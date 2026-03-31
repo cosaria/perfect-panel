@@ -44,7 +44,7 @@ func (s *service) RandomUUID() string {
 	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:])
 }
 
-func (s *service) verify(ctx context.Context, secret string, token string, ip string, key string) (bool, error) {
+func (s *service) verify(ctx context.Context, secret string, token string, ip string, key string) (_ bool, err error) {
 	_, cancel := context.WithTimeout(ctx, s.timeout)
 	defer cancel()
 	body := &bytes.Buffer{}
@@ -63,7 +63,11 @@ func (s *service) verify(ctx context.Context, secret string, token string, ip st
 	if err != nil {
 		return false, err
 	}
-	defer firstResult.Body.Close()
+	defer func() {
+		if closeErr := firstResult.Body.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 	firstOutcome := make(map[string]interface{})
 	err = json.NewDecoder(firstResult.Body).Decode(&firstOutcome)
 	if err != nil {
