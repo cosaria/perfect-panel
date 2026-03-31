@@ -97,7 +97,11 @@ func (c *Client) QueryOrderStatus(orderNo string) bool {
 		logger.Error("[Epay] QueryOrderStatus error", logger.Field("orderNo", orderNo), logger.Field("error", err.Error()))
 		return false
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			logger.Error("[Epay] QueryOrderStatus close body error", logger.Field("orderNo", orderNo), logger.Field("error", closeErr.Error()))
+		}
+	}()
 	value, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logger.Error("[Epay] QueryOrderStatus error", logger.Field("orderNo", orderNo), logger.Field("error", err.Error()))

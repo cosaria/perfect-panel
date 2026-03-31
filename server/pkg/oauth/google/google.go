@@ -36,14 +36,18 @@ func New(config *Config) *Client {
 		},
 	}
 }
-func (c *Client) GetUserInfo(token string) (*UserInfo, error) {
+func (c *Client) GetUserInfo(token string) (_ *UserInfo, err error) {
 	client := c.Config.Client(context.Background(), &oauth2.Token{AccessToken: token})
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
 		logger.Error("[Google OAuth 2.0] Get User Info", logger.Field("error", err.Error()))
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	var userInfo map[string]interface{}
 	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {

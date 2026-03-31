@@ -177,7 +177,7 @@ func GetClaims(idToken string) (*jwt.MapClaims, error) {
 	return &claims, nil
 }
 
-func doRequest(ctx context.Context, client *http.Client, result interface{}, url string, data url.Values) error {
+func doRequest(ctx context.Context, client *http.Client, result interface{}, url string, data url.Values) (err error) {
 	req, err := http.NewRequestWithContext(ctx, "POST", url, strings.NewReader(data.Encode()))
 	if err != nil {
 		return err
@@ -190,7 +190,11 @@ func doRequest(ctx context.Context, client *http.Client, result interface{}, url
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer func() {
+		if closeErr := res.Body.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	if res.StatusCode != http.StatusOK {
 		log.Printf("error response from apple: %s", res.Status)

@@ -442,8 +442,8 @@ func TestRotateLoggerWithSizeLimitRotateRuleWrite(t *testing.T) {
 	assert.Nil(t, err)
 	if len(filename) > 0 {
 		defer func() {
-			os.Remove(logger.getBackupFilename())
-			os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz")
+			_ = os.Remove(logger.getBackupFilename())
+			_ = os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz")
 		}()
 	}
 	// the following write calls cannot be changed to Write, because of DATA RACE.

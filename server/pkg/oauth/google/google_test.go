@@ -27,7 +27,7 @@ func handleMain(w http.ResponseWriter, r *http.Request) {
 			<a href="/login">Log in with Google</a>
 		</body>
 	</html>`
-	fmt.Fprint(w, html)
+	_, _ = fmt.Fprint(w, html)
 }
 
 func handleLogin(w http.ResponseWriter, r *http.Request) {
@@ -74,5 +74,5 @@ func handleAuth(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get user info", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, "Hello, %s", userInfo.Name)
+	_, _ = fmt.Fprintf(w, "Hello, %s", userInfo.Name)
 }
