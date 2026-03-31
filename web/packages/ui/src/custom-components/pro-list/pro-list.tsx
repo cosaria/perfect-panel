@@ -57,7 +57,7 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
   empty,
 }: ProListProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [rowSelection, setRowSelection] = useState<{ [key: number]: boolean }>({});
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [data, setData] = useState<TData[]>([]);
   const [rowCount, setRowCount] = useState<number>(0);
   const [pagination, setPagination] = useState({

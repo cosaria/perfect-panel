@@ -1,13 +1,13 @@
-// @ts-expect-error
+// @ts-ignore
 /* eslint-disable */
 import request from "@/utils/request";
 
 /** Update document PUT /v1/admin/document/ */
 export async function updateDocument(
   body: API.UpdateDocumentRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/document/", {
+  return request<API.Response & { data?: any }>("/v1/admin/document/", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -20,9 +20,9 @@ export async function updateDocument(
 /** Create document POST /v1/admin/document/ */
 export async function createDocument(
   body: API.CreateDocumentRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/document/", {
+  return request<API.Response & { data?: any }>("/v1/admin/document/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -35,9 +35,9 @@ export async function createDocument(
 /** Delete document DELETE /v1/admin/document/ */
 export async function deleteDocument(
   body: API.DeleteDocumentRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/document/", {
+  return request<API.Response & { data?: any }>("/v1/admin/document/", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -50,9 +50,9 @@ export async function deleteDocument(
 /** Batch delete document DELETE /v1/admin/document/batch */
 export async function batchDeleteDocument(
   body: API.BatchDeleteDocumentRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/document/batch", {
+  return request<API.Response & { data?: any }>("/v1/admin/document/batch", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -63,24 +63,30 @@ export async function batchDeleteDocument(
 }
 
 /** Get document detail GET /v1/admin/document/detail */
-export async function getDocumentDetail(options?: Record<string, unknown>) {
-  return request<API.Response & { data?: API.Document }>("/v1/admin/document/detail", {
-    method: "GET",
-    ...(options || {}),
-  });
+export async function getDocumentDetail(options?: { [key: string]: any }) {
+  return request<API.Response & { data?: API.Document }>(
+    "/v1/admin/document/detail",
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
 }
 
 /** Get document list GET /v1/admin/document/list */
 export async function getDocumentList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetDocumentListParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.GetDocumentListResponse }>("/v1/admin/document/list", {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: API.GetDocumentListResponse }>(
+    "/v1/admin/document/list",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }

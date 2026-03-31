@@ -36,19 +36,49 @@ export default function EmailAuthForm() {
       try {
         switch (type) {
           case "login": {
-            const login = await userLogin(params);
+            if (!params.email || !params.password) {
+              return;
+            }
+
+            const login = await userLogin({
+              identifier: params.identifier ?? params.email,
+              email: params.email,
+              password: params.password,
+              cf_token: params.cf_token,
+            });
             toast.success(t("login.success"));
             onLogin(login.data.data?.token);
             break;
           }
           case "register": {
-            const create = await userRegister(params);
+            if (!params.email || !params.password) {
+              return;
+            }
+
+            const create = await userRegister({
+              identifier: params.identifier ?? params.email,
+              email: params.email,
+              password: params.password,
+              invite: params.invite,
+              code: params.code,
+              cf_token: params.cf_token,
+            });
             toast.success(t("register.success"));
             onLogin(create.data.data?.token);
             break;
           }
           case "reset":
-            await resetPassword(params);
+            if (!params.email || !params.password) {
+              return;
+            }
+
+            await resetPassword({
+              identifier: params.identifier ?? params.email,
+              email: params.email,
+              password: params.password,
+              code: params.code,
+              cf_token: params.cf_token,
+            });
             toast.success(t("reset.success"));
             setType("login");
             break;

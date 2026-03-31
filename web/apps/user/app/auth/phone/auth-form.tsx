@@ -20,7 +20,7 @@ export default function PhoneAuthForm() {
   const router = useRouter();
   const [type, setType] = useState<AuthView>("login");
   const [loading, startTransition] = useTransition();
-  const [initialValues, setInitialValues] = useState<PhoneAuthValues>({
+  const [initialValues, setInitialValues] = useState<PhoneAuthValues | undefined>({
     identifier: "",
     telephone: "",
     telephone_area_code: "1",
@@ -39,19 +39,53 @@ export default function PhoneAuthForm() {
       try {
         switch (type) {
           case "login": {
-            const login = await telephoneLogin(params);
+            if (!params.telephone || !params.telephone_area_code) {
+              return;
+            }
+
+            const login = await telephoneLogin({
+              identifier: params.identifier ?? params.telephone,
+              telephone: params.telephone,
+              telephone_area_code: params.telephone_area_code,
+              telephone_code: params.telephone_code ?? "",
+              password: params.password ?? "",
+              cf_token: params.cf_token,
+            });
             toast.success(t("login.success"));
             onLogin(login.data.data?.token);
             break;
           }
           case "register": {
-            const create = await telephoneUserRegister(params);
+            if (!params.telephone || !params.telephone_area_code || !params.password) {
+              return;
+            }
+
+            const create = await telephoneUserRegister({
+              identifier: params.identifier ?? params.telephone,
+              telephone: params.telephone,
+              telephone_area_code: params.telephone_area_code,
+              password: params.password,
+              invite: params.invite,
+              code: params.code,
+              cf_token: params.cf_token,
+            });
             toast.success(t("register.success"));
             onLogin(create.data.data?.token);
             break;
           }
           case "reset":
-            await telephoneResetPassword(params);
+            if (!params.telephone || !params.telephone_area_code || !params.password) {
+              return;
+            }
+
+            await telephoneResetPassword({
+              identifier: params.identifier ?? params.telephone,
+              telephone: params.telephone,
+              telephone_area_code: params.telephone_area_code,
+              password: params.password,
+              code: params.code,
+              cf_token: params.cf_token,
+            });
             toast.success(t("reset.success"));
             setType("login");
             break;

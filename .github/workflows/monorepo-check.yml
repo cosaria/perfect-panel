@@ -102,6 +102,22 @@ jobs:
         working-directory: server
         run: go test ./...
 
+  web-lint:
+    name: Web Lint
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.web == 'true' || needs.changes.outputs.shared == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun workspace
+        uses: ./.github/actions/setup-bun
+
+      - name: Lint web workspace
+        working-directory: web
+        run: bun run lint
+
   web-admin-validate:
     name: Web Admin Validate
     runs-on: ubuntu-latest
@@ -114,9 +130,9 @@ jobs:
       - name: Setup Bun workspace
         uses: ./.github/actions/setup-bun
 
-      - name: Lint admin app
+      - name: Typecheck admin app
         working-directory: web/apps/admin
-        run: bun run lint
+        run: bun run check-types
 
       - name: Build admin app
         working-directory: web/apps/admin
@@ -134,9 +150,9 @@ jobs:
       - name: Setup Bun workspace
         uses: ./.github/actions/setup-bun
 
-      - name: Lint user app
+      - name: Typecheck user app
         working-directory: web/apps/user
-        run: bun run lint
+        run: bun run check-types
 
       - name: Build user app
         working-directory: web/apps/user
@@ -149,6 +165,7 @@ jobs:
     needs:
       - workflow-validate
       - server-validate
+      - web-lint
       - web-admin-validate
       - web-user-validate
     steps:
@@ -156,11 +173,12 @@ jobs:
         env:
           WORKFLOW_RESULT: ${{ needs.workflow-validate.result }}
           SERVER_RESULT: ${{ needs.server-validate.result }}
+          WEB_LINT_RESULT: ${{ needs.web-lint.result }}
           ADMIN_RESULT: ${{ needs.web-admin-validate.result }}
           USER_RESULT: ${{ needs.web-user-validate.result }}
         run: |
           failure=0
-          for result in "$WORKFLOW_RESULT" "$SERVER_RESULT" "$ADMIN_RESULT" "$USER_RESULT"; do
+          for result in "$WORKFLOW_RESULT" "$SERVER_RESULT" "$WEB_LINT_RESULT" "$ADMIN_RESULT" "$USER_RESULT"; do
             case "$result" in
               failure|cancelled|timed_out|action_required)
                 failure=1
@@ -172,6 +190,7 @@ jobs:
             echo "Migration-window mode: keep this workflow non-required until it has 2 green main runs and 1 green feature PR."
             echo "- workflow-validate: ${WORKFLOW_RESULT}"
             echo "- server-validate: ${SERVER_RESULT}"
+            echo "- web-lint: ${WEB_LINT_RESULT}"
             echo "- web-admin-validate: ${ADMIN_RESULT}"
             echo "- web-user-validate: ${USER_RESULT}"
           } >> "$GITHUB_STEP_SUMMARY"

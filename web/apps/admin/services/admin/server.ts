@@ -1,13 +1,13 @@
-// @ts-expect-error
+// @ts-ignore
 /* eslint-disable */
 import request from "@/utils/request";
 
 /** Create Server POST /v1/admin/server/create */
 export async function createServer(
   body: API.CreateServerRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/server/create", {
+  return request<API.Response & { data?: any }>("/v1/admin/server/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -20,9 +20,9 @@ export async function createServer(
 /** Delete Server POST /v1/admin/server/delete */
 export async function deleteServer(
   body: API.DeleteServerRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/server/delete", {
+  return request<API.Response & { data?: any }>("/v1/admin/server/delete", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -36,68 +36,61 @@ export async function deleteServer(
 export async function filterServerList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterServerListParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.FilterServerListResponse }>("/v1/admin/server/list", {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
-/** Check if there is any server or node to migrate GET /v1/admin/server/migrate/has */
-export async function hasMigrateSeverNode(options?: Record<string, unknown>) {
-  return request<API.Response & { data?: API.HasMigrateSeverNodeResponse }>(
-    "/v1/admin/server/migrate/has",
+  return request<API.Response & { data?: API.FilterServerListResponse }>(
+    "/v1/admin/server/list",
     {
       method: "GET",
+      params: {
+        ...params,
+      },
       ...(options || {}),
-    },
-  );
-}
-
-/** Migrate server and node data to new database POST /v1/admin/server/migrate/run */
-export async function migrateServerNode(options?: Record<string, unknown>) {
-  return request<API.Response & { data?: API.MigrateServerNodeResponse }>(
-    "/v1/admin/server/migrate/run",
-    {
-      method: "POST",
-      ...(options || {}),
-    },
+    }
   );
 }
 
 /** Create Node POST /v1/admin/server/node/create */
-export async function createNode(body: API.CreateNodeRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/server/node/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+export async function createNode(
+  body: API.CreateNodeRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: any }>(
+    "/v1/admin/server/node/create",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Delete Node POST /v1/admin/server/node/delete */
-export async function deleteNode(body: API.DeleteNodeRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/server/node/delete", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+export async function deleteNode(
+  body: API.DeleteNodeRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: any }>(
+    "/v1/admin/server/node/delete",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Filter Node List GET /v1/admin/server/node/list */
 export async function filterNodeList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterNodeListParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.FilterNodeListResponse }>(
     "/v1/admin/server/node/list",
@@ -107,16 +100,16 @@ export async function filterNodeList(
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** Reset node sort POST /v1/admin/server/node/sort */
 export async function resetSortWithNode(
   body: API.ResetSortRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/server/node/sort", {
+  return request<API.Response & { data?: any }>("/v1/admin/server/node/sort", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -129,43 +122,55 @@ export async function resetSortWithNode(
 /** Toggle Node Status POST /v1/admin/server/node/status/toggle */
 export async function toggleNodeStatus(
   body: API.ToggleNodeStatusRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/server/node/status/toggle", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: any }>(
+    "/v1/admin/server/node/status/toggle",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Query all node tags GET /v1/admin/server/node/tags */
-export async function queryNodeTag(options?: Record<string, unknown>) {
-  return request<API.Response & { data?: API.QueryNodeTagResponse }>("/v1/admin/server/node/tags", {
-    method: "GET",
-    ...(options || {}),
-  });
+export async function queryNodeTag(options?: { [key: string]: any }) {
+  return request<API.Response & { data?: API.QueryNodeTagResponse }>(
+    "/v1/admin/server/node/tags",
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
 }
 
 /** Update Node POST /v1/admin/server/node/update */
-export async function updateNode(body: API.UpdateNodeRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/server/node/update", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+export async function updateNode(
+  body: API.UpdateNodeRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: any }>(
+    "/v1/admin/server/node/update",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Get Server Protocols GET /v1/admin/server/protocols */
 export async function getServerProtocols(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetServerProtocolsParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetServerProtocolsResponse }>(
     "/v1/admin/server/protocols",
@@ -175,31 +180,34 @@ export async function getServerProtocols(
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** Reset server sort POST /v1/admin/server/server/sort */
 export async function resetSortWithServer(
   body: API.ResetSortRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/server/server/sort", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: any }>(
+    "/v1/admin/server/server/sort",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Update Server POST /v1/admin/server/update */
 export async function updateServer(
   body: API.UpdateServerRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/server/update", {
+  return request<API.Response & { data?: any }>("/v1/admin/server/update", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

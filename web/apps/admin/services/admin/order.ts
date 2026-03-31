@@ -1,10 +1,13 @@
-// @ts-expect-error
+// @ts-ignore
 /* eslint-disable */
 import request from "@/utils/request";
 
 /** Create order POST /v1/admin/order/ */
-export async function createOrder(body: API.CreateOrderRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/order/", {
+export async function createOrder(
+  body: API.CreateOrderRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: any }>("/v1/admin/order/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -18,23 +21,26 @@ export async function createOrder(body: API.CreateOrderRequest, options?: Record
 export async function getOrderList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetOrderListParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.GetOrderListResponse }>("/v1/admin/order/list", {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: API.GetOrderListResponse }>(
+    "/v1/admin/order/list",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** Update order status PUT /v1/admin/order/status */
 export async function updateOrderStatus(
   body: API.UpdateOrderStatusRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/order/status", {
+  return request<API.Response & { data?: any }>("/v1/admin/order/status", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

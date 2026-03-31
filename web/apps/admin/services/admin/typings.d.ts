@@ -115,7 +115,7 @@ declare namespace API {
   type AuthMethodConfig = {
     id: number;
     method: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     enabled: boolean;
   };
 
@@ -290,7 +290,7 @@ declare namespace API {
     description: string;
     icon?: string;
     domain?: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     fee_mode: number;
     fee_percent?: number;
     fee_amount?: number;
@@ -355,6 +355,7 @@ declare namespace API {
     allow_deduction: boolean;
     reset_cycle: number;
     renewal_reset: boolean;
+    show_original_price: boolean;
   };
 
   type CreateTicketFollowRequest = {
@@ -1127,6 +1128,7 @@ declare namespace API {
     size: number;
     search?: string;
     user_id?: number;
+    unscoped?: boolean;
     subscribe_id?: number;
     user_subscribe_id?: number;
   };
@@ -1136,6 +1138,7 @@ declare namespace API {
     size: number;
     search?: string;
     user_id?: number;
+    unscoped?: boolean;
     subscribe_id?: number;
     user_subscribe_id?: number;
   };
@@ -1308,7 +1311,7 @@ declare namespace API {
   };
 
   type LogResponse = {
-    list: Record<string, unknown>;
+    list: Record<string, any>;
   };
 
   type LogSetting = {
@@ -1322,7 +1325,7 @@ declare namespace API {
     platform: string;
     to: string;
     subject: string;
-    content: Record<string, unknown>;
+    content: Record<string, any>;
     status: number;
     created_at: number;
   };
@@ -1337,6 +1340,15 @@ declare namespace API {
     enable: boolean;
     enable_whitelist: boolean;
     whitelist: string[];
+  };
+
+  type ModuleConfig = {
+    /** 通讯密钥 */
+    secret: string;
+    /** 服务名称 */
+    service_name: string;
+    /** 服务版本 */
+    service_version: string;
   };
 
   type Node = {
@@ -1446,7 +1458,7 @@ declare namespace API {
     description: string;
     icon?: string;
     domain?: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     fee_mode: number;
     fee_percent?: number;
     fee_amount?: number;
@@ -1471,7 +1483,7 @@ declare namespace API {
     description: string;
     icon: string;
     domain: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     fee_mode: number;
     fee_percent: number;
     fee_amount: number;
@@ -1482,7 +1494,7 @@ declare namespace API {
   type PlatformInfo = {
     platform: string;
     platform_url: string;
-    platform_field_description: Record<string, unknown>;
+    platform_field_description: Record<string, any>;
   };
 
   type PlatformResponse = {
@@ -1639,6 +1651,20 @@ declare namespace API {
     list: Document[];
   };
 
+  type QueryIPLocationParams = {
+    ip: string;
+  };
+
+  type QueryIPLocationRequest = {
+    ip: string;
+  };
+
+  type QueryIPLocationResponse = {
+    country: string;
+    region?: string;
+    city: string;
+  };
+
   type QueryNodeTagResponse = {
     tags: string[];
   };
@@ -1781,6 +1807,10 @@ declare namespace API {
     order_no: string;
   };
 
+  type ResetAllSubscribeTokenResponse = {
+    success: boolean;
+  };
+
   type ResetSortRequest = {
     sort: SortItem[];
   };
@@ -1810,13 +1840,21 @@ declare namespace API {
     order_no: string;
   };
 
+  type ResetUserSubscribeTokenRequest = {
+    user_subscribe_id: number;
+  };
+
+  type ResetUserSubscribeTrafficRequest = {
+    user_subscribe_id: number;
+  };
+
   type Response = {
     /** 状态码 */
     code?: number;
     /** 消息 */
     msg?: string;
     /** 数据 */
-    data?: Record<string, unknown>;
+    data?: Record<string, any>;
   };
 
   type RevenueStatisticsResponse = {
@@ -1995,6 +2033,7 @@ declare namespace API {
     allow_deduction: boolean;
     reset_cycle: number;
     renewal_reset: boolean;
+    show_original_price: boolean;
     created_at: number;
     updated_at: number;
   };
@@ -2059,6 +2098,7 @@ declare namespace API {
     allow_deduction?: boolean;
     reset_cycle?: number;
     renewal_reset?: boolean;
+    show_original_price?: boolean;
     created_at?: number;
     updated_at?: number;
     sold: number;
@@ -2121,6 +2161,10 @@ declare namespace API {
   type ToggleNodeStatusRequest = {
     id: number;
     enable: boolean;
+  };
+
+  type ToggleUserSubscribeStatusRequest = {
+    user_subscribe_id: number;
   };
 
   type TosConfig = {
@@ -2199,7 +2243,7 @@ declare namespace API {
   type UpdateAuthMethodConfigRequest = {
     id: number;
     method: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     enabled: boolean;
   };
 
@@ -2251,7 +2295,7 @@ declare namespace API {
     description: string;
     icon?: string;
     domain?: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     fee_mode: number;
     fee_percent?: number;
     fee_amount?: number;
@@ -2310,6 +2354,7 @@ declare namespace API {
     allow_deduction: boolean;
     reset_cycle: number;
     renewal_reset: boolean;
+    show_original_price: boolean;
   };
 
   type UpdateTicketStatusRequest = {
@@ -2375,10 +2420,10 @@ declare namespace API {
     enable_trade_notify: boolean;
     auth_methods: UserAuthMethod[];
     user_devices: UserDevice[];
+    rules: string[];
     created_at: number;
     updated_at: number;
     deleted_at?: number;
-    is_del?: boolean;
   };
 
   type UserAffiliate = {
@@ -2443,6 +2488,7 @@ declare namespace API {
     upload: number;
     token: string;
     status: number;
+    short: string;
     created_at: number;
     updated_at: number;
   };

@@ -1,13 +1,13 @@
-// @ts-expect-error
+// @ts-ignore
 /* eslint-disable */
 import request from "@/utils/request";
 
 /** Update coupon PUT /v1/admin/coupon/ */
 export async function updateCoupon(
   body: API.UpdateCouponRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/coupon/", {
+  return request<API.Response & { data?: any }>("/v1/admin/coupon/", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -20,9 +20,9 @@ export async function updateCoupon(
 /** Create coupon POST /v1/admin/coupon/ */
 export async function createCoupon(
   body: API.CreateCouponRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/coupon/", {
+  return request<API.Response & { data?: any }>("/v1/admin/coupon/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -35,9 +35,9 @@ export async function createCoupon(
 /** Delete coupon DELETE /v1/admin/coupon/ */
 export async function deleteCoupon(
   body: API.DeleteCouponRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/coupon/", {
+  return request<API.Response & { data?: any }>("/v1/admin/coupon/", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -50,9 +50,9 @@ export async function deleteCoupon(
 /** Batch delete coupon DELETE /v1/admin/coupon/batch */
 export async function batchDeleteCoupon(
   body: API.BatchDeleteCouponRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/coupon/batch", {
+  return request<API.Response & { data?: any }>("/v1/admin/coupon/batch", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -66,13 +66,16 @@ export async function batchDeleteCoupon(
 export async function getCouponList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetCouponListParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.GetCouponListResponse }>("/v1/admin/coupon/list", {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: API.GetCouponListResponse }>(
+    "/v1/admin/coupon/list",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }

@@ -46,7 +46,7 @@ export default function Page() {
         getUserInfo();
         setEnabled(false);
       }
-      return data?.data;
+      return data?.data as API.OrderDetail | undefined;
     },
     refetchInterval: 3000,
   });
@@ -103,7 +103,7 @@ export default function Page() {
           <div className="grid gap-0.5">
             <CardTitle className="flex flex-col text-lg">
               {t("orderNumber")}
-              <span>{data?.orderNo}</span>
+              <span>{data?.order_no}</span>
             </CardTitle>
             <CardDescription>
               {t("createdAt")}: {formatDate(data?.created_at)}

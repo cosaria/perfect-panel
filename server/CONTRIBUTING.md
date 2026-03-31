@@ -17,7 +17,7 @@ To ensure the quality of the codebase and maintainability of the project, please
 
 ## 2. Code Checks Before Submission
 
-- **Code Style**: Ensure the code adheres to the project's coding standards (e.g., ESLint, Prettier, or GoLint).
+- **Code Style**: Ensure the code adheres to the project's coding standards (e.g., Biome or GoLint).
 - **Functional Testing**: Fully test new features or bug fixes to ensure no missing functionality or regressions.
 - **Unit Tests**: Write unit tests for added or modified functionality and ensure all tests pass.
 - **Documentation Updates**: Update documentation if the PR includes new features or API changes.

@@ -242,15 +242,15 @@ export default function ThirdPartyAccounts() {
           {accounts.map((account) => {
             const method = user?.auth_methods?.find((auth) => auth.auth_type === account.id);
             const isEditing = account.id === "email";
-            const currentValue = method?.auth_identifier || editValues[account.id];
+            const currentValue = method?.auth_identifier ?? editValues[account.id] ?? "";
             let displayValue = "";
 
             switch (account.id) {
               case "email":
-                displayValue = isEditing ? currentValue : method?.auth_identifier || "";
+                displayValue = isEditing ? currentValue : (method?.auth_identifier ?? "");
                 break;
               default:
-                displayValue = method?.auth_identifier || t(`${account.id}.description`);
+                displayValue = method?.auth_identifier ?? t(`${account.id}.description`);
             }
 
             return (

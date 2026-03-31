@@ -115,7 +115,7 @@ declare namespace API {
   type AuthMethodConfig = {
     id: number;
     method: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     enabled: boolean;
   };
 
@@ -130,7 +130,7 @@ declare namespace API {
 
   type BindOAuthCallbackRequest = {
     method: string;
-    callback: Record<string, unknown>;
+    callback: Record<string, any>;
   };
 
   type BindOAuthRequest = {
@@ -168,6 +168,11 @@ declare namespace API {
     amount: number;
     order_no: string;
     timestamp: number;
+  };
+
+  type CommissionWithdrawRequest = {
+    amount: number;
+    content: string;
   };
 
   type Coupon = {
@@ -376,7 +381,7 @@ declare namespace API {
     platform: string;
     to: string;
     subject: string;
-    content: Record<string, unknown>;
+    content: Record<string, any>;
     status: number;
     created_at: number;
   };
@@ -472,7 +477,7 @@ declare namespace API {
     description: string;
     icon?: string;
     domain?: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     fee_mode: number;
     fee_percent?: number;
     fee_amount?: number;
@@ -497,7 +502,7 @@ declare namespace API {
     description: string;
     icon: string;
     domain: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     fee_mode: number;
     fee_percent: number;
     fee_amount: number;
@@ -508,7 +513,7 @@ declare namespace API {
   type PlatformInfo = {
     platform: string;
     platform_url: string;
-    platform_field_description: Record<string, unknown>;
+    platform_field_description: Record<string, any>;
   };
 
   type PlatformResponse = {
@@ -816,6 +821,21 @@ declare namespace API {
     list: UserSubscribeInfo[];
   };
 
+  type QueryWithdrawalLogListRequest = {
+    page: number;
+    size: number;
+  };
+
+  type QueryWithdrawalLogListResponse = {
+    list: WithdrawalLog[];
+    total: number;
+  };
+
+  type QueryWithdrawalLogParams = {
+    page: number;
+    size: number;
+  };
+
   type RechargeOrderRequest = {
     amount: number;
     payment: number;
@@ -874,7 +894,7 @@ declare namespace API {
     /** 消息 */
     msg?: string;
     /** 数据 */
-    data?: Record<string, unknown>;
+    data?: Record<string, any>;
   };
 
   type SecurityConfig = {
@@ -965,6 +985,7 @@ declare namespace API {
     allow_deduction: boolean;
     reset_cycle: number;
     renewal_reset: boolean;
+    show_original_price: boolean;
     created_at: number;
     updated_at: number;
   };
@@ -1089,6 +1110,15 @@ declare namespace API {
     password: string;
   };
 
+  type UpdateUserRulesRequest = {
+    rules: string[];
+  };
+
+  type UpdateUserSubscribeNoteRequest = {
+    user_subscribe_id: number;
+    note: string;
+  };
+
   type UpdateUserTicketStatusRequest = {
     id: number;
     status: number;
@@ -1113,10 +1143,10 @@ declare namespace API {
     enable_trade_notify: boolean;
     auth_methods: UserAuthMethod[];
     user_devices: UserDevice[];
+    rules: string[];
     created_at: number;
     updated_at: number;
     deleted_at?: number;
-    is_del?: boolean;
   };
 
   type UserAffiliate = {
@@ -1167,6 +1197,7 @@ declare namespace API {
     upload: number;
     token: string;
     status: number;
+    short: string;
     created_at: number;
     updated_at: number;
   };
@@ -1248,5 +1279,16 @@ declare namespace API {
     transport_config: TransportConfig;
     security: string;
     security_config: SecurityConfig;
+  };
+
+  type WithdrawalLog = {
+    id: number;
+    user_id: number;
+    amount: number;
+    content: string;
+    status: number;
+    reason?: string;
+    created_at: number;
+    updated_at: number;
   };
 }

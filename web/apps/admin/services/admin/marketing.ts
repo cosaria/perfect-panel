@@ -1,4 +1,4 @@
-// @ts-expect-error
+// @ts-ignore
 /* eslint-disable */
 import request from "@/utils/request";
 
@@ -6,24 +6,23 @@ import request from "@/utils/request";
 export async function getBatchSendEmailTaskList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetBatchSendEmailTaskListParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.GetBatchSendEmailTaskListResponse }>(
-    "/v1/admin/marketing/email/batch/list",
-    {
-      method: "GET",
-      params: {
-        ...params,
-      },
-      ...(options || {}),
+  return request<
+    API.Response & { data?: API.GetBatchSendEmailTaskListResponse }
+  >("/v1/admin/marketing/email/batch/list", {
+    method: "GET",
+    params: {
+      ...params,
     },
-  );
+    ...(options || {}),
+  });
 }
 
 /** Get pre-send email count POST /v1/admin/marketing/email/batch/pre-send-count */
 export async function getPreSendEmailCount(
   body: API.GetPreSendEmailCountRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetPreSendEmailCountResponse }>(
     "/v1/admin/marketing/email/batch/pre-send-count",
@@ -34,32 +33,17 @@ export async function getPreSendEmailCount(
       },
       data: body,
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** Create a batch send email task POST /v1/admin/marketing/email/batch/send */
 export async function createBatchSendEmailTask(
   body: API.CreateBatchSendEmailTaskRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/marketing/email/batch/send", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
-}
-
-/** Get batch send email task status POST /v1/admin/marketing/email/batch/status */
-export async function getBatchSendEmailTaskStatus(
-  body: API.GetBatchSendEmailTaskStatusRequest,
-  options?: Record<string, unknown>,
-) {
-  return request<API.Response & { data?: API.GetBatchSendEmailTaskStatusResponse }>(
-    "/v1/admin/marketing/email/batch/status",
+  return request<API.Response & { data?: any }>(
+    "/v1/admin/marketing/email/batch/send",
     {
       method: "POST",
       headers: {
@@ -67,45 +51,68 @@ export async function getBatchSendEmailTaskStatus(
       },
       data: body,
       ...(options || {}),
-    },
+    }
   );
+}
+
+/** Get batch send email task status POST /v1/admin/marketing/email/batch/status */
+export async function getBatchSendEmailTaskStatus(
+  body: API.GetBatchSendEmailTaskStatusRequest,
+  options?: { [key: string]: any }
+) {
+  return request<
+    API.Response & { data?: API.GetBatchSendEmailTaskStatusResponse }
+  >("/v1/admin/marketing/email/batch/status", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
 }
 
 /** Stop a batch send email task POST /v1/admin/marketing/email/batch/stop */
 export async function stopBatchSendEmailTask(
   body: API.StopBatchSendEmailTaskRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/marketing/email/batch/stop", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: any }>(
+    "/v1/admin/marketing/email/batch/stop",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Create a quota task POST /v1/admin/marketing/quota/create */
 export async function createQuotaTask(
   body: API.CreateQuotaTaskRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/marketing/quota/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: any }>(
+    "/v1/admin/marketing/quota/create",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Query quota task list GET /v1/admin/marketing/quota/list */
 export async function queryQuotaTaskList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.QueryQuotaTaskListParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.QueryQuotaTaskListResponse }>(
     "/v1/admin/marketing/quota/list",
@@ -115,14 +122,14 @@ export async function queryQuotaTaskList(
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** Query quota task pre-count POST /v1/admin/marketing/quota/pre-count */
 export async function queryQuotaTaskPreCount(
   body: API.QueryQuotaTaskPreCountRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.QueryQuotaTaskPreCountResponse }>(
     "/v1/admin/marketing/quota/pre-count",
@@ -133,6 +140,6 @@ export async function queryQuotaTaskPreCount(
       },
       data: body,
       ...(options || {}),
-    },
+    }
   );
 }

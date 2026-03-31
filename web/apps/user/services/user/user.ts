@@ -1,15 +1,15 @@
-// @ts-expect-error
+// @ts-ignore
 /* eslint-disable */
 import request from "@/utils/request";
 
 /** Query User Affiliate Count GET /v1/public/user/affiliate/count */
-export async function queryUserAffiliate(options?: Record<string, unknown>) {
+export async function queryUserAffiliate(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.QueryUserAffiliateCountResponse }>(
     "/v1/public/user/affiliate/count",
     {
       method: "GET",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -17,7 +17,7 @@ export async function queryUserAffiliate(options?: Record<string, unknown>) {
 export async function queryUserAffiliateList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.QueryUserAffiliateListParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.QueryUserAffiliateListResponse }>(
     "/v1/public/user/affiliate/list",
@@ -27,27 +27,27 @@ export async function queryUserAffiliateList(
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** Query User Balance Log GET /v1/public/user/balance_log */
-export async function queryUserBalanceLog(options?: Record<string, unknown>) {
+export async function queryUserBalanceLog(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.QueryUserBalanceLogListResponse }>(
     "/v1/public/user/balance_log",
     {
       method: "GET",
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** Update Bind Email PUT /v1/public/user/bind_email */
 export async function updateBindEmail(
   body: API.UpdateBindEmailRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/public/user/bind_email", {
+  return request<API.Response & { data?: any }>("/v1/public/user/bind_email", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -60,9 +60,9 @@ export async function updateBindEmail(
 /** Update Bind Mobile PUT /v1/public/user/bind_mobile */
 export async function updateBindMobile(
   body: API.UpdateBindMobileRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/public/user/bind_mobile", {
+  return request<API.Response & { data?: any }>("/v1/public/user/bind_mobile", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -73,40 +73,49 @@ export async function updateBindMobile(
 }
 
 /** Bind OAuth POST /v1/public/user/bind_oauth */
-export async function bindOAuth(body: API.BindOAuthRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: API.BindOAuthResponse }>("/v1/public/user/bind_oauth", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+export async function bindOAuth(
+  body: API.BindOAuthRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: API.BindOAuthResponse }>(
+    "/v1/public/user/bind_oauth",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Bind OAuth Callback POST /v1/public/user/bind_oauth/callback */
 export async function bindOAuthCallback(
   body: API.BindOAuthCallbackRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/public/user/bind_oauth/callback", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: any }>(
+    "/v1/public/user/bind_oauth/callback",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Bind Telegram GET /v1/public/user/bind_telegram */
-export async function bindTelegram(options?: Record<string, unknown>) {
+export async function bindTelegram(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.BindTelegramResponse }>(
     "/v1/public/user/bind_telegram",
     {
       method: "GET",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -114,30 +123,50 @@ export async function bindTelegram(options?: Record<string, unknown>) {
 export async function queryUserCommissionLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.QueryUserCommissionLogParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.QueryUserCommissionLogListResponse }>(
-    "/v1/public/user/commission_log",
-    {
-      method: "GET",
-      params: {
-        ...params,
-      },
-      ...(options || {}),
-    },
-  );
-}
-
-/** Get Device List GET /v1/public/user/devices */
-export async function getDeviceList(options?: Record<string, unknown>) {
-  return request<API.Response & { data?: API.GetDeviceListResponse }>("/v1/public/user/devices", {
+  return request<
+    API.Response & { data?: API.QueryUserCommissionLogListResponse }
+  >("/v1/public/user/commission_log", {
     method: "GET",
+    params: {
+      ...params,
+    },
     ...(options || {}),
   });
 }
 
+/** Commission Withdraw POST /v1/public/user/commission_withdraw */
+export async function commissionWithdraw(
+  body: API.CommissionWithdrawRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: API.WithdrawalLog }>(
+    "/v1/public/user/commission_withdraw",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
+}
+
+/** Get Device List GET /v1/public/user/devices */
+export async function getDeviceList(options?: { [key: string]: any }) {
+  return request<API.Response & { data?: API.GetDeviceListResponse }>(
+    "/v1/public/user/devices",
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
+}
+
 /** Query User Info GET /v1/public/user/info */
-export async function queryUserInfo(options?: Record<string, unknown>) {
+export async function queryUserInfo(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.User }>("/v1/public/user/info", {
     method: "GET",
     ...(options || {}),
@@ -148,23 +177,26 @@ export async function queryUserInfo(options?: Record<string, unknown>) {
 export async function getLoginLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetLoginLogParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.GetLoginLogResponse }>("/v1/public/user/login_log", {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: API.GetLoginLogResponse }>(
+    "/v1/public/user/login_log",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** Update User Notify PUT /v1/public/user/notify */
 export async function updateUserNotify(
   body: API.UpdateUserNotifyRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/public/user/notify", {
+  return request<API.Response & { data?: any }>("/v1/public/user/notify", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -175,22 +207,37 @@ export async function updateUserNotify(
 }
 
 /** Get OAuth Methods GET /v1/public/user/oauth_methods */
-export async function getOAuthMethods(options?: Record<string, unknown>) {
+export async function getOAuthMethods(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.GetOAuthMethodsResponse }>(
     "/v1/public/user/oauth_methods",
     {
       method: "GET",
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** Update User Password PUT /v1/public/user/password */
 export async function updateUserPassword(
   body: API.UpdateUserPasswordRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/public/user/password", {
+  return request<API.Response & { data?: any }>("/v1/public/user/password", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** Update User Rules PUT /v1/public/user/rules */
+export async function updateUserRules(
+  body: API.UpdateUserRulesRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: any }>("/v1/public/user/rules", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -201,13 +248,13 @@ export async function updateUserPassword(
 }
 
 /** Query User Subscribe GET /v1/public/user/subscribe */
-export async function queryUserSubscribe(options?: Record<string, unknown>) {
+export async function queryUserSubscribe(options?: { [key: string]: any }) {
   return request<API.Response & { data?: API.QueryUserSubscribeListResponse }>(
     "/v1/public/user/subscribe",
     {
       method: "GET",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -215,7 +262,7 @@ export async function queryUserSubscribe(options?: Record<string, unknown>) {
 export async function getSubscribeLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetSubscribeLogParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.GetSubscribeLogResponse }>(
     "/v1/public/user/subscribe_log",
@@ -225,63 +272,99 @@ export async function getSubscribeLog(
         ...params,
       },
       ...(options || {}),
-    },
+    }
+  );
+}
+
+/** Update User Subscribe Note PUT /v1/public/user/subscribe_note */
+export async function updateUserSubscribeNote(
+  body: API.UpdateUserSubscribeNoteRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: any }>(
+    "/v1/public/user/subscribe_note",
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
   );
 }
 
 /** Reset User Subscribe Token PUT /v1/public/user/subscribe_token */
 export async function resetUserSubscribeToken(
   body: API.ResetUserSubscribeTokenRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/public/user/subscribe_token", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: any }>(
+    "/v1/public/user/subscribe_token",
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Unbind Device PUT /v1/public/user/unbind_device */
 export async function unbindDevice(
   body: API.UnbindDeviceRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/public/user/unbind_device", {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: any }>(
+    "/v1/public/user/unbind_device",
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Unbind OAuth POST /v1/public/user/unbind_oauth */
-export async function unbindOAuth(body: API.UnbindOAuthRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: unknown }>("/v1/public/user/unbind_oauth", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+export async function unbindOAuth(
+  body: API.UnbindOAuthRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: any }>(
+    "/v1/public/user/unbind_oauth",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Unbind Telegram POST /v1/public/user/unbind_telegram */
-export async function unbindTelegram(options?: Record<string, unknown>) {
-  return request<API.Response & { data?: unknown }>("/v1/public/user/unbind_telegram", {
-    method: "POST",
-    ...(options || {}),
-  });
+export async function unbindTelegram(options?: { [key: string]: any }) {
+  return request<API.Response & { data?: any }>(
+    "/v1/public/user/unbind_telegram",
+    {
+      method: "POST",
+      ...(options || {}),
+    }
+  );
 }
 
 /** 此处后端没有提供注释 POST /v1/public/user/unsubscribe */
-export async function unsubscribe(body: API.UnsubscribeRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: unknown }>("/v1/public/user/unsubscribe", {
+export async function unsubscribe(
+  body: API.UnsubscribeRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: any }>("/v1/public/user/unsubscribe", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -294,7 +377,7 @@ export async function unsubscribe(body: API.UnsubscribeRequest, options?: Record
 /** Pre Unsubscribe POST /v1/public/user/unsubscribe/pre */
 export async function preUnsubscribe(
   body: API.PreUnsubscribeRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.PreUnsubscribeResponse }>(
     "/v1/public/user/unsubscribe/pre",
@@ -305,18 +388,42 @@ export async function preUnsubscribe(
       },
       data: body,
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** Verify Email POST /v1/public/user/verify_email */
-export async function verifyEmail(body: API.VerifyEmailRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: unknown }>("/v1/public/user/verify_email", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+export async function verifyEmail(
+  body: API.VerifyEmailRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: any }>(
+    "/v1/public/user/verify_email",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
+}
+
+/** Query Withdrawal Log GET /v1/public/user/withdrawal_log */
+export async function queryWithdrawalLog(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.QueryWithdrawalLogParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: API.QueryWithdrawalLogListResponse }>(
+    "/v1/public/user/withdrawal_log",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }

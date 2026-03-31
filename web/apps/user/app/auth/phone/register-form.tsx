@@ -67,7 +67,11 @@ export default function RegisterForm({
   const turnstile = useRef<TurnstileRef>(null);
   const handleSubmit = form.handleSubmit((data) => {
     try {
-      onSubmit(data);
+      onSubmit({
+        ...data,
+        invite: data.invite ?? undefined,
+        cf_token: data.cf_token ?? undefined,
+      });
     } catch (_error) {
       turnstile.current?.reset();
     }

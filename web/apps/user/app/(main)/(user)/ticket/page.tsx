@@ -57,8 +57,12 @@ export default function Page() {
   const { data: ticket, refetch: refetchTicket } = useQuery({
     queryKey: ["getUserTicketDetails", ticketId],
     queryFn: async () => {
+      if (ticketId == null) {
+        return undefined;
+      }
+
       const { data } = await getUserTicketDetails({ id: ticketId });
-      return data.data as API.Ticket;
+      return data.data as API.Ticket | undefined;
     },
     enabled: !!ticketId,
     refetchInterval: 5000,
@@ -289,7 +293,7 @@ export default function Page() {
                 className="flex w-full flex-row items-center gap-2"
                 onSubmit={async (event) => {
                   event.preventDefault();
-                  if (message) {
+                  if (message && ticketId != null) {
                     await createUserTicketFollow({
                       ticket_id: ticketId,
                       from: "User",
@@ -312,7 +316,7 @@ export default function Page() {
                     accept="image/*"
                     onChange={(event) => {
                       const file = event.target.files?.[0];
-                      if (file?.type.startsWith("image/")) {
+                      if (file?.type.startsWith("image/") && ticketId != null) {
                         const reader = new FileReader();
                         reader.readAsDataURL(file);
                         reader.onload = (e) => {

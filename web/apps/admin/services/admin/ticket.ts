@@ -1,13 +1,13 @@
-// @ts-expect-error
+// @ts-ignore
 /* eslint-disable */
 import request from "@/utils/request";
 
 /** Update ticket status PUT /v1/admin/ticket/ */
 export async function updateTicketStatus(
   body: API.UpdateTicketStatusRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/ticket/", {
+  return request<API.Response & { data?: any }>("/v1/admin/ticket/", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -21,23 +21,26 @@ export async function updateTicketStatus(
 export async function getTicket(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetTicketParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.Ticket }>("/v1/admin/ticket/detail", {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: API.Ticket }>(
+    "/v1/admin/ticket/detail",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** Create ticket follow POST /v1/admin/ticket/follow */
 export async function createTicketFollow(
   body: API.CreateTicketFollowRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: unknown }>("/v1/admin/ticket/follow", {
+  return request<API.Response & { data?: any }>("/v1/admin/ticket/follow", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -51,13 +54,16 @@ export async function createTicketFollow(
 export async function getTicketList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetTicketListParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.GetTicketListResponse }>("/v1/admin/ticket/list", {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: API.GetTicketListResponse }>(
+    "/v1/admin/ticket/list",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }

@@ -10,19 +10,30 @@ type ErrorResponseData = {
   message?: string;
 };
 
+type RequestConfigWithErrorHandler = InternalAxiosRequestConfig & {
+  skipErrorHandler?: boolean;
+};
+
 async function handleError(
   response: AxiosError<ErrorResponseData> | AxiosResponse<ErrorResponseData>,
 ) {
-  const code = response.data?.code;
-  if ([40002, 40003, 40004, 40005].includes(code)) return Logout();
-  if (response?.config?.skipErrorHandler) return;
+  const data = "data" in response ? response.data : response.response?.data;
+  const config = ("data" in response ? response.config : response.config) as
+    | RequestConfigWithErrorHandler
+    | undefined;
+  const code = data?.code;
+
+  if (typeof code === "number" && [40002, 40003, 40004, 40005].includes(code)) {
+    return Logout();
+  }
+  if (config?.skipErrorHandler) return;
   if (!isBrowser()) return;
 
   const t = await getTranslations("common");
   const message =
     t(`request.${code}`) !== `request.${code}`
       ? t(`request.${code}`)
-      : response.data?.message || ("message" in response ? response.message : undefined);
+      : data?.message || ("message" in response ? response.message : undefined);
 
   toast.error(message);
 }

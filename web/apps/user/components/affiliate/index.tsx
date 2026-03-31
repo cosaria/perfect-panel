@@ -12,7 +12,6 @@ import {
 import { formatDate, isBrowser } from "@workspace/ui/utils";
 import { Copy } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { toast } from "sonner";
 import { Display } from "@/components/display";
@@ -24,7 +23,6 @@ import { queryUserAffiliate, queryUserAffiliateList } from "@/services/user/user
 export default function Affiliate() {
   const t = useTranslations("affiliate");
   const { user, common } = useGlobalStore();
-  const [_sum, setSum] = useState<number>();
   const { data } = useQuery({
     queryKey: ["queryUserAffiliate"],
     queryFn: async () => {
@@ -86,7 +84,6 @@ export default function Affiliate() {
             ...pagination,
             ...filter,
           });
-          setSum(response.data.data?.sum);
           return {
             list: response.data.data?.list || [],
             total: response.data.data?.total || 0,

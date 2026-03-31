@@ -1,10 +1,13 @@
-// @ts-expect-error
+// @ts-ignore
 /* eslint-disable */
 import request from "@/utils/request";
 
 /** Close order POST /v1/public/order/close */
-export async function closeOrder(body: API.CloseOrderRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: unknown }>("/v1/public/order/close", {
+export async function closeOrder(
+  body: API.CloseOrderRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: any }>("/v1/public/order/close", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -18,87 +21,114 @@ export async function closeOrder(body: API.CloseOrderRequest, options?: Record<s
 export async function queryOrderDetail(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.QueryOrderDetailParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.OrderDetail }>("/v1/public/order/detail", {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: API.OrderDetail }>(
+    "/v1/public/order/detail",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** Get order list GET /v1/public/order/list */
 export async function queryOrderList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.QueryOrderListParams,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.QueryOrderListResponse }>("/v1/public/order/list", {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: API.QueryOrderListResponse }>(
+    "/v1/public/order/list",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** Pre create order POST /v1/public/order/pre */
 export async function preCreateOrder(
   body: API.PurchaseOrderRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
-  return request<API.Response & { data?: API.PreOrderResponse }>("/v1/public/order/pre", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+  return request<API.Response & { data?: API.PreOrderResponse }>(
+    "/v1/public/order/pre",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** purchase Subscription POST /v1/public/order/purchase */
-export async function purchase(body: API.PurchaseOrderRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: API.PurchaseOrderResponse }>("/v1/public/order/purchase", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+export async function purchase(
+  body: API.PurchaseOrderRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: API.PurchaseOrderResponse }>(
+    "/v1/public/order/purchase",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** 此处后端没有提供注释 POST /v1/public/order/recharge */
-export async function recharge(body: API.RechargeOrderRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: API.RechargeOrderResponse }>("/v1/public/order/recharge", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+export async function recharge(
+  body: API.RechargeOrderRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: API.RechargeOrderResponse }>(
+    "/v1/public/order/recharge",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Renewal Subscription POST /v1/public/order/renewal */
-export async function renewal(body: API.RenewalOrderRequest, options?: Record<string, unknown>) {
-  return request<API.Response & { data?: API.RenewalOrderResponse }>("/v1/public/order/renewal", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
+export async function renewal(
+  body: API.RenewalOrderRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.Response & { data?: API.RenewalOrderResponse }>(
+    "/v1/public/order/renewal",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** Reset traffic POST /v1/public/order/reset */
 export async function resetTraffic(
   body: API.ResetTrafficOrderRequest,
-  options?: Record<string, unknown>,
+  options?: { [key: string]: any }
 ) {
   return request<API.Response & { data?: API.ResetTrafficOrderResponse }>(
     "/v1/public/order/reset",
@@ -109,6 +139,6 @@ export async function resetTraffic(
       },
       data: body,
       ...(options || {}),
-    },
+    }
   );
 }

@@ -19,14 +19,15 @@
     "build": "turbo build",
     "clean": "./scripts/clean.sh",
     "dev": "turbo dev",
+    "format": "biome format --write .",
     "lint": "turbo lint",
-    "locale": "turbo locale && bun prettier",
-    "openapi": "turbo openapi && bun prettier",
+    "locale": "turbo locale && bun run format",
+    "openapi": "turbo openapi && bun run format",
     "prepare": "./scripts/prepare.sh",
-    "prettier": "prettier --write \"**/*.{ts,tsx,js,jsx,cjs,mjs,md,json}\"",
     "release": "semantic-release",
+    "typecheck": "turbo check-types",
     "update:deps": "./scripts/update-deps.sh",
-    "update:shadcn": "./scripts/update-shadcn-ui.sh && bun prettier"
+    "update:shadcn": "./scripts/update-shadcn-ui.sh && bun run format"
   },
   "commitlint": {
     "extends": [
@@ -34,19 +35,10 @@
     ]
   },
   "lint-staged": {
-    "*.{json,md}": [
-      "prettier --write --no-error-on-unmatched-pattern"
-    ],
-    "*.{js,jsx,cjs,mjs}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.{ts,tsx}": [
-      "prettier --parser=typescript --write",
-      "eslint --fix"
+    "*.{json,md,js,jsx,cjs,mjs,ts,tsx}": [
+      "biome check --write"
     ]
   },
-  "prettier": "@workspace/prettier-config",
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
@@ -122,20 +114,15 @@
     "zod": "^4.1.5"
   },
   "devDependencies": {
-    "@eslint/js": "^9.38.0",
+    "@biomejs/biome": "^2.4.9",
     "@netlify/plugin-nextjs": "^5.12.1",
-    "@umijs/openapi": "^1.13.15",
     "@workspace/commitlint-config": "workspace:*",
-    "@workspace/eslint-config": "workspace:*",
-    "@workspace/prettier-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "autoprefixer": "^10.4.21",
     "commitlint": "^19.6.1",
-    "eslint": "^9.17.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.5",
     "postcss": "^8.5.6",
-    "prettier": "^3.4.2",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "semantic-release": "21.1.2",

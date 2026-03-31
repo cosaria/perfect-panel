@@ -121,7 +121,7 @@ declare namespace API {
   type AuthMethodConfig = {
     id: number;
     method: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     enabled: boolean;
   };
 
@@ -338,6 +338,12 @@ declare namespace API {
     state: string;
   };
 
+  type HeartbeatResponse = {
+    status: boolean;
+    message?: string;
+    timestamp?: number;
+  };
+
   type Hysteria2 = {
     port: number;
     hop_ports: string;
@@ -362,7 +368,7 @@ declare namespace API {
     platform: string;
     to: string;
     subject: string;
-    content: Record<string, unknown>;
+    content: Record<string, any>;
     status: number;
     created_at: number;
   };
@@ -414,7 +420,7 @@ declare namespace API {
   type OAuthLoginGetTokenRequest = {
     /** google, facebook, apple, telegram, github etc. */
     method: string;
-    callback: Record<string, unknown>;
+    callback: Record<string, any>;
   };
 
   type OAuthLoginResponse = {
@@ -474,7 +480,7 @@ declare namespace API {
     description: string;
     icon?: string;
     domain?: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     fee_mode: number;
     fee_percent?: number;
     fee_amount?: number;
@@ -499,7 +505,7 @@ declare namespace API {
     description: string;
     icon: string;
     domain: string;
-    config: Record<string, unknown>;
+    config: Record<string, any>;
     fee_mode: number;
     fee_percent: number;
     fee_amount: number;
@@ -510,7 +516,7 @@ declare namespace API {
   type PlatformInfo = {
     platform: string;
     platform_url: string;
-    platform_field_description: Record<string, unknown>;
+    platform_field_description: Record<string, any>;
   };
 
   type PlatformResponse = {
@@ -744,13 +750,17 @@ declare namespace API {
     order_no: string;
   };
 
+  type ResetUserSubscribeTokenRequest = {
+    user_subscribe_id: number;
+  };
+
   type Response = {
     /** 状态码 */
     code?: number;
     /** 消息 */
     msg?: string;
     /** 数据 */
-    data?: Record<string, unknown>;
+    data?: Record<string, any>;
   };
 
   type SecurityConfig = {
@@ -857,6 +867,7 @@ declare namespace API {
     allow_deduction: boolean;
     reset_cycle: number;
     renewal_reset: boolean;
+    show_original_price: boolean;
     created_at: number;
     updated_at: number;
   };
@@ -1013,10 +1024,10 @@ declare namespace API {
     enable_trade_notify: boolean;
     auth_methods: UserAuthMethod[];
     user_devices: UserDevice[];
+    rules: string[];
     created_at: number;
     updated_at: number;
     deleted_at?: number;
-    is_del?: boolean;
   };
 
   type UserAffiliate = {
@@ -1083,6 +1094,7 @@ declare namespace API {
     upload: number;
     token: string;
     status: number;
+    short: string;
     created_at: number;
     updated_at: number;
   };

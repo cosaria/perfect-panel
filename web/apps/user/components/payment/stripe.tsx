@@ -41,6 +41,20 @@ type StripeElementChangeEvent =
   | StripeCardExpiryElementChangeEvent
   | StripeCardCvcElementChangeEvent;
 
+type SupportedNextAction =
+  | {
+      type: "alipay_handle_redirect";
+      alipay_handle_redirect?: {
+        url?: string;
+      };
+    }
+  | {
+      type: "wechat_pay_display_qr_code";
+      wechat_pay_display_qr_code?: {
+        image_url_svg?: string;
+      };
+    };
+
 const CardPaymentForm: React.FC<CardPaymentFormProps> = ({ clientSecret, onError }) => {
   const stripe = useStripe();
   const { theme, systemTheme } = useTheme();
@@ -78,7 +92,8 @@ const CardPaymentForm: React.FC<CardPaymentFormProps> = ({ clientSecret, onError
 
   const handleChange = (event: StripeElementChangeEvent, field: keyof typeof errors) => {
     if (event.error) {
-      setErrors((prev) => ({ ...prev, [field]: event.error.message }));
+      const message = event.error.message || t("payment_failed");
+      setErrors((prev) => ({ ...prev, [field]: message }));
     } else {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
@@ -295,7 +310,7 @@ const CheckoutForm: React.FC<Omit<StripePaymentProps, "publishable_key">> = ({
       if (error) return handleError(error.message || t("error"));
 
       if (paymentIntent?.status === "requires_action") {
-        const nextAction = paymentIntent.next_action;
+        const nextAction = paymentIntent.next_action as SupportedNextAction | null;
         const qrUrl =
           method === "alipay"
             ? nextAction?.type === "alipay_handle_redirect"
