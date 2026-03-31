@@ -1,0 +1,47 @@
+{
+  "balanceRecharge": "Bakiye Yenileme",
+  "cancel": "İptal",
+  "createdAt": "Oluşturulma Zamanı",
+  "detail": "Detaylar",
+  "goToPayment": "Ödemeye Git",
+  "methods": {
+    "alipay_f2f": "Alipay (Yüz Yüze)",
+    "balance": "Bakiye",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "name": "Adı",
+  "orderClosed": "Sipariş kapatıldı",
+  "orderList": "Sipariş Listesi",
+  "orderNo": "Sipariş No",
+  "orderNumber": "Sipariş Numarası",
+  "payment": "Ödemeye Git",
+  "paymentAmount": "Ödeme Tutarı",
+  "paymentMethod": "Ödeme Yöntemi",
+  "paymentSuccess": "Ödeme Başarılı",
+  "productList": "Ürün Listesi",
+  "rechargeAmount": "Yenileme Tutarı",
+  "resetPrice": "Fiyatı Sıfırla",
+  "resetTraffic": "Trafiği Sıfırla",
+  "scanToPay": "Lütfen tarayıcı ile ödeme yapın",
+  "status": {
+    "0": "Durum",
+    "1": "Ödeme Bekleniyor",
+    "2": "Ödendi",
+    "3": "İptal Edildi",
+    "4": "Kapandı",
+    "5": "Tamamlandı"
+  },
+  "subscribeNow": "Hemen Abone Ol",
+  "timeExpired": "Ödeme süresi doldu",
+  "type": {
+    "0": "Tür",
+    "1": "Yeni Satın Alma",
+    "2": "Yenileme",
+    "3": "Veri Sıfırlama",
+    "4": "Yeniden Yükleme"
+  },
+  "viewDocument": "Belgeyi Görüntüle",
+  "waitingForPayment": "Ödeme Bekleniyor"
+}

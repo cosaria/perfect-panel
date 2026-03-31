@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Přidat",
+    "batchDelete": "Hromadné smazání",
+    "batchDeleteSuccess": "Úspěšně smazáno {count} klientů",
+    "batchDeleteWarning": "Opravdu chcete smazat vybrané {count} klienty?",
+    "cancel": "Zrušit",
+    "confirm": "Potvrdit",
+    "confirmDelete": "Potvrdit smazání",
+    "createSuccess": "Úspěšně vytvořeno",
+    "delete": "Smazat",
+    "deleteFailed": "Smazání se nezdařilo",
+    "deleteSuccess": "Úspěšně smazáno",
+    "deleteWarning": "Tuto operaci nelze vrátit zpět. Opravdu chcete smazat tohoto klienta?",
+    "edit": "Upravit",
+    "save": "Uložit",
+    "saveFailed": "Uložení se nezdařilo",
+    "update": "Aktualizovat",
+    "updateSuccess": "Úspěšně aktualizováno"
+  },
+  "config": {
+    "description": "Spravujte nastavení systému předplatného",
+    "singleSubscriptionMode": "Režim jednoho předplatného",
+    "singleSubscriptionModeDescription": "Omezit uživatele na jedno aktivní předplatné. Existující předplatná nejsou ovlivněna",
+    "subscriptionDomain": "Doména předplatného",
+    "subscriptionDomainDescription": "Vlastní doména pro odkazy na předplatné",
+    "subscriptionDomainPlaceholder": "Zadejte doménu předplatného, jednu na řádek",
+    "subscriptionPath": "Cesta předplatného",
+    "subscriptionPathDescription": "Vlastní cesta pro koncové body předplatného (lepší výkon po restartu systému)",
+    "subscriptionPathPlaceholder": "Zadejte cestu předplatného",
+    "title": "Konfigurace předplatného",
+    "updateError": "Aktualizace se nezdařila",
+    "updateSuccess": "Nastavení byla úspěšně aktualizována",
+    "userAgentLimit": "{userAgent} Omezení",
+    "userAgentLimitDescription": "Povolit omezení přístupu na základě {userAgent}",
+    "userAgentList": "{userAgent} Bílá listina",
+    "userAgentListDescription": "Povolené {userAgent} pro přístup k předplatnému, jedna na řádek. Konfigurovaná aplikace {userAgent} bude automaticky zahrnuta",
+    "userAgentListPlaceholder": "Zadejte povolené {userAgent}, jedna na řádek",
+    "wildcardResolution": "Řešení zástupných znaků",
+    "wildcardResolutionDescription": "Povolit řešení domény se zástupnými znaky pro předplatná"
+  },
+  "form": {
+    "addTitle": "Přidat klienta",
+    "descriptions": {
+      "description": "Podrobný popis klienta",
+      "downloadLink": "odkaz na stažení platformy",
+      "icon": "URL ikony nebo base64 kódování",
+      "name": "Název zobrazení klienta",
+      "outputFormat": "Formát konfiguračního souboru předplatného",
+      "scheme": {
+        "base64Encoding": "Kódování Base64",
+        "functions": "Podporuje funkce:",
+        "jsonStringify": "JSON objekt na řetězec",
+        "nameVariable": "název webu",
+        "title": "Šablona URL schématu",
+        "urlEncoding": "Kódování URL",
+        "urlVariable": "URL pro odběr",
+        "variables": "Podporuje proměnné:"
+      },
+      "template": {
+        "description": "Použijte syntaxi Go šablony k generování konfiguračních souborů předplatného",
+        "functions": "Funkce šablony:",
+        "if": "podmínkové příkazy",
+        "nodes": "seznam proxy uzlů",
+        "range": "iterovat pole",
+        "siteName": "název webu",
+        "sprig": "Knihovna funkcí Sprig (zpracování řetězců, data atd.)",
+        "subscribeName": "název předplatného",
+        "title": "Syntaxe Go šablony",
+        "userInfo": "uživatelské informace (provoz, expirace atd.)",
+        "variables": "Dostupné proměnné:"
+      },
+      "userAgentPrefix": "Identifikátor klienta pro rozlišení různých klientů"
+    },
+    "editTitle": "Upravit klienta",
+    "fields": {
+      "description": "Popis",
+      "icon": "Ikona",
+      "name": "Název",
+      "outputFormat": "Formát výstupu",
+      "scheme": "URL schéma",
+      "template": "Šablona souboru předplatného"
+    },
+    "tabs": {
+      "basic": "Základní informace",
+      "download": "Stahování",
+      "template": "Šablony"
+    },
+    "validation": {
+      "nameRequired": "Název klienta je povinný",
+      "userAgentRequiredSuffix": "je povinný"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Čistý text",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Správa klientů"
+  },
+  "table": {
+    "columns": {
+      "default": "Výchozí",
+      "description": "Popis",
+      "name": "Název klienta",
+      "outputFormat": "Formát výstupu",
+      "supportedPlatforms": "Podporované platformy"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Dekódování selhalo: Obsah není platný formát Base64",
+      "decodedContent": "Dekódovaný obsah",
+      "originalContent": "Původní obsah (Base64)"
+    },
+    "failed": "Náhled selhal",
+    "loading": "Načítání...",
+    "preview": "Náhled",
+    "title": "Náhled šablony"
+  }
+}

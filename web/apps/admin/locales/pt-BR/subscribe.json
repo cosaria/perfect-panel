@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Adicionar",
+    "batchDelete": "Excluir em Lote",
+    "batchDeleteSuccess": "Excluídos com sucesso {count} clientes",
+    "batchDeleteWarning": "Você tem certeza que deseja excluir os {count} clientes selecionados?",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "confirmDelete": "Confirmar Exclusão",
+    "createSuccess": "Criado com sucesso",
+    "delete": "Excluir",
+    "deleteFailed": "Falha ao excluir",
+    "deleteSuccess": "Excluído com sucesso",
+    "deleteWarning": "Esta operação não pode ser desfeita. Você tem certeza que deseja excluir este cliente?",
+    "edit": "Editar",
+    "save": "Salvar",
+    "saveFailed": "Falha ao salvar",
+    "update": "Atualizar",
+    "updateSuccess": "Atualizado com sucesso"
+  },
+  "config": {
+    "description": "Gerenciar configurações do sistema de assinatura",
+    "singleSubscriptionMode": "Modo de Assinatura Única",
+    "singleSubscriptionModeDescription": "Limitar usuários a uma assinatura ativa. Assinaturas existentes não são afetadas",
+    "subscriptionDomain": "Domínio da Assinatura",
+    "subscriptionDomainDescription": "Domínio personalizado para links de assinatura",
+    "subscriptionDomainPlaceholder": "Insira o domínio da assinatura, um por linha",
+    "subscriptionPath": "Caminho da Assinatura",
+    "subscriptionPathDescription": "Caminho personalizado para endpoints de assinatura (melhor desempenho após reinício do sistema)",
+    "subscriptionPathPlaceholder": "Insira o caminho da assinatura",
+    "title": "Configuração de Assinatura",
+    "updateError": "Falha na atualização",
+    "updateSuccess": "Configurações atualizadas com sucesso",
+    "userAgentLimit": "Restrição de {userAgent}",
+    "userAgentLimitDescription": "Ativar restrições de acesso com base em {userAgent}",
+    "userAgentList": "Lista Branca de {userAgent}",
+    "userAgentListDescription": "Permitir {userAgent} para acesso à assinatura, um por linha. O aplicativo configurado {userAgent} será incluído automaticamente",
+    "userAgentListPlaceholder": "Insira {userAgent} permitidos, um por linha",
+    "wildcardResolution": "Resolução de Coringa",
+    "wildcardResolutionDescription": "Ativar resolução de domínio coringa para assinaturas"
+  },
+  "form": {
+    "addTitle": "Adicionar Cliente",
+    "descriptions": {
+      "description": "Descrição detalhada do cliente",
+      "downloadLink": "URL de download da plataforma",
+      "icon": "URL do ícone ou codificação base64",
+      "name": "Nome de exibição do cliente",
+      "outputFormat": "Formato do arquivo de configuração da assinatura",
+      "scheme": {
+        "base64Encoding": "Codificação Base64",
+        "functions": "Suporta funções:",
+        "jsonStringify": "Objeto JSON para string",
+        "nameVariable": "nome do site",
+        "title": "Modelo de Esquema de URL",
+        "urlEncoding": "Codificação de URL",
+        "urlVariable": "URL de assinatura",
+        "variables": "Suporta variáveis:"
+      },
+      "template": {
+        "description": "Use a sintaxe do template Go para gerar arquivos de configuração de assinatura",
+        "functions": "Funções do template:",
+        "if": "declarações condicionais",
+        "nodes": "lista de nós proxy",
+        "range": "iterar arrays",
+        "siteName": "nome do site",
+        "sprig": "Biblioteca de funções Sprig (processamento de strings, datas, etc.)",
+        "subscribeName": "nome da assinatura",
+        "title": "Sintaxe do Template Go",
+        "userInfo": "informações do usuário (tráfego, expiração, etc.)",
+        "variables": "Variáveis disponíveis:"
+      },
+      "userAgentPrefix": "Identificador do cliente para distinguir diferentes clientes"
+    },
+    "editTitle": "Editar Cliente",
+    "fields": {
+      "description": "Descrição",
+      "icon": "Ícone",
+      "name": "Nome",
+      "outputFormat": "Formato de Saída",
+      "scheme": "Esquema de URL",
+      "template": "Template do Arquivo de Assinatura"
+    },
+    "tabs": {
+      "basic": "Informações Básicas",
+      "download": "Downloads",
+      "template": "Templates"
+    },
+    "validation": {
+      "nameRequired": "O nome do cliente é obrigatório",
+      "userAgentRequiredSuffix": "é obrigatório"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Texto Simples",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Gerenciamento de Clientes"
+  },
+  "table": {
+    "columns": {
+      "default": "Padrão",
+      "description": "Descrição",
+      "name": "Nome do Cliente",
+      "outputFormat": "Formato de Saída",
+      "supportedPlatforms": "Plataformas Suportadas"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Falha na decodificação: O conteúdo não é um formato Base64 válido",
+      "decodedContent": "Conteúdo Decodificado",
+      "originalContent": "Conteúdo Original (Base64)"
+    },
+    "failed": "Falha na prévia",
+    "loading": "Carregando...",
+    "preview": "Prévia",
+    "title": "Prévia do Modelo"
+  }
+}

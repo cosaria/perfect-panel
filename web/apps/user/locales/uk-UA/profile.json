@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "Налаштування облікового запису",
+    "newPassword": "Новий пароль",
+    "passwordMismatch": "Паролі не співпадають",
+    "repeatNewPassword": "Повторіть новий пароль",
+    "updatePassword": "Оновити пароль",
+    "updateSuccess": "Оновлення успішне"
+  },
+  "notify": {
+    "balanceChange": "Зміна балансу",
+    "channels": "Канали сповіщень",
+    "finance": "Фінанси",
+    "login": "Увійти",
+    "notificationSettings": "Налаштування сповіщень",
+    "notificationTypes": "Типи сповіщень",
+    "save": "Зберегти зміни",
+    "subscribe": "Підписатися",
+    "updateSuccess": "Оновлення успішне"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Увійти через Apple"
+    },
+    "bind": "Підключити",
+    "bindFailed": "Не вдалося підключити",
+    "bindMobile": "Підключити мобільний",
+    "bindSuccess": "Успішно підключено",
+    "change": "Змінити",
+    "confirm": "Підтвердити",
+    "device": {
+      "description": "Увійдіть за допомогою ID пристрою"
+    },
+    "email": {
+      "description": "Прив'яжіть вашу електронну адресу",
+      "invalid": "Будь ласка, введіть дійсну електронну адресу",
+      "placeholder": "Введіть вашу електронну адресу",
+      "title": "Змінити електронну пошту"
+    },
+    "facebook": {
+      "description": "Увійти через Facebook"
+    },
+    "github": {
+      "description": "Увійти через GitHub"
+    },
+    "google": {
+      "description": "Увійти через Google"
+    },
+    "mobile": {
+      "description": "Прив'яжіть ваш мобільний номер",
+      "invalid": "Будь ласка, введіть дійсний мобільний номер",
+      "placeholder": "Введіть ваш мобільний номер",
+      "title": "Змінити номер мобільного телефону"
+    },
+    "phone": {
+      "description": "Прив'яжіть ваш номер телефону",
+      "placeholder": "Введіть ваш номер телефону",
+      "title": "Змінити номер телефону"
+    },
+    "save": "Зберегти",
+    "telegram": {
+      "description": "Увійти через Telegram"
+    },
+    "title": "Підключені акаунти",
+    "unbind": "Відключити",
+    "update": "Оновити",
+    "updateSuccess": "Оновлення успішне"
+  }
+}

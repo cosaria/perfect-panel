@@ -1,0 +1,47 @@
+{
+  "balanceRecharge": "Recharge de Solde",
+  "cancel": "Annuler",
+  "createdAt": "Date de création",
+  "detail": "Détails",
+  "goToPayment": "Aller au paiement",
+  "methods": {
+    "alipay_f2f": "Alipay (Face à Face)",
+    "balance": "Solde",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "name": "Nom",
+  "orderClosed": "Commande fermée",
+  "orderList": "Liste des commandes",
+  "orderNo": "Numéro de commande",
+  "orderNumber": "Numéro de commande",
+  "payment": "Payer",
+  "paymentAmount": "Montant du paiement",
+  "paymentMethod": "Méthode de paiement",
+  "paymentSuccess": "Paiement réussi",
+  "productList": "Liste des produits",
+  "rechargeAmount": "Montant du Recharge",
+  "resetPrice": "Réinitialiser le Prix",
+  "resetTraffic": "Réinitialiser le Trafic",
+  "scanToPay": "Veuillez scanner pour payer",
+  "status": {
+    "0": "Statut",
+    "1": "En attente de paiement",
+    "2": "Payé",
+    "3": "Annulé",
+    "4": "Fermé",
+    "5": "Terminé"
+  },
+  "subscribeNow": "Abonnez-vous maintenant",
+  "timeExpired": "Le délai de paiement est écoulé",
+  "type": {
+    "0": "Type",
+    "1": "Nouvel achat",
+    "2": "Renouvellement",
+    "3": "Réinitialiser le trafic",
+    "4": "Recharger"
+  },
+  "viewDocument": "Voir le document",
+  "waitingForPayment": "En attente de paiement"
+}

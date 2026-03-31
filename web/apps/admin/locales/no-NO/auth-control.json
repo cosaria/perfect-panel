@@ -1,0 +1,206 @@
+{
+  "apple": {
+    "clientId": "Tjeneste-ID",
+    "clientIdDescription": "Apple-tjeneste-ID, du kan få den fra Apple Developer Portal",
+    "clientSecret": "Privat Nøkkel",
+    "clientSecretDescription": "Innholdet i den private nøkkelen (.p8-fil) brukt for autentisering med Apple",
+    "description": "Autentiser brukere med Apple-kontoer",
+    "enable": "Aktiver",
+    "enableDescription": "Etter aktivering kan brukere logge inn med sin Apple-ID",
+    "keyId": "Nøkkel-ID",
+    "keyIdDescription": "ID-en til din private nøkkel fra Apple Developer Portal",
+    "redirectUri": "Omadressering URL",
+    "redirectUriDescription": "Vennligst fyll inn API-adressen til den omdirigerte URL-en etter å ha bestått Apple-autentisering. Ikke bruk / på slutten.",
+    "teamId": "Team-ID",
+    "teamIdDescription": "Apple Developer Team-ID",
+    "title": "Apple Innlogging"
+  },
+  "common": {
+    "cancel": "Avbryt",
+    "save": "Lagre",
+    "saveFailed": "Lagring mislyktes",
+    "saveSuccess": "Lagring vellykket"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "blockVirtualMachine": "Blokker virtuell maskin",
+    "blockVirtualMachineDescription": "Når aktivert, vil enheter bli forhindret fra å kjøre på virtuelle maskiner eller emulatorer",
+    "communicationKey": "Kommunikasjonsnøkkel",
+    "communicationKeyDescription": "Kommunikasjonsnøkkelen brukes for sikker kommunikasjon mellom enheter og servere",
+    "description": "Autentiser brukere med enhetsidentifikatorer",
+    "enable": "Aktiver",
+    "enableDescription": "Etter aktivering støttes flere enhetsidentifikatorer som IMEI/IDFA/IDFV/AndroidID/Mac-adresse for pålogging og registrering",
+    "enableSecurity": "Aktiver kommunikasjonskryptering",
+    "enableSecurityDescription": "Når aktivert, vil kommunikasjonen mellom enheter og servere bli kryptert",
+    "showAds": "Vis annonser",
+    "showAdsDescription": "Når aktivert, vil annonser bli vist på enhetene",
+    "title": "Enhetsautentisering"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "basicSettings": "Grunnleggende innstillinger",
+    "description": "Autentiser brukere med e-postadresser",
+    "emailSuffixWhitelist": "E-post Suffix Hviteliste",
+    "emailSuffixWhitelistDescription": "Når aktivert, kan kun e-poster med suffikser i listen registrere seg",
+    "emailVerification": "E-postbekreftelse",
+    "emailVerificationDescription": "Når aktivert, må brukere bekrefte e-posten sin",
+    "enable": "Aktiver",
+    "enableDescription": "Etter aktivering vil funksjonene for e-postregistrering, innlogging, binding og avbinding bli aktivert",
+    "expirationEmailTemplate": "Mal for utløpsvarsel",
+    "expirationTemplate": "Utløpsvarsel",
+    "inputPlaceholder": "Skriv inn verdi...",
+    "logs": "Logger",
+    "logsDescription": "Se historikk over sendte e-poster og deres status",
+    "maintenanceEmailTemplate": "Mal for vedlikeholdsvarsel",
+    "maintenanceTemplate": "Vedlikeholdsvarsel",
+    "sendFailure": "Kunne ikke sende test-e-post, vennligst sjekk konfigurasjonen.",
+    "sendSuccess": "Test-e-post sendt vellykket.",
+    "sendTestEmail": "Send test-e-post",
+    "sendTestEmailDescription": "Send en test-e-post for å verifisere konfigurasjonen.",
+    "senderAddress": "Avsenderadresse",
+    "senderAddressDescription": "Standard e-postadresse som brukes for å sende e-poster.",
+    "smtpAccount": "SMTP-konto",
+    "smtpAccountDescription": "E-postkontoen som brukes for autentisering.",
+    "smtpEncryptionMethod": "SMTP-krypteringsmetode",
+    "smtpEncryptionMethodDescription": "Velg om du vil aktivere SSL/TLS-kryptering.",
+    "smtpPassword": "SMTP-passord",
+    "smtpPasswordDescription": "Passordet for SMTP-kontoen.",
+    "smtpServerAddress": "SMTP-serveradresse",
+    "smtpServerAddressDescription": "Angi serveradressen som brukes for å sende e-poster.",
+    "smtpServerPort": "SMTP-serverport",
+    "smtpServerPortDescription": "Angi porten som brukes til å koble til SMTP-serveren.",
+    "smtpSettings": "SMTP-innstillinger",
+    "templateVariables": {
+      "code": {
+        "description": "6-sifret verifiseringskode",
+        "title": "Verifiseringskode"
+      },
+      "expire": {
+        "description": "Gyldighetstid for verifiseringskode (minutter)",
+        "title": "Gyldighetsperiode"
+      },
+      "expireDate": {
+        "description": "Tjenestens utløpsdato, minner brukerne når tjenesten utløper",
+        "title": "Utløpsdato"
+      },
+      "maintenanceDate": {
+        "description": "Systemets vedlikeholdsdato, viser startdato for vedlikehold",
+        "title": "Vedlikeholdsdato"
+      },
+      "maintenanceTime": {
+        "description": "Estimert vedlikeholdstid, viser vedlikeholdsperiode eller varighet",
+        "title": "Vedlikeholdsvarighet"
+      },
+      "siteLogo": {
+        "description": "URL til nettstedets logo",
+        "title": "Nettstedslogo"
+      },
+      "siteName": {
+        "description": "Nåværende nettstednavn",
+        "title": "Nettstedsnavn"
+      },
+      "title": "Variabler for e-postmaler",
+      "type": {
+        "conditionalSyntax": "Støtter betinget syntaks for å bytte innhold basert på type",
+        "description": "Identifikator for e-posttype, 1 for registreringsverifiseringskode, andre for passordtilbakestillingsverifiseringskode",
+        "title": "E-posttype"
+      }
+    },
+    "title": "E-postautentisering",
+    "trafficExceedEmailTemplate": "Mal for trafikkgrensevarsel",
+    "trafficTemplate": "Trafikkgrense",
+    "verifyEmailTemplate": "Mal for verifiserings-e-post",
+    "verifyTemplate": "Verifiserings-e-post",
+    "whitelistSuffixes": "Hvitelistesuffikser",
+    "whitelistSuffixesDescription": "Brukes for e-postbekreftelse under registrering; én per linje",
+    "whitelistSuffixesPlaceholder": "Skriv inn e-postsuffikser, ett per linje"
+  },
+  "facebook": {
+    "clientId": "Klient-ID",
+    "clientIdDescription": "Facebook App-ID fra Facebook Developers Console",
+    "clientSecret": "Klienthemmelighet",
+    "clientSecretDescription": "Facebook App-hemmelighet fra Facebook Developers Console",
+    "description": "Autentiser brukere med Facebook-kontoer",
+    "enable": "Aktiver",
+    "enableDescription": "Etter aktivering kan brukere logge inn med sin Facebook-konto",
+    "title": "Facebook Innlogging"
+  },
+  "github": {
+    "clientId": "GitHub Klient-ID",
+    "clientIdDescription": "Klient-ID-en fra innstillingene for din GitHub OAuth-applikasjon",
+    "clientSecret": "GitHub-klienthemmelighet",
+    "clientSecretDescription": "Klienthemmeligheten fra innstillingene for din GitHub OAuth-applikasjon",
+    "description": "Autentiser brukere med GitHub-kontoer",
+    "enable": "Aktiver GitHub-autentisering",
+    "enableDescription": "Tillat brukere å logge inn med sine GitHub-kontoer",
+    "title": "GitHub Innlogging"
+  },
+  "google": {
+    "clientId": "Klient-ID",
+    "clientIdDescription": "Google OAuth 2.0 Klient-ID fra Google Cloud Console",
+    "clientSecret": "Klienthemmelighet",
+    "clientSecretDescription": "Google OAuth 2.0-klienthemmelighet fra Google Cloud Console",
+    "description": "Autentiser brukere med Google-kontoer",
+    "enable": "Aktiver",
+    "enableDescription": "Etter aktivering kan brukere logge inn med sin Google-konto",
+    "title": "Google Innlogging"
+  },
+  "log": {
+    "content": "Innhold",
+    "createdAt": "Opprettet den",
+    "emailLog": "E-postlogg",
+    "mobileLog": "Mobil logg",
+    "platform": "Plattform",
+    "sendFailed": "Feilet",
+    "sendSuccess": "Suksess",
+    "status": "Status",
+    "subject": "Emne",
+    "to": "Mottaker",
+    "updatedAt": "Oppdatert den"
+  },
+  "phone": {
+    "accessLabel": "Tilgang",
+    "applyPlatform": "Søk Plattform",
+    "description": "Autentiser brukere med telefonnumre",
+    "enable": "Aktiver",
+    "enableTip": "Etter aktivering vil funksjonene for registrering, innlogging, binding og frakobling av mobiltelefon bli aktivert",
+    "endpointLabel": "Endepunkt",
+    "logs": "Logger",
+    "logsDescription": "Se historikk over sendte SMS-meldinger og deres status",
+    "phoneNumberLabel": "Telefonnummer",
+    "placeholders": {
+      "template": "Din verifiseringskode er {code}, gyldig i 5 minutter"
+    },
+    "platform": "SMS-plattform",
+    "platformConfigTip": "Vennligst fyll inn den oppgitte {key} konfigurasjonen",
+    "platformTip": "Vennligst velg SMS-plattform",
+    "secretLabel": "Hemmelighet",
+    "sendFailed": "Sending mislyktes",
+    "sendSuccess": "Sendt Vellykket",
+    "settings": "Innstillinger",
+    "signNameLabel": "Signaturnavn",
+    "template": "SMS-mal",
+    "templateCodeLabel": "Malekode",
+    "templateTip": "Vennligst fyll ut SMS-malen, behold {code} i midten, ellers vil SMS-funksjonen ikke fungere",
+    "testSms": "Send test-SMS",
+    "testSmsPhone": "Skriv inn telefonnummer",
+    "testSmsTip": "Send en test-SMS for å verifisere konfigurasjonen din",
+    "title": "Telefonautentisering",
+    "updateSuccess": "Oppdatering Vellykket",
+    "whitelistAreaCode": "Hviteliste områdekode",
+    "whitelistAreaCodeTip": "Vennligst skriv inn hviteliste områdekoder, f.eks. 1, 852, 886, 888",
+    "whitelistValidation": "Hviteliste verifisering",
+    "whitelistValidationTip": "Når aktivert, kan kun områdekoder i hvitelisten sende SMS"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "clientId": "Bot-ID",
+    "clientIdDescription": "Telegram Bot-ID, du kan få den fra @BotFather",
+    "clientSecret": "Bot-token",
+    "clientSecretDescription": "Telegram Bot Token, du kan få den fra @BotFather",
+    "description": "Autentiser brukere med Telegram-kontoer",
+    "enable": "Aktiver",
+    "enableDescription": "Etter aktivering vil funksjonene for registrering, innlogging, binding og frakobling av mobiltelefon bli aktivert",
+    "title": "Telegram Innlogging"
+  }
+}

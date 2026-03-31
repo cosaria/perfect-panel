@@ -1,0 +1,11 @@
+{
+  "commissionInfo": "Tilastollinen summa, kutsupalkkio siirretään automaattisesti saldoon",
+  "commissionRate": "Komissioaste",
+  "copyInviteLink": "Kopioi kutsulinkki",
+  "copySuccess": "Kopiointi onnistui",
+  "inviteCode": "kutsukoodi",
+  "inviteRecords": "Kutsuhistoria",
+  "registrationTime": "Rekisteröintiaika",
+  "totalCommission": "Kokonaisprovisio",
+  "userIdentifier": "Käyttäjän tunnus"
+}

@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "Kontoinnstillinger",
+    "newPassword": "Nytt passord",
+    "passwordMismatch": "Passordene stemmer ikke overens",
+    "repeatNewPassword": "Gjenta nytt passord",
+    "updatePassword": "Oppdater passord",
+    "updateSuccess": "Oppdatering vellykket"
+  },
+  "notify": {
+    "balanceChange": "Endring i saldo",
+    "channels": "Varslingskanaler",
+    "finance": "Økonomi",
+    "login": "Logg inn",
+    "notificationSettings": "Varslingsinnstillinger",
+    "notificationTypes": "Varslingstyper",
+    "save": "Lagre endringer",
+    "subscribe": "Abonner",
+    "updateSuccess": "Oppdatering vellykket"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Logg inn med Apple"
+    },
+    "bind": "Koble til",
+    "bindFailed": "Kobling mislyktes",
+    "bindMobile": "Koble mobil",
+    "bindSuccess": "Koblet til med suksess",
+    "change": "Endre",
+    "confirm": "Bekreft",
+    "device": {
+      "description": "Logg inn med enhets-ID"
+    },
+    "email": {
+      "description": "Koble e-postadressen din",
+      "invalid": "Vennligst skriv inn en gyldig e-postadresse",
+      "placeholder": "Skriv inn e-postadressen din",
+      "title": "Endre e-post"
+    },
+    "facebook": {
+      "description": "Logg inn med Facebook"
+    },
+    "github": {
+      "description": "Logg inn med GitHub"
+    },
+    "google": {
+      "description": "Logg inn med Google"
+    },
+    "mobile": {
+      "description": "Koble mobilnummeret ditt",
+      "invalid": "Vennligst skriv inn et gyldig mobilnummer",
+      "placeholder": "Skriv inn mobilnummeret ditt",
+      "title": "Endre mobilnummer"
+    },
+    "phone": {
+      "description": "Koble telefonnummeret ditt",
+      "placeholder": "Skriv inn telefonnummeret ditt",
+      "title": "Endre telefon"
+    },
+    "save": "Lagre",
+    "telegram": {
+      "description": "Logg inn med Telegram"
+    },
+    "title": "Koblede kontoer",
+    "unbind": "Koble fra",
+    "update": "Oppdater",
+    "updateSuccess": "Oppdatering vellykket"
+  }
+}

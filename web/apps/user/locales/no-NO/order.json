@@ -1,0 +1,47 @@
+{
+  "balanceRecharge": "Balansopplading",
+  "cancel": "Avbryt",
+  "createdAt": "Opprettet",
+  "detail": "Detaljer",
+  "goToPayment": "Gå til betaling",
+  "methods": {
+    "alipay_f2f": "Alipay (Ansikt til ansikt)",
+    "balance": "Balanse",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "name": "Navn",
+  "orderClosed": "Bestillingen er stengt",
+  "orderList": "Bestillingsliste",
+  "orderNo": "Bestillingsnummer",
+  "orderNumber": "Bestillingsnummer",
+  "payment": "Gå til betaling",
+  "paymentAmount": "Betalingsbeløp",
+  "paymentMethod": "Betalingsmetode",
+  "paymentSuccess": "Betaling vellykket",
+  "productList": "Produktliste",
+  "rechargeAmount": "Oppladingsbeløp",
+  "resetPrice": "Tilbakestill pris",
+  "resetTraffic": "Tilbakestill trafikk",
+  "scanToPay": "Vennligst skann for å betale",
+  "status": {
+    "0": "Status",
+    "1": "Venter på betaling",
+    "2": "Betalt",
+    "3": "Kansellert",
+    "4": "Lukket",
+    "5": "Fullført"
+  },
+  "subscribeNow": "Abonner nå",
+  "timeExpired": "Betalingstiden er utløpt",
+  "type": {
+    "0": "Type",
+    "1": "Ny kjøp",
+    "2": "Fornyelse",
+    "3": "Tilbakestill data",
+    "4": "Påfylling"
+  },
+  "viewDocument": "Vis dokument",
+  "waitingForPayment": "Venter på betaling"
+}

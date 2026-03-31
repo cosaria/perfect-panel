@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "Nastavení účtu",
+    "newPassword": "Nové heslo",
+    "passwordMismatch": "Hesla se neshodují",
+    "repeatNewPassword": "Zopakujte nové heslo",
+    "updatePassword": "Aktualizovat heslo",
+    "updateSuccess": "Aktualizace úspěšná"
+  },
+  "notify": {
+    "balanceChange": "Změna zůstatku",
+    "channels": "Notifikační kanály",
+    "finance": "Finance",
+    "login": "Přihlášení",
+    "notificationSettings": "Nastavení oznámení",
+    "notificationTypes": "Typy notifikací",
+    "save": "Uložit změny",
+    "subscribe": "Přihlásit se",
+    "updateSuccess": "Aktualizace byla úspěšná"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Přihlásit se pomocí Apple"
+    },
+    "bind": "Připojit",
+    "bindFailed": "Nepodařilo se připojit",
+    "bindMobile": "Připojit mobil",
+    "bindSuccess": "Úspěšně připojeno",
+    "change": "Změnit",
+    "confirm": "Potvrdit",
+    "device": {
+      "description": "Přihlásit se pomocí ID zařízení"
+    },
+    "email": {
+      "description": "Propojte svou e-mailovou adresu",
+      "invalid": "Zadejte platnou e-mailovou adresu",
+      "placeholder": "Zadejte svou e-mailovou adresu",
+      "title": "Změnit e-mail"
+    },
+    "facebook": {
+      "description": "Přihlásit se pomocí Facebooku"
+    },
+    "github": {
+      "description": "Přihlásit se pomocí GitHubu"
+    },
+    "google": {
+      "description": "Přihlásit se pomocí Google"
+    },
+    "mobile": {
+      "description": "Propojte své mobilní číslo",
+      "invalid": "Zadejte platné mobilní číslo",
+      "placeholder": "Zadejte své mobilní číslo",
+      "title": "Změnit číslo mobilního telefonu"
+    },
+    "phone": {
+      "description": "Propojte své telefonní číslo",
+      "placeholder": "Zadejte své telefonní číslo",
+      "title": "Změnit telefon"
+    },
+    "save": "Uložit",
+    "telegram": {
+      "description": "Přihlásit se pomocí Telegramu"
+    },
+    "title": "Připojené účty",
+    "unbind": "Odpojit",
+    "update": "Aktualizovat",
+    "updateSuccess": "Aktualizace úspěšná"
+  }
+}

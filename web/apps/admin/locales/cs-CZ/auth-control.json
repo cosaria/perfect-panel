@@ -1,0 +1,206 @@
+{
+  "apple": {
+    "clientId": "ID služby",
+    "clientIdDescription": "Apple Service ID, který můžete získat z Apple Developer Portálu",
+    "clientSecret": "Soukromý klíč",
+    "clientSecretDescription": "Obsah soukromého klíče (.p8 soubor) používaný pro autentizaci s Apple",
+    "description": "Ověřte uživatele pomocí účtů Apple",
+    "enable": "Povolit",
+    "enableDescription": "Po povolení se uživatelé mohou přihlásit pomocí svého Apple ID",
+    "keyId": "ID klíče",
+    "keyIdDescription": "ID vašeho soukromého klíče z Apple Developer Portálu",
+    "redirectUri": "Přesměrovací URL",
+    "redirectUriDescription": "Prosím vyplňte adresu API přesměrované URL po úspěšném ověření pomocí Apple. Nepoužívejte / na konci.",
+    "teamId": "ID týmu",
+    "teamIdDescription": "ID týmu Apple Developer",
+    "title": "Přihlášení pomocí Apple"
+  },
+  "common": {
+    "cancel": "Zrušit",
+    "save": "Uložit",
+    "saveFailed": "Uložení se nezdařilo",
+    "saveSuccess": "Úspěšně uloženo"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "blockVirtualMachine": "Blokovat virtuální stroj",
+    "blockVirtualMachineDescription": "Pokud je povoleno, zařízení nebudou moci běžet na virtuálních strojích nebo emulátorech",
+    "communicationKey": "Komunikační klíč",
+    "communicationKeyDescription": "Komunikační klíč se používá pro bezpečnou komunikaci mezi zařízeními a servery",
+    "description": "Ověřte uživatele pomocí identifikátorů zařízení",
+    "enable": "Povolit",
+    "enableDescription": "Po povolení jsou podporovány různé identifikátory zařízení, jako jsou IMEI/IDFA/IDFV/AndroidID/Mac adresa pro přihlášení a registraci",
+    "enableSecurity": "Povolit šifrování komunikace",
+    "enableSecurityDescription": "Pokud je povoleno, komunikace mezi zařízeními a servery bude šifrována",
+    "showAds": "Zobrazit reklamy",
+    "showAdsDescription": "Pokud je povoleno, na zařízeních se budou zobrazovat reklamy",
+    "title": "Ověření zařízení"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "basicSettings": "Základní nastavení",
+    "description": "Ověřte uživatele pomocí e-mailových adres",
+    "emailSuffixWhitelist": "Seznam povolených přípon e-mailů",
+    "emailSuffixWhitelistDescription": "Když je povoleno, mohou se registrovat pouze e-maily s příponami v seznamu",
+    "emailVerification": "Ověření e-mailu",
+    "emailVerificationDescription": "Když je povoleno, uživatelé budou muset ověřit svůj e-mail",
+    "enable": "Povolit",
+    "enableDescription": "Po aktivaci budou povoleny funkce registrace e-mailem, přihlášení, propojení a odpojení.",
+    "expirationEmailTemplate": "Šablona oznámení o vypršení platnosti",
+    "expirationTemplate": "Oznámení o vypršení platnosti",
+    "inputPlaceholder": "Zadejte hodnotu...",
+    "logs": "Protokoly",
+    "logsDescription": "Zobrazit historii odeslaných e-mailů a jejich stav",
+    "maintenanceEmailTemplate": "Šablona oznámení o údržbě",
+    "maintenanceTemplate": "Oznámení o údržbě",
+    "sendFailure": "Nepodařilo se odeslat testovací e-mail, zkontrolujte prosím konfiguraci.",
+    "sendSuccess": "Testovací e-mail byl úspěšně odeslán.",
+    "sendTestEmail": "Odeslat testovací e-mail",
+    "sendTestEmailDescription": "Odeslat testovací e-mail pro ověření konfigurace.",
+    "senderAddress": "Adresa odesílatele",
+    "senderAddressDescription": "Výchozí e-mailová adresa používaná pro odesílání e-mailů.",
+    "smtpAccount": "SMTP účet",
+    "smtpAccountDescription": "E-mailový účet používaný pro ověřování.",
+    "smtpEncryptionMethod": "Metoda šifrování SMTP",
+    "smtpEncryptionMethodDescription": "Vyberte, zda povolit šifrování SSL/TLS.",
+    "smtpPassword": "SMTP heslo",
+    "smtpPasswordDescription": "Heslo pro účet SMTP.",
+    "smtpServerAddress": "Adresa SMTP serveru",
+    "smtpServerAddressDescription": "Zadejte adresu serveru používanou pro odesílání e-mailů.",
+    "smtpServerPort": "Port SMTP serveru",
+    "smtpServerPortDescription": "Zadejte port používaný k připojení k SMTP serveru.",
+    "smtpSettings": "Nastavení SMTP",
+    "templateVariables": {
+      "code": {
+        "description": "6místný ověřovací kód",
+        "title": "Ověřovací kód"
+      },
+      "expire": {
+        "description": "Doba platnosti ověřovacího kódu (minuty)",
+        "title": "Doba platnosti"
+      },
+      "expireDate": {
+        "description": "Datum vypršení platnosti služby, připomíná uživatelům, kdy služba vyprší",
+        "title": "Datum vypršení platnosti"
+      },
+      "maintenanceDate": {
+        "description": "Datum údržby systému, zobrazuje datum zahájení údržby",
+        "title": "Datum údržby"
+      },
+      "maintenanceTime": {
+        "description": "Odhadovaná doba údržby, zobrazuje časové období nebo trvání údržby",
+        "title": "Doba údržby"
+      },
+      "siteLogo": {
+        "description": "URL obrázku loga webu",
+        "title": "Logo webu"
+      },
+      "siteName": {
+        "description": "Aktuální název webu",
+        "title": "Název webu"
+      },
+      "title": "Proměnné šablony e-mailu",
+      "type": {
+        "conditionalSyntax": "Podporuje podmínkovou syntaxi pro přepínání obsahu na základě typu",
+        "description": "Identifikátor typu e-mailu, 1 pro ověřovací kód registrace, ostatní pro ověřovací kód pro resetování hesla",
+        "title": "Typ e-mailu"
+      }
+    },
+    "title": "Ověření e-mailem",
+    "trafficExceedEmailTemplate": "Šablona oznámení o překročení limitu provozu",
+    "trafficTemplate": "Limit provozu",
+    "verifyEmailTemplate": "Šablona ověřovacího e-mailu",
+    "verifyTemplate": "Ověřovací e-mail",
+    "whitelistSuffixes": "Povolené přípony",
+    "whitelistSuffixesDescription": "Používá se pro ověření e-mailu během registrace; jeden na řádek",
+    "whitelistSuffixesPlaceholder": "Zadejte přípony e-mailů, každou na samostatný řádek"
+  },
+  "facebook": {
+    "clientId": "ID klienta",
+    "clientIdDescription": "ID aplikace Facebook z konzole pro vývojáře Facebooku",
+    "clientSecret": "Klientský tajný klíč",
+    "clientSecretDescription": "Facebook App Secret z Facebook Developers Console",
+    "description": "Ověřte uživatele pomocí účtů Facebook",
+    "enable": "Povolit",
+    "enableDescription": "Po povolení se uživatelé mohou přihlásit pomocí svého účtu na Facebooku",
+    "title": "Přihlášení pomocí Facebooku"
+  },
+  "github": {
+    "clientId": "ID klienta GitHub",
+    "clientIdDescription": "ID klienta z nastavení vaší GitHub OAuth aplikace",
+    "clientSecret": "GitHub klientský tajný klíč",
+    "clientSecretDescription": "Tajný klíč klienta z nastavení vaší GitHub OAuth aplikace",
+    "description": "Ověřte uživatele pomocí účtů GitHub",
+    "enable": "Povolit ověřování GitHub",
+    "enableDescription": "Povolit uživatelům přihlásit se pomocí jejich účtů na GitHubu",
+    "title": "Přihlášení pomocí GitHubu"
+  },
+  "google": {
+    "clientId": "ID klienta",
+    "clientIdDescription": "ID klienta Google OAuth 2.0 z Google Cloud Console",
+    "clientSecret": "Klientský tajný klíč",
+    "clientSecretDescription": "Tajný klíč klienta Google OAuth 2.0 z Google Cloud Console",
+    "description": "Ověřte uživatele pomocí účtů Google",
+    "enable": "Povolit",
+    "enableDescription": "Po povolení se uživatelé mohou přihlásit pomocí svého účtu Google",
+    "title": "Přihlášení pomocí Google"
+  },
+  "log": {
+    "content": "Obsah",
+    "createdAt": "Vytvořeno",
+    "emailLog": "Emailový záznam",
+    "mobileLog": "Mobilní záznam",
+    "platform": "Platforma",
+    "sendFailed": "Selhalo",
+    "sendSuccess": "Úspěch",
+    "status": "Stav",
+    "subject": "Předmět",
+    "to": "Příjemce",
+    "updatedAt": "Aktualizováno"
+  },
+  "phone": {
+    "accessLabel": "Přístup",
+    "applyPlatform": "Použít platformu",
+    "description": "Ověřte uživatele pomocí telefonních čísel",
+    "enable": "Povolit",
+    "enableTip": "Po povolení budou povoleny funkce registrace, přihlášení, připojení a odpojení mobilního telefonu",
+    "endpointLabel": "Koncový bod",
+    "logs": "Protokoly",
+    "logsDescription": "Zobrazit historii odeslaných SMS zpráv a jejich stav",
+    "phoneNumberLabel": "Telefonní číslo",
+    "placeholders": {
+      "template": "Váš ověřovací kód je {code}, platný po dobu 5 minut"
+    },
+    "platform": "SMS platforma",
+    "platformConfigTip": "Vyplňte prosím poskytnutou konfiguraci {key}",
+    "platformTip": "Vyberte prosím platformu pro SMS",
+    "secretLabel": "Tajný klíč",
+    "sendFailed": "Odeslání se nezdařilo",
+    "sendSuccess": "Úspěšně odesláno",
+    "settings": "Nastavení",
+    "signNameLabel": "Název podpisu",
+    "template": "Šablona SMS",
+    "templateCodeLabel": "Kód šablony",
+    "templateTip": "Prosím vyplňte SMS šablonu, ponechte {code} uprostřed, jinak SMS funkce nebude fungovat",
+    "testSms": "Odeslat testovací SMS",
+    "testSmsPhone": "Zadejte telefonní číslo",
+    "testSmsTip": "Odeslat testovací SMS pro ověření vaší konfigurace",
+    "title": "Ověření telefonem",
+    "updateSuccess": "Aktualizace úspěšná",
+    "whitelistAreaCode": "Kód oblasti v bílém seznamu",
+    "whitelistAreaCodeTip": "Zadejte kódy oblastí v bílém seznamu, např. 1, 852, 886, 888",
+    "whitelistValidation": "Ověření bílého seznamu",
+    "whitelistValidationTip": "Pokud je povoleno, mohou SMS odesílat pouze kódy oblastí v bílém seznamu"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "clientId": "ID robota",
+    "clientIdDescription": "ID Telegram bota, které můžete získat od @BotFather",
+    "clientSecret": "Token robota",
+    "clientSecretDescription": "Telegram Bot Token, který můžete získat od @BotFather",
+    "description": "Ověřte uživatele pomocí účtů Telegram",
+    "enable": "Povolit",
+    "enableDescription": "Po povolení budou povoleny funkce registrace, přihlášení, připojení a odpojení mobilního telefonu",
+    "title": "Přihlášení pomocí Telegramu"
+  }
+}

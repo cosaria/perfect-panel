@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "जोड़ें",
+    "batchDelete": "बैच हटाएं",
+    "batchDeleteSuccess": "सफलता से {count} क्लाइंट हटाए गए",
+    "batchDeleteWarning": "क्या आप निश्चित हैं कि आप चयनित {count} क्लाइंट हटाना चाहते हैं?",
+    "cancel": "रद्द करें",
+    "confirm": "पुष्टि करें",
+    "confirmDelete": "हटाने की पुष्टि करें",
+    "createSuccess": "सफलता से बनाया गया",
+    "delete": "हटाएं",
+    "deleteFailed": "हटाना विफल",
+    "deleteSuccess": "सफलता से हटाया गया",
+    "deleteWarning": "यह क्रिया पूर्ववत नहीं की जा सकती। क्या आप निश्चित हैं कि आप इस क्लाइंट को हटाना चाहते हैं?",
+    "edit": "संपादित करें",
+    "save": "सहेजें",
+    "saveFailed": "सहेजना विफल",
+    "update": "अपडेट करें",
+    "updateSuccess": "सफलता से अपडेट किया गया"
+  },
+  "config": {
+    "description": "सदस्यता प्रणाली सेटिंग्स प्रबंधित करें",
+    "singleSubscriptionMode": "एकल सदस्यता मोड",
+    "singleSubscriptionModeDescription": "उपयोगकर्ताओं को एक सक्रिय सदस्यता तक सीमित करें। मौजूदा सदस्यताएँ अप्रभावित रहेंगी",
+    "subscriptionDomain": "सदस्यता डोमेन",
+    "subscriptionDomainDescription": "सदस्यता लिंक के लिए कस्टम डोमेन",
+    "subscriptionDomainPlaceholder": "सदस्यता डोमेन दर्ज करें, एक प्रति पंक्ति",
+    "subscriptionPath": "सदस्यता पथ",
+    "subscriptionPathDescription": "सदस्यता एंडपॉइंट्स के लिए कस्टम पथ (सिस्टम पुनरारंभ के बाद बेहतर प्रदर्शन)",
+    "subscriptionPathPlaceholder": "सदस्यता पथ दर्ज करें",
+    "title": "सदस्यता कॉन्फ़िगरेशन",
+    "updateError": "अपडेट विफल",
+    "updateSuccess": "सेटिंग्स सफलतापूर्वक अपडेट की गईं",
+    "userAgentLimit": "{userAgent} प्रतिबंध",
+    "userAgentLimitDescription": "{userAgent} के आधार पर पहुंच प्रतिबंध सक्षम करें",
+    "userAgentList": "{userAgent} श्वेतसूची",
+    "userAgentListDescription": "सदस्यता पहुंच के लिए अनुमत {userAgent}, एक प्रति पंक्ति। कॉन्फ़िगर की गई एप्लिकेशन {userAgent} स्वचालित रूप से शामिल की जाएगी",
+    "userAgentListPlaceholder": "अनुमत {userAgent} दर्ज करें, एक प्रति पंक्ति",
+    "wildcardResolution": "वाइल्डकार्ड समाधान",
+    "wildcardResolutionDescription": "सदस्यताओं के लिए वाइल्डकार्ड डोमेन समाधान सक्षम करें"
+  },
+  "form": {
+    "addTitle": "क्लाइंट जोड़ें",
+    "descriptions": {
+      "description": "क्लाइंट का विस्तृत विवरण",
+      "downloadLink": "प्लेटफ़ॉर्म डाउनलोड यूआरएल",
+      "icon": "आइकन यूआरएल या बेस64 एन्कोडिंग",
+      "name": "क्लाइंट प्रदर्शन नाम",
+      "outputFormat": "सदस्यता कॉन्फ़िगरेशन फ़ाइल प्रारूप",
+      "scheme": {
+        "base64Encoding": "बेस64 एन्कोडिंग",
+        "functions": "कार्य का समर्थन करता है:",
+        "jsonStringify": "जेसन ऑब्जेक्ट को स्ट्रिंग",
+        "nameVariable": "साइट का नाम",
+        "title": "यूआरएल स्कीम टेम्पलेट",
+        "urlEncoding": "यूआरएल एन्कोडिंग",
+        "urlVariable": "सदस्यता यूआरएल",
+        "variables": "चर का समर्थन करता है:"
+      },
+      "template": {
+        "description": "सदस्यता कॉन्फ़िगरेशन फ़ाइलें उत्पन्न करने के लिए गो टेम्पलेट सिंटैक्स का उपयोग करें",
+        "functions": "टेम्पलेट कार्य:",
+        "if": "शर्तीय कथन",
+        "nodes": "प्रॉक्सी नोड्स की सूची",
+        "range": "ऐरे को दोहराएं",
+        "siteName": "साइट का नाम",
+        "sprig": "स्प्रिग फ़ंक्शन पुस्तकालय (स्ट्रिंग प्रोसेसिंग, तिथियाँ, आदि)",
+        "subscribeName": "सदस्यता का नाम",
+        "title": "गो टेम्पलेट सिंटैक्स",
+        "userInfo": "उपयोगकर्ता जानकारी (ट्रैफ़िक, समाप्ति, आदि)",
+        "variables": "उपलब्ध चर:"
+      },
+      "userAgentPrefix": "विभिन्न क्लाइंट्स को अलग करने के लिए क्लाइंट पहचानकर्ता"
+    },
+    "editTitle": "क्लाइंट संपादित करें",
+    "fields": {
+      "description": "विवरण",
+      "icon": "आइकन",
+      "name": "नाम",
+      "outputFormat": "आउटपुट प्रारूप",
+      "scheme": "यूआरएल स्कीम",
+      "template": "सदस्यता फ़ाइल टेम्पलेट"
+    },
+    "tabs": {
+      "basic": "बुनियादी जानकारी",
+      "download": "डाउनलोड",
+      "template": "टेम्पलेट"
+    },
+    "validation": {
+      "nameRequired": "क्लाइंट नाम आवश्यक है",
+      "userAgentRequiredSuffix": "आवश्यक है"
+    }
+  },
+  "outputFormats": {
+    "base64": "बेस64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "सादा पाठ",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "क्लाइंट प्रबंधन"
+  },
+  "table": {
+    "columns": {
+      "default": "डिफ़ॉल्ट",
+      "description": "विवरण",
+      "name": "क्लाइंट नाम",
+      "outputFormat": "आउटपुट प्रारूप",
+      "supportedPlatforms": "समर्थित प्लेटफ़ॉर्म"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "डिकोड विफल: सामग्री मान्य Base64 प्रारूप नहीं है",
+      "decodedContent": "डिकोड की गई सामग्री",
+      "originalContent": "मूल सामग्री (Base64)"
+    },
+    "failed": "पूर्वावलोकन विफल",
+    "loading": "लोड हो रहा है...",
+    "preview": "पूर्वावलोकन",
+    "title": "टेम्पलेट पूर्वावलोकन"
+  }
+}

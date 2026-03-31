@@ -1,0 +1,37 @@
+{
+  "amount": "Összeg",
+  "couponDiscount": "Kuponkedvezmény",
+  "discount": "Kedvezmény összege",
+  "failed": "sikertelen",
+  "feeAmount": "Díj összege",
+  "method": "Fizetési mód",
+  "methods": {
+    "alipay_f2f": "Alipay (szemtől szemben)",
+    "balance": "Egyenleg",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "orderNumber": "Rendelési szám",
+  "status": {
+    "0": "Állapot",
+    "1": "Fizetésre vár",
+    "2": "Fizetve",
+    "3": "Törölve",
+    "4": "Lezárva",
+    "5": "Befejezve"
+  },
+  "subscribe": "Feliratkozás",
+  "subscribePrice": "Előfizetési ár",
+  "total": "Összesen",
+  "tradeNo": "Tranzakciószám",
+  "type": {
+    "0": "Típus",
+    "1": "Új vásárlás",
+    "2": "Megújítás",
+    "3": "Forgalom visszaállítása",
+    "4": "Feltöltés"
+  },
+  "updateTime": "Frissítési idő",
+  "user": "felhasználó"
+}

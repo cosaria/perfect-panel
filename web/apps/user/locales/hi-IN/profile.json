@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "खाता सेटिंग्स",
+    "newPassword": "नया पासवर्ड",
+    "passwordMismatch": "दोनों पासवर्ड मेल नहीं खाते",
+    "repeatNewPassword": "नया पासवर्ड दोहराएं",
+    "updatePassword": "पासवर्ड अपडेट करें",
+    "updateSuccess": "सफलतापूर्वक अपडेट किया गया"
+  },
+  "notify": {
+    "balanceChange": "बैलेंस परिवर्तन",
+    "channels": "सूचना चैनल",
+    "finance": "वित्त",
+    "login": "लॉगिन",
+    "notificationSettings": "सूचना सेटिंग्स",
+    "notificationTypes": "सूचना प्रकार",
+    "save": "परिवर्तन सहेजें",
+    "subscribe": "सदस्यता लें",
+    "updateSuccess": "सफलतापूर्वक अपडेट किया गया"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "एप्पल के साथ साइन इन करें"
+    },
+    "bind": "जोड़ें",
+    "bindFailed": "कनेक्ट करने में विफल",
+    "bindMobile": "मोबाइल कनेक्ट करें",
+    "bindSuccess": "सफलता से कनेक्ट किया गया",
+    "change": "बदलें",
+    "confirm": "पुष्टि करें",
+    "device": {
+      "description": "डिवाइस आईडी के साथ साइन इन करें"
+    },
+    "email": {
+      "description": "अपने ईमेल पते को लिंक करें",
+      "invalid": "कृपया एक मान्य ईमेल पता दर्ज करें",
+      "placeholder": "अपना ईमेल पता दर्ज करें",
+      "title": "ईमेल बदलें"
+    },
+    "facebook": {
+      "description": "फेसबुक के साथ साइन इन करें"
+    },
+    "github": {
+      "description": "गिटहब के साथ साइन इन करें"
+    },
+    "google": {
+      "description": "गूगल के साथ साइन इन करें"
+    },
+    "mobile": {
+      "description": "अपने मोबाइल नंबर को लिंक करें",
+      "invalid": "कृपया एक मान्य मोबाइल नंबर दर्ज करें",
+      "placeholder": "अपना मोबाइल नंबर दर्ज करें",
+      "title": "मोबाइल नंबर बदलें"
+    },
+    "phone": {
+      "description": "अपने फोन नंबर को लिंक करें",
+      "placeholder": "अपना फोन नंबर दर्ज करें",
+      "title": "फोन बदलें"
+    },
+    "save": "सहेजें",
+    "telegram": {
+      "description": "टेलीग्राम के साथ साइन इन करें"
+    },
+    "title": "जुड़े हुए खाते",
+    "unbind": "अलग करें",
+    "update": "अपडेट करें",
+    "updateSuccess": "अपडेट सफल"
+  }
+}

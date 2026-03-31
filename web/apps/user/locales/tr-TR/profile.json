@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "Hesap Ayarları",
+    "newPassword": "Yeni Şifre",
+    "passwordMismatch": "Şifreler uyuşmuyor",
+    "repeatNewPassword": "Yeni Şifreyi Tekrarla",
+    "updatePassword": "Şifreyi Güncelle",
+    "updateSuccess": "Güncelleme Başarılı"
+  },
+  "notify": {
+    "balanceChange": "Bakiye Değişikliği",
+    "channels": "Bildirim Kanalları",
+    "finance": "Finans",
+    "login": "Giriş",
+    "notificationSettings": "Bildirim Ayarları",
+    "notificationTypes": "Bildirim Türleri",
+    "save": "Değişiklikleri Kaydet",
+    "subscribe": "Abone Ol",
+    "updateSuccess": "Güncelleme Başarılı"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Apple ile giriş yap"
+    },
+    "bind": "Bağla",
+    "bindFailed": "Bağlantı kurulamadı",
+    "bindMobile": "Mobil Bağla",
+    "bindSuccess": "Bağlantı başarıyla kuruldu",
+    "change": "Değiştir",
+    "confirm": "Onayla",
+    "device": {
+      "description": "Cihaz Kimliği ile Giriş Yap"
+    },
+    "email": {
+      "description": "E-posta adresinizi bağlayın",
+      "invalid": "Lütfen geçerli bir e-posta adresi girin",
+      "placeholder": "E-posta adresinizi girin",
+      "title": "E-posta Değiştir"
+    },
+    "facebook": {
+      "description": "Facebook ile giriş yap"
+    },
+    "github": {
+      "description": "GitHub ile giriş yap"
+    },
+    "google": {
+      "description": "Google ile giriş yap"
+    },
+    "mobile": {
+      "description": "Cep telefonunuzu bağlayın",
+      "invalid": "Lütfen geçerli bir cep telefonu numarası girin",
+      "placeholder": "Cep telefonunuzu girin",
+      "title": "Mobil Numarayı Değiştir"
+    },
+    "phone": {
+      "description": "Telefon numaranızı bağlayın",
+      "placeholder": "Telefon numaranızı girin",
+      "title": "Telefon Değiştir"
+    },
+    "save": "Kaydet",
+    "telegram": {
+      "description": "Telegram ile giriş yap"
+    },
+    "title": "Bağlı Hesaplar",
+    "unbind": "Bağlantıyı Kes",
+    "update": "Güncelle",
+    "updateSuccess": "Güncelleme Başarılı"
+  }
+}

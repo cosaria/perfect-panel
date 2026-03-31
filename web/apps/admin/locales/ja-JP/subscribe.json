@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "追加",
+    "batchDelete": "一括削除",
+    "batchDeleteSuccess": "{count} 件のクライアントを正常に削除しました",
+    "batchDeleteWarning": "選択した {count} 件のクライアントを削除してもよろしいですか？",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "confirmDelete": "削除を確認",
+    "createSuccess": "正常に作成されました",
+    "delete": "削除",
+    "deleteFailed": "削除に失敗しました",
+    "deleteSuccess": "正常に削除されました",
+    "deleteWarning": "この操作は元に戻せません。本当にこのクライアントを削除してもよろしいですか？",
+    "edit": "編集",
+    "save": "保存",
+    "saveFailed": "保存に失敗しました",
+    "update": "更新",
+    "updateSuccess": "正常に更新されました"
+  },
+  "config": {
+    "description": "サブスクリプションシステムの設定を管理します",
+    "singleSubscriptionMode": "単一サブスクリプションモード",
+    "singleSubscriptionModeDescription": "ユーザーを1つのアクティブなサブスクリプションに制限します。既存のサブスクリプションには影響しません",
+    "subscriptionDomain": "サブスクリプションドメイン",
+    "subscriptionDomainDescription": "サブスクリプションリンク用のカスタムドメイン",
+    "subscriptionDomainPlaceholder": "サブスクリプションドメインを入力してください（1行につき1つ）",
+    "subscriptionPath": "サブスクリプションパス",
+    "subscriptionPathDescription": "サブスクリプションエンドポイント用のカスタムパス（システム再起動後のパフォーマンス向上）",
+    "subscriptionPathPlaceholder": "サブスクリプションパスを入力してください",
+    "title": "サブスクリプション設定",
+    "updateError": "更新に失敗しました",
+    "updateSuccess": "設定が正常に更新されました",
+    "userAgentLimit": "{userAgent} 制限",
+    "userAgentLimitDescription": "{userAgent} に基づくアクセス制限を有効にします",
+    "userAgentList": "{userAgent} ホワイトリスト",
+    "userAgentListDescription": "サブスクリプションアクセスを許可された {userAgent}（1行につき1つ）。構成されたアプリケーション {userAgent} は自動的に含まれます",
+    "userAgentListPlaceholder": "許可された {userAgent} を入力してください（1行につき1つ）",
+    "wildcardResolution": "ワイルドカード解決",
+    "wildcardResolutionDescription": "サブスクリプション用のワイルドカードドメイン解決を有効にします"
+  },
+  "form": {
+    "addTitle": "クライアントを追加",
+    "descriptions": {
+      "description": "詳細なクライアント説明",
+      "downloadLink": "プラットフォームダウンロードURL",
+      "icon": "アイコンのURLまたはbase64エンコーディング",
+      "name": "クライアントの表示名",
+      "outputFormat": "サブスクリプション設定ファイル形式",
+      "scheme": {
+        "base64Encoding": "Base64エンコーディング",
+        "functions": "サポートされている関数：",
+        "jsonStringify": "JSONオブジェクトを文字列に",
+        "nameVariable": "サイト名",
+        "title": "URLスキームテンプレート",
+        "urlEncoding": "URLエンコーディング",
+        "urlVariable": "サブスクリプションURL",
+        "variables": "サポートされている変数："
+      },
+      "template": {
+        "description": "Goテンプレート構文を使用してサブスクリプション設定ファイルを生成します",
+        "functions": "テンプレート関数：",
+        "if": "条件文",
+        "nodes": "プロキシノードリスト",
+        "range": "配列を反復処理",
+        "siteName": "サイト名",
+        "sprig": "Sprig関数ライブラリ（文字列処理、日付など）",
+        "subscribeName": "サブスクリプション名",
+        "title": "Goテンプレート構文",
+        "userInfo": "ユーザー情報（トラフィック、有効期限など）",
+        "variables": "利用可能な変数："
+      },
+      "userAgentPrefix": "異なるクライアントを区別するためのクライアント識別子"
+    },
+    "editTitle": "クライアントを編集",
+    "fields": {
+      "description": "説明",
+      "icon": "アイコン",
+      "name": "名前",
+      "outputFormat": "出力形式",
+      "scheme": "URLスキーム",
+      "template": "サブスクリプションファイルテンプレート"
+    },
+    "tabs": {
+      "basic": "基本情報",
+      "download": "ダウンロード",
+      "template": "テンプレート"
+    },
+    "validation": {
+      "nameRequired": "クライアント名は必須です",
+      "userAgentRequiredSuffix": "は必須です"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "プレーンテキスト",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "クライアント管理"
+  },
+  "table": {
+    "columns": {
+      "default": "デフォルト",
+      "description": "説明",
+      "name": "クライアント名",
+      "outputFormat": "出力形式",
+      "supportedPlatforms": "サポートされているプラットフォーム"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "デコードに失敗しました：コンテンツが有効なBase64形式ではありません",
+      "decodedContent": "デコードされたコンテンツ",
+      "originalContent": "オリジナルコンテンツ（Base64）"
+    },
+    "failed": "プレビューに失敗しました",
+    "loading": "読み込み中...",
+    "preview": "プレビュー",
+    "title": "テンプレートプレビュー"
+  }
+}

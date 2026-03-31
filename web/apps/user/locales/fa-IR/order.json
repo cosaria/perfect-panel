@@ -1,0 +1,47 @@
+{
+  "balanceRecharge": "شارژ موجودی",
+  "cancel": "لغو",
+  "createdAt": "ایجاد شده در",
+  "detail": "جزئیات",
+  "goToPayment": "برو به پرداخت",
+  "methods": {
+    "alipay_f2f": "علی‌پی (رو در رو)",
+    "balance": "موجودی",
+    "epay": "ای‌پی",
+    "stripe_alipay": "استرایپ (علی‌پی)",
+    "stripe_wechat_pay": "استرایپ (وی‌چت)"
+  },
+  "name": "نام",
+  "orderClosed": "سفارش بسته شد",
+  "orderList": "لیست سفارشات",
+  "orderNo": "شماره سفارش",
+  "orderNumber": "شماره سفارش",
+  "payment": "پرداخت",
+  "paymentAmount": "مبلغ پرداخت",
+  "paymentMethod": "روش پرداخت",
+  "paymentSuccess": "پرداخت موفق",
+  "productList": "فهرست محصولات",
+  "rechargeAmount": "مقدار شارژ",
+  "resetPrice": "تنظیم مجدد قیمت",
+  "resetTraffic": "تنظیم مجدد ترافیک",
+  "scanToPay": "اسکن برای پرداخت",
+  "status": {
+    "0": "وضعیت",
+    "1": "در انتظار",
+    "2": "پرداخت شده",
+    "3": "لغو شده",
+    "4": "بسته شده",
+    "5": "تکمیل شده"
+  },
+  "subscribeNow": "همین حالا مشترک شوید",
+  "timeExpired": "زمان پرداخت به پایان رسید",
+  "type": {
+    "0": "نوع",
+    "1": "خرید جدید",
+    "2": "تمدید",
+    "3": "بازنشانی ترافیک",
+    "4": "شارژ"
+  },
+  "viewDocument": "مشاهده سند",
+  "waitingForPayment": "در انتظار پرداخت"
+}

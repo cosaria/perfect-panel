@@ -1,0 +1,26 @@
+{
+  "cancel": "Mégse",
+  "check": "Ellenőrzés",
+  "close": "Bezárás",
+  "closeSuccess": "A munkalap sikeresen lezárva",
+  "closeWarning": "A munkalap lezárása után nem lehet tovább válaszolni.",
+  "confirm": "Megerősítés",
+  "confirmClose": "Biztosan bezárja a munkalapot?",
+  "createSuccess": "Sikeres létrehozás",
+  "createTicket": "Jegy létrehozása",
+  "createTicketDescription": "A jegyekre 24 órán belül válaszolunk",
+  "description": "leírás",
+  "inputPlaceholder": "Írja be az üzenetét",
+  "reply": "válasz",
+  "status": {
+    "0": "Állapot",
+    "1": "Feldolgozásra vár",
+    "2": "Feldolgozás alatt",
+    "3": "Megoldva",
+    "4": "Lezárva"
+  },
+  "submit": "Beküldés",
+  "ticketList": "Jegyzéklista",
+  "title": "Cím",
+  "updatedAt": "Frissítve"
+}

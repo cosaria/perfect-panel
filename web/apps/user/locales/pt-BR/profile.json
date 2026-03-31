@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "Configurações da Conta",
+    "newPassword": "Nova Senha",
+    "passwordMismatch": "As senhas digitadas não coincidem",
+    "repeatNewPassword": "Repita a Nova Senha",
+    "updatePassword": "Atualizar Senha",
+    "updateSuccess": "Atualização bem-sucedida"
+  },
+  "notify": {
+    "balanceChange": "Mudança de Saldo",
+    "channels": "Canais de Notificação",
+    "finance": "Finanças",
+    "login": "Login",
+    "notificationSettings": "Configurações de notificação",
+    "notificationTypes": "Tipos de Notificação",
+    "save": "Salvar Alterações",
+    "subscribe": "Inscrever-se",
+    "updateSuccess": "Atualização bem-sucedida"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Faça login com Apple"
+    },
+    "bind": "Conectar",
+    "bindFailed": "Falha ao conectar",
+    "bindMobile": "Conectar Celular",
+    "bindSuccess": "Conectado com sucesso",
+    "change": "Alterar",
+    "confirm": "Confirmar",
+    "device": {
+      "description": "Entrar com o ID do Dispositivo"
+    },
+    "email": {
+      "description": "Vincule seu endereço de email",
+      "invalid": "Por favor, insira um endereço de email válido",
+      "placeholder": "Digite seu endereço de email",
+      "title": "Alterar Email"
+    },
+    "facebook": {
+      "description": "Faça login com Facebook"
+    },
+    "github": {
+      "description": "Faça login com GitHub"
+    },
+    "google": {
+      "description": "Faça login com Google"
+    },
+    "mobile": {
+      "description": "Vincule seu número de celular",
+      "invalid": "Por favor, insira um número de celular válido",
+      "placeholder": "Digite seu número de celular",
+      "title": "Alterar Número de Celular"
+    },
+    "phone": {
+      "description": "Vincule seu número de telefone",
+      "placeholder": "Digite seu número de telefone",
+      "title": "Alterar Telefone"
+    },
+    "save": "Salvar",
+    "telegram": {
+      "description": "Faça login com Telegram"
+    },
+    "title": "Contas Conectadas",
+    "unbind": "Desconectar",
+    "update": "Atualizar",
+    "updateSuccess": "Atualização Bem-Sucedida"
+  }
+}

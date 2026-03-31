@@ -1,0 +1,206 @@
+{
+  "apple": {
+    "clientId": "Szolgáltatás azonosító",
+    "clientIdDescription": "Apple Szolgáltatásazonosító, amelyet az Apple Fejlesztői Portálról szerezhet be",
+    "clientSecret": "Privát kulcs",
+    "clientSecretDescription": "A privát kulcs tartalma (.p8 fájl), amelyet az Apple-lel való hitelesítéshez használnak",
+    "description": "Felhasználók hitelesítése Apple fiókokkal",
+    "enable": "Engedélyez",
+    "enableDescription": "Bekapcsolás után a felhasználók bejelentkezhetnek az Apple ID-jukkal",
+    "keyId": "Kulcsazonosító",
+    "keyIdDescription": "Az Apple Fejlesztői Portálon található privát kulcs azonosítója",
+    "redirectUri": "Átirányítási URL",
+    "redirectUriDescription": "Kérjük, töltse ki az API címet a sikeres Apple hitelesítést követően átirányított URL-hez. Ne használjon / jelet a végén.",
+    "teamId": "Csapat azonosító",
+    "teamIdDescription": "Apple Fejlesztői Csapatazonosító",
+    "title": "Apple Bejelentkezés"
+  },
+  "common": {
+    "cancel": "Mégse",
+    "save": "Mentés",
+    "saveFailed": "Mentés sikertelen",
+    "saveSuccess": "Sikeresen mentve"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "blockVirtualMachine": "Virtuális gép blokkolása",
+    "blockVirtualMachineDescription": "Ha engedélyezve van, az eszközök nem fognak tudni virtuális gépeken vagy emulátorokon futni",
+    "communicationKey": "Kommunikációs kulcs",
+    "communicationKeyDescription": "A kommunikációs kulcs a biztonságos kommunikációhoz szükséges az eszközök és a szerverek között",
+    "description": "Felhasználók hitelesítése eszközazonosítókkal",
+    "enable": "Engedélyezés",
+    "enableDescription": "Engedélyezés után több eszközazonosító, például IMEI/IDFA/IDFV/AndroidID/Mac-cím támogatott a bejelentkezéshez és a regisztrációhoz.",
+    "enableSecurity": "Kommunikációs titkosítás engedélyezése",
+    "enableSecurityDescription": "Ha engedélyezve van, az eszközök és a szerverek közötti kommunikáció titkosítva lesz",
+    "showAds": "Hirdetések megjelenítése",
+    "showAdsDescription": "Ha engedélyezve van, hirdetések fognak megjelenni az eszközökön",
+    "title": "Eszköz Hitelesítés"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "basicSettings": "Alapbeállítások",
+    "description": "Felhasználók hitelesítése email címekkel",
+    "emailSuffixWhitelist": "E-mail végződés fehérlista",
+    "emailSuffixWhitelistDescription": "Ha engedélyezve van, csak a listán szereplő végződésű e-mailek regisztrálhatnak",
+    "emailVerification": "Email ellenőrzés",
+    "emailVerificationDescription": "Ha engedélyezve van, a felhasználóknak ellenőrizniük kell az e-mail címüket",
+    "enable": "Engedélyez",
+    "enableDescription": "A funkció engedélyezése után az e-mailes regisztráció, bejelentkezés, kötés és leválasztás lehetőségei elérhetővé válnak.",
+    "expirationEmailTemplate": "Lejárati Értesítő Sablon",
+    "expirationTemplate": "Lejárati Értesítő",
+    "inputPlaceholder": "Adja meg az értéket...",
+    "logs": "Naplók",
+    "logsDescription": "Küldött emailek és állapotuk történetének megtekintése",
+    "maintenanceEmailTemplate": "Karbantartási Értesítő Sablon",
+    "maintenanceTemplate": "Karbantartási Értesítő",
+    "sendFailure": "Nem sikerült elküldeni a teszt e-mailt, kérjük, ellenőrizze a beállításokat.",
+    "sendSuccess": "Teszt e-mail sikeresen elküldve.",
+    "sendTestEmail": "Teszt e-mail küldése",
+    "sendTestEmailDescription": "Küldjön egy teszt e-mailt a konfiguráció ellenőrzéséhez.",
+    "senderAddress": "Feladó címe",
+    "senderAddressDescription": "Az alapértelmezett e-mail cím, amelyet az e-mailek küldésére használnak.",
+    "smtpAccount": "SMTP fiók",
+    "smtpAccountDescription": "Az e-mail fiók, amelyet hitelesítésre használnak.",
+    "smtpEncryptionMethod": "SMTP titkosítási módszer",
+    "smtpEncryptionMethodDescription": "Válassza ki, hogy engedélyezi-e az SSL/TLS titkosítást.",
+    "smtpPassword": "SMTP jelszó",
+    "smtpPasswordDescription": "Az SMTP-fiók jelszava.",
+    "smtpServerAddress": "SMTP szerver címe",
+    "smtpServerAddressDescription": "Adja meg az e-mailek küldésére használt szerver címét.",
+    "smtpServerPort": "SMTP szerver port",
+    "smtpServerPortDescription": "Adja meg az SMTP szerverhez való csatlakozáshoz használt portot.",
+    "smtpSettings": "SMTP Beállítások",
+    "templateVariables": {
+      "code": {
+        "description": "6 számjegyű ellenőrző kód",
+        "title": "Ellenőrző Kód"
+      },
+      "expire": {
+        "description": "Ellenőrző kód érvényességi ideje (perc)",
+        "title": "Érvényességi Időszak"
+      },
+      "expireDate": {
+        "description": "Szolgáltatás lejárati dátuma, emlékezteti a felhasználókat a szolgáltatás lejáratára",
+        "title": "Lejárati Dátum"
+      },
+      "maintenanceDate": {
+        "description": "Rendszerkarbantartás dátuma, megjeleníti a karbantartás kezdő dátumát",
+        "title": "Karbantartási Dátum"
+      },
+      "maintenanceTime": {
+        "description": "Becsült karbantartási idő, megjeleníti a karbantartás időszakát vagy időtartamát",
+        "title": "Karbantartási Időtartam"
+      },
+      "siteLogo": {
+        "description": "Weboldal logó kép URL",
+        "title": "Webhely Logó"
+      },
+      "siteName": {
+        "description": "Jelenlegi weboldal neve",
+        "title": "Webhely Neve"
+      },
+      "title": "Email Sablon Változók",
+      "type": {
+        "conditionalSyntax": "Támogatja a feltételes szintaxist a tartalom típus szerinti váltásához",
+        "description": "Email típus azonosító, 1 a regisztrációs ellenőrző kódhoz, mások a jelszó visszaállító ellenőrző kódhoz",
+        "title": "Email Típus"
+      }
+    },
+    "title": "Email Hitelesítés",
+    "trafficExceedEmailTemplate": "Forgalmi Korlát Értesítő Sablon",
+    "trafficTemplate": "Forgalmi Korlát",
+    "verifyEmailTemplate": "Ellenőrző Email Sablon",
+    "verifyTemplate": "Ellenőrző Email",
+    "whitelistSuffixes": "Engedélyezett utótagok",
+    "whitelistSuffixesDescription": "E-mail ellenőrzéshez használatos a regisztráció során; soronként egy",
+    "whitelistSuffixesPlaceholder": "Adja meg az e-mail végződéseket, soronként egyet"
+  },
+  "facebook": {
+    "clientId": "Ügyfélazonosító",
+    "clientIdDescription": "Facebook alkalmazásazonosító a Facebook Fejlesztői Konzolból",
+    "clientSecret": "Ügyfél titok",
+    "clientSecretDescription": "Facebook alkalmazás titok a Facebook Fejlesztői Konzolból",
+    "description": "Felhasználók hitelesítése Facebook fiókokkal",
+    "enable": "Engedélyez",
+    "enableDescription": "A bekapcsolás után a felhasználók bejelentkezhetnek a Facebook-fiókjukkal",
+    "title": "Facebook Bejelentkezés"
+  },
+  "github": {
+    "clientId": "GitHub kliensazonosító",
+    "clientIdDescription": "Az ügyfélazonosító a GitHub OAuth alkalmazás beállításaiból",
+    "clientSecret": "GitHub kliens titok",
+    "clientSecretDescription": "A kliens titkos kulcsa a GitHub OAuth alkalmazás beállításaiból",
+    "description": "Felhasználók hitelesítése GitHub fiókokkal",
+    "enable": "GitHub-hitelesítés engedélyezése",
+    "enableDescription": "Engedélyezze a felhasználóknak, hogy GitHub fiókjukkal jelentkezzenek be",
+    "title": "GitHub Bejelentkezés"
+  },
+  "google": {
+    "clientId": "Ügyfélazonosító",
+    "clientIdDescription": "Google OAuth 2.0 ügyfélazonosító a Google Cloud Console-ból",
+    "clientSecret": "Ügyfél titok",
+    "clientSecretDescription": "Google OAuth 2.0 kliens titok a Google Cloud Console-ból",
+    "description": "Felhasználók hitelesítése Google fiókokkal",
+    "enable": "Engedélyez",
+    "enableDescription": "A bekapcsolás után a felhasználók bejelentkezhetnek a Google-fiókjukkal",
+    "title": "Google Bejelentkezés"
+  },
+  "log": {
+    "content": "Tartalom",
+    "createdAt": "Létrehozva",
+    "emailLog": "Email Napló",
+    "mobileLog": "Mobil Napló",
+    "platform": "Platform",
+    "sendFailed": "Sikertelen",
+    "sendSuccess": "Sikeres",
+    "status": "Állapot",
+    "subject": "Tárgy",
+    "to": "Címzett",
+    "updatedAt": "Frissítve"
+  },
+  "phone": {
+    "accessLabel": "Hozzáférés",
+    "applyPlatform": "Alkalmazási Platform",
+    "description": "Felhasználók hitelesítése telefonszámokkal",
+    "enable": "Engedélyez",
+    "enableTip": "A bekapcsolás után a mobiltelefon regisztráció, bejelentkezés, kötés és oldás funkciók elérhetővé válnak",
+    "endpointLabel": "Végpont",
+    "logs": "Naplók",
+    "logsDescription": "Küldött SMS üzenetek és állapotuk történetének megtekintése",
+    "phoneNumberLabel": "Telefonszám",
+    "placeholders": {
+      "template": "Az Ön ellenőrző kódja {code}, érvényes 5 percig"
+    },
+    "platform": "SMS Platform",
+    "platformConfigTip": "Kérjük, töltse ki a megadott {key} konfigurációt",
+    "platformTip": "Kérjük, válassza ki az SMS platformot",
+    "secretLabel": "Titok",
+    "sendFailed": "Küldés sikertelen",
+    "sendSuccess": "Sikeres küldés",
+    "settings": "Beállítások",
+    "signNameLabel": "Aláírás Neve",
+    "template": "SMS sablon",
+    "templateCodeLabel": "Sablon Kód",
+    "templateTip": "Kérjük, töltse ki az SMS sablont, tartsa meg a {code} részt a közepén, különben az SMS funkció nem fog működni.",
+    "testSms": "Teszt SMS küldése",
+    "testSmsPhone": "Adja meg a telefonszámot",
+    "testSmsTip": "Küldjön egy teszt SMS-t a konfiguráció ellenőrzéséhez",
+    "title": "Telefon Hitelesítés",
+    "updateSuccess": "Sikeres frissítés",
+    "whitelistAreaCode": "Fehérlista Területi Kód",
+    "whitelistAreaCodeTip": "Kérjük, adja meg a fehérlista területi kódokat, pl. 1, 852, 886, 888",
+    "whitelistValidation": "Fehérlista Ellenőrzés",
+    "whitelistValidationTip": "Ha engedélyezve van, csak a fehérlistán szereplő területi kódok küldhetnek SMS-t"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "clientId": "Bot azonosító",
+    "clientIdDescription": "Telegram Bot azonosító, amelyet a @BotFather-től szerezhetsz meg",
+    "clientSecret": "Bot Token",
+    "clientSecretDescription": "Telegram Bot Token, amelyet a @BotFather-től szerezhetsz be",
+    "description": "Felhasználók hitelesítése Telegram fiókokkal",
+    "enable": "Engedélyez",
+    "enableDescription": "A bekapcsolás után a mobiltelefon regisztráció, bejelentkezés, kötés és oldás funkciók elérhetővé válnak",
+    "title": "Telegram Bejelentkezés"
+  }
+}

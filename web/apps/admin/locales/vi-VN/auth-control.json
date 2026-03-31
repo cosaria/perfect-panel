@@ -1,0 +1,206 @@
+{
+  "apple": {
+    "clientId": "ID Dịch vụ",
+    "clientIdDescription": "Apple Service ID, bạn có thể lấy nó từ Cổng thông tin Nhà phát triển Apple",
+    "clientSecret": "Khóa Riêng",
+    "clientSecretDescription": "Nội dung khóa riêng tư (.p8 file) được sử dụng để xác thực với Apple",
+    "description": "Xác thực người dùng bằng tài khoản Apple",
+    "enable": "Kích hoạt",
+    "enableDescription": "Sau khi kích hoạt, người dùng có thể đăng nhập bằng ID Apple của họ",
+    "keyId": "Mã khóa",
+    "keyIdDescription": "ID của khóa riêng tư của bạn từ Cổng thông tin Nhà phát triển Apple",
+    "redirectUri": "URL chuyển hướng",
+    "redirectUriDescription": "Vui lòng điền địa chỉ API của URL được chuyển hướng sau khi xác thực Apple thành công. Không sử dụng / ở cuối.",
+    "teamId": "ID Đội",
+    "teamIdDescription": "ID Nhóm Nhà Phát Triển Apple",
+    "title": "Đăng Nhập Bằng Apple"
+  },
+  "common": {
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "saveFailed": "Lưu thất bại",
+    "saveSuccess": "Lưu thành công"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "blockVirtualMachine": "Chặn Máy Ảo",
+    "blockVirtualMachineDescription": "Khi được kích hoạt, các thiết bị sẽ không thể chạy trên máy ảo hoặc trình giả lập",
+    "communicationKey": "Khóa Giao Tiếp",
+    "communicationKeyDescription": "Khóa giao tiếp được sử dụng để bảo mật giao tiếp giữa các thiết bị và máy chủ",
+    "description": "Xác thực người dùng bằng các định danh thiết bị",
+    "enable": "Kích hoạt",
+    "enableDescription": "Sau khi kích hoạt, nhiều định danh thiết bị như IMEI/IDFA/IDFV/AndroidID/Địa chỉ Mac sẽ được hỗ trợ cho việc đăng nhập và đăng ký",
+    "enableSecurity": "Kích Hoạt Mã Hóa Giao Tiếp",
+    "enableSecurityDescription": "Khi được kích hoạt, giao tiếp giữa các thiết bị và máy chủ sẽ được mã hóa",
+    "showAds": "Hiển Thị Quảng Cáo",
+    "showAdsDescription": "Khi được kích hoạt, quảng cáo sẽ được hiển thị trên các thiết bị",
+    "title": "Xác Thực Thiết Bị"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "basicSettings": "Cài Đặt Cơ Bản",
+    "description": "Xác thực người dùng bằng địa chỉ email",
+    "emailSuffixWhitelist": "Danh sách trắng Hậu tố Email",
+    "emailSuffixWhitelistDescription": "Khi được bật, chỉ những email có hậu tố trong danh sách mới có thể đăng ký",
+    "emailVerification": "Xác minh Email",
+    "emailVerificationDescription": "Khi được bật, người dùng sẽ cần xác minh email của họ",
+    "enable": "Kích hoạt",
+    "enableDescription": "Sau khi kích hoạt, các chức năng đăng ký email, đăng nhập, liên kết và hủy liên kết sẽ được bật",
+    "expirationEmailTemplate": "Mẫu Thông Báo Hết Hạn",
+    "expirationTemplate": "Thông Báo Hết Hạn",
+    "inputPlaceholder": "Nhập giá trị...",
+    "logs": "Nhật ký",
+    "logsDescription": "Xem lịch sử các email đã gửi và trạng thái của chúng",
+    "maintenanceEmailTemplate": "Mẫu Thông Báo Bảo Trì",
+    "maintenanceTemplate": "Thông Báo Bảo Trì",
+    "sendFailure": "Gửi email kiểm tra thất bại, vui lòng kiểm tra cấu hình.",
+    "sendSuccess": "Email kiểm tra đã được gửi thành công.",
+    "sendTestEmail": "Gửi Email Thử",
+    "sendTestEmailDescription": "Gửi một email thử nghiệm để xác minh cấu hình.",
+    "senderAddress": "Địa chỉ người gửi",
+    "senderAddressDescription": "Địa chỉ email mặc định được sử dụng để gửi email.",
+    "smtpAccount": "Tài khoản SMTP",
+    "smtpAccountDescription": "Tài khoản email được sử dụng để xác thực.",
+    "smtpEncryptionMethod": "Phương Thức Mã Hóa SMTP",
+    "smtpEncryptionMethodDescription": "Chọn xem có bật mã hóa SSL/TLS hay không.",
+    "smtpPassword": "Mật khẩu SMTP",
+    "smtpPasswordDescription": "Mật khẩu cho tài khoản SMTP.",
+    "smtpServerAddress": "Địa chỉ máy chủ SMTP",
+    "smtpServerAddressDescription": "Chỉ định địa chỉ máy chủ được sử dụng để gửi email.",
+    "smtpServerPort": "Cổng Máy Chủ SMTP",
+    "smtpServerPortDescription": "Chỉ định cổng được sử dụng để kết nối với máy chủ SMTP.",
+    "smtpSettings": "Cài Đặt SMTP",
+    "templateVariables": {
+      "code": {
+        "description": "Mã xác thực 6 chữ số",
+        "title": "Mã Xác Thực"
+      },
+      "expire": {
+        "description": "Thời gian hiệu lực của mã xác thực (phút)",
+        "title": "Thời Gian Hiệu Lực"
+      },
+      "expireDate": {
+        "description": "Ngày hết hạn dịch vụ, nhắc nhở người dùng khi dịch vụ hết hạn",
+        "title": "Ngày Hết Hạn"
+      },
+      "maintenanceDate": {
+        "description": "Ngày bảo trì hệ thống, hiển thị ngày bắt đầu bảo trì",
+        "title": "Ngày Bảo Trì"
+      },
+      "maintenanceTime": {
+        "description": "Thời gian bảo trì ước tính, hiển thị khoảng thời gian hoặc thời gian bảo trì",
+        "title": "Thời Gian Bảo Trì"
+      },
+      "siteLogo": {
+        "description": "URL hình ảnh logo trang web",
+        "title": "Logo Trang Web"
+      },
+      "siteName": {
+        "description": "Tên trang web hiện tại",
+        "title": "Tên Trang Web"
+      },
+      "title": "Biến Mẫu Email",
+      "type": {
+        "conditionalSyntax": "Hỗ trợ cú pháp điều kiện để chuyển đổi nội dung dựa trên loại",
+        "description": "Định danh loại email, 1 cho mã xác thực đăng ký, các loại khác cho mã xác thực đặt lại mật khẩu",
+        "title": "Loại Email"
+      }
+    },
+    "title": "Xác Thực Qua Email",
+    "trafficExceedEmailTemplate": "Mẫu Thông Báo Giới Hạn Lưu Lượng",
+    "trafficTemplate": "Giới Hạn Lưu Lượng",
+    "verifyEmailTemplate": "Mẫu Email Xác Thực",
+    "verifyTemplate": "Email Xác Thực",
+    "whitelistSuffixes": "Danh sách trắng Hậu tố",
+    "whitelistSuffixesDescription": "Được sử dụng để xác minh email trong quá trình đăng ký; một dòng mỗi mục",
+    "whitelistSuffixesPlaceholder": "Nhập các hậu tố email, mỗi dòng một hậu tố"
+  },
+  "facebook": {
+    "clientId": "ID Khách hàng",
+    "clientIdDescription": "ID ứng dụng Facebook từ Bảng điều khiển Nhà phát triển Facebook",
+    "clientSecret": "Bí mật Khách hàng",
+    "clientSecretDescription": "Mã bí mật ứng dụng Facebook từ Bảng điều khiển Nhà phát triển Facebook",
+    "description": "Xác thực người dùng bằng tài khoản Facebook",
+    "enable": "Kích hoạt",
+    "enableDescription": "Sau khi kích hoạt, người dùng có thể đăng nhập bằng tài khoản Facebook của họ",
+    "title": "Đăng Nhập Bằng Facebook"
+  },
+  "github": {
+    "clientId": "ID Khách hàng GitHub",
+    "clientIdDescription": "ID khách hàng từ cài đặt ứng dụng OAuth GitHub của bạn",
+    "clientSecret": "Mã Bí Mật Khách Hàng GitHub",
+    "clientSecretDescription": "Mã bí mật của ứng dụng OAuth GitHub từ cài đặt ứng dụng của bạn",
+    "description": "Xác thực người dùng bằng tài khoản GitHub",
+    "enable": "Bật Xác thực GitHub",
+    "enableDescription": "Cho phép người dùng đăng nhập bằng tài khoản GitHub của họ",
+    "title": "Đăng Nhập Bằng GitHub"
+  },
+  "google": {
+    "clientId": "ID Khách hàng",
+    "clientIdDescription": "ID Khách hàng OAuth 2.0 của Google từ Google Cloud Console",
+    "clientSecret": "Bí mật Khách hàng",
+    "clientSecretDescription": "Mã bí mật OAuth 2.0 của Google từ Bảng điều khiển Google Cloud",
+    "description": "Xác thực người dùng bằng tài khoản Google",
+    "enable": "Kích hoạt",
+    "enableDescription": "Sau khi kích hoạt, người dùng có thể đăng nhập bằng tài khoản Google của họ",
+    "title": "Đăng Nhập Bằng Google"
+  },
+  "log": {
+    "content": "Nội dung",
+    "createdAt": "Ngày tạo",
+    "emailLog": "Nhật ký Email",
+    "mobileLog": "Nhật ký Di động",
+    "platform": "Nền tảng",
+    "sendFailed": "Gửi thất bại",
+    "sendSuccess": "Gửi thành công",
+    "status": "Trạng thái",
+    "subject": "Chủ đề",
+    "to": "Người nhận",
+    "updatedAt": "Ngày cập nhật"
+  },
+  "phone": {
+    "accessLabel": "Truy cập",
+    "applyPlatform": "Nền tảng ứng dụng",
+    "description": "Xác thực người dùng bằng số điện thoại",
+    "enable": "Kích hoạt",
+    "enableTip": "Sau khi kích hoạt, các chức năng đăng ký, đăng nhập, liên kết và hủy liên kết điện thoại di động sẽ được kích hoạt",
+    "endpointLabel": "Điểm cuối",
+    "logs": "Nhật ký",
+    "logsDescription": "Xem lịch sử các tin nhắn SMS đã gửi và trạng thái của chúng",
+    "phoneNumberLabel": "Số Điện Thoại",
+    "placeholders": {
+      "template": "Mã xác minh của bạn là {code}, có hiệu lực trong 5 phút"
+    },
+    "platform": "Nền tảng SMS",
+    "platformConfigTip": "Vui lòng điền vào cấu hình {key} được cung cấp",
+    "platformTip": "Vui lòng chọn nền tảng SMS",
+    "secretLabel": "Mật khẩu",
+    "sendFailed": "Gửi Thất Bại",
+    "sendSuccess": "Gửi thành công",
+    "settings": "Cài đặt",
+    "signNameLabel": "Tên ký hiệu",
+    "template": "Mẫu SMS",
+    "templateCodeLabel": "Mã mẫu",
+    "templateTip": "Vui lòng điền vào mẫu SMS, giữ {code} ở giữa, nếu không chức năng SMS sẽ không hoạt động",
+    "testSms": "Gửi SMS Thử",
+    "testSmsPhone": "Nhập số điện thoại",
+    "testSmsTip": "Gửi một tin nhắn SMS thử nghiệm để xác minh cấu hình của bạn",
+    "title": "Xác Thực Qua Điện Thoại",
+    "updateSuccess": "Cập nhật thành công",
+    "whitelistAreaCode": "Mã khu vực trong danh sách trắng",
+    "whitelistAreaCodeTip": "Vui lòng nhập mã khu vực trong danh sách trắng, ví dụ: 1, 852, 886, 888",
+    "whitelistValidation": "Xác minh danh sách trắng",
+    "whitelistValidationTip": "Khi được kích hoạt, chỉ các mã khu vực trong danh sách trắng mới có thể gửi SMS"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "clientId": "ID Bot",
+    "clientIdDescription": "ID Bot Telegram, bạn có thể lấy từ @BotFather",
+    "clientSecret": "Mã thông báo Bot",
+    "clientSecretDescription": "Mã thông báo Bot Telegram, bạn có thể lấy nó từ @BotFather",
+    "description": "Xác thực người dùng bằng tài khoản Telegram",
+    "enable": "Kích hoạt",
+    "enableDescription": "Sau khi kích hoạt, các chức năng đăng ký, đăng nhập, liên kết và hủy liên kết điện thoại di động sẽ được kích hoạt",
+    "title": "Đăng Nhập Bằng Telegram"
+  }
+}

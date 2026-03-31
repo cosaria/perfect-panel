@@ -1,0 +1,190 @@
+{
+  "apple": {
+    "title": "Apple Sign-In",
+    "description": "Authenticate users with Apple accounts",
+    "clientId": "Service ID",
+    "clientIdDescription": "Apple Service ID, available from Apple Developer Portal",
+    "clientSecret": "Private Key",
+    "clientSecretDescription": "Private key content (.p8 file) for authenticating with Apple",
+    "enable": "Enable",
+    "enableDescription": "When enabled, users can sign in with their Apple ID",
+    "keyId": "Key ID",
+    "keyIdDescription": "Your private key ID from Apple Developer Portal",
+    "redirectUri": "Redirect URL",
+    "redirectUriDescription": "API address for redirect URL after successful Apple authentication. Do not end with /",
+    "teamId": "Team ID",
+    "teamIdDescription": "Apple Developer Team ID"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "saveSuccess": "Saved successfully",
+    "saveFailed": "Save failed"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "title": "Device Authentication",
+    "description": "Authenticate users with device identifiers",
+    "blockVirtualMachine": "Block Virtual Machines",
+    "blockVirtualMachineDescription": "When enabled, prevents devices from running on virtual machines or emulators",
+    "communicationKey": "Communication Key",
+    "communicationKeyDescription": "Secure communication key between devices and servers",
+    "enable": "Enable",
+    "enableDescription": "When enabled, supports login and registration using multiple device identifiers like IMEI/IDFA/IDFV/AndroidID/MAC address",
+    "enableSecurity": "Enable Communication Encryption",
+    "enableSecurityDescription": "When enabled, communication between devices and servers will be encrypted",
+    "showAds": "Show Advertisements",
+    "showAdsDescription": "When enabled, advertisements will be displayed on devices"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "title": "Email Authentication",
+    "description": "Authenticate users with email addresses",
+    "basicSettings": "Basic Settings",
+    "emailVerification": "Email Verification",
+    "emailVerificationDescription": "When enabled, users need to verify their email addresses",
+    "emailSuffixWhitelist": "Email Suffix Whitelist",
+    "emailSuffixWhitelistDescription": "When enabled, only emails with suffixes in the list can register",
+    "whitelistSuffixes": "Whitelist Suffixes",
+    "whitelistSuffixesPlaceholder": "Enter email suffixes, one per line (e.g., example.com)",
+    "whitelistSuffixesDescription": "Enter email suffixes, one per line (e.g., example.com)",
+    "enable": "Enable",
+    "enableDescription": "When enabled, enables email registration, login, binding, and unbinding functions",
+    "inputPlaceholder": "Enter value...",
+    "sendFailure": "Test email send failed, please check configuration.",
+    "sendSuccess": "Test email sent successfully.",
+    "sendTestEmail": "Send Test Email",
+    "sendTestEmailDescription": "Send a test email to verify configuration.",
+    "senderAddress": "Sender Address",
+    "senderAddressDescription": "Default email address used for sending emails.",
+    "smtpAccount": "SMTP Account",
+    "smtpAccountDescription": "Email account used for authentication.",
+    "smtpEncryptionMethod": "SMTP Encryption Method",
+    "smtpEncryptionMethodDescription": "Choose whether to enable SSL/TLS encryption.",
+    "smtpPassword": "SMTP Password",
+    "smtpPasswordDescription": "Password for the SMTP account.",
+    "smtpServerAddress": "SMTP Server Address",
+    "smtpServerAddressDescription": "Specify the server address used for sending emails.",
+    "smtpServerPort": "SMTP Server Port",
+    "smtpServerPortDescription": "Specify the port used to connect to the SMTP server.",
+    "smtpSettings": "SMTP Settings",
+    "verifyEmailTemplate": "Verification Email Template",
+    "verifyTemplate": "Verification Email",
+    "expirationEmailTemplate": "Expiration Notice Template",
+    "expirationTemplate": "Expiration Notice",
+    "maintenanceEmailTemplate": "Maintenance Notice Template",
+    "maintenanceTemplate": "Maintenance Notice",
+    "trafficExceedEmailTemplate": "Traffic Limit Notice Template",
+    "trafficTemplate": "Traffic Limit",
+    "templateVariables": {
+      "title": "Email Template Variables",
+      "type": {
+        "title": "Email Type",
+        "description": "Email type identifier, 1 for registration verification code, others for password reset verification code",
+        "conditionalSyntax": "Supports conditional syntax for switching content based on type"
+      },
+      "siteLogo": {
+        "title": "Site Logo",
+        "description": "Website logo image URL"
+      },
+      "siteName": {
+        "title": "Site Name",
+        "description": "Current website name"
+      },
+      "expire": {
+        "title": "Validity Period",
+        "description": "Verification code validity time (minutes)"
+      },
+      "code": {
+        "title": "Verification Code",
+        "description": "6-digit verification code"
+      },
+      "expireDate": {
+        "title": "Expiration Date",
+        "description": "Service expiration date, reminds users when service expires"
+      },
+      "maintenanceDate": {
+        "title": "Maintenance Date",
+        "description": "System maintenance date, displays maintenance start date"
+      },
+      "maintenanceTime": {
+        "title": "Maintenance Duration",
+        "description": "Estimated maintenance time, displays maintenance time period or duration"
+      }
+    }
+  },
+  "facebook": {
+    "title": "Facebook Sign-In",
+    "description": "Authenticate users with Facebook accounts",
+    "clientId": "Client ID",
+    "clientIdDescription": "Facebook App ID from Facebook Developer Console",
+    "clientSecret": "Client Secret",
+    "clientSecretDescription": "Facebook App Secret from Facebook Developer Console",
+    "enable": "Enable",
+    "enableDescription": "When enabled, users can sign in with their Facebook account"
+  },
+  "github": {
+    "title": "GitHub Sign-In",
+    "description": "Authenticate users with GitHub accounts",
+    "clientId": "GitHub Client ID",
+    "clientIdDescription": "Client ID from your GitHub OAuth application settings",
+    "clientSecret": "GitHub Client Secret",
+    "clientSecretDescription": "Client secret from your GitHub OAuth application settings",
+    "enable": "Enable GitHub Authentication",
+    "enableDescription": "Allow users to sign in with their GitHub accounts"
+  },
+  "google": {
+    "title": "Google Sign-In",
+    "description": "Authenticate users with Google accounts",
+    "clientId": "Client ID",
+    "clientIdDescription": "Google OAuth 2.0 Client ID from Google Cloud Console",
+    "clientSecret": "Client Secret",
+    "clientSecretDescription": "Google OAuth 2.0 Client Secret from Google Cloud Console",
+    "enable": "Enable",
+    "enableDescription": "When enabled, users can sign in with their Google account"
+  },
+
+  "phone": {
+    "title": "Phone Authentication",
+    "description": "Authenticate users with phone numbers",
+    "enable": "Enable",
+    "enableTip": "When enabled, enables phone registration, login, binding, and unbinding functions",
+    "whitelistValidation": "Whitelist Validation",
+    "whitelistValidationTip": "When enabled, only area codes in the whitelist can send SMS",
+    "whitelistAreaCode": "Whitelist Area Codes",
+    "whitelistAreaCodeTip": "Enter whitelist area codes, e.g., 1, 852, 886, 888",
+    "platform": "SMS Platform",
+    "platformTip": "Please select SMS platform",
+    "platformConfigTip": "Please fill in the provided {key} configuration",
+    "applyPlatform": "Apply Platform",
+    "accessLabel": "Access",
+    "endpointLabel": "Endpoint",
+    "secretLabel": "Secret",
+    "templateCodeLabel": "Template Code",
+    "signNameLabel": "Sign Name",
+    "phoneNumberLabel": "Phone Number",
+    "template": "SMS Template",
+    "templateTip": "Please fill in the SMS template, keep {code} in the middle, otherwise SMS function will not work properly",
+    "placeholders": {
+      "template": "Your verification code is {code}, valid for 5 minutes"
+    },
+    "testSms": "Send Test SMS",
+    "testSmsTip": "Send a test SMS to verify your configuration",
+    "testSmsPhone": "Enter phone number",
+    "sendSuccess": "Sent successfully",
+    "sendFailed": "Send failed",
+    "updateSuccess": "Updated successfully",
+    "settings": "Settings"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "title": "Telegram Sign-In",
+    "description": "Authenticate users with Telegram accounts",
+    "clientId": "Bot ID",
+    "clientIdDescription": "Telegram Bot ID, available from @BotFather",
+    "clientSecret": "Bot Token",
+    "clientSecretDescription": "Telegram Bot Token, available from @BotFather",
+    "enable": "Enable",
+    "enableDescription": "When enabled, users can sign in with their Telegram account"
+  }
+}

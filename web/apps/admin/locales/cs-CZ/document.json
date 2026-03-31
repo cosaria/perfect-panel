@@ -1,0 +1,29 @@
+{
+  "DocumentList": "Seznam dokumentů",
+  "actions": "Akce",
+  "cancel": "Zrušit",
+  "confirm": "Potvrdit",
+  "confirmDelete": "Opravdu chcete smazat?",
+  "create": "Vytvořit",
+  "createDocument": "Vytvořit dokument",
+  "createSuccess": "Vytvoření úspěšné",
+  "delete": "smazat",
+  "deleteDescription": "Jakmile je odstraněno, data nelze obnovit. Prosím, postupujte opatrně.",
+  "deleteSuccess": "Úspěšně odstraněno",
+  "edit": "Upravit",
+  "editDocument": "Upravit dokument",
+  "form": {
+    "cancel": "Zrušit",
+    "confirm": "Potvrdit",
+    "content": "Obsah",
+    "tags": "Kategorie",
+    "tagsPlaceholder": "Pro zadání více kategorií použijte klávesu Enter nebo čárku (,).",
+    "title": "Název",
+    "titlePlaceholder": "Prosím zadejte"
+  },
+  "show": "Zobrazit",
+  "tags": "Kategorie",
+  "title": "Titul",
+  "updateSuccess": "Aktualizace byla úspěšná",
+  "updatedAt": "Aktualizováno"
+}

@@ -1,0 +1,206 @@
+{
+  "apple": {
+    "clientId": "Ідентифікатор сервісу",
+    "clientIdDescription": "Apple Service ID, ви можете отримати його на порталі розробників Apple",
+    "clientSecret": "Приватний ключ",
+    "clientSecretDescription": "Вміст приватного ключа (.p8 файл), що використовується для автентифікації з Apple",
+    "description": "Аутентифікація користувачів за допомогою облікових записів Apple",
+    "enable": "Увімкнути",
+    "enableDescription": "Після увімкнення користувачі можуть увійти за допомогою свого Apple ID",
+    "keyId": "Ідентифікатор ключа",
+    "keyIdDescription": "Ідентифікатор вашого приватного ключа з Apple Developer Portal",
+    "redirectUri": "URL перенаправлення",
+    "redirectUriDescription": "Будь ласка, введіть адресу API перенаправленого URL після успішної аутентифікації через Apple. Не використовуйте / в кінці.",
+    "teamId": "Ідентифікатор команди",
+    "teamIdDescription": "Ідентифікатор команди розробників Apple",
+    "title": "Увійти через Apple"
+  },
+  "common": {
+    "cancel": "Скасувати",
+    "save": "Зберегти",
+    "saveFailed": "Не вдалося зберегти",
+    "saveSuccess": "Успішно збережено"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "blockVirtualMachine": "Блокувати віртуальну машину",
+    "blockVirtualMachineDescription": "При увімкненні пристрої не зможуть працювати на віртуальних машинах або емуляторах",
+    "communicationKey": "Ключ зв'язку",
+    "communicationKeyDescription": "Ключ зв'язку використовується для безпечного зв'язку між пристроями та серверами",
+    "description": "Аутентифікація користувачів за допомогою ідентифікаторів пристроїв",
+    "enable": "Увімкнути",
+    "enableDescription": "Після увімкнення підтримуються кілька ідентифікаторів пристроїв, таких як IMEI/IDFA/IDFV/AndroidID/Mac-адреса для входу та реєстрації",
+    "enableSecurity": "Увімкнути шифрування зв'язку",
+    "enableSecurityDescription": "При увімкненні зв'язок між пристроями та серверами буде зашифровано",
+    "showAds": "Показувати рекламу",
+    "showAdsDescription": "При увімкненні на пристроях буде відображатися реклама",
+    "title": "Аутентифікація пристрою"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "basicSettings": "Основні налаштування",
+    "description": "Аутентифікація користувачів за допомогою електронних адрес",
+    "emailSuffixWhitelist": "Білий список суфіксів електронної пошти",
+    "emailSuffixWhitelistDescription": "Коли увімкнено, лише електронні адреси з суфіксами зі списку можуть реєструватися",
+    "emailVerification": "Підтвердження електронної пошти",
+    "emailVerificationDescription": "Коли ввімкнено, користувачам потрібно буде підтвердити свою електронну пошту",
+    "enable": "Увімкнути",
+    "enableDescription": "Після активації будуть доступні функції реєстрації електронною поштою, входу, прив'язки та відв'язки.",
+    "expirationEmailTemplate": "Шаблон електронного листа про закінчення терміну",
+    "expirationTemplate": "Повідомлення про закінчення терміну",
+    "inputPlaceholder": "Введіть значення...",
+    "logs": "Журнали",
+    "logsDescription": "Переглянути історію надісланих електронних листів та їх статус",
+    "maintenanceEmailTemplate": "Шаблон електронного листа про технічне обслуговування",
+    "maintenanceTemplate": "Повідомлення про технічне обслуговування",
+    "sendFailure": "Не вдалося надіслати тестовий електронний лист, будь ласка, перевірте налаштування.",
+    "sendSuccess": "Тестовий електронний лист успішно надіслано.",
+    "sendTestEmail": "Надіслати тестовий електронний лист",
+    "sendTestEmailDescription": "Надіслати тестовий електронний лист для перевірки конфігурації.",
+    "senderAddress": "Адреса відправника",
+    "senderAddressDescription": "Адреса електронної пошти за замовчуванням, яка використовується для відправки електронних листів.",
+    "smtpAccount": "Обліковий запис SMTP",
+    "smtpAccountDescription": "Обліковий запис електронної пошти, що використовується для автентифікації.",
+    "smtpEncryptionMethod": "Метод шифрування SMTP",
+    "smtpEncryptionMethodDescription": "Виберіть, чи увімкнути шифрування SSL/TLS.",
+    "smtpPassword": "SMTP пароль",
+    "smtpPasswordDescription": "Пароль для облікового запису SMTP.",
+    "smtpServerAddress": "Адреса SMTP сервера",
+    "smtpServerAddressDescription": "Вкажіть адресу сервера, що використовується для відправки електронних листів.",
+    "smtpServerPort": "Порт SMTP сервера",
+    "smtpServerPortDescription": "Вкажіть порт, який використовується для підключення до SMTP-сервера.",
+    "smtpSettings": "Налаштування SMTP",
+    "templateVariables": {
+      "code": {
+        "description": "6-значний код підтвердження",
+        "title": "Код підтвердження"
+      },
+      "expire": {
+        "description": "Час дії коду підтвердження (хвилини)",
+        "title": "Термін дії"
+      },
+      "expireDate": {
+        "description": "Дата закінчення послуги, нагадує користувачам, коли послуга закінчується",
+        "title": "Дата закінчення"
+      },
+      "maintenanceDate": {
+        "description": "Дата технічного обслуговування системи, відображає дату початку технічного обслуговування",
+        "title": "Дата технічного обслуговування"
+      },
+      "maintenanceTime": {
+        "description": "Орієнтовний час технічного обслуговування, відображає період або тривалість технічного обслуговування",
+        "title": "Тривалість технічного обслуговування"
+      },
+      "siteLogo": {
+        "description": "URL-адреса зображення логотипу вебсайту",
+        "title": "Логотип сайту"
+      },
+      "siteName": {
+        "description": "Поточна назва вебсайту",
+        "title": "Назва сайту"
+      },
+      "title": "Змінні шаблону електронної пошти",
+      "type": {
+        "conditionalSyntax": "Підтримує умовний синтаксис для зміни вмісту на основі типу",
+        "description": "Ідентифікатор типу електронної пошти, 1 для коду підтвердження реєстрації, інші для коду підтвердження скидання пароля",
+        "title": "Тип електронної пошти"
+      }
+    },
+    "title": "Аутентифікація електронною поштою",
+    "trafficExceedEmailTemplate": "Шаблон електронного листа про перевищення трафіку",
+    "trafficTemplate": "Обмеження трафіку",
+    "verifyEmailTemplate": "Шаблон електронного листа для підтвердження",
+    "verifyTemplate": "Електронний лист для підтвердження",
+    "whitelistSuffixes": "Білий список суфіксів",
+    "whitelistSuffixesDescription": "Використовується для перевірки електронної пошти під час реєстрації; один на рядок",
+    "whitelistSuffixesPlaceholder": "Введіть суфікси електронної пошти, по одному на рядок"
+  },
+  "facebook": {
+    "clientId": "Ідентифікатор клієнта",
+    "clientIdDescription": "Ідентифікатор додатка Facebook з консолі розробників Facebook",
+    "clientSecret": "Секрет клієнта",
+    "clientSecretDescription": "Секретний ключ додатку Facebook з консолі розробників Facebook",
+    "description": "Аутентифікація користувачів за допомогою облікових записів Facebook",
+    "enable": "Увімкнути",
+    "enableDescription": "Після увімкнення користувачі можуть увійти за допомогою свого облікового запису Facebook",
+    "title": "Увійти через Facebook"
+  },
+  "github": {
+    "clientId": "Ідентифікатор клієнта GitHub",
+    "clientIdDescription": "Ідентифікатор клієнта з налаштувань вашого GitHub OAuth додатку",
+    "clientSecret": "Секретний ключ клієнта GitHub",
+    "clientSecretDescription": "Секрет клієнта з налаштувань вашого OAuth додатку GitHub",
+    "description": "Аутентифікація користувачів за допомогою облікових записів GitHub",
+    "enable": "Увімкнути автентифікацію через GitHub",
+    "enableDescription": "Дозволити користувачам входити за допомогою своїх облікових записів GitHub",
+    "title": "Увійти через GitHub"
+  },
+  "google": {
+    "clientId": "Ідентифікатор клієнта",
+    "clientIdDescription": "Ідентифікатор клієнта Google OAuth 2.0 з консолі Google Cloud",
+    "clientSecret": "Секрет клієнта",
+    "clientSecretDescription": "Секрет клієнта Google OAuth 2.0 з консолі Google Cloud",
+    "description": "Аутентифікація користувачів за допомогою облікових записів Google",
+    "enable": "Увімкнути",
+    "enableDescription": "Після увімкнення користувачі можуть увійти за допомогою свого облікового запису Google",
+    "title": "Увійти через Google"
+  },
+  "log": {
+    "content": "Контент",
+    "createdAt": "Дата створення",
+    "emailLog": "Лог електронної пошти",
+    "mobileLog": "Мобільний лог",
+    "platform": "Платформа",
+    "sendFailed": "Не вдалося надіслати",
+    "sendSuccess": "Успішно надіслано",
+    "status": "Статус",
+    "subject": "Тема",
+    "to": "Одержувач",
+    "updatedAt": "Дата оновлення"
+  },
+  "phone": {
+    "accessLabel": "Доступ",
+    "applyPlatform": "Застосувати платформу",
+    "description": "Аутентифікація користувачів за допомогою номерів телефонів",
+    "enable": "Увімкнути",
+    "enableTip": "Після увімкнення будуть доступні функції реєстрації, входу, прив'язки та відв'язки мобільного телефону",
+    "endpointLabel": "Кінцева точка",
+    "logs": "Журнали",
+    "logsDescription": "Переглянути історію надісланих SMS-повідомлень та їх статус",
+    "phoneNumberLabel": "Номер телефону",
+    "placeholders": {
+      "template": "Ваш код підтвердження {code}, дійсний протягом 5 хвилин"
+    },
+    "platform": "Платформа SMS",
+    "platformConfigTip": "Будь ласка, заповніть надану конфігурацію {key}",
+    "platformTip": "Будь ласка, виберіть платформу SMS",
+    "secretLabel": "Секрет",
+    "sendFailed": "Не вдалося надіслати",
+    "sendSuccess": "Відправлено успішно",
+    "settings": "Налаштування",
+    "signNameLabel": "Назва підпису",
+    "template": "Шаблон SMS",
+    "templateCodeLabel": "Код шаблону",
+    "templateTip": "Будь ласка, заповніть шаблон SMS, залиште {code} посередині, інакше функція SMS не буде працювати",
+    "testSms": "Надіслати тестове SMS",
+    "testSmsPhone": "Введіть номер телефону",
+    "testSmsTip": "Надіслати тестове SMS, щоб перевірити вашу конфігурацію",
+    "title": "Аутентифікація за телефоном",
+    "updateSuccess": "Оновлення успішне",
+    "whitelistAreaCode": "Код області білого списку",
+    "whitelistAreaCodeTip": "Будь ласка, введіть коди областей білого списку, наприклад, 1, 852, 886, 888",
+    "whitelistValidation": "Перевірка білого списку",
+    "whitelistValidationTip": "При увімкненні лише коди областей у білому списку можуть надсилати SMS"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "clientId": "Ідентифікатор бота",
+    "clientIdDescription": "ID телеграм-бота, який ви можете отримати у @BotFather",
+    "clientSecret": "Токен Бота",
+    "clientSecretDescription": "Токен бота Telegram, ви можете отримати його у @BotFather",
+    "description": "Аутентифікація користувачів за допомогою облікових записів Telegram",
+    "enable": "Увімкнути",
+    "enableDescription": "Після увімкнення будуть доступні функції реєстрації, входу, прив'язки та відв'язки мобільного телефону",
+    "title": "Увійти через Telegram"
+  }
+}

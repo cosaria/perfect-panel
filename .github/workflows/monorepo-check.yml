@@ -1,0 +1,135 @@
+name: Monorepo Check
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  server-validate:
+    name: Server Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+
+      - name: Download server dependencies
+        working-directory: server
+        run: go mod download
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          working-directory: server
+
+      - name: Run go vet
+        working-directory: server
+        run: go vet ./...
+
+      - name: Run go test
+        working-directory: server
+        run: go test ./...
+
+  web-admin-validate:
+    name: Web Admin Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.0
+
+      - name: Restore Bun cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('web/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install web dependencies
+        working-directory: web
+        run: bun install --frozen-lockfile
+
+      - name: Lint admin app
+        working-directory: web/apps/admin
+        run: bun run lint
+
+      - name: Build admin app
+        working-directory: web/apps/admin
+        run: bun run build
+
+  web-user-validate:
+    name: Web User Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.0
+
+      - name: Restore Bun cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('web/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install web dependencies
+        working-directory: web
+        run: bun install --frozen-lockfile
+
+      - name: Lint user app
+        working-directory: web/apps/user
+        run: bun run lint
+
+      - name: Build user app
+        working-directory: web/apps/user
+        run: bun run build
+
+  monorepo-summary:
+    name: Monorepo Summary
+    if: always()
+    runs-on: ubuntu-latest
+    needs:
+      - server-validate
+      - web-admin-validate
+      - web-user-validate
+    steps:
+      - name: Summarize results
+        env:
+          SERVER_RESULT: ${{ needs.server-validate.result }}
+          ADMIN_RESULT: ${{ needs.web-admin-validate.result }}
+          USER_RESULT: ${{ needs.web-user-validate.result }}
+        run: |
+          echo "Migration-window mode: keep this workflow non-required until it has 2 green main runs and 1 green feature PR." >> "$GITHUB_STEP_SUMMARY"
+          echo "- server-validate: ${SERVER_RESULT}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- web-admin-validate: ${ADMIN_RESULT}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- web-user-validate: ${USER_RESULT}" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Adaugă",
+    "batchDelete": "Ștergere în masă",
+    "batchDeleteSuccess": "Ștergerea a {count} clienți a fost realizată cu succes",
+    "batchDeleteWarning": "Ești sigur că vrei să ștergi cei {count} clienți selectați?",
+    "cancel": "Anulează",
+    "confirm": "Confirmă",
+    "confirmDelete": "Confirmă ștergerea",
+    "createSuccess": "Creat cu succes",
+    "delete": "Șterge",
+    "deleteFailed": "Ștergerea a eșuat",
+    "deleteSuccess": "Șters cu succes",
+    "deleteWarning": "Această operațiune nu poate fi anulată. Ești sigur că vrei să ștergi acest client?",
+    "edit": "Editează",
+    "save": "Salvează",
+    "saveFailed": "Salvarea a eșuat",
+    "update": "Actualizează",
+    "updateSuccess": "Actualizat cu succes"
+  },
+  "config": {
+    "description": "Gestionează setările sistemului de abonamente",
+    "singleSubscriptionMode": "Mod de Abonament Unic",
+    "singleSubscriptionModeDescription": "Limitează utilizatorii la un singur abonament activ. Abonamentele existente nu sunt afectate",
+    "subscriptionDomain": "Domeniu de Abonament",
+    "subscriptionDomainDescription": "Domeniu personalizat pentru linkurile de abonament",
+    "subscriptionDomainPlaceholder": "Introdu domeniul de abonament, câte unul pe linie",
+    "subscriptionPath": "Cale de Abonament",
+    "subscriptionPathDescription": "Cale personalizată pentru punctele finale de abonament (performanță mai bună după repornirea sistemului)",
+    "subscriptionPathPlaceholder": "Introdu calea de abonament",
+    "title": "Configurare Abonament",
+    "updateError": "Actualizarea a eșuat",
+    "updateSuccess": "Setările au fost actualizate cu succes",
+    "userAgentLimit": "Restricție {userAgent}",
+    "userAgentLimitDescription": "Activează restricții de acces bazate pe {userAgent}",
+    "userAgentList": "Listă albă {userAgent}",
+    "userAgentListDescription": "Permise {userAgent} pentru accesul la abonament, câte unul pe linie. Aplicația configurată {userAgent} va fi inclusă automat",
+    "userAgentListPlaceholder": "Introdu {userAgent} permise, câte unul pe linie",
+    "wildcardResolution": "Rezolvare Wildcard",
+    "wildcardResolutionDescription": "Activează rezolvarea domeniului wildcard pentru abonamente"
+  },
+  "form": {
+    "addTitle": "Adaugă Client",
+    "descriptions": {
+      "description": "Descriere detaliată a clientului",
+      "downloadLink": "URL descărcare platformă",
+      "icon": "URL iconiță sau codare base64",
+      "name": "Numele de afișare al clientului",
+      "outputFormat": "Formatul fișierului de configurare a abonamentului",
+      "scheme": {
+        "base64Encoding": "Codificare Base64",
+        "functions": "Suportă funcții:",
+        "jsonStringify": "Obiect JSON în șir",
+        "nameVariable": "numele site-ului",
+        "title": "Șablon Schema URL",
+        "urlEncoding": "Codificare URL",
+        "urlVariable": "URL-ul de abonare",
+        "variables": "Suportă variabile:"
+      },
+      "template": {
+        "description": "Folosește sintaxa șablon Go pentru a genera fișiere de configurare a abonamentului",
+        "functions": "Funcții de șablon:",
+        "if": "declarații condiționale",
+        "nodes": "lista nodurilor proxy",
+        "range": "iterează prin array-uri",
+        "siteName": "numele site-ului",
+        "sprig": "biblioteca de funcții Sprig (procesare stringuri, date, etc.)",
+        "subscribeName": "numele abonamentului",
+        "title": "Sintaxă Șablon Go",
+        "userInfo": "informații utilizator (trafic, expirare, etc.)",
+        "variables": "Variabile disponibile:"
+      },
+      "userAgentPrefix": "Identificatorul clientului pentru a distinge diferiți clienți"
+    },
+    "editTitle": "Editează Client",
+    "fields": {
+      "description": "Descriere",
+      "icon": "Iconiță",
+      "name": "Nume",
+      "outputFormat": "Format de Ieșire",
+      "scheme": "Schema URL",
+      "template": "Șablon Fișier Abonament"
+    },
+    "tabs": {
+      "basic": "Informații de Bază",
+      "download": "Descărcări",
+      "template": "Șabloane"
+    },
+    "validation": {
+      "nameRequired": "Numele clientului este necesar",
+      "userAgentRequiredSuffix": "este necesar"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Text Simplu",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Gestionarea Clienților"
+  },
+  "table": {
+    "columns": {
+      "default": "Implicit",
+      "description": "Descriere",
+      "name": "Numele Clientului",
+      "outputFormat": "Format de Ieșire",
+      "supportedPlatforms": "Platforme Suportate"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Decodarea a eșuat: Conținutul nu este un format Base64 valid",
+      "decodedContent": "Conținut Decodat",
+      "originalContent": "Conținut Original (Base64)"
+    },
+    "failed": "Previzualizarea a eșuat",
+    "loading": "Se încarcă...",
+    "preview": "Previzualizare",
+    "title": "Previzualizare Șablon"
+  }
+}

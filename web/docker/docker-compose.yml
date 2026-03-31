@@ -1,0 +1,21 @@
+services:
+  admin-web:
+    container_name: ppanel-admin-web
+    build:
+      context: ../
+      dockerfile: ./docker/ppanel-admin-web/Dockerfile
+    environment:
+      NEXT_PUBLIC_API_URL: 'https://api.ppanel.dev'
+    restart: always
+    ports:
+      - 3001:3000
+  user-web:
+    container_name: ppanel-user-web
+    build:
+      context: ../
+      dockerfile: ./docker/ppanel-user-web/Dockerfile
+    environment:
+      NEXT_PUBLIC_API_URL: 'https://api.ppanel.dev'
+    restart: always
+    ports:
+      - 3002:3000

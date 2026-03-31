@@ -1,0 +1,206 @@
+{
+  "apple": {
+    "clientId": "サービスID",
+    "clientIdDescription": "AppleサービスID。Apple Developer Portalから取得できます。",
+    "clientSecret": "プライベートキー",
+    "clientSecretDescription": "Appleとの認証に使用される秘密鍵コンテンツ（.p8ファイル）",
+    "description": "Apple アカウントでユーザーを認証する",
+    "enable": "有効にする",
+    "enableDescription": "有効にすると、ユーザーはApple IDでサインインできます",
+    "keyId": "キーID",
+    "keyIdDescription": "Apple Developer PortalからのプライベートキーのID",
+    "redirectUri": "リダイレクトURL",
+    "redirectUriDescription": "Apple認証に成功した後、リダイレクトされるURLのAPIアドレスを入力してください。末尾に/を使用しないでください。",
+    "teamId": "チームID",
+    "teamIdDescription": "Apple Developer チーム ID",
+    "title": "Apple サインイン"
+  },
+  "common": {
+    "cancel": "キャンセル",
+    "save": "保存",
+    "saveFailed": "保存に失敗しました",
+    "saveSuccess": "正常に保存されました"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "blockVirtualMachine": "仮想マシンをブロック",
+    "blockVirtualMachineDescription": "有効にすると、デバイスは仮想マシンやエミュレーター上での実行が禁止されます",
+    "communicationKey": "通信キー",
+    "communicationKeyDescription": "通信キーは、デバイスとサーバー間の安全な通信に使用されます",
+    "description": "デバイス識別子でユーザーを認証する",
+    "enable": "有効化",
+    "enableDescription": "有効化後、ログインおよび登録のために、IMEI/IDFA/IDFV/AndroidID/Macアドレスなどの複数のデバイス識別子がサポートされます。",
+    "enableSecurity": "通信暗号化を有効にする",
+    "enableSecurityDescription": "有効にすると、デバイスとサーバー間の通信が暗号化されます",
+    "showAds": "広告を表示",
+    "showAdsDescription": "有効にすると、デバイスに広告が表示されます",
+    "title": "デバイス認証"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "basicSettings": "基本設定",
+    "description": "メールアドレスでユーザーを認証する",
+    "emailSuffixWhitelist": "メールサフィックスホワイトリスト",
+    "emailSuffixWhitelistDescription": "有効にすると、リストにあるサフィックスを持つメールのみが登録できます",
+    "emailVerification": "メール確認",
+    "emailVerificationDescription": "有効にすると、ユーザーはメールを確認する必要があります",
+    "enable": "有効にする",
+    "enableDescription": "有効にすると、メールによる登録、ログイン、バインディング、およびバインディング解除の機能が有効になります",
+    "expirationEmailTemplate": "有効期限通知テンプレート",
+    "expirationTemplate": "有効期限通知",
+    "inputPlaceholder": "値を入力してください...",
+    "logs": "ログ",
+    "logsDescription": "送信されたメールの履歴とそのステータスを表示",
+    "maintenanceEmailTemplate": "メンテナンス通知テンプレート",
+    "maintenanceTemplate": "メンテナンス通知",
+    "sendFailure": "テストメールの送信に失敗しました。設定を確認してください。",
+    "sendSuccess": "テストメールが正常に送信されました。",
+    "sendTestEmail": "テストメールを送信",
+    "sendTestEmailDescription": "設定を確認するためにテストメールを送信します。",
+    "senderAddress": "送信者の住所",
+    "senderAddressDescription": "メール送信に使用されるデフォルトのメールアドレス。",
+    "smtpAccount": "SMTPアカウント",
+    "smtpAccountDescription": "認証に使用されるメールアカウント。",
+    "smtpEncryptionMethod": "SMTP暗号化方式",
+    "smtpEncryptionMethodDescription": "SSL/TLS暗号化を有効にするかどうかを選択してください。",
+    "smtpPassword": "SMTPパスワード",
+    "smtpPasswordDescription": "SMTPアカウントのパスワード。",
+    "smtpServerAddress": "SMTPサーバーアドレス",
+    "smtpServerAddressDescription": "メール送信に使用するサーバーアドレスを指定してください。",
+    "smtpServerPort": "SMTPサーバーポート",
+    "smtpServerPortDescription": "SMTPサーバーに接続するために使用するポートを指定してください。",
+    "smtpSettings": "SMTP 設定",
+    "templateVariables": {
+      "code": {
+        "description": "6桁の確認コード",
+        "title": "確認コード"
+      },
+      "expire": {
+        "description": "確認コードの有効時間（分）",
+        "title": "有効期限"
+      },
+      "expireDate": {
+        "description": "サービスの有効期限日、サービスが期限切れになるとユーザーに通知",
+        "title": "有効期限日"
+      },
+      "maintenanceDate": {
+        "description": "システムメンテナンス日、メンテナンス開始日を表示",
+        "title": "メンテナンス日"
+      },
+      "maintenanceTime": {
+        "description": "推定メンテナンス時間、メンテナンスの時間帯または期間を表示",
+        "title": "メンテナンス期間"
+      },
+      "siteLogo": {
+        "description": "ウェブサイトのロゴ画像URL",
+        "title": "サイトロゴ"
+      },
+      "siteName": {
+        "description": "現在のウェブサイト名",
+        "title": "サイト名"
+      },
+      "title": "メールテンプレート変数",
+      "type": {
+        "conditionalSyntax": "タイプに基づいてコンテンツを切り替えるための条件付き構文をサポート",
+        "description": "メールタイプ識別子、1は登録確認コード、その他はパスワードリセット確認コード",
+        "title": "メールタイプ"
+      }
+    },
+    "title": "メール認証",
+    "trafficExceedEmailTemplate": "トラフィック制限通知テンプレート",
+    "trafficTemplate": "トラフィック制限",
+    "verifyEmailTemplate": "確認メールテンプレート",
+    "verifyTemplate": "確認メール",
+    "whitelistSuffixes": "ホワイトリストのサフィックス",
+    "whitelistSuffixesDescription": "登録時のメール確認に使用されます。1行につき1つ",
+    "whitelistSuffixesPlaceholder": "メールのサフィックスを入力してください。1行に1つずつ"
+  },
+  "facebook": {
+    "clientId": "クライアントID",
+    "clientIdDescription": "Facebook開発者コンソールからのFacebookアプリID",
+    "clientSecret": "クライアントシークレット",
+    "clientSecretDescription": "Facebook開発者コンソールからのFacebookアプリシークレット",
+    "description": "Facebook アカウントでユーザーを認証する",
+    "enable": "有効にする",
+    "enableDescription": "有効にすると、ユーザーはFacebookアカウントでサインインできます",
+    "title": "Facebook サインイン"
+  },
+  "github": {
+    "clientId": "GitHub クライアント ID",
+    "clientIdDescription": "GitHub OAuthアプリケーション設定からのクライアントID",
+    "clientSecret": "GitHub クライアントシークレット",
+    "clientSecretDescription": "GitHub OAuthアプリケーション設定からのクライアントシークレット",
+    "description": "GitHub アカウントでユーザーを認証する",
+    "enable": "GitHub認証を有効にする",
+    "enableDescription": "ユーザーがGitHubアカウントでサインインできるようにする",
+    "title": "GitHub サインイン"
+  },
+  "google": {
+    "clientId": "クライアントID",
+    "clientIdDescription": "Google Cloud ConsoleからのGoogle OAuth 2.0クライアントID",
+    "clientSecret": "クライアントシークレット",
+    "clientSecretDescription": "Google Cloud ConsoleからのGoogle OAuth 2.0クライアントシークレット",
+    "description": "Google アカウントでユーザーを認証する",
+    "enable": "有効にする",
+    "enableDescription": "有効にすると、ユーザーはGoogleアカウントでサインインできます",
+    "title": "Google サインイン"
+  },
+  "log": {
+    "content": "コンテンツ",
+    "createdAt": "作成日時",
+    "emailLog": "メールログ",
+    "mobileLog": "モバイルログ",
+    "platform": "プラットフォーム",
+    "sendFailed": "失敗",
+    "sendSuccess": "成功",
+    "status": "ステータス",
+    "subject": "件名",
+    "to": "受取人",
+    "updatedAt": "更新日時"
+  },
+  "phone": {
+    "accessLabel": "アクセス",
+    "applyPlatform": "プラットフォームを適用",
+    "description": "電話番号でユーザーを認証する",
+    "enable": "有効にする",
+    "enableTip": "有効にすると、携帯電話の登録、ログイン、バインド、アンバインド機能が有効になります",
+    "endpointLabel": "エンドポイント",
+    "logs": "ログ",
+    "logsDescription": "送信されたSMSメッセージの履歴とそのステータスを表示",
+    "phoneNumberLabel": "電話番号",
+    "placeholders": {
+      "template": "あなたの認証コードは{code}です。5分間有効です"
+    },
+    "platform": "SMSプラットフォーム",
+    "platformConfigTip": "指定された{key}の設定を入力してください",
+    "platformTip": "SMSプラットフォームを選択してください",
+    "secretLabel": "シークレット",
+    "sendFailed": "送信に失敗しました",
+    "sendSuccess": "送信成功",
+    "settings": "設定",
+    "signNameLabel": "サイン名",
+    "template": "SMSテンプレート",
+    "templateCodeLabel": "テンプレートコード",
+    "templateTip": "SMSテンプレートに記入してください。{code}を中央に保持してください。そうしないと、SMS機能は動作しません。",
+    "testSms": "テストSMSを送信",
+    "testSmsPhone": "電話番号を入力してください",
+    "testSmsTip": "設定を確認するためにテストSMSを送信する",
+    "title": "電話認証",
+    "updateSuccess": "更新が成功しました",
+    "whitelistAreaCode": "ホワイトリストエリアコード",
+    "whitelistAreaCodeTip": "ホワイトリストエリアコードを入力してください。例：1、852、886、888",
+    "whitelistValidation": "ホワイトリスト検証",
+    "whitelistValidationTip": "有効にすると、ホワイトリストにあるエリアコードのみがSMSを送信できます"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "clientId": "ボットID",
+    "clientIdDescription": "TelegramボットID、@BotFatherから取得できます",
+    "clientSecret": "ボットトークン",
+    "clientSecretDescription": "Telegramボットトークンは、@BotFatherから取得できます。",
+    "description": "Telegram アカウントでユーザーを認証する",
+    "enable": "有効にする",
+    "enableDescription": "有効化すると、携帯電話の登録、ログイン、バインディング、バインディング解除の機能が有効になります",
+    "title": "Telegram サインイン"
+  }
+}

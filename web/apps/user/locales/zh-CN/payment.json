@@ -1,0 +1,26 @@
+{
+  "stripe": {
+    "card": {
+      "card_name": "持卡人姓名",
+      "card_number": "卡号",
+      "element_error": "无法获取卡片元素。",
+      "expiry_date": "有效期",
+      "loading": "Stripe.js 未加载完成，请稍后再试。",
+      "name_placeholder": "输入持卡人姓名",
+      "name_required": "持卡人姓名为必填项",
+      "pay_button": "立即支付",
+      "payment_failed": "支付失败，请重试。",
+      "processing": "支付处理中，请稍后查看结果。",
+      "processing_button": "处理中...",
+      "secure_notice": "您的支付信息已安全加密",
+      "security_code": "安全码",
+      "success_message": "感谢您的付款！",
+      "success_title": "支付成功"
+    },
+    "error": "发生意外错误",
+    "qrcode": {
+      "alipay": "使用支付宝扫描支付",
+      "wechat_pay": "使用微信扫描支付"
+    }
+  }
+}

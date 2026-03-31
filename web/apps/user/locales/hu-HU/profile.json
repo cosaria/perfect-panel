@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "Fiókbeállítások",
+    "newPassword": "Új jelszó",
+    "passwordMismatch": "A két jelszó nem egyezik",
+    "repeatNewPassword": "Új jelszó ismétlése",
+    "updatePassword": "Jelszó frissítése",
+    "updateSuccess": "Sikeres frissítés"
+  },
+  "notify": {
+    "balanceChange": "Egyenleg Változás",
+    "channels": "Értesítési Csatornák",
+    "finance": "Pénzügy",
+    "login": "Bejelentkezés",
+    "notificationSettings": "Értesítési beállítások",
+    "notificationTypes": "Értesítési Típusok",
+    "save": "Változtatások Mentése",
+    "subscribe": "Feliratkozás",
+    "updateSuccess": "Sikeres frissítés"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Jelentkezz be az Apple-lal"
+    },
+    "bind": "Kapcsolódás",
+    "bindFailed": "A csatlakozás nem sikerült",
+    "bindMobile": "Mobil csatlakoztatása",
+    "bindSuccess": "Sikeresen csatlakozott",
+    "change": "Változtatás",
+    "confirm": "Megerősítés",
+    "device": {
+      "description": "Bejelentkezés Eszközazonosítóval"
+    },
+    "email": {
+      "description": "Kapcsold össze az email címed",
+      "invalid": "Kérlek, adj meg egy érvényes email címet",
+      "placeholder": "Írd be az email címed",
+      "title": "Email Cím Megváltoztatása"
+    },
+    "facebook": {
+      "description": "Jelentkezz be a Facebookkal"
+    },
+    "github": {
+      "description": "Jelentkezz be a GitHub-bal"
+    },
+    "google": {
+      "description": "Jelentkezz be a Google-lal"
+    },
+    "mobile": {
+      "description": "Kapcsold össze a mobil számod",
+      "invalid": "Kérlek, adj meg egy érvényes mobil számot",
+      "placeholder": "Írd be a mobil számod",
+      "title": "Mobiltelefonszám megváltoztatása"
+    },
+    "phone": {
+      "description": "Kapcsold össze a telefonszámod",
+      "placeholder": "Írd be a telefonszámod",
+      "title": "Telefonszám Megváltoztatása"
+    },
+    "save": "Mentés",
+    "telegram": {
+      "description": "Jelentkezz be a Telegrammal"
+    },
+    "title": "Kapcsolt Fiókok",
+    "unbind": "Kapcsolat Megszakítása",
+    "update": "Frissítés",
+    "updateSuccess": "Frissítés Sikeres"
+  }
+}

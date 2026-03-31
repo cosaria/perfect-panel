@@ -1,0 +1,26 @@
+{
+  "cancel": "Avbryt",
+  "check": "Sjekk",
+  "close": "lukk",
+  "closeSuccess": "Arbeidsordre lukket vellykket",
+  "closeWarning": "Når du lukker saken, vil du ikke kunne svare videre.",
+  "confirm": "Bekreft",
+  "confirmClose": "Bekreft lukking av arbeidsordre?",
+  "createSuccess": "Opprettelse vellykket",
+  "createTicket": "Opprett billett",
+  "createTicketDescription": "Vi svarer på henvendelser innen 24 timer",
+  "description": "beskrivelse",
+  "inputPlaceholder": "Skriv inn meldingen din",
+  "reply": "svar",
+  "status": {
+    "0": "Status",
+    "1": "Venter på behandling",
+    "2": "Under behandling",
+    "3": "Løst",
+    "4": "Lukket"
+  },
+  "submit": "Send inn",
+  "ticketList": "Billettliste",
+  "title": "Tittel",
+  "updatedAt": "Oppdatert"
+}

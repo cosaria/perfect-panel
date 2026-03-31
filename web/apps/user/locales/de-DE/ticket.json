@@ -1,0 +1,26 @@
+{
+  "cancel": "Abbrechen",
+  "check": "Prüfen",
+  "close": "Schließen",
+  "closeSuccess": "Ticket erfolgreich geschlossen",
+  "closeWarning": "Nach dem Schließen des Tickets können Sie nicht mehr antworten.",
+  "confirm": "Bestätigen",
+  "confirmClose": "Möchten Sie das Ticket wirklich schließen?",
+  "createSuccess": "Erstellung erfolgreich",
+  "createTicket": "Ticket erstellen",
+  "createTicketDescription": "Tickets werden innerhalb von 24 Stunden beantwortet.",
+  "description": "Beschreibung",
+  "inputPlaceholder": "Geben Sie Ihre Nachricht ein",
+  "reply": "Antwort",
+  "status": {
+    "0": "Status",
+    "1": "Ausstehend",
+    "2": "In Bearbeitung",
+    "3": "Gelöst",
+    "4": "Geschlossen"
+  },
+  "submit": "Einreichen",
+  "ticketList": "Ticketliste",
+  "title": "Titel",
+  "updatedAt": "Aktualisierungszeitpunkt"
+}

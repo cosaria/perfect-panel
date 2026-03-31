@@ -1,0 +1,11 @@
+{
+  "commissionInfo": "Betrag berechnen, Einladungsprovision wird automatisch dem Guthaben gutgeschrieben",
+  "commissionRate": "Provisionssatz",
+  "copyInviteLink": "Einladungslink kopieren",
+  "copySuccess": "Kopieren erfolgreich",
+  "inviteCode": "Einladungscode",
+  "inviteRecords": "Einladungsprotokolle",
+  "registrationTime": "Registrierungszeit",
+  "totalCommission": "Gesamtprovision",
+  "userIdentifier": "Benutzerkennung"
+}

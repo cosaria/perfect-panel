@@ -1,0 +1,190 @@
+{
+  "apple": {
+    "title": "Apple 登录",
+    "description": "使用 Apple 账户进行身份验证",
+    "clientId": "服务 ID",
+    "clientIdDescription": "Apple 服务 ID，您可以从 Apple 开发者门户获取",
+    "clientSecret": "私钥",
+    "clientSecretDescription": "用于与 Apple 进行身份验证的私钥内容（.p8 文件）",
+    "enable": "启用",
+    "enableDescription": "启用后，用户可以使用他们的 Apple ID 登录",
+    "keyId": "密钥 ID",
+    "keyIdDescription": "您在 Apple 开发者门户中的私钥 ID",
+    "redirectUri": "重定向 URL",
+    "redirectUriDescription": "请填写成功通过 Apple 认证后重定向的 URL 的 API 地址。请勿在末尾使用 /。",
+    "teamId": "团队 ID",
+    "teamIdDescription": "Apple 开发者团队 ID"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "saveSuccess": "保存成功",
+    "saveFailed": "保存失败"
+  },
+  "communicationMethods": "通讯方式",
+  "device": {
+    "title": "设备认证",
+    "description": "使用设备标识符进行身份验证",
+    "blockVirtualMachine": "阻止虚拟机",
+    "blockVirtualMachineDescription": "启用后，将阻止设备在虚拟机或模拟器上运行",
+    "communicationKey": "通信密钥",
+    "communicationKeyDescription": "通信密钥用于设备与服务器之间的安全通信",
+    "enable": "启用",
+    "enableDescription": "启用后，支持使用多个设备标识符，如 IMEI/IDFA/IDFV/AndroidID/Mac 地址进行登录和注册",
+    "enableSecurity": "启用通信加密",
+    "enableSecurityDescription": "启用后，设备与服务器之间的通信将被加密",
+    "showAds": "显示广告",
+    "showAdsDescription": "启用后，设备上将显示广告"
+  },
+  "deviceAuthMethods": "设备认证方式",
+  "email": {
+    "title": "邮箱登录",
+    "description": "使用邮箱地址进行身份验证",
+    "basicSettings": "基础设置",
+    "emailVerification": "电子邮件验证",
+    "emailVerificationDescription": "启用后，用户需要验证他们的电子邮件",
+    "emailSuffixWhitelist": "电子邮件后缀白名单",
+    "emailSuffixWhitelistDescription": "启用后，只有在列表中的后缀的电子邮件才能注册",
+    "whitelistSuffixes": "白名单后缀",
+    "whitelistSuffixesPlaceholder": "请输入电子邮件后缀，每行一个(例如:example.com)",
+    "whitelistSuffixesDescription": "请输入电子邮件后缀，每行一个(例如:example.com)",
+    "enable": "启用",
+    "enableDescription": "启用后，将启用电子邮件注册、登录、绑定和解绑功能",
+    "inputPlaceholder": "输入值...",
+    "sendFailure": "测试邮件发送失败，请检查配置。",
+    "sendSuccess": "测试邮件发送成功。",
+    "sendTestEmail": "发送测试邮件",
+    "sendTestEmailDescription": "发送测试电子邮件以验证配置。",
+    "senderAddress": "发件人地址",
+    "senderAddressDescription": "用于发送电子邮件的默认电子邮件地址。",
+    "smtpAccount": "SMTP账户",
+    "smtpAccountDescription": "用于身份验证的电子邮件账户。",
+    "smtpEncryptionMethod": "SMTP加密方法",
+    "smtpEncryptionMethodDescription": "选择是否启用SSL/TLS加密。",
+    "smtpPassword": "SMTP 密码",
+    "smtpPasswordDescription": "SMTP账户的密码。",
+    "smtpServerAddress": "SMTP 服务器地址",
+    "smtpServerAddressDescription": "指定用于发送电子邮件的服务器地址。",
+    "smtpServerPort": "SMTP服务器端口",
+    "smtpServerPortDescription": "指定用于连接到SMTP服务器的端口。",
+    "smtpSettings": "SMTP设置",
+    "verifyEmailTemplate": "验证电子邮件模板",
+    "verifyTemplate": "验证邮件",
+    "expirationEmailTemplate": "到期通知模板",
+    "expirationTemplate": "到期通知",
+    "maintenanceEmailTemplate": "维护通知模板",
+    "maintenanceTemplate": "维护通知",
+    "trafficExceedEmailTemplate": "流量超限通知模板",
+    "trafficTemplate": "流量超限",
+    "templateVariables": {
+      "title": "邮件模板变量说明",
+      "type": {
+        "title": "邮件类型",
+        "description": "邮件类型标识，1代表注册验证码，其他代表重置密码验证码",
+        "conditionalSyntax": "支持条件判断语法，便于根据类型切换不同内容"
+      },
+      "siteLogo": {
+        "title": "网站Logo",
+        "description": "网站Logo图片地址"
+      },
+      "siteName": {
+        "title": "网站名称",
+        "description": "当前网站的名称"
+      },
+      "expire": {
+        "title": "有效时间",
+        "description": "验证码有效时间（分钟）"
+      },
+      "code": {
+        "title": "验证码",
+        "description": "6位数字验证码"
+      },
+      "expireDate": {
+        "title": "到期日期",
+        "description": "服务到期日期，提醒用户服务何时到期"
+      },
+      "maintenanceDate": {
+        "title": "维护日期",
+        "description": "系统维护日期，显示为维护开始的日期"
+      },
+      "maintenanceTime": {
+        "title": "维护时间",
+        "description": "预计维护时间，显示为维护持续的时间段或时长"
+      }
+    }
+  },
+  "facebook": {
+    "title": "Facebook 登录",
+    "description": "使用 Facebook 账户进行身份验证",
+    "clientId": "客户端 ID",
+    "clientIdDescription": "来自 Facebook 开发者控制台的 Facebook 应用 ID",
+    "clientSecret": "客户端密钥",
+    "clientSecretDescription": "来自 Facebook 开发者控制台的 Facebook 应用密钥",
+    "enable": "启用",
+    "enableDescription": "启用后，用户可以使用他们的 Facebook 帐户登录"
+  },
+  "github": {
+    "title": "GitHub 登录",
+    "description": "使用 GitHub 账户进行身份验证",
+    "clientId": "GitHub 客户端 ID",
+    "clientIdDescription": "来自您的 GitHub OAuth 应用程序设置的客户端 ID",
+    "clientSecret": "GitHub 客户端密钥",
+    "clientSecretDescription": "来自您的 GitHub OAuth 应用程序设置的客户端密钥",
+    "enable": "启用 GitHub 认证",
+    "enableDescription": "允许用户使用他们的GitHub账户登录"
+  },
+  "google": {
+    "title": "Google 登录",
+    "description": "使用 Google 账户进行身份验证",
+    "clientId": "客户端 ID",
+    "clientIdDescription": "来自 Google Cloud Console 的 Google OAuth 2.0 客户端 ID",
+    "clientSecret": "客户端密钥",
+    "clientSecretDescription": "来自 Google Cloud Console 的 Google OAuth 2.0 客户端密钥",
+    "enable": "启用",
+    "enableDescription": "启用后，用户可以使用他们的 Google 帐户登录"
+  },
+
+  "phone": {
+    "title": "手机登录",
+    "description": "使用手机号码进行身份验证",
+    "enable": "启用",
+    "enableTip": "启用后，将启用手机注册、登录、绑定和解绑功能",
+    "whitelistValidation": "白名单验证",
+    "whitelistValidationTip": "启用后，仅白名单中的区号可以发送短信",
+    "whitelistAreaCode": "白名单区号",
+    "whitelistAreaCodeTip": "请输入白名单区号，例如：1, 852, 886, 888",
+    "platform": "短信平台",
+    "platformTip": "请选择短信平台",
+    "platformConfigTip": "请填写提供的{key}配置",
+    "applyPlatform": "申请平台",
+    "accessLabel": "访问",
+    "endpointLabel": "端点",
+    "secretLabel": "密钥",
+    "templateCodeLabel": "模板代码",
+    "signNameLabel": "签名名称",
+    "phoneNumberLabel": "电话号码",
+    "template": "短信模板",
+    "templateTip": "请填写短信模板，保持 {code} 在中间，否则短信功能将无法正常工作",
+    "placeholders": {
+      "template": "您的验证码是{code}，有效期为5分钟"
+    },
+    "testSms": "发送测试短信",
+    "testSmsTip": "发送测试短信以验证您的配置",
+    "testSmsPhone": "输入电话号码",
+    "sendSuccess": "发送成功",
+    "sendFailed": "发送失败",
+    "updateSuccess": "更新成功",
+    "settings": "设置"
+  },
+  "socialAuthMethods": "社交认证方式",
+  "telegram": {
+    "title": "Telegram 登录",
+    "description": "使用 Telegram 账户进行身份验证",
+    "clientId": "机器人ID",
+    "clientIdDescription": "Telegram 机器人 ID，您可以从 @BotFather 获取",
+    "clientSecret": "机器人令牌",
+    "clientSecretDescription": "Telegram 机器人令牌，您可以从 @BotFather 获取",
+    "enable": "启用",
+    "enableDescription": "启用后，用户可以使用他们的 Telegram 账户登录"
+  }
+}

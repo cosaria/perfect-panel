@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Hozzáadás",
+    "batchDelete": "Tömeges törlés",
+    "batchDeleteSuccess": "Sikeresen törölt {count} ügyfelet",
+    "batchDeleteWarning": "Biztosan törölni szeretné a kiválasztott {count} ügyfelet?",
+    "cancel": "Mégse",
+    "confirm": "Megerősítés",
+    "confirmDelete": "Törlés megerősítése",
+    "createSuccess": "Sikeresen létrehozva",
+    "delete": "Törlés",
+    "deleteFailed": "Törlés sikertelen",
+    "deleteSuccess": "Sikeresen törölve",
+    "deleteWarning": "Ez a művelet nem vonható vissza. Biztosan törölni szeretné ezt az ügyfelet?",
+    "edit": "Szerkesztés",
+    "save": "Mentés",
+    "saveFailed": "Mentés sikertelen",
+    "update": "Frissítés",
+    "updateSuccess": "Sikeresen frissítve"
+  },
+  "config": {
+    "description": "Előfizetési rendszer beállításainak kezelése",
+    "singleSubscriptionMode": "Egyszeri Előfizetési Mód",
+    "singleSubscriptionModeDescription": "Korlátozza a felhasználókat egy aktív előfizetésre. A meglévő előfizetések nem érintettek",
+    "subscriptionDomain": "Előfizetési Domain",
+    "subscriptionDomainDescription": "Egyedi domain az előfizetési linkekhez",
+    "subscriptionDomainPlaceholder": "Adja meg az előfizetési domaint, soronként egyet",
+    "subscriptionPath": "Előfizetési Útvonal",
+    "subscriptionPathDescription": "Egyedi útvonal az előfizetési végpontokhoz (jobb teljesítmény a rendszer újraindítása után)",
+    "subscriptionPathPlaceholder": "Adja meg az előfizetési útvonalat",
+    "title": "Előfizetés Beállítások",
+    "updateError": "Frissítés sikertelen",
+    "updateSuccess": "Beállítások sikeresen frissítve",
+    "userAgentLimit": "{userAgent} Korlátozás",
+    "userAgentLimitDescription": "Engedélyezze a hozzáférési korlátozásokat a {userAgent} alapján",
+    "userAgentList": "{userAgent} Fehérlista",
+    "userAgentListDescription": "Engedélyezett {userAgent} az előfizetési hozzáféréshez, soronként egyet. A konfigurált alkalmazás {userAgent} automatikusan belekerül",
+    "userAgentListPlaceholder": "Adja meg az engedélyezett {userAgent} értékeket, soronként egyet",
+    "wildcardResolution": "Joker karakterek feloldása",
+    "wildcardResolutionDescription": "Engedélyezze a joker karakterek domain feloldását az előfizetésekhez"
+  },
+  "form": {
+    "addTitle": "Ügyfél Hozzáadása",
+    "descriptions": {
+      "description": "Részletes ügyfél leírás",
+      "downloadLink": "platform letöltési URL",
+      "icon": "Ikon URL vagy base64 kódolás",
+      "name": "Ügyfél megjelenítési neve",
+      "outputFormat": "Előfizetési konfigurációs fájl formátum",
+      "scheme": {
+        "base64Encoding": "Base64 kódolás",
+        "functions": "Támogatott funkciók:",
+        "jsonStringify": "JSON objektum stringgé alakítása",
+        "nameVariable": "webhely neve",
+        "title": "URL séma sablon",
+        "urlEncoding": "URL kódolás",
+        "urlVariable": "előfizetési URL",
+        "variables": "Támogatott változók:"
+      },
+      "template": {
+        "description": "Használja a Go sablon szintaxist az előfizetési konfigurációs fájlok generálásához",
+        "functions": "Sablon funkciók:",
+        "if": "feltételes állítások",
+        "nodes": "proxy csomópontok listája",
+        "range": "tömbök iterálása",
+        "siteName": "webhely neve",
+        "sprig": "Sprig funkció könyvtár (string feldolgozás, dátumok, stb.)",
+        "subscribeName": "előfizetés neve",
+        "title": "Go Sablon Szintaxis",
+        "userInfo": "felhasználói információ (forgalom, lejárat, stb.)",
+        "variables": "Elérhető változók:"
+      },
+      "userAgentPrefix": "Ügyfél azonosító a különböző ügyfelek megkülönböztetésére"
+    },
+    "editTitle": "Ügyfél Szerkesztése",
+    "fields": {
+      "description": "Leírás",
+      "icon": "Ikon",
+      "name": "Név",
+      "outputFormat": "Kimeneti Formátum",
+      "scheme": "URL séma",
+      "template": "Előfizetési Fájl Sablon"
+    },
+    "tabs": {
+      "basic": "Alap Információk",
+      "download": "Letöltések",
+      "template": "Sablonok"
+    },
+    "validation": {
+      "nameRequired": "Ügyfél név megadása kötelező",
+      "userAgentRequiredSuffix": "megadása kötelező"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Egyszerű Szöveg",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Ügyfélkezelés"
+  },
+  "table": {
+    "columns": {
+      "default": "Alapértelmezett",
+      "description": "Leírás",
+      "name": "Ügyfél Neve",
+      "outputFormat": "Kimeneti Formátum",
+      "supportedPlatforms": "Támogatott Platformok"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Dekódolás sikertelen: A tartalom nem érvényes Base64 formátum",
+      "decodedContent": "Dekódolt Tartalom",
+      "originalContent": "Eredeti Tartalom (Base64)"
+    },
+    "failed": "Az előnézet nem sikerült",
+    "loading": "Betöltés...",
+    "preview": "Előnézet",
+    "title": "Sablon Előnézet"
+  }
+}

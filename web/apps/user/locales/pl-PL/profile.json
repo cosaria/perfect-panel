@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "Ustawienia konta",
+    "newPassword": "Nowe hasło",
+    "passwordMismatch": "Wprowadzone hasła nie są zgodne",
+    "repeatNewPassword": "Powtórz nowe hasło",
+    "updatePassword": "Zaktualizuj hasło",
+    "updateSuccess": "Aktualizacja zakończona sukcesem"
+  },
+  "notify": {
+    "balanceChange": "Zmiana salda",
+    "channels": "Kanały powiadomień",
+    "finance": "Finanse",
+    "login": "Zaloguj się",
+    "notificationSettings": "Ustawienia powiadomień",
+    "notificationTypes": "Typy powiadomień",
+    "save": "Zapisz zmiany",
+    "subscribe": "Subskrybuj",
+    "updateSuccess": "Aktualizacja zakończona sukcesem"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Zaloguj się za pomocą Apple"
+    },
+    "bind": "Połącz",
+    "bindFailed": "Nie udało się połączyć",
+    "bindMobile": "Połącz telefon komórkowy",
+    "bindSuccess": "Pomyślnie połączono",
+    "change": "Zmień",
+    "confirm": "Potwierdź",
+    "device": {
+      "description": "Zaloguj się za pomocą identyfikatora urządzenia"
+    },
+    "email": {
+      "description": "Połącz swój adres e-mail",
+      "invalid": "Proszę wprowadzić prawidłowy adres e-mail",
+      "placeholder": "Wprowadź swój adres e-mail",
+      "title": "Zmień adres e-mail"
+    },
+    "facebook": {
+      "description": "Zaloguj się za pomocą Facebooka"
+    },
+    "github": {
+      "description": "Zaloguj się za pomocą GitHub"
+    },
+    "google": {
+      "description": "Zaloguj się za pomocą Google"
+    },
+    "mobile": {
+      "description": "Połącz swój numer komórkowy",
+      "invalid": "Proszę wprowadzić prawidłowy numer komórkowy",
+      "placeholder": "Wprowadź swój numer komórkowy",
+      "title": "Zmień numer telefonu komórkowego"
+    },
+    "phone": {
+      "description": "Połącz swój numer telefonu",
+      "placeholder": "Wprowadź swój numer telefonu",
+      "title": "Zmień numer telefonu"
+    },
+    "save": "Zapisz",
+    "telegram": {
+      "description": "Zaloguj się za pomocą Telegramu"
+    },
+    "title": "Połączone konta",
+    "unbind": "Rozłącz",
+    "update": "Aktualizuj",
+    "updateSuccess": "Aktualizacja zakończona sukcesem"
+  }
+}

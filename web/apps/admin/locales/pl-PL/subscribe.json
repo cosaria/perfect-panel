@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Dodaj",
+    "batchDelete": "Usuwanie zbiorcze",
+    "batchDeleteSuccess": "Pomyślnie usunięto {count} klientów",
+    "batchDeleteWarning": "Czy na pewno chcesz usunąć wybranych {count} klientów?",
+    "cancel": "Anuluj",
+    "confirm": "Potwierdź",
+    "confirmDelete": "Potwierdź usunięcie",
+    "createSuccess": "Pomyślnie utworzono",
+    "delete": "Usuń",
+    "deleteFailed": "Usunięcie nie powiodło się",
+    "deleteSuccess": "Pomyślnie usunięto",
+    "deleteWarning": "Ta operacja nie może być cofnięta. Czy na pewno chcesz usunąć tego klienta?",
+    "edit": "Edytuj",
+    "save": "Zapisz",
+    "saveFailed": "Zapis nie powiódł się",
+    "update": "Aktualizuj",
+    "updateSuccess": "Pomyślnie zaktualizowano"
+  },
+  "config": {
+    "description": "Zarządzaj ustawieniami systemu subskrypcyjnego",
+    "singleSubscriptionMode": "Tryb pojedynczej subskrypcji",
+    "singleSubscriptionModeDescription": "Ogranicz użytkowników do jednej aktywnej subskrypcji. Istniejące subskrypcje pozostają bez zmian",
+    "subscriptionDomain": "Domena subskrypcyjna",
+    "subscriptionDomainDescription": "Niestandardowa domena dla linków subskrypcyjnych",
+    "subscriptionDomainPlaceholder": "Wprowadź domenę subskrypcyjną, jedna na linię",
+    "subscriptionPath": "Ścieżka subskrypcyjna",
+    "subscriptionPathDescription": "Niestandardowa ścieżka dla punktów końcowych subskrypcji (lepsza wydajność po restarcie systemu)",
+    "subscriptionPathPlaceholder": "Wprowadź ścieżkę subskrypcyjną",
+    "title": "Konfiguracja subskrypcji",
+    "updateError": "Aktualizacja nie powiodła się",
+    "updateSuccess": "Ustawienia zaktualizowane pomyślnie",
+    "userAgentLimit": "Ograniczenie {userAgent}",
+    "userAgentLimitDescription": "Włącz ograniczenia dostępu na podstawie {userAgent}",
+    "userAgentList": "Biała lista {userAgent}",
+    "userAgentListDescription": "Dozwolone {userAgent} do dostępu do subskrypcji, jedna na linię. Skonfigurowana aplikacja {userAgent} zostanie automatycznie uwzględniona",
+    "userAgentListPlaceholder": "Wprowadź dozwolone {userAgent}, jedna na linię",
+    "wildcardResolution": "Rozwiązywanie symboli wieloznacznych",
+    "wildcardResolutionDescription": "Włącz rozwiązywanie domen wieloznacznych dla subskrypcji"
+  },
+  "form": {
+    "addTitle": "Dodaj klienta",
+    "descriptions": {
+      "description": "Szczegółowy opis klienta",
+      "downloadLink": "URL pobierania platformy",
+      "icon": "URL ikony lub kodowanie base64",
+      "name": "Nazwa wyświetlana klienta",
+      "outputFormat": "Format pliku konfiguracyjnego subskrypcji",
+      "scheme": {
+        "base64Encoding": "Kodowanie Base64",
+        "functions": "Obsługuje funkcje:",
+        "jsonStringify": "Obiekt JSON na ciąg",
+        "nameVariable": "nazwa witryny",
+        "title": "Szablon schematu URL",
+        "urlEncoding": "Kodowanie URL",
+        "urlVariable": "adres URL subskrypcji",
+        "variables": "Obsługuje zmienne:"
+      },
+      "template": {
+        "description": "Użyj składni szablonu Go do generowania plików konfiguracyjnych subskrypcji",
+        "functions": "Funkcje szablonu:",
+        "if": "instrukcje warunkowe",
+        "nodes": "lista węzłów proxy",
+        "range": "iteruj po tablicach",
+        "siteName": "nazwa witryny",
+        "sprig": "Biblioteka funkcji Sprig (przetwarzanie ciągów, daty itp.)",
+        "subscribeName": "nazwa subskrypcji",
+        "title": "Składnia szablonu Go",
+        "userInfo": "informacje o użytkowniku (ruch, wygaśnięcie itp.)",
+        "variables": "Dostępne zmienne:"
+      },
+      "userAgentPrefix": "Identyfikator klienta do rozróżniania różnych klientów"
+    },
+    "editTitle": "Edytuj klienta",
+    "fields": {
+      "description": "Opis",
+      "icon": "Ikona",
+      "name": "Nazwa",
+      "outputFormat": "Format wyjściowy",
+      "scheme": "Schemat URL",
+      "template": "Szablon pliku subskrypcyjnego"
+    },
+    "tabs": {
+      "basic": "Podstawowe informacje",
+      "download": "Pobrania",
+      "template": "Szablony"
+    },
+    "validation": {
+      "nameRequired": "Nazwa klienta jest wymagana",
+      "userAgentRequiredSuffix": "jest wymagana"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Tekst zwykły",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Zarządzanie klientami"
+  },
+  "table": {
+    "columns": {
+      "default": "Domyślny",
+      "description": "Opis",
+      "name": "Nazwa klienta",
+      "outputFormat": "Format wyjściowy",
+      "supportedPlatforms": "Obsługiwane platformy"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Dekodowanie nie powiodło się: Zawartość nie jest w prawidłowym formacie Base64",
+      "decodedContent": "Zdekodowana zawartość",
+      "originalContent": "Oryginalna zawartość (Base64)"
+    },
+    "failed": "Nie udało się załadować podglądu",
+    "loading": "Ładowanie...",
+    "preview": "Podgląd",
+    "title": "Podgląd szablonu"
+  }
+}

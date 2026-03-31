@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "Password Settings",
+    "newPassword": "New Password",
+    "passwordMismatch": "Passwords do not match",
+    "repeatNewPassword": "Repeat New Password",
+    "updatePassword": "Update Password",
+    "updateSuccess": "Update Successful"
+  },
+  "notify": {
+    "balanceChange": "Balance Change",
+    "channels": "Notification Channels",
+    "finance": "Finance",
+    "login": "Login",
+    "notificationSettings": "Notification Settings",
+    "notificationTypes": "Notification Types",
+    "save": "Save Changes",
+    "subscribe": "Subscribe",
+    "updateSuccess": "Update Successful"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Sign in with Apple"
+    },
+    "bind": "Connect",
+    "bindFailed": "Failed to connect",
+    "bindMobile": "Connect Mobile",
+    "bindSuccess": "Successfully connected",
+    "change": "Change",
+    "confirm": "Confirm",
+    "device": {
+      "description": "Sign in with Device ID"
+    },
+    "email": {
+      "description": "Link your email address",
+      "invalid": "Please enter a valid email address",
+      "placeholder": "Enter your email address",
+      "title": "Change Email"
+    },
+    "facebook": {
+      "description": "Sign in with Facebook"
+    },
+    "github": {
+      "description": "Sign in with GitHub"
+    },
+    "google": {
+      "description": "Sign in with Google"
+    },
+    "mobile": {
+      "description": "Link your mobile number",
+      "invalid": "Please enter a valid mobile number",
+      "placeholder": "Enter your mobile number",
+      "title": "Change Mobile Number"
+    },
+    "phone": {
+      "description": "Link your phone number",
+      "placeholder": "Enter your phone number",
+      "title": "Change Phone"
+    },
+    "save": "Save",
+    "telegram": {
+      "description": "Sign in with Telegram"
+    },
+    "title": "Connected Accounts",
+    "unbind": "Disconnect",
+    "update": "Update",
+    "updateSuccess": "Update Successful"
+  }
+}

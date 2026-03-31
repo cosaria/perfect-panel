@@ -1,0 +1,29 @@
+{
+  "DocumentList": "Liste des documents",
+  "actions": "Actions",
+  "cancel": "Annuler",
+  "confirm": "Confirmer",
+  "confirmDelete": "Êtes-vous sûr de vouloir supprimer ?",
+  "create": "Créer",
+  "createDocument": "Créer un document",
+  "createSuccess": "Création réussie",
+  "delete": "Supprimer",
+  "deleteDescription": "Une fois supprimées, les données ne pourront pas être récupérées. Veuillez procéder avec prudence.",
+  "deleteSuccess": "Suppression réussie",
+  "edit": "Éditer",
+  "editDocument": "Modifier le document",
+  "form": {
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "content": "Contenu",
+    "tags": "Catégories",
+    "tagsPlaceholder": "Veuillez utiliser la touche Entrée ou une virgule (,) pour séparer et entrer plusieurs catégories",
+    "title": "Titre",
+    "titlePlaceholder": "Veuillez entrer"
+  },
+  "show": "Afficher",
+  "tags": "Catégories",
+  "title": "Titre",
+  "updateSuccess": "Mise à jour réussie",
+  "updatedAt": "Mis à jour à"
+}

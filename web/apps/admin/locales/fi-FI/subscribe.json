@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Lisää",
+    "batchDelete": "Ryhmän poistaminen",
+    "batchDeleteSuccess": "Poistettiin onnistuneesti {count} asiakasta",
+    "batchDeleteWarning": "Oletko varma, että haluat poistaa valitut {count} asiakasta?",
+    "cancel": "Peruuta",
+    "confirm": "Vahvista",
+    "confirmDelete": "Vahvista poisto",
+    "createSuccess": "Luotiin onnistuneesti",
+    "delete": "Poista",
+    "deleteFailed": "Poisto epäonnistui",
+    "deleteSuccess": "Poistettu onnistuneesti",
+    "deleteWarning": "Tätä toimintoa ei voi peruuttaa. Oletko varma, että haluat poistaa tämän asiakkaan?",
+    "edit": "Muokkaa",
+    "save": "Tallenna",
+    "saveFailed": "Tallennus epäonnistui",
+    "update": "Päivitä",
+    "updateSuccess": "Päivitys onnistui"
+  },
+  "config": {
+    "description": "Hallitse tilausjärjestelmän asetuksia",
+    "singleSubscriptionMode": "Yksittäinen tilausmoodi",
+    "singleSubscriptionModeDescription": "Rajoita käyttäjät yhteen aktiiviseen tilaukseen. Olemassa olevat tilaukset eivät vaikuta",
+    "subscriptionDomain": "Tilauksen verkkotunnus",
+    "subscriptionDomainDescription": "Mukautettu verkkotunnus tilauslinkeille",
+    "subscriptionDomainPlaceholder": "Syötä tilauksen verkkotunnus, yksi per rivi",
+    "subscriptionPath": "Tilauksen polku",
+    "subscriptionPathDescription": "Mukautettu polku tilauspisteille (parempi suorituskyky järjestelmän uudelleenkäynnistyksen jälkeen)",
+    "subscriptionPathPlaceholder": "Syötä tilauksen polku",
+    "title": "Tilauksen asetukset",
+    "updateError": "Päivitys epäonnistui",
+    "updateSuccess": "Asetukset päivitettiin onnistuneesti",
+    "userAgentLimit": "{userAgent} Rajoitus",
+    "userAgentLimitDescription": "Ota käyttöön pääsyn rajoitukset perustuen {userAgent}",
+    "userAgentList": "{userAgent} Valkoinen lista",
+    "userAgentListDescription": "Sallitut {userAgent} tilauspääsyyn, yksi per rivi. Määritetty sovellus {userAgent} lisätään automaattisesti",
+    "userAgentListPlaceholder": "Syötä sallitut {userAgent}, yksi per rivi",
+    "wildcardResolution": "Wildcard-ratkaisu",
+    "wildcardResolutionDescription": "Ota käyttöön wildcard-verkkotunnuksen ratkaisu tilauksille"
+  },
+  "form": {
+    "addTitle": "Lisää asiakas",
+    "descriptions": {
+      "description": "Yksityiskohtainen asiakaskuvaus",
+      "downloadLink": "alustan lataus-URL",
+      "icon": "Ikonin URL tai base64-koodaus",
+      "name": "Asiakkaan näyttönimi",
+      "outputFormat": "Tilauksen konfiguraatiotiedoston muoto",
+      "scheme": {
+        "base64Encoding": "Base64-koodaus",
+        "functions": "Tukee toimintoja:",
+        "jsonStringify": "JSON-objekti merkkijonoksi",
+        "nameVariable": "sivuston nimi",
+        "title": "URL-skeeman malli",
+        "urlEncoding": "URL-koodaus",
+        "urlVariable": "tilaus-URL",
+        "variables": "Tukee muuttujia:"
+      },
+      "template": {
+        "description": "Käytä Go-mallin syntaksia luodaksesi tilauksen konfiguraatiotiedostoja",
+        "functions": "Mallitoiminnot:",
+        "if": "ehdolliset lauseet",
+        "nodes": "proxy-solmujen lista",
+        "range": "iteroi taulukoita",
+        "siteName": "sivuston nimi",
+        "sprig": "Sprig-toimintokirjasto (merkkijonojen käsittely, päivämäärät jne.)",
+        "subscribeName": "tilauksen nimi",
+        "title": "Go-mallin syntaksi",
+        "userInfo": "käyttäjätiedot (liikenne, vanheneminen jne.)",
+        "variables": "Saatavilla olevat muuttujat:"
+      },
+      "userAgentPrefix": "Asiakkaan tunniste erottamaan eri asiakkaita"
+    },
+    "editTitle": "Muokkaa asiakasta",
+    "fields": {
+      "description": "Kuvaus",
+      "icon": "Ikoni",
+      "name": "Nimi",
+      "outputFormat": "Tulostusmuoto",
+      "scheme": "URL-skeema",
+      "template": "Tilauksen tiedostomalli"
+    },
+    "tabs": {
+      "basic": "Perustiedot",
+      "download": "Lataukset",
+      "template": "Mallit"
+    },
+    "validation": {
+      "nameRequired": "Asiakkaan nimi on pakollinen",
+      "userAgentRequiredSuffix": "on pakollinen"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Plain Text",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Asiakashallinta"
+  },
+  "table": {
+    "columns": {
+      "default": "Oletus",
+      "description": "Kuvaus",
+      "name": "Asiakkaan nimi",
+      "outputFormat": "Tulostusmuoto",
+      "supportedPlatforms": "Tuetut alustat"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Dekoodaus epäonnistui: Sisältö ei ole voimassa olevaa Base64-muotoa",
+      "decodedContent": "Dekoodattu sisältö",
+      "originalContent": "Alkuperäinen sisältö (Base64)"
+    },
+    "failed": "Esikatselu epäonnistui",
+    "loading": "Ladataan...",
+    "preview": "Esikatselu",
+    "title": "Mallin esikatselu"
+  }
+}

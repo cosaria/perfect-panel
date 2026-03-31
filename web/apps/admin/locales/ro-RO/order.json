@@ -1,0 +1,37 @@
+{
+  "amount": "Sumă",
+  "couponDiscount": "Reducere cupon",
+  "discount": "Valoare reducere",
+  "failed": "eșuat",
+  "feeAmount": "Taxă",
+  "method": "Metodă de plată",
+  "methods": {
+    "alipay_f2f": "Alipay (față în față)",
+    "balance": "Sold",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "orderNumber": "Număr comandă",
+  "status": {
+    "0": "stare",
+    "1": "în așteptare pentru plată",
+    "2": "plătit",
+    "3": "anulat",
+    "4": "închis",
+    "5": "finalizat"
+  },
+  "subscribe": "Abonare",
+  "subscribePrice": "Preț abonament",
+  "total": "Total",
+  "tradeNo": "Număr tranzacție",
+  "type": {
+    "0": "Tip",
+    "1": "Achiziție nouă",
+    "2": "Reînnoire",
+    "3": "Resetare trafic",
+    "4": "Reîncărcare"
+  },
+  "updateTime": "Timp de actualizare",
+  "user": "utilizator"
+}

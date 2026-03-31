@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "Tiliasetukset",
+    "newPassword": "Uusi salasana",
+    "passwordMismatch": "Salasanat eivät täsmää",
+    "repeatNewPassword": "Toista uusi salasana",
+    "updatePassword": "Päivitä salasana",
+    "updateSuccess": "Päivitys onnistui"
+  },
+  "notify": {
+    "balanceChange": "Saldo Muutos",
+    "channels": "Ilmoituskanavat",
+    "finance": "Rahoitus",
+    "login": "Kirjaudu",
+    "notificationSettings": "Ilmoitusasetukset",
+    "notificationTypes": "Ilmoitustyypit",
+    "save": "Tallenna muutokset",
+    "subscribe": "Tilaa",
+    "updateSuccess": "Päivitys onnistui"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Kirjaudu sisään Applen kanssa"
+    },
+    "bind": "Yhdistä",
+    "bindFailed": "Yhteyden muodostaminen epäonnistui",
+    "bindMobile": "Yhdistä puhelin",
+    "bindSuccess": "Yhteys onnistui",
+    "change": "Vaihda",
+    "confirm": "Vahvista",
+    "device": {
+      "description": "Kirjaudu sisään laite-ID:llä"
+    },
+    "email": {
+      "description": "Linkitä sähköpostiosoitteesi",
+      "invalid": "Ole hyvä ja syötä voimassa oleva sähköpostiosoite",
+      "placeholder": "Syötä sähköpostiosoitteesi",
+      "title": "Vaihda sähköposti"
+    },
+    "facebook": {
+      "description": "Kirjaudu sisään Facebookilla"
+    },
+    "github": {
+      "description": "Kirjaudu sisään GitHubilla"
+    },
+    "google": {
+      "description": "Kirjaudu sisään Googlella"
+    },
+    "mobile": {
+      "description": "Linkitä matkapuhelinnumerosi",
+      "invalid": "Ole hyvä ja syötä voimassa oleva matkapuhelinnumero",
+      "placeholder": "Syötä matkapuhelinnumerosi",
+      "title": "Vaihda puhelinnumero"
+    },
+    "phone": {
+      "description": "Linkitä puhelinnumerosi",
+      "placeholder": "Syötä puhelinnumerosi",
+      "title": "Vaihda puhelin"
+    },
+    "save": "Tallenna",
+    "telegram": {
+      "description": "Kirjaudu sisään Telegramilla"
+    },
+    "title": "Yhdistetyt tilit",
+    "unbind": "Irrota",
+    "update": "Päivitä",
+    "updateSuccess": "Päivitys onnistui"
+  }
+}

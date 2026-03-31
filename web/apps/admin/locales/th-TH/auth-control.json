@@ -1,0 +1,206 @@
+{
+  "apple": {
+    "clientId": "รหัสบริการ",
+    "clientIdDescription": "Apple Service ID, คุณสามารถรับได้จาก Apple Developer Portal",
+    "clientSecret": "คีย์ส่วนตัว",
+    "clientSecretDescription": "เนื้อหาของคีย์ส่วนตัว (.p8 ไฟล์) ที่ใช้สำหรับการยืนยันตัวตนกับ Apple",
+    "description": "ยืนยันตัวตนผู้ใช้ด้วยบัญชี Apple",
+    "enable": "เปิดใช้งาน",
+    "enableDescription": "หลังจากเปิดใช้งานแล้ว ผู้ใช้สามารถลงชื่อเข้าใช้ด้วย Apple ID ของตนได้",
+    "keyId": "รหัสคีย์",
+    "keyIdDescription": "รหัสประจำตัวของกุญแจส่วนตัวของคุณจาก Apple Developer Portal",
+    "redirectUri": "URL ที่เปลี่ยนเส้นทาง",
+    "redirectUriDescription": "กรุณากรอกที่อยู่ API ของ URL ที่ถูกเปลี่ยนเส้นทางหลังจากผ่านการตรวจสอบสิทธิ์ของ Apple อย่างสำเร็จแล้ว ห้ามใช้ / ที่ท้าย.",
+    "teamId": "รหัสทีม",
+    "teamIdDescription": "รหัสทีมผู้พัฒนาแอปเปิ้ล",
+    "title": "การลงชื่อเข้าใช้ด้วย Apple"
+  },
+  "common": {
+    "cancel": "ยกเลิก",
+    "save": "บันทึก",
+    "saveFailed": "บันทึกล้มเหลว",
+    "saveSuccess": "บันทึกสำเร็จ"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "blockVirtualMachine": "บล็อกเครื่องเสมือน",
+    "blockVirtualMachineDescription": "เมื่อเปิดใช้งาน อุปกรณ์จะไม่สามารถทำงานบนเครื่องเสมือนหรืออีมูเลเตอร์ได้",
+    "communicationKey": "กุญแจการสื่อสาร",
+    "communicationKeyDescription": "กุญแจการสื่อสารใช้สำหรับการสื่อสารที่ปลอดภัยระหว่างอุปกรณ์และเซิร์ฟเวอร์",
+    "description": "ยืนยันตัวตนผู้ใช้ด้วยหมายเลขประจำอุปกรณ์",
+    "enable": "เปิดใช้งาน",
+    "enableDescription": "หลังจากเปิดใช้งาน จะรองรับการเข้าสู่ระบบและการลงทะเบียนด้วยตัวระบุอุปกรณ์หลายตัว เช่น IMEI/IDFA/IDFV/AndroidID/ที่อยู่ Mac",
+    "enableSecurity": "เปิดใช้งานการเข้ารหัสการสื่อสาร",
+    "enableSecurityDescription": "เมื่อเปิดใช้งาน การสื่อสารระหว่างอุปกรณ์และเซิร์ฟเวอร์จะถูกเข้ารหัส",
+    "showAds": "แสดงโฆษณา",
+    "showAdsDescription": "เมื่อเปิดใช้งาน โฆษณาจะถูกแสดงบนอุปกรณ์",
+    "title": "การยืนยันตัวตนอุปกรณ์"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "basicSettings": "การตั้งค่าพื้นฐาน",
+    "description": "ยืนยันตัวตนผู้ใช้ด้วยที่อยู่อีเมล",
+    "emailSuffixWhitelist": "รายการอนุญาตโดเมนอีเมล",
+    "emailSuffixWhitelistDescription": "เมื่อเปิดใช้งาน จะสามารถลงทะเบียนได้เฉพาะอีเมลที่มีคำต่อท้ายในรายการเท่านั้น",
+    "emailVerification": "การยืนยันอีเมล",
+    "emailVerificationDescription": "เมื่อเปิดใช้งาน ผู้ใช้จะต้องยืนยันอีเมลของตน",
+    "enable": "เปิดใช้งาน",
+    "enableDescription": "หลังจากเปิดใช้งาน ฟังก์ชันการลงทะเบียนทางอีเมล การเข้าสู่ระบบ การผูก และการยกเลิกการผูก จะถูกเปิดใช้งาน",
+    "expirationEmailTemplate": "แม่แบบการแจ้งเตือนหมดอายุ",
+    "expirationTemplate": "การแจ้งเตือนหมดอายุ",
+    "inputPlaceholder": "กรอกค่า...",
+    "logs": "บันทึก",
+    "logsDescription": "ดูประวัติของอีเมลที่ส่งและสถานะของพวกเขา",
+    "maintenanceEmailTemplate": "แม่แบบการแจ้งเตือนการบำรุงรักษา",
+    "maintenanceTemplate": "การแจ้งเตือนการบำรุงรักษา",
+    "sendFailure": "การส่งอีเมลทดสอบล้มเหลว กรุณาตรวจสอบการตั้งค่า",
+    "sendSuccess": "ส่งอีเมลทดสอบสำเร็จแล้ว",
+    "sendTestEmail": "ส่งอีเมลทดสอบ",
+    "sendTestEmailDescription": "ส่งอีเมลทดสอบเพื่อตรวจสอบการตั้งค่า",
+    "senderAddress": "ที่อยู่ผู้ส่ง",
+    "senderAddressDescription": "ที่อยู่อีเมลเริ่มต้นที่ใช้สำหรับการส่งอีเมล.",
+    "smtpAccount": "บัญชี SMTP",
+    "smtpAccountDescription": "บัญชีอีเมลที่ใช้สำหรับการยืนยันตัวตน.",
+    "smtpEncryptionMethod": "วิธีการเข้ารหัส SMTP",
+    "smtpEncryptionMethodDescription": "เลือกว่าจะเปิดใช้งานการเข้ารหัส SSL/TLS หรือไม่",
+    "smtpPassword": "รหัสผ่าน SMTP",
+    "smtpPasswordDescription": "รหัสผ่านสำหรับบัญชี SMTP.",
+    "smtpServerAddress": "ที่อยู่เซิร์ฟเวอร์ SMTP",
+    "smtpServerAddressDescription": "ระบุที่อยู่เซิร์ฟเวอร์ที่ใช้สำหรับการส่งอีเมล",
+    "smtpServerPort": "พอร์ตเซิร์ฟเวอร์ SMTP",
+    "smtpServerPortDescription": "ระบุพอร์ตที่ใช้ในการเชื่อมต่อกับเซิร์ฟเวอร์ SMTP.",
+    "smtpSettings": "การตั้งค่า SMTP",
+    "templateVariables": {
+      "code": {
+        "description": "รหัสยืนยัน 6 หลัก",
+        "title": "รหัสยืนยัน"
+      },
+      "expire": {
+        "description": "ระยะเวลาที่รหัสยืนยันมีผล (นาที)",
+        "title": "ระยะเวลาการใช้งาน"
+      },
+      "expireDate": {
+        "description": "วันที่หมดอายุของบริการ, เตือนผู้ใช้เมื่อบริการหมดอายุ",
+        "title": "วันที่หมดอายุ"
+      },
+      "maintenanceDate": {
+        "description": "วันที่บำรุงรักษาระบบ, แสดงวันที่เริ่มต้นการบำรุงรักษา",
+        "title": "วันที่บำรุงรักษา"
+      },
+      "maintenanceTime": {
+        "description": "เวลาที่คาดการณ์ในการบำรุงรักษา, แสดงระยะเวลาหรือช่วงเวลาการบำรุงรักษา",
+        "title": "ระยะเวลาการบำรุงรักษา"
+      },
+      "siteLogo": {
+        "description": "URL รูปภาพโลโก้เว็บไซต์",
+        "title": "โลโก้เว็บไซต์"
+      },
+      "siteName": {
+        "description": "ชื่อเว็บไซต์ปัจจุบัน",
+        "title": "ชื่อเว็บไซต์"
+      },
+      "title": "ตัวแปรแม่แบบอีเมล",
+      "type": {
+        "conditionalSyntax": "รองรับไวยากรณ์เงื่อนไขสำหรับการเปลี่ยนเนื้อหาตามประเภท",
+        "description": "ตัวระบุประเภทอีเมล, 1 สำหรับรหัสยืนยันการลงทะเบียน, อื่น ๆ สำหรับรหัสยืนยันการรีเซ็ตรหัสผ่าน",
+        "title": "ประเภทอีเมล"
+      }
+    },
+    "title": "การยืนยันตัวตนทางอีเมล",
+    "trafficExceedEmailTemplate": "แม่แบบการแจ้งเตือนการจำกัดการใช้งาน",
+    "trafficTemplate": "การจำกัดการใช้งาน",
+    "verifyEmailTemplate": "แม่แบบอีเมลยืนยัน",
+    "verifyTemplate": "อีเมลยืนยัน",
+    "whitelistSuffixes": "อนุญาตให้ใช้คำต่อท้าย",
+    "whitelistSuffixesDescription": "ใช้สำหรับการยืนยันอีเมลระหว่างการลงทะเบียน; หนึ่งบรรทัดต่อหนึ่งรายการ",
+    "whitelistSuffixesPlaceholder": "กรอกคำต่อท้ายอีเมล ทีละบรรทัด"
+  },
+  "facebook": {
+    "clientId": "รหัสลูกค้า",
+    "clientIdDescription": "รหัสแอป Facebook จากคอนโซลนักพัฒนาของ Facebook",
+    "clientSecret": "รหัสลับของลูกค้า",
+    "clientSecretDescription": "รหัสลับของแอป Facebook จาก Facebook Developers Console",
+    "description": "ยืนยันตัวตนผู้ใช้ด้วยบัญชี Facebook",
+    "enable": "เปิดใช้งาน",
+    "enableDescription": "หลังจากเปิดใช้งานแล้ว ผู้ใช้สามารถลงชื่อเข้าใช้ด้วยบัญชี Facebook ของพวกเขาได้",
+    "title": "การลงชื่อเข้าใช้ด้วย Facebook"
+  },
+  "github": {
+    "clientId": "รหัสลูกค้า GitHub",
+    "clientIdDescription": "รหัสไคลเอนต์จากการตั้งค่าแอปพลิเคชัน OAuth ของ GitHub ของคุณ",
+    "clientSecret": "รหัสลับของ GitHub Client",
+    "clientSecretDescription": "รหัสลับของไคลเอนต์จากการตั้งค่าแอปพลิเคชัน GitHub OAuth ของคุณ",
+    "description": "ยืนยันตัวตนผู้ใช้ด้วยบัญชี GitHub",
+    "enable": "เปิดใช้งานการยืนยันตัวตนของ GitHub",
+    "enableDescription": "อนุญาตให้ผู้ใช้ลงชื่อเข้าใช้ด้วยบัญชี GitHub ของพวกเขา",
+    "title": "การลงชื่อเข้าใช้ด้วย GitHub"
+  },
+  "google": {
+    "clientId": "รหัสลูกค้า",
+    "clientIdDescription": "Google OAuth 2.0 Client ID จาก Google Cloud Console",
+    "clientSecret": "รหัสลับของลูกค้า",
+    "clientSecretDescription": "Google OAuth 2.0 Client Secret จาก Google Cloud Console",
+    "description": "ยืนยันตัวตนผู้ใช้ด้วยบัญชี Google",
+    "enable": "เปิดใช้งาน",
+    "enableDescription": "หลังจากเปิดใช้งาน ผู้ใช้สามารถลงชื่อเข้าใช้ด้วยบัญชี Google ของตนได้",
+    "title": "การลงชื่อเข้าใช้ด้วย Google"
+  },
+  "log": {
+    "content": "เนื้อหา",
+    "createdAt": "สร้างเมื่อ",
+    "emailLog": "บันทึกอีเมล",
+    "mobileLog": "บันทึกมือถือ",
+    "platform": "แพลตฟอร์ม",
+    "sendFailed": "ส่งล้มเหลว",
+    "sendSuccess": "ส่งสำเร็จ",
+    "status": "สถานะ",
+    "subject": "หัวข้อ",
+    "to": "ผู้รับ",
+    "updatedAt": "ปรับปรุงเมื่อ"
+  },
+  "phone": {
+    "accessLabel": "การเข้าถึง",
+    "applyPlatform": "สมัครแพลตฟอร์ม",
+    "description": "ยืนยันตัวตนผู้ใช้ด้วยหมายเลขโทรศัพท์",
+    "enable": "เปิดใช้งาน",
+    "enableTip": "หลังจากเปิดใช้งานแล้ว ฟังก์ชันการลงทะเบียน การเข้าสู่ระบบ การผูก และการยกเลิกการผูกโทรศัพท์มือถือจะถูกเปิดใช้งาน",
+    "endpointLabel": "จุดสิ้นสุด",
+    "logs": "บันทึก",
+    "logsDescription": "ดูประวัติของข้อความ SMS ที่ส่งและสถานะของพวกเขา",
+    "phoneNumberLabel": "หมายเลขโทรศัพท์",
+    "placeholders": {
+      "template": "รหัสยืนยันของคุณคือ {code} ใช้ได้ภายใน 5 นาที"
+    },
+    "platform": "แพลตฟอร์ม SMS",
+    "platformConfigTip": "กรุณากรอกการตั้งค่าที่ให้ไว้ {key}",
+    "platformTip": "กรุณาเลือกแพลตฟอร์ม SMS",
+    "secretLabel": "ความลับ",
+    "sendFailed": "ส่งไม่สำเร็จ",
+    "sendSuccess": "ส่งสำเร็จ",
+    "settings": "การตั้งค่า",
+    "signNameLabel": "ชื่อผู้ลงนาม",
+    "template": "เทมเพลต SMS",
+    "templateCodeLabel": "รหัสแม่แบบ",
+    "templateTip": "กรุณากรอกเทมเพลต SMS โดยให้ {code} อยู่ตรงกลาง มิฉะนั้นฟังก์ชัน SMS จะไม่ทำงาน",
+    "testSms": "ส่ง SMS ทดสอบ",
+    "testSmsPhone": "กรุณาใส่หมายเลขโทรศัพท์",
+    "testSmsTip": "ส่ง SMS ทดสอบเพื่อตรวจสอบการตั้งค่าของคุณ",
+    "title": "การยืนยันตัวตนทางโทรศัพท์",
+    "updateSuccess": "อัปเดตสำเร็จ",
+    "whitelistAreaCode": "รหัสพื้นที่ในรายการอนุญาต",
+    "whitelistAreaCodeTip": "กรุณาใส่รหัสพื้นที่ในรายการอนุญาต เช่น 1, 852, 886, 888",
+    "whitelistValidation": "การตรวจสอบรายการอนุญาต",
+    "whitelistValidationTip": "เมื่อเปิดใช้งาน จะอนุญาตให้ส่ง SMS เฉพาะรหัสพื้นที่ในรายการอนุญาตเท่านั้น"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "clientId": "รหัสบอท",
+    "clientIdDescription": "Telegram Bot ID, คุณสามารถรับได้จาก @BotFather",
+    "clientSecret": "โทเค็นบอท",
+    "clientSecretDescription": "โทเค็นบอทของ Telegram คุณสามารถรับได้จาก @BotFather",
+    "description": "ยืนยันตัวตนผู้ใช้ด้วยบัญชี Telegram",
+    "enable": "เปิดใช้งาน",
+    "enableDescription": "หลังจากเปิดใช้งานแล้ว ฟังก์ชันการลงทะเบียน การเข้าสู่ระบบ การผูก และการยกเลิกการผูกโทรศัพท์มือถือจะถูกเปิดใช้งาน",
+    "title": "การลงชื่อเข้าใช้ด้วย Telegram"
+  }
+}

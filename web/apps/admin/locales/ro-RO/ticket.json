@@ -1,0 +1,19 @@
+{
+  "actions": "acțiuni",
+  "cancel": "Anulează",
+  "check": "Verificare",
+  "close": "Închide",
+  "closeSuccess": "Închidere reușită",
+  "closeWarning": "Odată închis, nu veți mai putea opera acest tichet. Vă rugăm să acționați cu prudență.",
+  "confirm": "Confirmare",
+  "confirmClose": "Sigur doriți să închideți?",
+  "createdAt": "Data creării",
+  "inputPlaceholder": "Introduceți întrebarea dumneavoastră și vă vom răspunde cât mai curând posibil.",
+  "open": "Deschide",
+  "reply": "răspuns",
+  "status": ["stare", "de urmat", "de răspuns", "procesat", "închis"],
+  "ticketList": "Listă de tichete",
+  "title": "Titlu",
+  "updatedAt": "Actualizat la",
+  "user": "utilizator"
+}

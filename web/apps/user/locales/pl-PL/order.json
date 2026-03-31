@@ -1,0 +1,47 @@
+{
+  "balanceRecharge": "Doładowanie balansu",
+  "cancel": "Anuluj",
+  "createdAt": "Czas utworzenia",
+  "detail": "Szczegóły",
+  "goToPayment": "Przejdź do płatności",
+  "methods": {
+    "alipay_f2f": "Alipay (Twarzą w twarz)",
+    "balance": "Saldo",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "name": "Nazwa",
+  "orderClosed": "Zamówienie zostało zamknięte",
+  "orderList": "Lista zamówień",
+  "orderNo": "Numer zamówienia",
+  "orderNumber": "Numer zamówienia",
+  "payment": "Przejdź do płatności",
+  "paymentAmount": "Kwota płatności",
+  "paymentMethod": "Metoda płatności",
+  "paymentSuccess": "Płatność zakończona sukcesem",
+  "productList": "Lista produktów",
+  "rechargeAmount": "Kwota doładowania",
+  "resetPrice": "Resetuj cenę",
+  "resetTraffic": "Resetuj ruch",
+  "scanToPay": "Zeskanuj kod, aby zapłacić",
+  "status": {
+    "0": "Status",
+    "1": "Oczekuje na płatność",
+    "2": "Opłacone",
+    "3": "Anulowane",
+    "4": "Zamknięte",
+    "5": "Zakończone"
+  },
+  "subscribeNow": "Subskrybuj teraz",
+  "timeExpired": "Czas na dokonanie płatności minął",
+  "type": {
+    "0": "Typ",
+    "1": "Nowy zakup",
+    "2": "Przedłużenie",
+    "3": "Resetowanie danych",
+    "4": "Doładowanie"
+  },
+  "viewDocument": "Wyświetl dokument",
+  "waitingForPayment": "Oczekiwanie na płatność"
+}

@@ -1,0 +1,37 @@
+{
+  "amount": "Částka",
+  "couponDiscount": "Sleva na kupón",
+  "discount": "Sleva",
+  "failed": "selhání",
+  "feeAmount": "Poplatek",
+  "method": "Platební metoda",
+  "methods": {
+    "alipay_f2f": "Alipay (tváří v tvář)",
+    "balance": "Zůstatek",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "orderNumber": "Číslo objednávky",
+  "status": {
+    "0": "Stav",
+    "1": "Čeká na platbu",
+    "2": "Zaplaceno",
+    "3": "Zrušeno",
+    "4": "Uzavřeno",
+    "5": "Dokončeno"
+  },
+  "subscribe": "Předplatit",
+  "subscribePrice": "Cena předplatného",
+  "total": "Celkem",
+  "tradeNo": "Číslo transakce",
+  "type": {
+    "0": "Typ",
+    "1": "Nový nákup",
+    "2": "Obnovení",
+    "3": "Resetování dat",
+    "4": "Dobití"
+  },
+  "updateTime": "Aktualizace času",
+  "user": "uživatel"
+}

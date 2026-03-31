@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Добавить",
+    "batchDelete": "Пакетное удаление",
+    "batchDeleteSuccess": "Успешно удалено {count} клиентов",
+    "batchDeleteWarning": "Вы уверены, что хотите удалить выбранные {count} клиентов?",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить",
+    "confirmDelete": "Подтвердить удаление",
+    "createSuccess": "Успешно создано",
+    "delete": "Удалить",
+    "deleteFailed": "Ошибка удаления",
+    "deleteSuccess": "Успешно удалено",
+    "deleteWarning": "Это действие нельзя отменить. Вы уверены, что хотите удалить этого клиента?",
+    "edit": "Редактировать",
+    "save": "Сохранить",
+    "saveFailed": "Ошибка сохранения",
+    "update": "Обновить",
+    "updateSuccess": "Успешно обновлено"
+  },
+  "config": {
+    "description": "Управление настройками системы подписки",
+    "singleSubscriptionMode": "Режим единственной подписки",
+    "singleSubscriptionModeDescription": "Ограничить пользователей одной активной подпиской. Существующие подписки не затрагиваются",
+    "subscriptionDomain": "Домен подписки",
+    "subscriptionDomainDescription": "Пользовательский домен для ссылок на подписку",
+    "subscriptionDomainPlaceholder": "Введите домен подписки, по одному на строку",
+    "subscriptionPath": "Путь подписки",
+    "subscriptionPathDescription": "Пользовательский путь для конечных точек подписки (лучшее выполнение после перезапуска системы)",
+    "subscriptionPathPlaceholder": "Введите путь подписки",
+    "title": "Настройки подписки",
+    "updateError": "Ошибка обновления",
+    "updateSuccess": "Настройки успешно обновлены",
+    "userAgentLimit": "Ограничение {userAgent}",
+    "userAgentLimitDescription": "Включить ограничения доступа на основе {userAgent}",
+    "userAgentList": "Белый список {userAgent}",
+    "userAgentListDescription": "Разрешенные {userAgent} для доступа к подписке, по одному на строку. Настроенное приложение {userAgent} будет автоматически включено",
+    "userAgentListPlaceholder": "Введите разрешенные {userAgent}, по одному на строку",
+    "wildcardResolution": "Разрешение подстановочных знаков",
+    "wildcardResolutionDescription": "Включить разрешение доменов с подстановочными знаками для подписок"
+  },
+  "form": {
+    "addTitle": "Добавить клиента",
+    "descriptions": {
+      "description": "Подробное описание клиента",
+      "downloadLink": "URL для загрузки платформы",
+      "icon": "URL иконки или base64 кодировка",
+      "name": "Отображаемое имя клиента",
+      "outputFormat": "Формат файла конфигурации подписки",
+      "scheme": {
+        "base64Encoding": "Кодирование Base64",
+        "functions": "Поддерживает функции:",
+        "jsonStringify": "Преобразование JSON-объекта в строку",
+        "nameVariable": "имя сайта",
+        "title": "Шаблон схемы URL",
+        "urlEncoding": "Кодирование URL",
+        "urlVariable": "URL подписки",
+        "variables": "Поддерживает переменные:"
+      },
+      "template": {
+        "description": "Используйте синтаксис шаблона Go для генерации файлов конфигурации подписки",
+        "functions": "Функции шаблона:",
+        "if": "условные операторы",
+        "nodes": "список прокси-узлов",
+        "range": "перебирать массивы",
+        "siteName": "имя сайта",
+        "sprig": "Библиотека функций Sprig (обработка строк, даты и т. д.)",
+        "subscribeName": "имя подписки",
+        "title": "Синтаксис шаблона Go",
+        "userInfo": "информация о пользователе (трафик, срок действия и т. д.)",
+        "variables": "Доступные переменные:"
+      },
+      "userAgentPrefix": "Идентификатор клиента для различения разных клиентов"
+    },
+    "editTitle": "Редактировать клиента",
+    "fields": {
+      "description": "Описание",
+      "icon": "Иконка",
+      "name": "Имя",
+      "outputFormat": "Формат вывода",
+      "scheme": "Схема URL",
+      "template": "Шаблон файла подписки"
+    },
+    "tabs": {
+      "basic": "Основная информация",
+      "download": "Загрузки",
+      "template": "Шаблоны"
+    },
+    "validation": {
+      "nameRequired": "Имя клиента обязательно",
+      "userAgentRequiredSuffix": "обязательно"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Обычный текст",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Управление клиентами"
+  },
+  "table": {
+    "columns": {
+      "default": "По умолчанию",
+      "description": "Описание",
+      "name": "Имя клиента",
+      "outputFormat": "Формат вывода",
+      "supportedPlatforms": "Поддерживаемые платформы"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Ошибка декодирования: Содержимое не является допустимым форматом Base64",
+      "decodedContent": "Декодированное содержимое",
+      "originalContent": "Исходное содержимое (Base64)"
+    },
+    "failed": "Не удалось загрузить предварительный просмотр",
+    "loading": "Загрузка...",
+    "preview": "Предварительный просмотр",
+    "title": "Предварительный просмотр шаблона"
+  }
+}

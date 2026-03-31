@@ -1,0 +1,26 @@
+{
+  "cancel": "Cancelar",
+  "check": "Revisar",
+  "close": "cerrar",
+  "closeSuccess": "Orden de trabajo cerrada con éxito",
+  "closeWarning": "Después de cerrar el ticket, no podrás seguir respondiendo.",
+  "confirm": "Confirmar",
+  "confirmClose": "¿Confirmar el cierre del ticket?",
+  "createSuccess": "Creación exitosa",
+  "createTicket": "Crear Ticket",
+  "createTicketDescription": "El ticket será respondido en 24 horas.",
+  "description": "descripción",
+  "inputPlaceholder": "Ingresa tu mensaje",
+  "reply": "Responder",
+  "status": {
+    "0": "Estado",
+    "1": "Pendiente",
+    "2": "En proceso",
+    "3": "Resuelto",
+    "4": "Cerrado"
+  },
+  "submit": "Enviar",
+  "ticketList": "Lista de tickets",
+  "title": "Título",
+  "updatedAt": "Actualizado en"
+}

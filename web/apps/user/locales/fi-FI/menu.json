@@ -1,0 +1,17 @@
+{
+  "affiliate": "Kutsuni",
+  "announcement": "Ilmoituslista",
+  "dashboard": "Kojelauta",
+  "document": "Käyttöohjeet",
+  "finance": "rahoitus",
+  "help": "apua",
+  "logout": "Kirjaudu ulos",
+  "order": "Tilauslista",
+  "payment": "Tilaustiedot",
+  "personal": "henkilökohtainen",
+  "profile": "Profiili",
+  "server": "palvelu",
+  "subscribe": "Osta tilaus",
+  "ticket": "Minun tukipyyntöni",
+  "wallet": "Lompakkokeskus"
+}

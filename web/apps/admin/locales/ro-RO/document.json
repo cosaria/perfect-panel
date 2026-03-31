@@ -1,0 +1,29 @@
+{
+  "DocumentList": "Listă de documente",
+  "actions": "acțiuni",
+  "cancel": "Anulează",
+  "confirm": "Confirmare",
+  "confirmDelete": "Sunteți sigur că doriți să ștergeți?",
+  "create": "crea",
+  "createDocument": "Creează document",
+  "createSuccess": "Creat cu succes",
+  "delete": "șterge",
+  "deleteDescription": "Odată șters, datele nu vor putea fi recuperate. Vă rugăm să acționați cu prudență.",
+  "deleteSuccess": "Ștergere reușită",
+  "edit": "editează",
+  "editDocument": "Editare document",
+  "form": {
+    "cancel": "Anulează",
+    "confirm": "Confirmă",
+    "content": "Conținut",
+    "tags": "Categorii",
+    "tagsPlaceholder": "Vă rugăm să folosiți tasta Enter sau virgula (,) pentru a separa și introduce mai multe categorii",
+    "title": "Titlu",
+    "titlePlaceholder": "Vă rugăm să introduceți"
+  },
+  "show": "afișare",
+  "tags": "Categorii",
+  "title": "Titlu",
+  "updateSuccess": "Actualizare reușită",
+  "updatedAt": "Actualizat la"
+}

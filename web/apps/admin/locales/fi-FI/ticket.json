@@ -1,0 +1,19 @@
+{
+  "actions": "toiminnot",
+  "cancel": "Peruuta",
+  "check": "Tarkista",
+  "close": "sulje",
+  "closeSuccess": "Sulkeminen onnistui",
+  "closeWarning": "Kun suljet tämän työtilauksen, et voi enää käsitellä sitä. Olethan varovainen.",
+  "confirm": "Vahvista",
+  "confirmClose": "Haluatko varmasti sulkea?",
+  "createdAt": "Luontiaika",
+  "inputPlaceholder": "Kirjoita kysymyksesi tähän, vastaamme mahdollisimman pian.",
+  "open": "Avaa",
+  "reply": "vastaa",
+  "status": ["Tila", "Seurattava", "Vastattava", "Käsitelty", "Suljettu"],
+  "ticketList": "Tukipyyntölista",
+  "title": "Otsikko",
+  "updatedAt": "Päivitetty",
+  "user": "käyttäjä"
+}

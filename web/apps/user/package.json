@@ -1,0 +1,94 @@
+{
+	"name": "ppanel-user-web",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "next build",
+		"dev": "next dev --turbopack -p 3001",
+		"lint": "eslint . && tsc --noEmit",
+		"locale": "lobe-i18n --with-md",
+		"openapi": "openapi2ts",
+		"start": "next start"
+	},
+	"dependencies": {
+		"@stripe/react-stripe-js": "^3.9.2",
+		"@stripe/stripe-js": "^7.9.0",
+		"@tanstack/react-query": "^5.85.5",
+		"@tanstack/react-query-next-experimental": "^5.85.5",
+		"@workspace/ui": "workspace:*",
+		"ahooks": "^3.9.4",
+		"axios": "^1.11.0",
+		"framer-motion": "^12.23.12",
+		"gray-matter": "^4.0.3",
+		"lucide-react": "^0.542.0",
+		"next": "^15.5.7",
+		"next-intl": "^3.26.3",
+		"next-runtime-env": "^3.3.0",
+		"next-themes": "^0.4.6",
+		"nextjs-toploader": "^3.8.16",
+		"qrcode.react": "^4.2.0",
+		"radash": "^12.1.1",
+		"react": "^19.2.1",
+		"react-copy-to-clipboard": "^5.1.0",
+		"react-dom": "^19.2.1",
+		"react-turnstile": "^1.1.4",
+		"rtl-detect": "^1.1.2",
+		"ua-parser-js": "^2.0.4",
+		"universal-cookie": "^8.0.1",
+		"zustand": "^5.0.8"
+	},
+	"devDependencies": {
+		"@types/node": "^24.3.0",
+		"@types/react": "^19.2.7",
+		"@types/react-copy-to-clipboard": "^5.0.7",
+		"@types/react-dom": "^19.2.3",
+		"@types/rtl-detect": "^1.0.3",
+		"@workspace/eslint-config": "workspace:*",
+		"@workspace/typescript-config": "workspace:*",
+		"typescript": "^5.9.2"
+	},
+	"i18n": {
+		"entry": "./locales/en-US",
+		"entryLocale": "en-US",
+		"output": "./locales",
+		"saveImmediately": true,
+		"concurrency": 10,
+		"outputLocales": [
+			"cs-CZ",
+			"de-DE",
+			"en-US",
+			"es-ES",
+			"es-MX",
+			"fa-IR",
+			"fi-FI",
+			"fr-FR",
+			"hi-IN",
+			"hu-HU",
+			"ja-JP",
+			"ko-KR",
+			"no-NO",
+			"pl-PL",
+			"pt-BR",
+			"ro-RO",
+			"ru-RU",
+			"th-TH",
+			"tr-TR",
+			"uk-UA",
+			"vi-VN",
+			"zh-CN",
+			"zh-HK"
+		],
+		"modelName": "gpt-4o",
+		"experimental": {
+			"jsonMode": true
+		},
+		"markdown": {
+			"entry": [
+				"./README.md"
+			],
+			"outputLocales": [
+				"zh-CN"
+			]
+		}
+	}
+}

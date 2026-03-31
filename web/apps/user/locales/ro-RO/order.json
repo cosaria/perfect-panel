@@ -1,0 +1,47 @@
+{
+  "balanceRecharge": "Reîncărcare Sold",
+  "cancel": "Anulare",
+  "createdAt": "Data creării",
+  "detail": "Detalii",
+  "goToPayment": "Mergi la plată",
+  "methods": {
+    "alipay_f2f": "Alipay (Față în Față)",
+    "balance": "Sold",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "name": "Nume",
+  "orderClosed": "Comanda a fost închisă",
+  "orderList": "Listă de comenzi",
+  "orderNo": "Număr comandă",
+  "orderNumber": "Număr comandă",
+  "payment": "Plătește",
+  "paymentAmount": "Suma de plată",
+  "paymentMethod": "Metodă de plată",
+  "paymentSuccess": "Plata a fost efectuată cu succes",
+  "productList": "Listă de produse",
+  "rechargeAmount": "Sumă de Reîncărcare",
+  "resetPrice": "Resetare Preț",
+  "resetTraffic": "Resetare Trafic",
+  "scanToPay": "Vă rugăm să scanați pentru a plăti",
+  "status": {
+    "0": "stare",
+    "1": "în așteptare pentru plată",
+    "2": "plătit",
+    "3": "anulat",
+    "4": "închis",
+    "5": "finalizat"
+  },
+  "subscribeNow": "Abonează-te acum",
+  "timeExpired": "Timpul de plată a expirat",
+  "type": {
+    "0": "Tip",
+    "1": "Achiziție nouă",
+    "2": "Reînnoire",
+    "3": "Resetare trafic",
+    "4": "Reîncărcare"
+  },
+  "viewDocument": "Vizualizați documentul",
+  "waitingForPayment": "Așteptare pentru plată"
+}

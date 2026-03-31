@@ -1,0 +1,26 @@
+{
+  "stripe": {
+    "card": {
+      "card_name": "Cardholder Name",
+      "card_number": "Card Number",
+      "element_error": "Unable to get card element.",
+      "expiry_date": "Expiry Date",
+      "loading": "Stripe.js is not loaded. Please try again later.",
+      "name_placeholder": "Enter cardholder name",
+      "name_required": "Cardholder name is required",
+      "pay_button": "Pay Now",
+      "payment_failed": "Payment failed, please try again.",
+      "processing": "Payment processing, please check the result later.",
+      "processing_button": "Processing...",
+      "secure_notice": "Your payment information is securely encrypted",
+      "security_code": "Security Code",
+      "success_message": "Thank you for your payment!",
+      "success_title": "Payment Successful"
+    },
+    "error": "An unexpected error occurred",
+    "qrcode": {
+      "alipay": "Scan with Alipay to pay",
+      "wechat_pay": "Scan with WeChat to pay"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "balanceRecharge": "Поповнення балансу",
+  "cancel": "Скасувати",
+  "createdAt": "Час створення",
+  "detail": "Деталі",
+  "goToPayment": "Перейти до оплати",
+  "methods": {
+    "alipay_f2f": "Alipay (Обличчям до обличчя)",
+    "balance": "Баланс",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "name": "Назва",
+  "orderClosed": "Замовлення закрито",
+  "orderList": "Список замовлень",
+  "orderNo": "Номер замовлення",
+  "orderNumber": "Номер замовлення",
+  "payment": "Перейти до оплати",
+  "paymentAmount": "Сума платежу",
+  "paymentMethod": "Спосіб оплати",
+  "paymentSuccess": "Оплата успішна",
+  "productList": "Список продуктів",
+  "rechargeAmount": "Сума поповнення",
+  "resetPrice": "Скинути ціну",
+  "resetTraffic": "Скинути трафік",
+  "scanToPay": "Будь ласка, відскануйте для оплати",
+  "status": {
+    "0": "Статус",
+    "1": "Очікує оплату",
+    "2": "Оплачено",
+    "3": "Скасовано",
+    "4": "Закрито",
+    "5": "Завершено"
+  },
+  "subscribeNow": "Підписатися зараз",
+  "timeExpired": "Час оплати минув",
+  "type": {
+    "0": "Тип",
+    "1": "Нова покупка",
+    "2": "Продовження",
+    "3": "Скидання трафіку",
+    "4": "Поповнення"
+  },
+  "viewDocument": "Переглянути документ",
+  "waitingForPayment": "Очікування оплати"
+}

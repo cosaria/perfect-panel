@@ -1,0 +1,32 @@
+{
+  "actions": "działania",
+  "announcementList": "Lista ogłoszeń",
+  "cancel": "Anuluj",
+  "confirm": "Potwierdź",
+  "confirmDelete": "Czy na pewno chcesz usunąć?",
+  "content": "zawartość",
+  "create": "Utwórz",
+  "createAnnouncement": "Utwórz ogłoszenie",
+  "createSuccess": "Utworzono pomyślnie",
+  "delete": "usuń",
+  "deleteDescription": "Po usunięciu dane nie będą mogły zostać odzyskane. Proszę postępować ostrożnie.",
+  "deleteSuccess": "Usunięto pomyślnie",
+  "edit": "edytuj",
+  "editAnnouncement": "Edytuj ogłoszenie",
+  "enable": "Włącz",
+  "form": {
+    "cancel": "Anuluj",
+    "confirm": "Potwierdź",
+    "content": "Treść",
+    "contentPlaceholder": "Wprowadź treść ogłoszenia (obsługa Markdown)",
+    "title": "Tytuł",
+    "titlePlaceholder": "Wprowadź"
+  },
+  "hide": "ukryj",
+  "pinned": "Przypięte",
+  "popup": "wyskakujące okienko",
+  "show": "Pokaż",
+  "title": "Tytuł",
+  "updateSuccess": "Aktualizacja zakończona pomyślnie",
+  "updatedAt": "Zaktualizowano"
+}

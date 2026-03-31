@@ -1,0 +1,206 @@
+{
+  "apple": {
+    "clientId": "ID de service",
+    "clientIdDescription": "ID de service Apple, vous pouvez l'obtenir depuis le portail des développeurs Apple",
+    "clientSecret": "Clé Privée",
+    "clientSecretDescription": "Le contenu de la clé privée (fichier .p8) utilisé pour l'authentification avec Apple",
+    "description": "Authentifiez les utilisateurs avec des comptes Apple",
+    "enable": "Activer",
+    "enableDescription": "Après activation, les utilisateurs peuvent se connecter avec leur identifiant Apple",
+    "keyId": "ID de clé",
+    "keyIdDescription": "L'ID de votre clé privée depuis le portail des développeurs Apple",
+    "redirectUri": "URL de redirection",
+    "redirectUriDescription": "Veuillez remplir l'adresse API de l'URL redirigée après avoir réussi l'authentification Apple. Ne pas utiliser / à la fin.",
+    "teamId": "ID de l'équipe",
+    "teamIdDescription": "ID d'équipe du développeur Apple",
+    "title": "Connexion avec Apple"
+  },
+  "common": {
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saveFailed": "Échec de l'enregistrement",
+    "saveSuccess": "Enregistré avec succès"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "blockVirtualMachine": "Bloquer la machine virtuelle",
+    "blockVirtualMachineDescription": "Lorsqu'il est activé, les appareils seront empêchés de fonctionner sur des machines virtuelles ou des émulateurs",
+    "communicationKey": "Clé de communication",
+    "communicationKeyDescription": "La clé de communication est utilisée pour une communication sécurisée entre les appareils et les serveurs",
+    "description": "Authentifiez les utilisateurs avec des identifiants d'appareil",
+    "enable": "Activer",
+    "enableDescription": "Après activation, plusieurs identifiants de périphériques tels que IMEI/IDFA/IDFV/AndroidID/adresse Mac sont pris en charge pour la connexion et l'enregistrement",
+    "enableSecurity": "Activer le chiffrement de la communication",
+    "enableSecurityDescription": "Lorsqu'il est activé, la communication entre les appareils et les serveurs sera chiffrée",
+    "showAds": "Afficher les publicités",
+    "showAdsDescription": "Lorsqu'il est activé, des publicités seront affichées sur les appareils",
+    "title": "Authentification par appareil"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "basicSettings": "Paramètres de base",
+    "description": "Authentifiez les utilisateurs avec des adresses e-mail",
+    "emailSuffixWhitelist": "Liste blanche des suffixes d'email",
+    "emailSuffixWhitelistDescription": "Lorsqu'elle est activée, seules les adresses e-mail avec des suffixes figurant dans la liste peuvent s'inscrire",
+    "emailVerification": "Vérification de l'email",
+    "emailVerificationDescription": "Lorsqu'elle est activée, les utilisateurs devront vérifier leur adresse e-mail",
+    "enable": "Activer",
+    "enableDescription": "Après activation, les fonctions d'enregistrement par e-mail, de connexion, de liaison et de délégation seront activées",
+    "expirationEmailTemplate": "Modèle d'avis d'expiration",
+    "expirationTemplate": "Avis d'expiration",
+    "inputPlaceholder": "Entrez la valeur...",
+    "logs": "Journaux",
+    "logsDescription": "Voir l'historique des e-mails envoyés et leur statut",
+    "maintenanceEmailTemplate": "Modèle d'avis de maintenance",
+    "maintenanceTemplate": "Avis de maintenance",
+    "sendFailure": "Échec de l'envoi de l'email de test, veuillez vérifier la configuration.",
+    "sendSuccess": "E-mail de test envoyé avec succès.",
+    "sendTestEmail": "Envoyer un e-mail de test",
+    "sendTestEmailDescription": "Envoyez un e-mail de test pour vérifier la configuration.",
+    "senderAddress": "Adresse de l'expéditeur",
+    "senderAddressDescription": "L'adresse e-mail par défaut utilisée pour envoyer des e-mails.",
+    "smtpAccount": "Compte SMTP",
+    "smtpAccountDescription": "Le compte de messagerie utilisé pour l'authentification.",
+    "smtpEncryptionMethod": "Méthode de chiffrement SMTP",
+    "smtpEncryptionMethodDescription": "Choisissez si vous souhaitez activer le chiffrement SSL/TLS.",
+    "smtpPassword": "Mot de passe SMTP",
+    "smtpPasswordDescription": "Le mot de passe pour le compte SMTP.",
+    "smtpServerAddress": "Adresse du serveur SMTP",
+    "smtpServerAddressDescription": "Spécifiez l'adresse du serveur utilisée pour l'envoi des e-mails.",
+    "smtpServerPort": "Port du serveur SMTP",
+    "smtpServerPortDescription": "Spécifiez le port utilisé pour se connecter au serveur SMTP.",
+    "smtpSettings": "Paramètres SMTP",
+    "templateVariables": {
+      "code": {
+        "description": "Code de vérification à 6 chiffres",
+        "title": "Code de vérification"
+      },
+      "expire": {
+        "description": "Temps de validité du code de vérification (minutes)",
+        "title": "Durée de validité"
+      },
+      "expireDate": {
+        "description": "Date d'expiration du service, rappelle aux utilisateurs quand le service expire",
+        "title": "Date d'expiration"
+      },
+      "maintenanceDate": {
+        "description": "Date de maintenance du système, affiche la date de début de la maintenance",
+        "title": "Date de maintenance"
+      },
+      "maintenanceTime": {
+        "description": "Temps de maintenance estimé, affiche la période ou la durée de maintenance",
+        "title": "Durée de maintenance"
+      },
+      "siteLogo": {
+        "description": "URL de l'image du logo du site web",
+        "title": "Logo du site"
+      },
+      "siteName": {
+        "description": "Nom actuel du site web",
+        "title": "Nom du site"
+      },
+      "title": "Variables de modèle d'e-mail",
+      "type": {
+        "conditionalSyntax": "Prend en charge la syntaxe conditionnelle pour changer le contenu en fonction du type",
+        "description": "Identifiant de type d'e-mail, 1 pour le code de vérification d'inscription, autres pour le code de vérification de réinitialisation de mot de passe",
+        "title": "Type d'e-mail"
+      }
+    },
+    "title": "Authentification par e-mail",
+    "trafficExceedEmailTemplate": "Modèle d'avis de limite de trafic",
+    "trafficTemplate": "Limite de trafic",
+    "verifyEmailTemplate": "Modèle d'e-mail de vérification",
+    "verifyTemplate": "E-mail de vérification",
+    "whitelistSuffixes": "Suffixes de la liste blanche",
+    "whitelistSuffixesDescription": "Utilisé pour la vérification des e-mails lors de l'inscription ; un par ligne",
+    "whitelistSuffixesPlaceholder": "Entrez les suffixes d'email, un par ligne"
+  },
+  "facebook": {
+    "clientId": "ID client",
+    "clientIdDescription": "ID de l'application Facebook depuis la console des développeurs Facebook",
+    "clientSecret": "Secret Client",
+    "clientSecretDescription": "Secret de l'application Facebook depuis la console des développeurs Facebook",
+    "description": "Authentifiez les utilisateurs avec des comptes Facebook",
+    "enable": "Activer",
+    "enableDescription": "Après activation, les utilisateurs peuvent se connecter avec leur compte Facebook",
+    "title": "Connexion avec Facebook"
+  },
+  "github": {
+    "clientId": "ID Client GitHub",
+    "clientIdDescription": "L'ID client de vos paramètres d'application OAuth GitHub",
+    "clientSecret": "Secret Client GitHub",
+    "clientSecretDescription": "Le secret client de vos paramètres d'application OAuth GitHub",
+    "description": "Authentifiez les utilisateurs avec des comptes GitHub",
+    "enable": "Activer l'authentification GitHub",
+    "enableDescription": "Permettre aux utilisateurs de se connecter avec leurs comptes GitHub",
+    "title": "Connexion avec GitHub"
+  },
+  "google": {
+    "clientId": "ID Client",
+    "clientIdDescription": "ID client OAuth 2.0 de Google depuis la console Google Cloud",
+    "clientSecret": "Secret Client",
+    "clientSecretDescription": "Secret client OAuth 2.0 de Google depuis la console Google Cloud",
+    "description": "Authentifiez les utilisateurs avec des comptes Google",
+    "enable": "Activer",
+    "enableDescription": "Après activation, les utilisateurs peuvent se connecter avec leur compte Google",
+    "title": "Connexion avec Google"
+  },
+  "log": {
+    "content": "Contenu",
+    "createdAt": "Créé le",
+    "emailLog": "Journal des e-mails",
+    "mobileLog": "Journal mobile",
+    "platform": "Plateforme",
+    "sendFailed": "Échec de l'envoi",
+    "sendSuccess": "Envoi réussi",
+    "status": "Statut",
+    "subject": "Objet",
+    "to": "Destinataire",
+    "updatedAt": "Mis à jour le"
+  },
+  "phone": {
+    "accessLabel": "Accès",
+    "applyPlatform": "Plateforme d'application",
+    "description": "Authentifiez les utilisateurs avec des numéros de téléphone",
+    "enable": "Activer",
+    "enableTip": "Après activation, les fonctions d'enregistrement, de connexion, de liaison et de déliaison par téléphone mobile seront activées",
+    "endpointLabel": "Point de terminaison",
+    "logs": "Journaux",
+    "logsDescription": "Voir l'historique des messages SMS envoyés et leur statut",
+    "phoneNumberLabel": "Numéro de téléphone",
+    "placeholders": {
+      "template": "Votre code de vérification est {code}, valable pendant 5 minutes"
+    },
+    "platform": "Plateforme SMS",
+    "platformConfigTip": "Veuillez remplir la configuration {key} fournie",
+    "platformTip": "Veuillez sélectionner la plateforme SMS",
+    "secretLabel": "Secret",
+    "sendFailed": "Échec de l'envoi",
+    "sendSuccess": "Envoi réussi",
+    "settings": "Paramètres",
+    "signNameLabel": "Nom de l'expéditeur",
+    "template": "Modèle SMS",
+    "templateCodeLabel": "Code de modèle",
+    "templateTip": "Veuillez remplir le modèle de SMS, conservez {code} au milieu, sinon la fonction SMS ne fonctionnera pas.",
+    "testSms": "Envoyer un SMS de test",
+    "testSmsPhone": "Entrez le numéro de téléphone",
+    "testSmsTip": "Envoyez un SMS de test pour vérifier votre configuration",
+    "title": "Authentification par téléphone",
+    "updateSuccess": "Mise à jour réussie",
+    "whitelistAreaCode": "Code de zone sur liste blanche",
+    "whitelistAreaCodeTip": "Veuillez entrer les codes de zone sur liste blanche, par exemple, 1, 852, 886, 888",
+    "whitelistValidation": "Vérification de la liste blanche",
+    "whitelistValidationTip": "Lorsqu'elle est activée, seuls les codes de zone figurant sur la liste blanche peuvent envoyer des SMS"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "clientId": "ID du Bot",
+    "clientIdDescription": "ID du bot Telegram, vous pouvez l'obtenir auprès de @BotFather",
+    "clientSecret": "Jeton du Bot",
+    "clientSecretDescription": "Jeton du bot Telegram, vous pouvez l'obtenir auprès de @BotFather",
+    "description": "Authentifiez les utilisateurs avec des comptes Telegram",
+    "enable": "Activer",
+    "enableDescription": "Après activation, les fonctions d'enregistrement, de connexion, de liaison et de dissociation par téléphone mobile seront activées",
+    "title": "Connexion avec Telegram"
+  }
+}

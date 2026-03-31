@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Додати",
+    "batchDelete": "Пакетне видалення",
+    "batchDeleteSuccess": "Успішно видалено {count} клієнтів",
+    "batchDeleteWarning": "Ви впевнені, що хочете видалити вибрані {count} клієнтів?",
+    "cancel": "Скасувати",
+    "confirm": "Підтвердити",
+    "confirmDelete": "Підтвердити видалення",
+    "createSuccess": "Успішно створено",
+    "delete": "Видалити",
+    "deleteFailed": "Не вдалося видалити",
+    "deleteSuccess": "Успішно видалено",
+    "deleteWarning": "Цю операцію не можна скасувати. Ви впевнені, що хочете видалити цього клієнта?",
+    "edit": "Редагувати",
+    "save": "Зберегти",
+    "saveFailed": "Не вдалося зберегти",
+    "update": "Оновити",
+    "updateSuccess": "Успішно оновлено"
+  },
+  "config": {
+    "description": "Керування налаштуваннями системи підписки",
+    "singleSubscriptionMode": "Режим одноразової підписки",
+    "singleSubscriptionModeDescription": "Обмежити користувачів однією активною підпискою. Існуючі підписки не підлягають змінам",
+    "subscriptionDomain": "Домен підписки",
+    "subscriptionDomainDescription": "Користувацький домен для посилань на підписки",
+    "subscriptionDomainPlaceholder": "Введіть домен підписки, по одному в рядку",
+    "subscriptionPath": "Шлях підписки",
+    "subscriptionPathDescription": "Користувацький шлях для кінцевих точок підписки (краща продуктивність після перезавантаження системи)",
+    "subscriptionPathPlaceholder": "Введіть шлях підписки",
+    "title": "Налаштування підписки",
+    "updateError": "Не вдалося оновити",
+    "updateSuccess": "Налаштування успішно оновлено",
+    "userAgentLimit": "Обмеження {userAgent}",
+    "userAgentLimitDescription": "Увімкнути обмеження доступу на основі {userAgent}",
+    "userAgentList": "Білий список {userAgent}",
+    "userAgentListDescription": "Дозволені {userAgent} для доступу до підписки, по одному в рядку. Налаштована програма {userAgent} буде автоматично включена",
+    "userAgentListPlaceholder": "Введіть дозволені {userAgent}, по одному в рядку",
+    "wildcardResolution": "Розв'язання підстановочних знаків",
+    "wildcardResolutionDescription": "Увімкнути розв'язання доменів з підстановочними знаками для підписок"
+  },
+  "form": {
+    "addTitle": "Додати клієнта",
+    "descriptions": {
+      "description": "Детальний опис клієнта",
+      "downloadLink": "URL для завантаження платформи",
+      "icon": "URL іконки або base64 кодування",
+      "name": "Відображуване ім'я клієнта",
+      "outputFormat": "Формат файлу конфігурації підписки",
+      "scheme": {
+        "base64Encoding": "Кодування Base64",
+        "functions": "Підтримує функції:",
+        "jsonStringify": "JSON об'єкт в рядок",
+        "nameVariable": "назва сайту",
+        "title": "Шаблон URL-схеми",
+        "urlEncoding": "Кодування URL",
+        "urlVariable": "URL підписки",
+        "variables": "Підтримує змінні:"
+      },
+      "template": {
+        "description": "Використовуйте синтаксис шаблону Go для генерації файлів конфігурації підписки",
+        "functions": "Функції шаблону:",
+        "if": "умовні оператори",
+        "nodes": "список проксі-нод",
+        "range": "ітерація масивів",
+        "siteName": "ім'я сайту",
+        "sprig": "Бібліотека функцій Sprig (обробка рядків, дати тощо)",
+        "subscribeName": "ім'я підписки",
+        "title": "Синтаксис шаблону Go",
+        "userInfo": "інформація про користувача (трафік, термін дії тощо)",
+        "variables": "Доступні змінні:"
+      },
+      "userAgentPrefix": "Ідентифікатор клієнта для розрізнення різних клієнтів"
+    },
+    "editTitle": "Редагувати клієнта",
+    "fields": {
+      "description": "Опис",
+      "icon": "Іконка",
+      "name": "Ім'я",
+      "outputFormat": "Формат виходу",
+      "scheme": "URL-схема",
+      "template": "Шаблон файлу підписки"
+    },
+    "tabs": {
+      "basic": "Основна інформація",
+      "download": "Завантаження",
+      "template": "Шаблони"
+    },
+    "validation": {
+      "nameRequired": "Ім'я клієнта обов'язкове",
+      "userAgentRequiredSuffix": "обов'язкове"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Текстовий формат",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Управління клієнтами"
+  },
+  "table": {
+    "columns": {
+      "default": "За замовчуванням",
+      "description": "Опис",
+      "name": "Ім'я клієнта",
+      "outputFormat": "Формат виходу",
+      "supportedPlatforms": "Підтримувані платформи"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Не вдалося декодувати: вміст не є дійсним форматом Base64",
+      "decodedContent": "Декодований вміст",
+      "originalContent": "Оригінальний вміст (Base64)"
+    },
+    "failed": "Не вдалося відобразити попередній перегляд",
+    "loading": "Завантаження...",
+    "preview": "Перегляд",
+    "title": "Попередній перегляд шаблону"
+  }
+}

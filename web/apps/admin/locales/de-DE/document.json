@@ -1,0 +1,29 @@
+{
+  "DocumentList": "Dokumentenliste",
+  "actions": "Aktionen",
+  "cancel": "Abbrechen",
+  "confirm": "Bestätigen",
+  "confirmDelete": "Sind Sie sicher, dass Sie löschen möchten?",
+  "create": "Erstellen",
+  "createDocument": "Dokument erstellen",
+  "createSuccess": "Erstellung erfolgreich",
+  "delete": "Löschen",
+  "deleteDescription": "Sobald gelöscht, können die Daten nicht wiederhergestellt werden. Bitte gehen Sie vorsichtig vor.",
+  "deleteSuccess": "Erfolgreich gelöscht",
+  "edit": "Bearbeiten",
+  "editDocument": "Dokument bearbeiten",
+  "form": {
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "content": "Inhalt",
+    "tags": "Kategorien",
+    "tagsPlaceholder": "Bitte mit der Eingabetaste oder Komma (,) trennen, um mehrere Kategorien einzugeben",
+    "title": "Titel",
+    "titlePlaceholder": "Bitte eingeben"
+  },
+  "show": "Anzeigen",
+  "tags": "Kategorien",
+  "title": "Titel",
+  "updateSuccess": "Aktualisierung erfolgreich",
+  "updatedAt": "Aktualisierungszeit"
+}

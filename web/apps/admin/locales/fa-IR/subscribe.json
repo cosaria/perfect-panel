@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "اضافه کردن",
+    "batchDelete": "حذف دسته‌ای",
+    "batchDeleteSuccess": "با موفقیت {count} مشتری حذف شد",
+    "batchDeleteWarning": "آیا مطمئن هستید که می‌خواهید {count} مشتری انتخاب شده را حذف کنید؟",
+    "cancel": "لغو",
+    "confirm": "تأیید",
+    "confirmDelete": "تأیید حذف",
+    "createSuccess": "با موفقیت ایجاد شد",
+    "delete": "حذف",
+    "deleteFailed": "حذف ناموفق بود",
+    "deleteSuccess": "با موفقیت حذف شد",
+    "deleteWarning": "این عملیات قابل بازگشت نیست. آیا مطمئن هستید که می‌خواهید این مشتری را حذف کنید؟",
+    "edit": "ویرایش",
+    "save": "ذخیره",
+    "saveFailed": "ذخیره ناموفق بود",
+    "update": "به‌روزرسانی",
+    "updateSuccess": "با موفقیت به‌روزرسانی شد"
+  },
+  "config": {
+    "description": "مدیریت تنظیمات سیستم اشتراک",
+    "singleSubscriptionMode": "حالت اشتراک تکی",
+    "singleSubscriptionModeDescription": "محدود کردن کاربران به یک اشتراک فعال. اشتراک‌های موجود تحت تأثیر قرار نمی‌گیرند",
+    "subscriptionDomain": "دامنه اشتراک",
+    "subscriptionDomainDescription": "دامنه سفارشی برای لینک‌های اشتراک",
+    "subscriptionDomainPlaceholder": "دامنه اشتراک را وارد کنید، هر کدام در یک خط",
+    "subscriptionPath": "مسیر اشتراک",
+    "subscriptionPathDescription": "مسیر سفارشی برای نقاط پایانی اشتراک (عملکرد بهتر پس از راه‌اندازی مجدد سیستم)",
+    "subscriptionPathPlaceholder": "مسیر اشتراک را وارد کنید",
+    "title": "پیکربندی اشتراک",
+    "updateError": "به‌روزرسانی ناموفق بود",
+    "updateSuccess": "تنظیمات با موفقیت به‌روزرسانی شد",
+    "userAgentLimit": "{userAgent} محدودیت",
+    "userAgentLimitDescription": "فعال‌سازی محدودیت‌های دسترسی بر اساس {userAgent}",
+    "userAgentList": "{userAgent} لیست سفید",
+    "userAgentListDescription": "اجازه دسترسی {userAgent} برای اشتراک، هر کدام در یک خط. برنامه پیکربندی شده {userAgent} به‌طور خودکار شامل خواهد شد",
+    "userAgentListPlaceholder": "اجازه {userAgent} را وارد کنید، هر کدام در یک خط",
+    "wildcardResolution": "حل wildcard",
+    "wildcardResolutionDescription": "فعال‌سازی حل دامنه wildcard برای اشتراک‌ها"
+  },
+  "form": {
+    "addTitle": "اضافه کردن مشتری",
+    "descriptions": {
+      "description": "توضیحات دقیق مشتری",
+      "downloadLink": "URL دانلود پلتفرم",
+      "icon": "URL آیکون یا کدگذاری base64",
+      "name": "نام نمایشی مشتری",
+      "outputFormat": "فرمت فایل پیکربندی اشتراک",
+      "scheme": {
+        "base64Encoding": "کدگذاری Base64",
+        "functions": "توابع را پشتیبانی می‌کند:",
+        "jsonStringify": "شی JSON به رشته",
+        "nameVariable": "نام سایت",
+        "title": "الگوی طرح URL",
+        "urlEncoding": "کدگذاری URL",
+        "urlVariable": "URL اشتراک",
+        "variables": "متغیرها را پشتیبانی می‌کند:"
+      },
+      "template": {
+        "description": "استفاده از نحو قالب Go برای تولید فایل‌های پیکربندی اشتراک",
+        "functions": "توابع قالب:",
+        "if": "عبارات شرطی",
+        "nodes": "لیست گره‌های پروکسی",
+        "range": "تکرار آرایه‌ها",
+        "siteName": "نام سایت",
+        "sprig": "کتابخانه توابع Sprig (پردازش رشته، تاریخ‌ها و غیره)",
+        "subscribeName": "نام اشتراک",
+        "title": "نحو قالب Go",
+        "userInfo": "اطلاعات کاربر (ترافیک، انقضا و غیره)",
+        "variables": "متغیرهای موجود:"
+      },
+      "userAgentPrefix": "شناسایی مشتری برای تمایز مشتریان مختلف"
+    },
+    "editTitle": "ویرایش مشتری",
+    "fields": {
+      "description": "توضیحات",
+      "icon": "آیکون",
+      "name": "نام",
+      "outputFormat": "فرمت خروجی",
+      "scheme": "طرح URL",
+      "template": "قالب فایل اشتراک"
+    },
+    "tabs": {
+      "basic": "اطلاعات پایه",
+      "download": "دانلودها",
+      "template": "قالب‌ها"
+    },
+    "validation": {
+      "nameRequired": "نام مشتری الزامی است",
+      "userAgentRequiredSuffix": "الزامی است"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "متن ساده",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "اندروید",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "لینوکس",
+    "mac": "macOS",
+    "windows": "ویندوز"
+  },
+  "protocol": {
+    "title": "مدیریت مشتری"
+  },
+  "table": {
+    "columns": {
+      "default": "پیش‌فرض",
+      "description": "توضیحات",
+      "name": "نام مشتری",
+      "outputFormat": "فرمت خروجی",
+      "supportedPlatforms": "پلتفرم‌های پشتیبانی شده"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "خطا در رمزگشایی: محتوا فرمت Base64 معتبر نیست",
+      "decodedContent": "محتوای رمزگشایی شده",
+      "originalContent": "محتوای اصلی (Base64)"
+    },
+    "failed": "پیش‌نمایش ناموفق بود",
+    "loading": "در حال بارگذاری...",
+    "preview": "پیش‌نمایش",
+    "title": "پیش‌نمایش الگو"
+  }
+}

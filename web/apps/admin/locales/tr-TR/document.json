@@ -1,0 +1,29 @@
+{
+  "DocumentList": "Belge Listesi",
+  "actions": "eylemler",
+  "cancel": "İptal",
+  "confirm": "Onayla",
+  "confirmDelete": "Silmek istediğinizden emin misiniz?",
+  "create": "oluştur",
+  "createDocument": "Belge Oluştur",
+  "createSuccess": "Başarıyla oluşturuldu",
+  "delete": "sil",
+  "deleteDescription": "Silindikten sonra, veriler geri alınamaz. Lütfen dikkatli olun.",
+  "deleteSuccess": "Başarıyla silindi",
+  "edit": "düzenle",
+  "editDocument": "Belgeyi Düzenle",
+  "form": {
+    "cancel": "İptal",
+    "confirm": "Onayla",
+    "content": "İçerik",
+    "tags": "Kategoriler",
+    "tagsPlaceholder": "Birden fazla kategori girmek için Enter tuşunu veya virgül (,) kullanın",
+    "title": "Başlık",
+    "titlePlaceholder": "Lütfen girin"
+  },
+  "show": "göster",
+  "tags": "Kategoriler",
+  "title": "Başlık",
+  "updateSuccess": "Güncelleme başarılı",
+  "updatedAt": "Güncellenme Zamanı"
+}

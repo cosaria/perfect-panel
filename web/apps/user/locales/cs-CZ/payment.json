@@ -1,0 +1,26 @@
+{
+  "stripe": {
+    "card": {
+      "card_name": "Jméno držitele karty",
+      "card_number": "Číslo karty",
+      "element_error": "Nelze získat prvek karty.",
+      "expiry_date": "Datum expirace",
+      "loading": "Stripe.js není načten. Zkuste to prosím znovu později.",
+      "name_placeholder": "Zadejte jméno držitele karty",
+      "name_required": "Jméno držitele karty je povinné",
+      "pay_button": "Zaplatit nyní",
+      "payment_failed": "Platba se nezdařila, zkuste to prosím znovu.",
+      "processing": "Platba se zpracovává, prosím zkontrolujte výsledek později.",
+      "processing_button": "Zpracovává se...",
+      "secure_notice": "Vaše platební informace jsou bezpečně šifrovány",
+      "security_code": "Bezpečnostní kód",
+      "success_message": "Děkujeme za vaši platbu!",
+      "success_title": "Platba byla úspěšná"
+    },
+    "error": "Došlo k neočekávané chybě",
+    "qrcode": {
+      "alipay": "Naskenujte pomocí Alipay pro platbu",
+      "wechat_pay": "Naskenujte pomocí WeChat pro platbu"
+    }
+  }
+}

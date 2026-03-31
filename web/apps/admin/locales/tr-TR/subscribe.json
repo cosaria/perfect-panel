@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Ekle",
+    "batchDelete": "Toplu Sil",
+    "batchDeleteSuccess": "{count} müşteri başarıyla silindi",
+    "batchDeleteWarning": "Seçilen {count} müşteriyi silmek istediğinize emin misiniz?",
+    "cancel": "İptal",
+    "confirm": "Onayla",
+    "confirmDelete": "Silme İşlemini Onayla",
+    "createSuccess": "Başarıyla oluşturuldu",
+    "delete": "Sil",
+    "deleteFailed": "Silme işlemi başarısız",
+    "deleteSuccess": "Başarıyla silindi",
+    "deleteWarning": "Bu işlem geri alınamaz. Bu müşteriyi silmek istediğinize emin misiniz?",
+    "edit": "Düzenle",
+    "save": "Kaydet",
+    "saveFailed": "Kaydetme işlemi başarısız",
+    "update": "Güncelle",
+    "updateSuccess": "Başarıyla güncellendi"
+  },
+  "config": {
+    "description": "Abonelik sistemi ayarlarını yönetin",
+    "singleSubscriptionMode": "Tek Abonelik Modu",
+    "singleSubscriptionModeDescription": "Kullanıcıları bir aktif abonelikle sınırlayın. Mevcut abonelikler etkilenmez",
+    "subscriptionDomain": "Abonelik Alanı",
+    "subscriptionDomainDescription": "Abonelik bağlantıları için özel alan",
+    "subscriptionDomainPlaceholder": "Abonelik alanını girin, her satıra bir tane",
+    "subscriptionPath": "Abonelik Yolu",
+    "subscriptionPathDescription": "Abonelik uç noktaları için özel yol (sistem yeniden başlatıldığında daha iyi performans)",
+    "subscriptionPathPlaceholder": "Abonelik yolunu girin",
+    "title": "Abonelik Yapılandırması",
+    "updateError": "Güncelleme başarısız",
+    "updateSuccess": "Ayarlar başarıyla güncellendi",
+    "userAgentLimit": "{userAgent} Kısıtlaması",
+    "userAgentLimitDescription": "{userAgent} bazında erişim kısıtlamalarını etkinleştir",
+    "userAgentList": "{userAgent} Beyaz Listesi",
+    "userAgentListDescription": "Abonelik erişimi için izin verilen {userAgent}, her satıra bir tane. Yapılandırılan uygulama {userAgent} otomatik olarak dahil edilecektir",
+    "userAgentListPlaceholder": "İzin verilen {userAgent} girin, her satıra bir tane",
+    "wildcardResolution": "Joker Karakter Çözümü",
+    "wildcardResolutionDescription": "Abonelikler için joker alan çözümünü etkinleştir"
+  },
+  "form": {
+    "addTitle": "Müşteri Ekle",
+    "descriptions": {
+      "description": "Detaylı müşteri açıklaması",
+      "downloadLink": "platform indirme URL'si",
+      "icon": "Simge URL'si veya base64 kodlaması",
+      "name": "Müşteri görüntüleme adı",
+      "outputFormat": "Abonelik yapılandırma dosyası formatı",
+      "scheme": {
+        "base64Encoding": "Base64 kodlaması",
+        "functions": "Fonksiyonları destekler:",
+        "jsonStringify": "JSON nesnesini dizeye çevir",
+        "nameVariable": "site adı",
+        "title": "URL Şeması şablonu",
+        "urlEncoding": "URL kodlaması",
+        "urlVariable": "abonelik URL'si",
+        "variables": "Değişkenleri destekler:"
+      },
+      "template": {
+        "description": "Abonelik yapılandırma dosyalarını oluşturmak için Go şablon söz dizimini kullanın",
+        "functions": "Şablon fonksiyonları:",
+        "if": "koşullu ifadeler",
+        "nodes": "proxy düğüm listesi",
+        "range": "dizileri yinele",
+        "siteName": "site adı",
+        "sprig": "Sprig fonksiyon kütüphanesi (dize işleme, tarihler vb.)",
+        "subscribeName": "abonelik adı",
+        "title": "Go Şablon Söz Dizimi",
+        "userInfo": "kullanıcı bilgisi (trafik, son tarih vb.)",
+        "variables": "Mevcut değişkenler:"
+      },
+      "userAgentPrefix": "Farklı müşterileri ayırt etmek için müşteri tanımlayıcısı"
+    },
+    "editTitle": "Müşteri Düzenle",
+    "fields": {
+      "description": "Açıklama",
+      "icon": "Simge",
+      "name": "İsim",
+      "outputFormat": "Çıktı Formatı",
+      "scheme": "URL Şeması",
+      "template": "Abonelik Dosyası Şablonu"
+    },
+    "tabs": {
+      "basic": "Temel Bilgiler",
+      "download": "İndirmeler",
+      "template": "Şablonlar"
+    },
+    "validation": {
+      "nameRequired": "Müşteri adı gereklidir",
+      "userAgentRequiredSuffix": "gereklidir"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Düz Metin",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Müşteri Yönetimi"
+  },
+  "table": {
+    "columns": {
+      "default": "Varsayılan",
+      "description": "Açıklama",
+      "name": "Müşteri Adı",
+      "outputFormat": "Çıktı Formatı",
+      "supportedPlatforms": "Desteklenen Platformlar"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Çözme başarısız oldu: İçerik geçerli bir Base64 formatında değil",
+      "decodedContent": "Çözülmüş İçerik",
+      "originalContent": "Orijinal İçerik (Base64)"
+    },
+    "failed": "Önizleme başarısız oldu",
+    "loading": "Yükleniyor...",
+    "preview": "Önizleme",
+    "title": "Şablon Önizlemesi"
+  }
+}

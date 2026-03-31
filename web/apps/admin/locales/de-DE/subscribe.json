@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Hinzufügen",
+    "batchDelete": "Massenlöschung",
+    "batchDeleteSuccess": "Erfolgreich {count} Clients gelöscht",
+    "batchDeleteWarning": "Sind Sie sicher, dass Sie die ausgewählten {count} Clients löschen möchten?",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "confirmDelete": "Löschen bestätigen",
+    "createSuccess": "Erfolgreich erstellt",
+    "delete": "Löschen",
+    "deleteFailed": "Löschen fehlgeschlagen",
+    "deleteSuccess": "Erfolgreich gelöscht",
+    "deleteWarning": "Diese Aktion kann nicht rückgängig gemacht werden. Sind Sie sicher, dass Sie diesen Client löschen möchten?",
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "saveFailed": "Speichern fehlgeschlagen",
+    "update": "Aktualisieren",
+    "updateSuccess": "Erfolgreich aktualisiert"
+  },
+  "config": {
+    "description": "Verwalten Sie die Systemeinstellungen für Abonnements",
+    "singleSubscriptionMode": "Einzelnes Abonnement",
+    "singleSubscriptionModeDescription": "Benutzer auf ein aktives Abonnement beschränken. Bestehende Abonnements bleiben unberührt",
+    "subscriptionDomain": "Abonnement-Domain",
+    "subscriptionDomainDescription": "Benutzerdefinierte Domain für Abonnement-Links",
+    "subscriptionDomainPlaceholder": "Geben Sie die Abonnement-Domain ein, eine pro Zeile",
+    "subscriptionPath": "Abonnement-Pfad",
+    "subscriptionPathDescription": "Benutzerdefinierter Pfad für Abonnement-Endpunkte (bessere Leistung nach Systemneustart)",
+    "subscriptionPathPlaceholder": "Geben Sie den Abonnement-Pfad ein",
+    "title": "Abonnementkonfiguration",
+    "updateError": "Aktualisierung fehlgeschlagen",
+    "updateSuccess": "Einstellungen erfolgreich aktualisiert",
+    "userAgentLimit": "{userAgent} Einschränkung",
+    "userAgentLimitDescription": "Zugriffsbeschränkungen basierend auf {userAgent} aktivieren",
+    "userAgentList": "{userAgent} Whitelist",
+    "userAgentListDescription": "Erlaubte {userAgent} für den Abonnementzugriff, eine pro Zeile. Konfigurierte Anwendung {userAgent} wird automatisch hinzugefügt",
+    "userAgentListPlaceholder": "Geben Sie erlaubte {userAgent} ein, eine pro Zeile",
+    "wildcardResolution": "Wildcard-Auflösung",
+    "wildcardResolutionDescription": "Aktivieren Sie die Wildcard-Domainauflösung für Abonnements"
+  },
+  "form": {
+    "addTitle": "Client hinzufügen",
+    "descriptions": {
+      "description": "Detaillierte Clientbeschreibung",
+      "downloadLink": "Plattform-Download-URL",
+      "icon": "Icon-URL oder Base64-Codierung",
+      "name": "Anzeigename des Clients",
+      "outputFormat": "Format der Abonnementkonfigurationsdatei",
+      "scheme": {
+        "base64Encoding": "Base64-Codierung",
+        "functions": "Unterstützt Funktionen:",
+        "jsonStringify": "JSON-Objekt in String",
+        "nameVariable": "Seitenname",
+        "title": "URL-Schema-Vorlage",
+        "urlEncoding": "URL-Codierung",
+        "urlVariable": "Abonnement-URL",
+        "variables": "Unterstützt Variablen:"
+      },
+      "template": {
+        "description": "Verwenden Sie die Go-Template-Syntax zur Erstellung von Abonnementkonfigurationsdateien",
+        "functions": "Template-Funktionen:",
+        "if": "Bedingte Anweisungen",
+        "nodes": "Proxy-Knotenliste",
+        "range": "Arrays durchlaufen",
+        "siteName": "Seitenname",
+        "sprig": "Sprig-Funktionsbibliothek (Stringverarbeitung, Daten usw.)",
+        "subscribeName": "Abonnementname",
+        "title": "Go-Template-Syntax",
+        "userInfo": "Benutzerinformationen (Verkehr, Ablaufdatum usw.)",
+        "variables": "Verfügbare Variablen:"
+      },
+      "userAgentPrefix": "Client-Identifikator zur Unterscheidung verschiedener Clients"
+    },
+    "editTitle": "Client bearbeiten",
+    "fields": {
+      "description": "Beschreibung",
+      "icon": "Icon",
+      "name": "Name",
+      "outputFormat": "Ausgabeformat",
+      "scheme": "URL-Schema",
+      "template": "Abonnementdateivorlage"
+    },
+    "tabs": {
+      "basic": "Basisinformationen",
+      "download": "Downloads",
+      "template": "Vorlagen"
+    },
+    "validation": {
+      "nameRequired": "Clientname ist erforderlich",
+      "userAgentRequiredSuffix": "ist erforderlich"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Reiner Text",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Client-Management"
+  },
+  "table": {
+    "columns": {
+      "default": "Standard",
+      "description": "Beschreibung",
+      "name": "Clientname",
+      "outputFormat": "Ausgabeformat",
+      "supportedPlatforms": "Unterstützte Plattformen"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Dekodierung fehlgeschlagen: Inhalt ist kein gültiges Base64-Format",
+      "decodedContent": "Dekodierter Inhalt",
+      "originalContent": "Ursprünglicher Inhalt (Base64)"
+    },
+    "failed": "Vorschau fehlgeschlagen",
+    "loading": "Wird geladen...",
+    "preview": "Vorschau",
+    "title": "Vorlagenvorschau"
+  }
+}

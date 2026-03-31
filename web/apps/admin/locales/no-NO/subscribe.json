@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Legg til",
+    "batchDelete": "Batch Slett",
+    "batchDeleteSuccess": "Slettet {count} klienter med suksess",
+    "batchDeleteWarning": "Er du sikker på at du vil slette de valgte {count} klientene?",
+    "cancel": "Avbryt",
+    "confirm": "Bekreft",
+    "confirmDelete": "Bekreft sletting",
+    "createSuccess": "Opprettet med suksess",
+    "delete": "Slett",
+    "deleteFailed": "Sletting feilet",
+    "deleteSuccess": "Slettet med suksess",
+    "deleteWarning": "Denne operasjonen kan ikke angres. Er du sikker på at du vil slette denne klienten?",
+    "edit": "Rediger",
+    "save": "Lagre",
+    "saveFailed": "Lagring feilet",
+    "update": "Oppdater",
+    "updateSuccess": "Oppdatert med suksess"
+  },
+  "config": {
+    "description": "Administrer innstillinger for abonnementsystemet",
+    "singleSubscriptionMode": "Enkelt Abonnementsmodus",
+    "singleSubscriptionModeDescription": "Begrens brukere til ett aktivt abonnement. Eksisterende abonnementer påvirkes ikke",
+    "subscriptionDomain": "Abonnementsdomene",
+    "subscriptionDomainDescription": "Egendefinert domene for abonnementslenker",
+    "subscriptionDomainPlaceholder": "Skriv inn abonnementsdomene, ett per linje",
+    "subscriptionPath": "Abonnementsbane",
+    "subscriptionPathDescription": "Egendefinert bane for abonnementsendepunkter (bedre ytelse etter systemrestart)",
+    "subscriptionPathPlaceholder": "Skriv inn abonnementsbane",
+    "title": "Abonnementsinnstillinger",
+    "updateError": "Oppdatering feilet",
+    "updateSuccess": "Innstillinger oppdatert med suksess",
+    "userAgentLimit": "{userAgent} Restriksjon",
+    "userAgentLimitDescription": "Aktiver tilgangsrestriksjoner basert på {userAgent}",
+    "userAgentList": "{userAgent} Hviteliste",
+    "userAgentListDescription": "Tillatte {userAgent} for abonnements tilgang, ett per linje. Konfigurert applikasjon {userAgent} vil bli automatisk inkludert",
+    "userAgentListPlaceholder": "Skriv inn tillatte {userAgent}, ett per linje",
+    "wildcardResolution": "Wildcard-oppløsning",
+    "wildcardResolutionDescription": "Aktiver wildcard-domeneoppløsning for abonnementer"
+  },
+  "form": {
+    "addTitle": "Legg til Klient",
+    "descriptions": {
+      "description": "Detaljert klientbeskrivelse",
+      "downloadLink": "plattforms nedlastings-URL",
+      "icon": "Ikon-URL eller base64-koding",
+      "name": "Klientens visningsnavn",
+      "outputFormat": "Format for abonnementskonfigurasjonsfil",
+      "scheme": {
+        "base64Encoding": "Base64-koding",
+        "functions": "Støtter funksjoner:",
+        "jsonStringify": "JSON-objekt til streng",
+        "nameVariable": "nettstedsnavn",
+        "title": "URL-skjema mal",
+        "urlEncoding": "URL-koding",
+        "urlVariable": "abonnements-URL",
+        "variables": "Støtter variabler:"
+      },
+      "template": {
+        "description": "Bruk Go mal-syntaks for å generere abonnementskonfigurasjonsfiler",
+        "functions": "Malfunksjoner:",
+        "if": "betingede setninger",
+        "nodes": "proxy-nodeliste",
+        "range": "iterere over lister",
+        "siteName": "nettstedsnavn",
+        "sprig": "Sprig funksjonsbibliotek (strengbehandling, datoer, osv.)",
+        "subscribeName": "abonnementsnavn",
+        "title": "Go Mal-syntaks",
+        "userInfo": "brukerinformasjon (trafikk, utløp, osv.)",
+        "variables": "Tilgjengelige variabler:"
+      },
+      "userAgentPrefix": "Klientidentifikator for å skille mellom forskjellige klienter"
+    },
+    "editTitle": "Rediger Klient",
+    "fields": {
+      "description": "Beskrivelse",
+      "icon": "Ikon",
+      "name": "Navn",
+      "outputFormat": "Utdataformat",
+      "scheme": "URL-skjema",
+      "template": "Abonnementsfilmal"
+    },
+    "tabs": {
+      "basic": "Grunnleggende Info",
+      "download": "Nedlastinger",
+      "template": "Mal"
+    },
+    "validation": {
+      "nameRequired": "Klientnavn er påkrevd",
+      "userAgentRequiredSuffix": "er påkrevd"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Ren tekst",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Klientadministrasjon"
+  },
+  "table": {
+    "columns": {
+      "default": "Standard",
+      "description": "Beskrivelse",
+      "name": "Klientnavn",
+      "outputFormat": "Utdataformat",
+      "supportedPlatforms": "Støttede plattformer"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Dekoding feilet: Innholdet er ikke i gyldig Base64-format",
+      "decodedContent": "Dekodet innhold",
+      "originalContent": "Opprinnelig innhold (Base64)"
+    },
+    "failed": "Forhåndsvisning feilet",
+    "loading": "Laster...",
+    "preview": "Forhåndsvisning",
+    "title": "Malemal"
+  }
+}

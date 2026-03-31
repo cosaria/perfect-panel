@@ -1,0 +1,29 @@
+{
+  "DocumentList": "문서 목록",
+  "actions": "작업",
+  "cancel": "취소",
+  "confirm": "확인",
+  "confirmDelete": "삭제하시겠습니까?",
+  "create": "생성",
+  "createDocument": "문서 생성",
+  "createSuccess": "생성 성공",
+  "delete": "삭제",
+  "deleteDescription": "삭제하면 데이터는 복구할 수 없습니다. 신중하게 진행하세요.",
+  "deleteSuccess": "삭제 성공",
+  "edit": "편집",
+  "editDocument": "문서 편집",
+  "form": {
+    "cancel": "취소",
+    "confirm": "확인",
+    "content": "내용",
+    "tags": "카테고리",
+    "tagsPlaceholder": "여러 카테고리를 입력하려면 Enter 키 또는 쉼표(,)로 구분하세요",
+    "title": "제목",
+    "titlePlaceholder": "입력하세요"
+  },
+  "show": "표시",
+  "tags": "카테고리",
+  "title": "제목",
+  "updateSuccess": "업데이트 성공",
+  "updatedAt": "업데이트 시간"
+}

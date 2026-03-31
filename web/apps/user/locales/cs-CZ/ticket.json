@@ -1,0 +1,26 @@
+{
+  "cancel": "Zrušit",
+  "check": "Zkontrolovat",
+  "close": "Zavřít",
+  "closeSuccess": "Úspěšně uzavřeno",
+  "closeWarning": "Po uzavření tiketu nebude možné dále odpovídat.",
+  "confirm": "Potvrdit",
+  "confirmClose": "Opravdu chcete uzavřít tiket?",
+  "createSuccess": "Vytvoření úspěšné",
+  "createTicket": "Vytvořit tiket",
+  "createTicketDescription": "Na váš tiket odpovíme do 24 hodin.",
+  "description": "Popis",
+  "inputPlaceholder": "Zadejte svou zprávu",
+  "reply": "odpověď",
+  "status": {
+    "0": "Stav",
+    "1": "Čeká na zpracování",
+    "2": "Zpracovává se",
+    "3": "Vyřešeno",
+    "4": "Uzavřeno"
+  },
+  "submit": "Odeslat",
+  "ticketList": "Seznam tiketů",
+  "title": "Titul",
+  "updatedAt": "Aktualizováno"
+}

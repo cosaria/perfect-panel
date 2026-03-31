@@ -1,0 +1,37 @@
+{
+  "amount": "Määrä",
+  "couponDiscount": "Kuponkialennus",
+  "discount": "Alennusmäärä",
+  "failed": "epäonnistui",
+  "feeAmount": "Käsittelymaksu",
+  "method": "Maksutapa",
+  "methods": {
+    "alipay_f2f": "Alipay (kasvokkain)",
+    "balance": "Saldo",
+    "epay": "Helppo maksaminen",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "orderNumber": "Tilausnumero",
+  "status": {
+    "0": "Tila",
+    "1": "Odottaa maksua",
+    "2": "Maksettu",
+    "3": "Peruutettu",
+    "4": "Suljettu",
+    "5": "Valmis"
+  },
+  "subscribe": "Tilaa",
+  "subscribePrice": "Tilauksen hinta",
+  "total": "Yhteensä",
+  "tradeNo": "Kaupan numero",
+  "type": {
+    "0": "Tyyppi",
+    "1": "Uusi osto",
+    "2": "Uusiminen",
+    "3": "Liikenteen nollaus",
+    "4": "Lataus"
+  },
+  "updateTime": "Päivitysaika",
+  "user": "käyttäjä"
+}

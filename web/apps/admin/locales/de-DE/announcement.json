@@ -1,0 +1,32 @@
+{
+  "actions": "Aktionen",
+  "announcementList": "Ankündigungsliste",
+  "cancel": "Abbrechen",
+  "confirm": "Bestätigen",
+  "confirmDelete": "Sind Sie sicher, dass Sie löschen möchten?",
+  "content": "Inhalt",
+  "create": "Erstellen",
+  "createAnnouncement": "Ankündigung erstellen",
+  "createSuccess": "Erstellung erfolgreich",
+  "delete": "Löschen",
+  "deleteDescription": "Sobald gelöscht, können die Daten nicht wiederhergestellt werden. Bitte gehen Sie vorsichtig vor.",
+  "deleteSuccess": "Erfolgreich gelöscht",
+  "edit": "Bearbeiten",
+  "editAnnouncement": "Ankündigung bearbeiten",
+  "enable": "Aktivieren",
+  "form": {
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "content": "Inhalt",
+    "contentPlaceholder": "Bitte geben Sie den Ankündigungsinhalt ein (Markdown unterstützt)",
+    "title": "Titel",
+    "titlePlaceholder": "Bitte eingeben"
+  },
+  "hide": "Verbergen",
+  "pinned": "Angeheftet",
+  "popup": "Popup",
+  "show": "Anzeigen",
+  "title": "Titel",
+  "updateSuccess": "Aktualisierung erfolgreich",
+  "updatedAt": "Aktualisierungszeitpunkt"
+}

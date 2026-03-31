@@ -1,0 +1,26 @@
+{
+  "stripe": {
+    "card": {
+      "card_name": "Kortholderens navn",
+      "card_number": "Kortnummer",
+      "element_error": "Kunne ikke hente kortelement.",
+      "expiry_date": "Utløpsdato",
+      "loading": "Stripe.js er ikke lastet inn. Vennligst prøv igjen senere.",
+      "name_placeholder": "Skriv inn kortholderens navn",
+      "name_required": "Kortholderens navn er påkrevd",
+      "pay_button": "Betal Nå",
+      "payment_failed": "Betaling mislyktes, vennligst prøv igjen.",
+      "processing": "Betaling behandles, vennligst sjekk resultatet senere.",
+      "processing_button": "Behandler...",
+      "secure_notice": "Din betalingsinformasjon er sikkert kryptert",
+      "security_code": "Sikkerhetskode",
+      "success_message": "Takk for betalingen!",
+      "success_title": "Betaling Vel Lykket"
+    },
+    "error": "En uventet feil oppstod",
+    "qrcode": {
+      "alipay": "Skann med Alipay for å betale",
+      "wechat_pay": "Skann med WeChat for å betale"
+    }
+  }
+}

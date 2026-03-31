@@ -1,0 +1,29 @@
+{
+  "DocumentList": "Lista dokumentów",
+  "actions": "działania",
+  "cancel": "Anuluj",
+  "confirm": "Potwierdź",
+  "confirmDelete": "Czy na pewno chcesz usunąć?",
+  "create": "Utwórz",
+  "createDocument": "Utwórz dokument",
+  "createSuccess": "Utworzono pomyślnie",
+  "delete": "usuń",
+  "deleteDescription": "Po usunięciu danych nie można ich odzyskać. Proszę postępować ostrożnie.",
+  "deleteSuccess": "Usunięto pomyślnie",
+  "edit": "edytuj",
+  "editDocument": "Edytuj dokument",
+  "form": {
+    "cancel": "Anuluj",
+    "confirm": "Potwierdź",
+    "content": "Treść",
+    "tags": "Kategorie",
+    "tagsPlaceholder": "Proszę użyć klawisza Enter lub przecinka (,) do oddzielenia wielu kategorii",
+    "title": "Tytuł",
+    "titlePlaceholder": "Proszę wprowadzić"
+  },
+  "show": "pokaż",
+  "tags": "Kategorie",
+  "title": "Tytuł",
+  "updateSuccess": "Aktualizacja zakończona pomyślnie",
+  "updatedAt": "Zaktualizowano"
+}

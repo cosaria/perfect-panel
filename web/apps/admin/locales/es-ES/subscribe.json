@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Agregar",
+    "batchDelete": "Eliminar en lote",
+    "batchDeleteSuccess": "Se eliminaron correctamente {count} clientes",
+    "batchDeleteWarning": "¿Está seguro de que desea eliminar los {count} clientes seleccionados?",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "confirmDelete": "Confirmar eliminación",
+    "createSuccess": "Creado con éxito",
+    "delete": "Eliminar",
+    "deleteFailed": "Error al eliminar",
+    "deleteSuccess": "Eliminado con éxito",
+    "deleteWarning": "Esta operación no se puede deshacer. ¿Está seguro de que desea eliminar este cliente?",
+    "edit": "Editar",
+    "save": "Guardar",
+    "saveFailed": "Error al guardar",
+    "update": "Actualizar",
+    "updateSuccess": "Actualizado con éxito"
+  },
+  "config": {
+    "description": "Gestionar la configuración del sistema de suscripción",
+    "singleSubscriptionMode": "Modo de Suscripción Única",
+    "singleSubscriptionModeDescription": "Limitar a los usuarios a una suscripción activa. Las suscripciones existentes no se ven afectadas",
+    "subscriptionDomain": "Dominio de Suscripción",
+    "subscriptionDomainDescription": "Dominio personalizado para enlaces de suscripción",
+    "subscriptionDomainPlaceholder": "Ingrese el dominio de suscripción, uno por línea",
+    "subscriptionPath": "Ruta de Suscripción",
+    "subscriptionPathDescription": "Ruta personalizada para los puntos finales de suscripción (mejor rendimiento después del reinicio del sistema)",
+    "subscriptionPathPlaceholder": "Ingrese la ruta de suscripción",
+    "title": "Configuración de Suscripción",
+    "updateError": "Error al actualizar",
+    "updateSuccess": "Configuraciones actualizadas con éxito",
+    "userAgentLimit": "Restricción de {userAgent}",
+    "userAgentLimitDescription": "Habilitar restricciones de acceso basadas en {userAgent}",
+    "userAgentList": "Lista blanca de {userAgent}",
+    "userAgentListDescription": "Permitir {userAgent} para acceso a suscripción, uno por línea. La aplicación configurada {userAgent} se incluirá automáticamente",
+    "userAgentListPlaceholder": "Ingrese {userAgent} permitidos, uno por línea",
+    "wildcardResolution": "Resolución de comodines",
+    "wildcardResolutionDescription": "Habilitar resolución de dominio comodín para suscripciones"
+  },
+  "form": {
+    "addTitle": "Agregar Cliente",
+    "descriptions": {
+      "description": "Descripción detallada del cliente",
+      "downloadLink": "URL de descarga de la plataforma",
+      "icon": "URL del ícono o codificación base64",
+      "name": "Nombre para mostrar del cliente",
+      "outputFormat": "Formato del archivo de configuración de suscripción",
+      "scheme": {
+        "base64Encoding": "Codificación Base64",
+        "functions": "Soporta funciones:",
+        "jsonStringify": "Objeto JSON a cadena",
+        "nameVariable": "nombre del sitio",
+        "title": "Plantilla de esquema de URL",
+        "urlEncoding": "Codificación de URL",
+        "urlVariable": "URL de suscripción",
+        "variables": "Soporta variables:"
+      },
+      "template": {
+        "description": "Utilizar la sintaxis de plantilla Go para generar archivos de configuración de suscripción",
+        "functions": "Funciones de plantilla:",
+        "if": "declaraciones condicionales",
+        "nodes": "lista de nodos proxy",
+        "range": "iterar arreglos",
+        "siteName": "nombre del sitio",
+        "sprig": "Biblioteca de funciones Sprig (procesamiento de cadenas, fechas, etc.)",
+        "subscribeName": "nombre de la suscripción",
+        "title": "Sintaxis de Plantilla Go",
+        "userInfo": "información del usuario (tráfico, expiración, etc.)",
+        "variables": "Variables disponibles:"
+      },
+      "userAgentPrefix": "Identificador del cliente para distinguir diferentes clientes"
+    },
+    "editTitle": "Editar Cliente",
+    "fields": {
+      "description": "Descripción",
+      "icon": "Ícono",
+      "name": "Nombre",
+      "outputFormat": "Formato de Salida",
+      "scheme": "Esquema de URL",
+      "template": "Plantilla de Archivo de Suscripción"
+    },
+    "tabs": {
+      "basic": "Información Básica",
+      "download": "Descargas",
+      "template": "Plantillas"
+    },
+    "validation": {
+      "nameRequired": "Se requiere el nombre del cliente",
+      "userAgentRequiredSuffix": "es requerido"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Texto Plano",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Gestión de Clientes"
+  },
+  "table": {
+    "columns": {
+      "default": "Predeterminado",
+      "description": "Descripción",
+      "name": "Nombre del Cliente",
+      "outputFormat": "Formato de Salida",
+      "supportedPlatforms": "Plataformas Soportadas"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Error de decodificación: El contenido no es un formato Base64 válido",
+      "decodedContent": "Contenido decodificado",
+      "originalContent": "Contenido original (Base64)"
+    },
+    "failed": "La vista previa ha fallado",
+    "loading": "Cargando...",
+    "preview": "Vista previa",
+    "title": "Vista previa de la plantilla"
+  }
+}

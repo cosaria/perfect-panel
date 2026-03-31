@@ -1,0 +1,8 @@
+[build]
+  command = "bun run build --filter=ppanel-admin-web"
+  publish = "./apps/admin/.next/"
+  [build.environment]
+    NODE_OPTIONS = "--max-old-space-size=8192"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

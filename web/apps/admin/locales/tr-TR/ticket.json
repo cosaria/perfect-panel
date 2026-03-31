@@ -1,0 +1,19 @@
+{
+  "actions": "eylemler",
+  "cancel": "İptal",
+  "check": "Kontrol et",
+  "close": "Kapat",
+  "closeSuccess": "Başarıyla kapatıldı",
+  "closeWarning": "Bir kez kapatıldığında, bu iş emri üzerinde işlem yapılamaz. Lütfen dikkatli olun.",
+  "confirm": "Onayla",
+  "confirmClose": "Kapatmak istediğinizden emin misiniz?",
+  "createdAt": "Oluşturulma Zamanı",
+  "inputPlaceholder": "Sorunuzu girin, en kısa sürede yanıtlayacağız.",
+  "open": "aç",
+  "reply": "cevap",
+  "status": ["Durum", "Takip Edilecek", "Yanıt Bekleniyor", "İşlem Tamamlandı", "Kapalı"],
+  "ticketList": "Bilet Listesi",
+  "title": "Başlık",
+  "updatedAt": "Güncelleme Zamanı",
+  "user": "kullanıcı"
+}

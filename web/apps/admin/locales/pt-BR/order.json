@@ -1,0 +1,37 @@
+{
+  "amount": "Quantia",
+  "couponDiscount": "Desconto do cupom",
+  "discount": "Valor do desconto",
+  "failed": "falha",
+  "feeAmount": "Taxa de Serviço",
+  "method": "Método de pagamento",
+  "methods": {
+    "alipay_f2f": "Alipay (cara a cara)",
+    "balance": "Saldo",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "orderNumber": "Número do Pedido",
+  "status": {
+    "0": "status",
+    "1": "Aguardando pagamento",
+    "2": "Pago",
+    "3": "Cancelado",
+    "4": "Fechado",
+    "5": "Concluído"
+  },
+  "subscribe": "Inscrever-se",
+  "subscribePrice": "Preço de assinatura",
+  "total": "Total",
+  "tradeNo": "Número de transação",
+  "type": {
+    "0": "tipo",
+    "1": "nova compra",
+    "2": "renovação",
+    "3": "redefinir dados",
+    "4": "recarregar"
+  },
+  "updateTime": "Hora de atualização",
+  "user": "usuário"
+}

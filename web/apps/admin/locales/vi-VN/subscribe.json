@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Thêm",
+    "batchDelete": "Xóa hàng loạt",
+    "batchDeleteSuccess": "Đã xóa thành công {count} khách hàng",
+    "batchDeleteWarning": "Bạn có chắc chắn muốn xóa {count} khách hàng đã chọn không?",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "confirmDelete": "Xác nhận xóa",
+    "createSuccess": "Tạo thành công",
+    "delete": "Xóa",
+    "deleteFailed": "Xóa không thành công",
+    "deleteSuccess": "Đã xóa thành công",
+    "deleteWarning": "Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa khách hàng này không?",
+    "edit": "Chỉnh sửa",
+    "save": "Lưu",
+    "saveFailed": "Lưu không thành công",
+    "update": "Cập nhật",
+    "updateSuccess": "Đã cập nhật thành công"
+  },
+  "config": {
+    "description": "Quản lý cài đặt hệ thống đăng ký",
+    "singleSubscriptionMode": "Chế độ Đăng ký Đơn",
+    "singleSubscriptionModeDescription": "Giới hạn người dùng chỉ một đăng ký hoạt động. Các đăng ký hiện có không bị ảnh hưởng",
+    "subscriptionDomain": "Miền Đăng ký",
+    "subscriptionDomainDescription": "Miền tùy chỉnh cho các liên kết đăng ký",
+    "subscriptionDomainPlaceholder": "Nhập miền đăng ký, mỗi miền một dòng",
+    "subscriptionPath": "Đường dẫn Đăng ký",
+    "subscriptionPathDescription": "Đường dẫn tùy chỉnh cho các điểm cuối đăng ký (hiệu suất tốt hơn sau khi khởi động lại hệ thống)",
+    "subscriptionPathPlaceholder": "Nhập đường dẫn đăng ký",
+    "title": "Cấu hình Đăng ký",
+    "updateError": "Cập nhật không thành công",
+    "updateSuccess": "Cài đặt đã được cập nhật thành công",
+    "userAgentLimit": "Hạn chế {userAgent}",
+    "userAgentLimitDescription": "Kích hoạt hạn chế truy cập dựa trên {userAgent}",
+    "userAgentList": "Danh sách trắng {userAgent}",
+    "userAgentListDescription": "Cho phép {userAgent} truy cập đăng ký, mỗi dòng một {userAgent}. Ứng dụng đã cấu hình {userAgent} sẽ được tự động bao gồm",
+    "userAgentListPlaceholder": "Nhập {userAgent} được phép, mỗi dòng một",
+    "wildcardResolution": "Giải quyết ký tự đại diện",
+    "wildcardResolutionDescription": "Kích hoạt giải quyết miền ký tự đại diện cho các đăng ký"
+  },
+  "form": {
+    "addTitle": "Thêm Khách hàng",
+    "descriptions": {
+      "description": "Mô tả chi tiết về khách hàng",
+      "downloadLink": "URL tải xuống nền tảng",
+      "icon": "URL biểu tượng hoặc mã hóa base64",
+      "name": "Tên hiển thị của khách hàng",
+      "outputFormat": "Định dạng tệp cấu hình đăng ký",
+      "scheme": {
+        "base64Encoding": "Mã hóa Base64",
+        "functions": "Hỗ trợ các hàm:",
+        "jsonStringify": "Đối tượng JSON thành chuỗi",
+        "nameVariable": "tên trang",
+        "title": "Mẫu mô hình URL",
+        "urlEncoding": "Mã hóa URL",
+        "urlVariable": "URL đăng ký",
+        "variables": "Hỗ trợ các biến:"
+      },
+      "template": {
+        "description": "Sử dụng cú pháp mẫu Go để tạo các tệp cấu hình đăng ký",
+        "functions": "Các hàm mẫu:",
+        "if": "câu lệnh điều kiện",
+        "nodes": "danh sách các nút proxy",
+        "range": "lặp qua các mảng",
+        "siteName": "tên trang",
+        "sprig": "Thư viện hàm Sprig (xử lý chuỗi, ngày tháng, v.v.)",
+        "subscribeName": "tên đăng ký",
+        "title": "Cú pháp Mẫu Go",
+        "userInfo": "thông tin người dùng (lưu lượng, hết hạn, v.v.)",
+        "variables": "Các biến có sẵn:"
+      },
+      "userAgentPrefix": "Định danh khách hàng để phân biệt các khách hàng khác nhau"
+    },
+    "editTitle": "Chỉnh sửa Khách hàng",
+    "fields": {
+      "description": "Mô tả",
+      "icon": "Biểu tượng",
+      "name": "Tên",
+      "outputFormat": "Định dạng Đầu ra",
+      "scheme": "Mô hình URL",
+      "template": "Mẫu Tệp Đăng ký"
+    },
+    "tabs": {
+      "basic": "Thông tin Cơ bản",
+      "download": "Tải xuống",
+      "template": "Mẫu"
+    },
+    "validation": {
+      "nameRequired": "Tên khách hàng là bắt buộc",
+      "userAgentRequiredSuffix": "là bắt buộc"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "Văn bản thuần",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "Quản lý Khách hàng"
+  },
+  "table": {
+    "columns": {
+      "default": "Mặc định",
+      "description": "Mô tả",
+      "name": "Tên Khách hàng",
+      "outputFormat": "Định dạng Đầu ra",
+      "supportedPlatforms": "Nền tảng Hỗ trợ"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "Giải mã không thành công: Nội dung không phải định dạng Base64 hợp lệ",
+      "decodedContent": "Nội dung đã giải mã",
+      "originalContent": "Nội dung gốc (Base64)"
+    },
+    "failed": "Xem trước không thành công",
+    "loading": "Đang tải...",
+    "preview": "Xem trước",
+    "title": "Xem trước mẫu"
+  }
+}

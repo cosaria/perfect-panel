@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "アカウント設定",
+    "newPassword": "新しいパスワード",
+    "passwordMismatch": "パスワードが一致しません",
+    "repeatNewPassword": "新しいパスワードを再入力",
+    "updatePassword": "パスワードを更新",
+    "updateSuccess": "更新成功"
+  },
+  "notify": {
+    "balanceChange": "残高の変更",
+    "channels": "通知チャネル",
+    "finance": "ファイナンス",
+    "login": "ログイン",
+    "notificationSettings": "通知設定",
+    "notificationTypes": "通知タイプ",
+    "save": "変更を保存",
+    "subscribe": "購読する",
+    "updateSuccess": "更新成功"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Appleでサインイン"
+    },
+    "bind": "接続",
+    "bindFailed": "接続に失敗しました",
+    "bindMobile": "携帯電話を接続",
+    "bindSuccess": "接続に成功しました",
+    "change": "変更",
+    "confirm": "確認",
+    "device": {
+      "description": "デバイスIDでサインイン"
+    },
+    "email": {
+      "description": "メールアドレスをリンクする",
+      "invalid": "有効なメールアドレスを入力してください",
+      "placeholder": "メールアドレスを入力してください",
+      "title": "メールアドレスの変更"
+    },
+    "facebook": {
+      "description": "Facebookでサインイン"
+    },
+    "github": {
+      "description": "GitHubでサインイン"
+    },
+    "google": {
+      "description": "Googleでサインイン"
+    },
+    "mobile": {
+      "description": "携帯番号をリンクする",
+      "invalid": "有効な携帯番号を入力してください",
+      "placeholder": "携帯番号を入力してください",
+      "title": "携帯電話番号の変更"
+    },
+    "phone": {
+      "description": "電話番号をリンクする",
+      "placeholder": "電話番号を入力してください",
+      "title": "電話番号の変更"
+    },
+    "save": "保存",
+    "telegram": {
+      "description": "Telegramでサインイン"
+    },
+    "title": "接続されたアカウント",
+    "unbind": "切断",
+    "update": "更新",
+    "updateSuccess": "更新成功"
+  }
+}

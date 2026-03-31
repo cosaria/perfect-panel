@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "Configuración de la cuenta",
+    "newPassword": "Nueva contraseña",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "repeatNewPassword": "Repetir nueva contraseña",
+    "updatePassword": "Actualizar contraseña",
+    "updateSuccess": "Actualización exitosa"
+  },
+  "notify": {
+    "balanceChange": "Cambio de Saldo",
+    "channels": "Canales de Notificación",
+    "finance": "Finanzas",
+    "login": "Iniciar Sesión",
+    "notificationSettings": "Configuración de notificaciones",
+    "notificationTypes": "Tipos de Notificación",
+    "save": "Guardar Cambios",
+    "subscribe": "Suscribirse",
+    "updateSuccess": "Actualización exitosa"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Iniciar sesión con Apple"
+    },
+    "bind": "Conectar",
+    "bindFailed": "Error al conectar",
+    "bindMobile": "Conectar móvil",
+    "bindSuccess": "Conectado con éxito",
+    "change": "Cambiar",
+    "confirm": "Confirmar",
+    "device": {
+      "description": "Iniciar sesión con el ID del dispositivo"
+    },
+    "email": {
+      "description": "Vincula tu dirección de correo electrónico",
+      "invalid": "Por favor, ingresa una dirección de correo electrónico válida",
+      "placeholder": "Ingresa tu dirección de correo electrónico",
+      "title": "Cambiar Correo Electrónico"
+    },
+    "facebook": {
+      "description": "Iniciar sesión con Facebook"
+    },
+    "github": {
+      "description": "Iniciar sesión con GitHub"
+    },
+    "google": {
+      "description": "Iniciar sesión con Google"
+    },
+    "mobile": {
+      "description": "Vincula tu número móvil",
+      "invalid": "Por favor, ingresa un número móvil válido",
+      "placeholder": "Ingresa tu número móvil",
+      "title": "Cambiar número de móvil"
+    },
+    "phone": {
+      "description": "Vincula tu número de teléfono",
+      "placeholder": "Ingresa tu número de teléfono",
+      "title": "Cambiar Teléfono"
+    },
+    "save": "Guardar",
+    "telegram": {
+      "description": "Iniciar sesión con Telegram"
+    },
+    "title": "Cuentas Conectadas",
+    "unbind": "Desconectar",
+    "update": "Actualizar",
+    "updateSuccess": "Actualización Exitosa"
+  }
+}

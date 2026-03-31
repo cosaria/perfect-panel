@@ -1,0 +1,206 @@
+{
+  "apple": {
+    "clientId": "服務編號",
+    "clientIdDescription": "Apple 服務 ID，您可以從 Apple 開發者門戶獲取",
+    "clientSecret": "私密金鑰",
+    "clientSecretDescription": "用於與 Apple 認證的私鑰內容（.p8 文件）",
+    "description": "使用 Apple 帳戶進行身份驗證",
+    "enable": "啟用",
+    "enableDescription": "啟用後，用戶可以使用其 Apple ID 登入",
+    "keyId": "鍵 ID",
+    "keyIdDescription": "您在 Apple 開發者平台上的私鑰 ID",
+    "redirectUri": "重定向網址",
+    "redirectUriDescription": "請填寫成功通過 Apple 認證後重定向的 URL 的 API 地址。請勿在末尾使用 /。",
+    "teamId": "團隊 ID",
+    "teamIdDescription": "Apple 開發者團隊 ID",
+    "title": "Apple 登入"
+  },
+  "common": {
+    "cancel": "取消",
+    "save": "儲存",
+    "saveFailed": "儲存失敗",
+    "saveSuccess": "儲存成功"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "blockVirtualMachine": "阻止虛擬機",
+    "blockVirtualMachineDescription": "啟用後，設備將無法在虛擬機或模擬器上運行",
+    "communicationKey": "通訊密鑰",
+    "communicationKeyDescription": "通訊密鑰用於設備與伺服器之間的安全通訊",
+    "description": "使用設備識別碼進行身份驗證",
+    "enable": "啟用",
+    "enableDescription": "啟用後，支持多個設備識別碼，例如 IMEI/IDFA/IDFV/AndroidID/Mac 地址，用於登錄和註冊",
+    "enableSecurity": "啟用通訊加密",
+    "enableSecurityDescription": "啟用後，設備與伺服器之間的通訊將被加密",
+    "showAds": "顯示廣告",
+    "showAdsDescription": "啟用後，設備上將顯示廣告",
+    "title": "設備身份驗證"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "basicSettings": "基本設置",
+    "description": "使用電子郵件地址進行身份驗證",
+    "emailSuffixWhitelist": "電郵後綴白名單",
+    "emailSuffixWhitelistDescription": "啟用後，只有在列表中的後綴的電郵才能註冊",
+    "emailVerification": "電郵驗證",
+    "emailVerificationDescription": "啟用後，用戶需要驗證他們的電郵",
+    "enable": "啟用",
+    "enableDescription": "啟用後，將開啟電子郵件註冊、登錄、綁定及解除綁定功能",
+    "expirationEmailTemplate": "到期通知模板",
+    "expirationTemplate": "到期通知",
+    "inputPlaceholder": "輸入值...",
+    "logs": "日誌",
+    "logsDescription": "查看已發送電子郵件的歷史記錄及其狀態",
+    "maintenanceEmailTemplate": "維護通知模板",
+    "maintenanceTemplate": "維護通知",
+    "sendFailure": "測試電郵發送失敗，請檢查設定。",
+    "sendSuccess": "測試電郵已成功發送。",
+    "sendTestEmail": "發送測試電郵",
+    "sendTestEmailDescription": "發送測試電郵以驗證配置。",
+    "senderAddress": "寄件人地址",
+    "senderAddressDescription": "用於發送電子郵件的預設電郵地址。",
+    "smtpAccount": "SMTP 帳戶",
+    "smtpAccountDescription": "用於身份驗證的電郵帳戶。",
+    "smtpEncryptionMethod": "SMTP 加密方法",
+    "smtpEncryptionMethodDescription": "選擇是否啟用SSL/TLS加密。",
+    "smtpPassword": "SMTP 密碼",
+    "smtpPasswordDescription": "SMTP 帳戶的密碼。",
+    "smtpServerAddress": "SMTP 伺服器地址",
+    "smtpServerAddressDescription": "指定用於發送電子郵件的伺服器地址。",
+    "smtpServerPort": "SMTP 伺服器端口",
+    "smtpServerPortDescription": "指定用於連接到 SMTP 伺服器的端口。",
+    "smtpSettings": "SMTP 設置",
+    "templateVariables": {
+      "code": {
+        "description": "6 位數驗證碼",
+        "title": "驗證碼"
+      },
+      "expire": {
+        "description": "驗證碼有效時間（分鐘）",
+        "title": "有效期"
+      },
+      "expireDate": {
+        "description": "服務到期日期，提醒用戶服務何時到期",
+        "title": "到期日期"
+      },
+      "maintenanceDate": {
+        "description": "系統維護日期，顯示維護開始日期",
+        "title": "維護日期"
+      },
+      "maintenanceTime": {
+        "description": "預估維護時間，顯示維護時間段或持續時間",
+        "title": "維護時長"
+      },
+      "siteLogo": {
+        "description": "網站標誌圖片 URL",
+        "title": "網站標誌"
+      },
+      "siteName": {
+        "description": "當前網站名稱",
+        "title": "網站名稱"
+      },
+      "title": "電子郵件模板變數",
+      "type": {
+        "conditionalSyntax": "支持基於類型切換內容的條件語法",
+        "description": "電子郵件類型標識符，1 代表註冊驗證碼，其他代表密碼重置驗證碼",
+        "title": "電子郵件類型"
+      }
+    },
+    "title": "電子郵件身份驗證",
+    "trafficExceedEmailTemplate": "流量限制通知模板",
+    "trafficTemplate": "流量限制",
+    "verifyEmailTemplate": "驗證電子郵件模板",
+    "verifyTemplate": "驗證電子郵件",
+    "whitelistSuffixes": "白名單後綴",
+    "whitelistSuffixesDescription": "用於註冊時的電郵驗證；每行一個",
+    "whitelistSuffixesPlaceholder": "輸入電郵後綴，每行一個"
+  },
+  "facebook": {
+    "clientId": "客戶 ID",
+    "clientIdDescription": "來自 Facebook 開發者控制台的 Facebook 應用程式 ID",
+    "clientSecret": "客戶密碼",
+    "clientSecretDescription": "來自 Facebook 開發者控制台的 Facebook 應用程式密碼",
+    "description": "使用 Facebook 帳戶進行身份驗證",
+    "enable": "啟用",
+    "enableDescription": "啟用後，用戶可以使用他們的 Facebook 帳戶登入",
+    "title": "Facebook 登入"
+  },
+  "github": {
+    "clientId": "GitHub 客戶端 ID",
+    "clientIdDescription": "來自您的 GitHub OAuth 應用程式設定的客戶端 ID",
+    "clientSecret": "GitHub 客戶端密碼",
+    "clientSecretDescription": "來自您 GitHub OAuth 應用程式設定的客戶端密碼",
+    "description": "使用 GitHub 帳戶進行身份驗證",
+    "enable": "啟用 GitHub 認證",
+    "enableDescription": "允許用戶使用他們的 GitHub 帳戶登入",
+    "title": "GitHub 登入"
+  },
+  "google": {
+    "clientId": "客戶 ID",
+    "clientIdDescription": "來自 Google Cloud Console 的 Google OAuth 2.0 客戶端 ID",
+    "clientSecret": "客戶密碼",
+    "clientSecretDescription": "來自 Google Cloud Console 的 Google OAuth 2.0 客戶端密鑰",
+    "description": "使用 Google 帳戶進行身份驗證",
+    "enable": "啟用",
+    "enableDescription": "啟用後，用戶可以使用他們的 Google 帳戶登入",
+    "title": "Google 登入"
+  },
+  "log": {
+    "content": "內容",
+    "createdAt": "創建於",
+    "emailLog": "電子郵件日誌",
+    "mobileLog": "手機日誌",
+    "platform": "平台",
+    "sendFailed": "發送失敗",
+    "sendSuccess": "發送成功",
+    "status": "狀態",
+    "subject": "主題",
+    "to": "收件人",
+    "updatedAt": "更新於"
+  },
+  "phone": {
+    "accessLabel": "訪問",
+    "applyPlatform": "申請平台",
+    "description": "使用電話號碼進行身份驗證",
+    "enable": "啟用",
+    "enableTip": "啟用後，將啟用手機註冊、登入、綁定和解綁功能",
+    "endpointLabel": "端點",
+    "logs": "日誌",
+    "logsDescription": "查看已發送 SMS 消息的歷史記錄及其狀態",
+    "phoneNumberLabel": "電話號碼",
+    "placeholders": {
+      "template": "您的驗證碼是{code}，有效期為5分鐘"
+    },
+    "platform": "SMS 平台",
+    "platformConfigTip": "請填寫提供的 {key} 配置",
+    "platformTip": "請選擇短信平台",
+    "secretLabel": "密鑰",
+    "sendFailed": "發送失敗",
+    "sendSuccess": "發送成功",
+    "settings": "設定",
+    "signNameLabel": "簽名名稱",
+    "template": "短信範本",
+    "templateCodeLabel": "模板代碼",
+    "templateTip": "請填寫短信模板，保持 {code} 在中間，否則短信功能將無法運作",
+    "testSms": "發送測試短信",
+    "testSmsPhone": "輸入電話號碼",
+    "testSmsTip": "發送測試短信以驗證您的配置",
+    "title": "電話身份驗證",
+    "updateSuccess": "更新成功",
+    "whitelistAreaCode": "白名單區域代碼",
+    "whitelistAreaCodeTip": "請輸入白名單區域代碼，例如：1, 852, 886, 888",
+    "whitelistValidation": "白名單驗證",
+    "whitelistValidationTip": "啟用後，只有白名單中的區域代碼可以發送短信"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "clientId": "機械人 ID",
+    "clientIdDescription": "Telegram 機械人 ID，你可以從 @BotFather 獲取",
+    "clientSecret": "機械人令牌",
+    "clientSecretDescription": "Telegram 機械人令牌，你可以從 @BotFather 獲取",
+    "description": "使用 Telegram 帳戶進行身份驗證",
+    "enable": "啟用",
+    "enableDescription": "啟用後，將開啟手機註冊、登入、綁定及解除綁定功能",
+    "title": "Telegram 登入"
+  }
+}

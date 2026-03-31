@@ -1,0 +1,11 @@
+{
+  "commissionInfo": "Statistikk over beløp, inviteringsprovisjon overføres automatisk til saldoen",
+  "commissionRate": "Provisjonssats",
+  "copyInviteLink": "Kopier invitasjonslenke",
+  "copySuccess": "Kopiering vellykket",
+  "inviteCode": "invitasjonskode",
+  "inviteRecords": "Invitasjonsoppføringer",
+  "registrationTime": "Registreringstid",
+  "totalCommission": "Totalprovisjon",
+  "userIdentifier": "Brukeridentifikator"
+}

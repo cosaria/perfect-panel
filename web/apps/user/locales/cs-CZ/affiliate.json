@@ -1,0 +1,11 @@
+{
+  "commissionInfo": "Statistická částka, provize za pozvání je automaticky převedena na zůstatek",
+  "commissionRate": "Provize",
+  "copyInviteLink": "Zkopírovat odkaz na pozvánku",
+  "copySuccess": "Kopírování úspěšné",
+  "inviteCode": "pozvánkový kód",
+  "inviteRecords": "Záznamy o pozvání",
+  "registrationTime": "Čas registrace",
+  "totalCommission": "Celková provize",
+  "userIdentifier": "Identifikátor uživatele"
+}

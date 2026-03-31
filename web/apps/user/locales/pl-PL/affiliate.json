@@ -1,0 +1,11 @@
+{
+  "commissionInfo": "Kwota statystyczna, prowizja za zaproszenie automatycznie przenoszona do salda",
+  "commissionRate": "Stawka prowizji",
+  "copyInviteLink": "Skopiuj link zaproszenia",
+  "copySuccess": "Skopiowano pomyślnie",
+  "inviteCode": "kodZaproszenia",
+  "inviteRecords": "Rekordy zaproszeń",
+  "registrationTime": "Czas rejestracji",
+  "totalCommission": "Łączna prowizja",
+  "userIdentifier": "Identyfikator Użytkownika"
+}

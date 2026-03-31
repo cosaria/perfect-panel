@@ -1,0 +1,69 @@
+{
+  "accountSettings": {
+    "accountSettings": "Kontoeinstellungen",
+    "newPassword": "Neues Passwort",
+    "passwordMismatch": "Die Passwörter stimmen nicht überein",
+    "repeatNewPassword": "Neues Passwort wiederholen",
+    "updatePassword": "Passwort aktualisieren",
+    "updateSuccess": "Erfolgreich aktualisiert"
+  },
+  "notify": {
+    "balanceChange": "Kontostandsänderung",
+    "channels": "Benachrichtigungskanäle",
+    "finance": "Finanzen",
+    "login": "Anmelden",
+    "notificationSettings": "Benachrichtigungseinstellungen",
+    "notificationTypes": "Benachrichtigungstypen",
+    "save": "Änderungen speichern",
+    "subscribe": "Abonnieren",
+    "updateSuccess": "Erfolgreich aktualisiert"
+  },
+  "thirdParty": {
+    "apple": {
+      "description": "Mit Apple anmelden"
+    },
+    "bind": "Verbinden",
+    "bindFailed": "Verbindung fehlgeschlagen",
+    "bindMobile": "Handy verbinden",
+    "bindSuccess": "Erfolgreich verbunden",
+    "change": "Ändern",
+    "confirm": "Bestätigen",
+    "device": {
+      "description": "Mit Geräte-ID anmelden"
+    },
+    "email": {
+      "description": "Verknüpfen Sie Ihre E-Mail-Adresse",
+      "invalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+      "placeholder": "Geben Sie Ihre E-Mail-Adresse ein",
+      "title": "E-Mail ändern"
+    },
+    "facebook": {
+      "description": "Mit Facebook anmelden"
+    },
+    "github": {
+      "description": "Mit GitHub anmelden"
+    },
+    "google": {
+      "description": "Mit Google anmelden"
+    },
+    "mobile": {
+      "description": "Verknüpfen Sie Ihre Handynummer",
+      "invalid": "Bitte geben Sie eine gültige Handynummer ein",
+      "placeholder": "Geben Sie Ihre Handynummer ein",
+      "title": "Handynummer ändern"
+    },
+    "phone": {
+      "description": "Verknüpfen Sie Ihre Telefonnummer",
+      "placeholder": "Geben Sie Ihre Telefonnummer ein",
+      "title": "Telefonnummer ändern"
+    },
+    "save": "Speichern",
+    "telegram": {
+      "description": "Mit Telegram anmelden"
+    },
+    "title": "Verbundene Konten",
+    "unbind": "Trennen",
+    "update": "Aktualisieren",
+    "updateSuccess": "Aktualisierung erfolgreich"
+  }
+}

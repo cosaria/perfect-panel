@@ -1,0 +1,26 @@
+{
+  "cancel": "취소",
+  "check": "확인",
+  "close": "닫기",
+  "closeSuccess": "작업 티켓이 성공적으로 닫혔습니다",
+  "closeWarning": "작업을 닫으면 더 이상 답장할 수 없습니다.",
+  "confirm": "확인",
+  "confirmClose": "작업 주문을 닫으시겠습니까?",
+  "createSuccess": "생성 성공",
+  "createTicket": "티켓 생성",
+  "createTicketDescription": "티켓은 24시간 이내에 응답됩니다.",
+  "description": "설명",
+  "inputPlaceholder": "메시지를 입력하세요",
+  "reply": "답장",
+  "status": {
+    "0": "상태",
+    "1": "대기 중",
+    "2": "처리 중",
+    "3": "해결됨",
+    "4": "닫힘"
+  },
+  "submit": "제출",
+  "ticketList": "티켓 목록",
+  "title": "제목",
+  "updatedAt": "업데이트 시간"
+}

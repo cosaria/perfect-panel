@@ -1,0 +1,11 @@
+{
+  "commissionInfo": "금액 통계, 초대 커미션이 자동으로 잔액에 전환됩니다.",
+  "commissionRate": "커미션 비율",
+  "copyInviteLink": "초대 링크 복사",
+  "copySuccess": "복사 성공",
+  "inviteCode": "초대 코드",
+  "inviteRecords": "초대 기록",
+  "registrationTime": "등록 시간",
+  "totalCommission": "총 수수료",
+  "userIdentifier": "사용자 식별자"
+}

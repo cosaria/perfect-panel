@@ -1,0 +1,32 @@
+{
+  "actions": "műveletek",
+  "announcementList": "Hirdetmények listája",
+  "cancel": "Mégse",
+  "confirm": "Megerősítés",
+  "confirmDelete": "Biztosan törölni szeretné?",
+  "content": "tartalom",
+  "create": "Létrehozás",
+  "createAnnouncement": "Hirdetmény létrehozása",
+  "createSuccess": "Sikeres létrehozás",
+  "delete": "törlés",
+  "deleteDescription": "Ha törli, az adatok nem állíthatók vissza. Kérjük, járjon el körültekintően.",
+  "deleteSuccess": "Sikeres törlés",
+  "edit": "szerkesztés",
+  "editAnnouncement": "Hirdetmény szerkesztése",
+  "enable": "Engedélyezés",
+  "form": {
+    "cancel": "Mégse",
+    "confirm": "Megerősít",
+    "content": "Tartalom",
+    "contentPlaceholder": "Kérjük, adja meg a közlemény tartalmát (támogatja a Markdown-t)",
+    "title": "Cím",
+    "titlePlaceholder": "Kérjük, adja meg"
+  },
+  "hide": "elrejt",
+  "pinned": "Kiemelt",
+  "popup": "Felugró ablak",
+  "show": "Megjelenítés",
+  "title": "Cím",
+  "updateSuccess": "Sikeres frissítés",
+  "updatedAt": "Frissítve"
+}

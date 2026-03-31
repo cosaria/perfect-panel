@@ -1,0 +1,47 @@
+{
+  "balanceRecharge": "Nạp Tiền Vào Tài Khoản",
+  "cancel": "Hủy",
+  "createdAt": "Thời gian tạo",
+  "detail": "Chi tiết",
+  "goToPayment": "Đi đến thanh toán",
+  "methods": {
+    "alipay_f2f": "Alipay (Giao dịch trực tiếp)",
+    "balance": "Số dư",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "name": "Tên",
+  "orderClosed": "Đơn hàng đã đóng",
+  "orderList": "Danh sách đơn hàng",
+  "orderNo": "Số đơn hàng",
+  "orderNumber": "Số đơn hàng",
+  "payment": "Thanh toán",
+  "paymentAmount": "Số tiền thanh toán",
+  "paymentMethod": "Phương Thức Thanh Toán",
+  "paymentSuccess": "Thanh toán thành công",
+  "productList": "Danh sách sản phẩm",
+  "rechargeAmount": "Số Tiền Nạp",
+  "resetPrice": "Đặt Lại Giá",
+  "resetTraffic": "Đặt Lại Lưu Lượng",
+  "scanToPay": "Vui lòng quét mã để thanh toán",
+  "status": {
+    "0": "Trạng thái",
+    "1": "Chờ thanh toán",
+    "2": "Đã thanh toán",
+    "3": "Đã hủy",
+    "4": "Đã đóng",
+    "5": "Đã hoàn thành"
+  },
+  "subscribeNow": "Đăng ký ngay",
+  "timeExpired": "Thời gian thanh toán đã hết",
+  "type": {
+    "0": "Loại",
+    "1": "Mua mới",
+    "2": "Gia hạn",
+    "3": "Đặt lại lưu lượng",
+    "4": "Nạp tiền"
+  },
+  "viewDocument": "Xem tài liệu",
+  "waitingForPayment": "Đang chờ thanh toán"
+}

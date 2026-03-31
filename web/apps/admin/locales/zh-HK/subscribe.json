@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "添加",
+    "batchDelete": "批量刪除",
+    "batchDeleteSuccess": "成功刪除 {count} 個客戶端",
+    "batchDeleteWarning": "您確定要刪除選定的 {count} 個客戶端嗎？",
+    "cancel": "取消",
+    "confirm": "確認",
+    "confirmDelete": "確認刪除",
+    "createSuccess": "創建成功",
+    "delete": "刪除",
+    "deleteFailed": "刪除失敗",
+    "deleteSuccess": "刪除成功",
+    "deleteWarning": "此操作無法撤銷。您確定要刪除此客戶端嗎？",
+    "edit": "編輯",
+    "save": "保存",
+    "saveFailed": "保存失敗",
+    "update": "更新",
+    "updateSuccess": "更新成功"
+  },
+  "config": {
+    "description": "管理訂閱系統設置",
+    "singleSubscriptionMode": "單一訂閱模式",
+    "singleSubscriptionModeDescription": "限制用戶只能擁有一個有效的訂閱。現有訂閱不受影響",
+    "subscriptionDomain": "訂閱域名",
+    "subscriptionDomainDescription": "訂閱鏈接的自定義域名",
+    "subscriptionDomainPlaceholder": "輸入訂閱域名，每行一個",
+    "subscriptionPath": "訂閱路徑",
+    "subscriptionPathDescription": "訂閱端點的自定義路徑（系統重啟後性能更佳）",
+    "subscriptionPathPlaceholder": "輸入訂閱路徑",
+    "title": "訂閱配置",
+    "updateError": "更新失敗",
+    "updateSuccess": "設置更新成功",
+    "userAgentLimit": "{userAgent} 限制",
+    "userAgentLimitDescription": "根據 {userAgent} 啟用訪問限制",
+    "userAgentList": "{userAgent} 白名單",
+    "userAgentListDescription": "允許的 {userAgent} 用於訂閱訪問，每行一個。配置的應用 {userAgent} 將自動包含",
+    "userAgentListPlaceholder": "輸入允許的 {userAgent}，每行一個",
+    "wildcardResolution": "通配符解析",
+    "wildcardResolutionDescription": "啟用訂閱的通配符域名解析"
+  },
+  "form": {
+    "addTitle": "添加客戶端",
+    "descriptions": {
+      "description": "詳細的客戶端描述",
+      "downloadLink": "平台下載 URL",
+      "icon": "圖標 URL 或 base64 編碼",
+      "name": "客戶端顯示名稱",
+      "outputFormat": "訂閱配置文件格式",
+      "scheme": {
+        "base64Encoding": "Base64 編碼",
+        "functions": "支持功能：",
+        "jsonStringify": "JSON 物件轉字串",
+        "nameVariable": "網站名稱",
+        "title": "網址方案範本",
+        "urlEncoding": "網址編碼",
+        "urlVariable": "訂閱網址",
+        "variables": "支持變數："
+      },
+      "template": {
+        "description": "使用 Go 模板語法生成訂閱配置文件",
+        "functions": "模板函數：",
+        "if": "條件語句",
+        "nodes": "代理節點列表",
+        "range": "迭代數組",
+        "siteName": "網站名稱",
+        "sprig": "Sprig 函數庫（字符串處理、日期等）",
+        "subscribeName": "訂閱名稱",
+        "title": "Go 模板語法",
+        "userInfo": "用戶信息（流量、到期等）",
+        "variables": "可用變量："
+      },
+      "userAgentPrefix": "用於區分不同客戶端的客戶端標識符"
+    },
+    "editTitle": "編輯客戶端",
+    "fields": {
+      "description": "描述",
+      "icon": "圖標",
+      "name": "名稱",
+      "outputFormat": "輸出格式",
+      "scheme": "網址方案",
+      "template": "訂閱文件模板"
+    },
+    "tabs": {
+      "basic": "基本信息",
+      "download": "下載",
+      "template": "模板"
+    },
+    "validation": {
+      "nameRequired": "客戶端名稱是必需的",
+      "userAgentRequiredSuffix": "是必需的"
+    }
+  },
+  "outputFormats": {
+    "base64": "Base64",
+    "conf": "CONF",
+    "json": "JSON",
+    "plain": "純文本",
+    "yaml": "YAML"
+  },
+  "platforms": {
+    "android": "Android",
+    "harmony": "HarmonyOS",
+    "ios": "iOS",
+    "linux": "Linux",
+    "mac": "macOS",
+    "windows": "Windows"
+  },
+  "protocol": {
+    "title": "客戶端管理"
+  },
+  "table": {
+    "columns": {
+      "default": "默認",
+      "description": "描述",
+      "name": "客戶端名稱",
+      "outputFormat": "輸出格式",
+      "supportedPlatforms": "支持的平台"
+    }
+  },
+  "templatePreview": {
+    "base64": {
+      "decodeError": "解碼失敗：內容不是有效的 Base64 格式",
+      "decodedContent": "解碼內容",
+      "originalContent": "原始內容（Base64）"
+    },
+    "failed": "預覽失敗",
+    "loading": "加載中...",
+    "preview": "預覽",
+    "title": "範本預覽"
+  }
+}

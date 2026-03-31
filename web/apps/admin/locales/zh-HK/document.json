@@ -1,0 +1,29 @@
+{
+  "DocumentList": "文件列表",
+  "actions": "操作",
+  "cancel": "取消",
+  "confirm": "確認",
+  "confirmDelete": "您確定要刪除嗎？",
+  "create": "建立",
+  "createDocument": "建立文件",
+  "createSuccess": "建立成功",
+  "delete": "刪除",
+  "deleteDescription": "一旦刪除，資料將無法恢復。請謹慎操作。",
+  "deleteSuccess": "刪除成功",
+  "edit": "編輯",
+  "editDocument": "編輯文件",
+  "form": {
+    "cancel": "取消",
+    "confirm": "確認",
+    "content": "內容",
+    "tags": "類別",
+    "tagsPlaceholder": "請用回車鍵或逗號（,）分隔以輸入多個類別",
+    "title": "標題",
+    "titlePlaceholder": "請輸入"
+  },
+  "show": "顯示",
+  "tags": "類別",
+  "title": "標題",
+  "updateSuccess": "更新成功",
+  "updatedAt": "更新時間"
+}

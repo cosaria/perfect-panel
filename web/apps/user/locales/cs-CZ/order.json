@@ -1,0 +1,47 @@
+{
+  "balanceRecharge": "Dobití kreditu",
+  "cancel": "Zrušit",
+  "createdAt": "Datum vytvoření",
+  "detail": "Detail",
+  "goToPayment": "Přejít k platbě",
+  "methods": {
+    "alipay_f2f": "Alipay (Tváří v tvář)",
+    "balance": "Zůstatek",
+    "epay": "Epay",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "name": "Název",
+  "orderClosed": "Objednávka byla uzavřena",
+  "orderList": "Seznam objednávek",
+  "orderNo": "Číslo objednávky",
+  "orderNumber": "Číslo objednávky",
+  "payment": "Přejít k platbě",
+  "paymentAmount": "Částka platby",
+  "paymentMethod": "Platební metoda",
+  "paymentSuccess": "Platba úspěšná",
+  "productList": "Seznam produktů",
+  "rechargeAmount": "Částka dobíjení",
+  "resetPrice": "Obnovit cenu",
+  "resetTraffic": "Obnovit provoz",
+  "scanToPay": "Prosím, naskenujte kód pro platbu",
+  "status": {
+    "0": "Stav",
+    "1": "Čeká na platbu",
+    "2": "Zaplaceno",
+    "3": "Zrušeno",
+    "4": "Uzavřeno",
+    "5": "Dokončeno"
+  },
+  "subscribeNow": "Předplatit nyní",
+  "timeExpired": "Čas pro platbu vypršel",
+  "type": {
+    "0": "Typ",
+    "1": "Nový nákup",
+    "2": "Obnovení",
+    "3": "Obnovení dat",
+    "4": "Dobití"
+  },
+  "viewDocument": "Zobrazit dokument",
+  "waitingForPayment": "Čekání na platbu"
+}

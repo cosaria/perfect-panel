@@ -1,0 +1,37 @@
+{
+  "amount": "Số tiền",
+  "couponDiscount": "Giảm giá phiếu giảm giá",
+  "discount": "Số tiền chiết khấu",
+  "failed": "Thất bại",
+  "feeAmount": "Phí dịch vụ",
+  "method": "Phương thức thanh toán",
+  "methods": {
+    "alipay_f2f": "Alipay (mặt đối mặt)",
+    "balance": "Số dư",
+    "epay": "Thanh toán dễ dàng",
+    "stripe_alipay": "Stripe (Alipay)",
+    "stripe_wechat_pay": "Stripe (WeChat)"
+  },
+  "orderNumber": "Số đơn hàng",
+  "status": {
+    "0": "Trạng thái",
+    "1": "Chờ thanh toán",
+    "2": "Đã thanh toán",
+    "3": "Đã hủy",
+    "4": "Đã đóng",
+    "5": "Đã hoàn thành"
+  },
+  "subscribe": "Đăng ký",
+  "subscribePrice": "Giá đăng ký",
+  "total": "Tổng cộng",
+  "tradeNo": "Số giao dịch",
+  "type": {
+    "0": "Loại",
+    "1": "Mua mới",
+    "2": "Gia hạn",
+    "3": "Đặt lại lưu lượng",
+    "4": "Nạp tiền"
+  },
+  "updateTime": "Thời gian cập nhật",
+  "user": "người dùng"
+}

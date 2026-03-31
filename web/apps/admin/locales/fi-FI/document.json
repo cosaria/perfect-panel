@@ -1,0 +1,29 @@
+{
+  "DocumentList": "Asiakirjaluettelo",
+  "actions": "toiminnot",
+  "cancel": "Peruuta",
+  "confirm": "Vahvista",
+  "confirmDelete": "Oletko varma, että haluat poistaa?",
+  "create": "luo",
+  "createDocument": "Luo asiakirja",
+  "createSuccess": "Luonti onnistui",
+  "delete": "poista",
+  "deleteDescription": "Kun tiedot on poistettu, niitä ei voi palauttaa. Ole varovainen.",
+  "deleteSuccess": "Poisto onnistui",
+  "edit": "muokkaa",
+  "editDocument": "Muokkaa asiakirjaa",
+  "form": {
+    "cancel": "Peruuta",
+    "confirm": "Vahvista",
+    "content": "Sisältö",
+    "tags": "Kategoriat",
+    "tagsPlaceholder": "Syötä useita kategorioita erottamalla ne Enterillä tai pilkulla (,)",
+    "title": "Otsikko",
+    "titlePlaceholder": "Ole hyvä ja syötä"
+  },
+  "show": "Näytä",
+  "tags": "Kategoriat",
+  "title": "Otsikko",
+  "updateSuccess": "Päivitys onnistui",
+  "updatedAt": "Päivitetty"
+}

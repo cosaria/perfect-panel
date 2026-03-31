@@ -1,0 +1,26 @@
+{
+  "cancel": "Anulează",
+  "check": "Verificare",
+  "close": "închide",
+  "closeSuccess": "Închiderea tichetului a fost realizată cu succes",
+  "closeWarning": "După închiderea tichetului, nu veți mai putea răspunde.",
+  "confirm": "Confirmare",
+  "confirmClose": "Confirmați închiderea tichetului?",
+  "createSuccess": "Creat cu succes",
+  "createTicket": "Creează un tichet",
+  "createTicketDescription": "Vom răspunde la cererea dumneavoastră în termen de 24 de ore",
+  "description": "descriere",
+  "inputPlaceholder": "Introduceți mesajul dvs.",
+  "reply": "răspuns",
+  "status": {
+    "0": "Stare",
+    "1": "În așteptare",
+    "2": "În procesare",
+    "3": "Rezolvat",
+    "4": "Închis"
+  },
+  "submit": "Trimite",
+  "ticketList": "Listă de tichete",
+  "title": "Titlu",
+  "updatedAt": "Actualizat la"
+}

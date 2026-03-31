@@ -1,0 +1,206 @@
+{
+  "apple": {
+    "clientId": "Идентификатор услуги",
+    "clientIdDescription": "Apple Service ID, вы можете получить его на портале разработчиков Apple",
+    "clientSecret": "Приватный ключ",
+    "clientSecretDescription": "Содержимое закрытого ключа (.p8 файл), используемого для аутентификации с Apple",
+    "description": "Аутентификация пользователей с помощью учетных записей Apple",
+    "enable": "Включить",
+    "enableDescription": "После включения пользователи смогут входить с помощью своего Apple ID",
+    "keyId": "Идентификатор ключа",
+    "keyIdDescription": "Идентификатор вашего закрытого ключа из Apple Developer Portal",
+    "redirectUri": "URL перенаправления",
+    "redirectUriDescription": "Пожалуйста, укажите адрес API перенаправленного URL после успешной аутентификации через Apple. Не используйте / в конце.",
+    "teamId": "ID команды",
+    "teamIdDescription": "Идентификатор команды разработчиков Apple",
+    "title": "Вход с Apple"
+  },
+  "common": {
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "saveFailed": "Ошибка сохранения",
+    "saveSuccess": "Успешно сохранено"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "blockVirtualMachine": "Блокировать виртуальную машину",
+    "blockVirtualMachineDescription": "При включении устройства не смогут работать на виртуальных машинах или эмуляторах",
+    "communicationKey": "Ключ связи",
+    "communicationKeyDescription": "Ключ связи используется для безопасной связи между устройствами и серверами",
+    "description": "Аутентификация пользователей с помощью идентификаторов устройств",
+    "enable": "Включить",
+    "enableDescription": "После включения поддерживаются несколько идентификаторов устройств, таких как IMEI/IDFA/IDFV/AndroidID/Mac-адрес для входа и регистрации",
+    "enableSecurity": "Включить шифрование связи",
+    "enableSecurityDescription": "При включении связь между устройствами и серверами будет зашифрована",
+    "showAds": "Показать рекламу",
+    "showAdsDescription": "При включении реклама будет отображаться на устройствах",
+    "title": "Аутентификация устройства"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "basicSettings": "Основные настройки",
+    "description": "Аутентификация пользователей с помощью адресов электронной почты",
+    "emailSuffixWhitelist": "Белый список суффиксов электронной почты",
+    "emailSuffixWhitelistDescription": "Когда включено, только электронные письма с суффиксами из списка могут регистрироваться",
+    "emailVerification": "Подтверждение электронной почты",
+    "emailVerificationDescription": "Когда включено, пользователям необходимо будет подтвердить свой адрес электронной почты",
+    "enable": "Включить",
+    "enableDescription": "После включения будут активированы функции регистрации по электронной почте, входа в систему, привязки и отвязки.",
+    "expirationEmailTemplate": "Шаблон уведомления о истечении срока",
+    "expirationTemplate": "Уведомление о истечении срока",
+    "inputPlaceholder": "Введите значение...",
+    "logs": "Журналы",
+    "logsDescription": "Просмотр истории отправленных писем и их статуса",
+    "maintenanceEmailTemplate": "Шаблон уведомления о техническом обслуживании",
+    "maintenanceTemplate": "Уведомление о техническом обслуживании",
+    "sendFailure": "Не удалось отправить тестовое письмо, пожалуйста, проверьте настройки.",
+    "sendSuccess": "Тестовое письмо успешно отправлено.",
+    "sendTestEmail": "Отправить тестовое письмо",
+    "sendTestEmailDescription": "Отправьте тестовое письмо, чтобы проверить конфигурацию.",
+    "senderAddress": "Адрес отправителя",
+    "senderAddressDescription": "Адрес электронной почты по умолчанию, используемый для отправки писем.",
+    "smtpAccount": "Учетная запись SMTP",
+    "smtpAccountDescription": "Учетная запись электронной почты, используемая для аутентификации.",
+    "smtpEncryptionMethod": "Метод шифрования SMTP",
+    "smtpEncryptionMethodDescription": "Выберите, включить ли шифрование SSL/TLS.",
+    "smtpPassword": "Пароль SMTP",
+    "smtpPasswordDescription": "Пароль для учетной записи SMTP.",
+    "smtpServerAddress": "Адрес SMTP сервера",
+    "smtpServerAddressDescription": "Укажите адрес сервера, используемого для отправки электронных писем.",
+    "smtpServerPort": "Порт SMTP сервера",
+    "smtpServerPortDescription": "Укажите порт, используемый для подключения к SMTP-серверу.",
+    "smtpSettings": "Настройки SMTP",
+    "templateVariables": {
+      "code": {
+        "description": "6-значный код подтверждения",
+        "title": "Код подтверждения"
+      },
+      "expire": {
+        "description": "Время действия кода подтверждения (минуты)",
+        "title": "Срок действия"
+      },
+      "expireDate": {
+        "description": "Дата истечения услуги, напоминает пользователям о сроке действия услуги",
+        "title": "Дата истечения"
+      },
+      "maintenanceDate": {
+        "description": "Дата технического обслуживания системы, отображает дату начала обслуживания",
+        "title": "Дата обслуживания"
+      },
+      "maintenanceTime": {
+        "description": "Ожидаемое время обслуживания, отображает период или продолжительность обслуживания",
+        "title": "Продолжительность обслуживания"
+      },
+      "siteLogo": {
+        "description": "URL-адрес изображения логотипа сайта",
+        "title": "Логотип сайта"
+      },
+      "siteName": {
+        "description": "Текущее название сайта",
+        "title": "Название сайта"
+      },
+      "title": "Переменные шаблона электронной почты",
+      "type": {
+        "conditionalSyntax": "Поддерживает условный синтаксис для переключения содержимого в зависимости от типа",
+        "description": "Идентификатор типа электронной почты, 1 для кода подтверждения регистрации, другие для кода подтверждения сброса пароля",
+        "title": "Тип электронной почты"
+      }
+    },
+    "title": "Аутентификация по электронной почте",
+    "trafficExceedEmailTemplate": "Шаблон уведомления о превышении трафика",
+    "trafficTemplate": "Ограничение трафика",
+    "verifyEmailTemplate": "Шаблон письма для подтверждения",
+    "verifyTemplate": "Письмо для подтверждения",
+    "whitelistSuffixes": "Белый список суффиксов",
+    "whitelistSuffixesDescription": "Используется для проверки электронной почты при регистрации; один на строку",
+    "whitelistSuffixesPlaceholder": "Введите суффиксы электронной почты, по одному на строку"
+  },
+  "facebook": {
+    "clientId": "ID клиента",
+    "clientIdDescription": "ID приложения Facebook из консоли разработчиков Facebook",
+    "clientSecret": "Секрет клиента",
+    "clientSecretDescription": "Секрет приложения Facebook из консоли разработчиков Facebook",
+    "description": "Аутентификация пользователей с помощью учетных записей Facebook",
+    "enable": "Включить",
+    "enableDescription": "После включения пользователи смогут входить в систему с помощью своей учетной записи Facebook",
+    "title": "Вход с Facebook"
+  },
+  "github": {
+    "clientId": "Идентификатор клиента GitHub",
+    "clientIdDescription": "Идентификатор клиента из настроек вашего OAuth-приложения на GitHub",
+    "clientSecret": "Секрет клиента GitHub",
+    "clientSecretDescription": "Секрет клиента из настроек вашего OAuth-приложения GitHub",
+    "description": "Аутентификация пользователей с помощью учетных записей GitHub",
+    "enable": "Включить аутентификацию через GitHub",
+    "enableDescription": "Разрешить пользователям входить в систему с помощью их учетных записей GitHub",
+    "title": "Вход с GitHub"
+  },
+  "google": {
+    "clientId": "ID клиента",
+    "clientIdDescription": "Идентификатор клиента Google OAuth 2.0 из консоли Google Cloud",
+    "clientSecret": "Секрет клиента",
+    "clientSecretDescription": "Секрет клиента Google OAuth 2.0 из консоли Google Cloud",
+    "description": "Аутентификация пользователей с помощью учетных записей Google",
+    "enable": "Включить",
+    "enableDescription": "После включения пользователи смогут входить в систему с помощью своей учетной записи Google",
+    "title": "Вход с Google"
+  },
+  "log": {
+    "content": "Содержимое",
+    "createdAt": "Дата создания",
+    "emailLog": "Журнал электронной почты",
+    "mobileLog": "Журнал мобильных устройств",
+    "platform": "Платформа",
+    "sendFailed": "Не удалось отправить",
+    "sendSuccess": "Успешно отправлено",
+    "status": "Статус",
+    "subject": "Тема",
+    "to": "Получатель",
+    "updatedAt": "Дата обновления"
+  },
+  "phone": {
+    "accessLabel": "Доступ",
+    "applyPlatform": "Применить платформу",
+    "description": "Аутентификация пользователей с помощью номеров телефонов",
+    "enable": "Включить",
+    "enableTip": "После включения будут доступны функции регистрации, входа, привязки и отвязки мобильного телефона",
+    "endpointLabel": "Конечная точка",
+    "logs": "Журналы",
+    "logsDescription": "Просмотр истории отправленных SMS-сообщений и их статуса",
+    "phoneNumberLabel": "Номер телефона",
+    "placeholders": {
+      "template": "Ваш проверочный код: {code}, действителен в течение 5 минут"
+    },
+    "platform": "Платформа SMS",
+    "platformConfigTip": "Пожалуйста, заполните предоставленную конфигурацию {key}",
+    "platformTip": "Пожалуйста, выберите платформу SMS",
+    "secretLabel": "Секрет",
+    "sendFailed": "Не удалось отправить",
+    "sendSuccess": "Успешно отправлено",
+    "settings": "Настройки",
+    "signNameLabel": "Имя подписи",
+    "template": "Шаблон SMS",
+    "templateCodeLabel": "Код шаблона",
+    "templateTip": "Пожалуйста, заполните шаблон SMS, оставив {code} в середине, в противном случае функция SMS не будет работать",
+    "testSms": "Отправить тестовое SMS",
+    "testSmsPhone": "Введите номер телефона",
+    "testSmsTip": "Отправьте тестовое SMS, чтобы проверить вашу конфигурацию",
+    "title": "Аутентификация по телефону",
+    "updateSuccess": "Обновление успешно",
+    "whitelistAreaCode": "Код региона в белом списке",
+    "whitelistAreaCodeTip": "Пожалуйста, введите коды регионов в белом списке, например, 1, 852, 886, 888",
+    "whitelistValidation": "Проверка белого списка",
+    "whitelistValidationTip": "При включении только коды регионов из белого списка могут отправлять SMS"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "clientId": "ID бота",
+    "clientIdDescription": "ID бота Telegram, вы можете получить его у @BotFather",
+    "clientSecret": "Токен бота",
+    "clientSecretDescription": "Токен бота Telegram, который вы можете получить у @BotFather",
+    "description": "Аутентификация пользователей с помощью учетных записей Telegram",
+    "enable": "Включить",
+    "enableDescription": "После включения будут доступны функции регистрации, входа, привязки и отвязки мобильного телефона",
+    "title": "Вход с Telegram"
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "apple": {
+    "clientId": "ID de servicio",
+    "clientIdDescription": "ID de servicio de Apple, puedes obtenerlo en el Portal de Desarrolladores de Apple",
+    "clientSecret": "Clave Privada",
+    "clientSecretDescription": "El contenido de la clave privada (archivo .p8) utilizado para la autenticación con Apple",
+    "description": "Autenticar usuarios con cuentas de Apple",
+    "enable": "Habilitar",
+    "enableDescription": "Después de habilitar, los usuarios pueden iniciar sesión con su ID de Apple",
+    "keyId": "ID de clave",
+    "keyIdDescription": "El ID de tu clave privada del Portal de Desarrolladores de Apple",
+    "redirectUri": "URL de redirección",
+    "redirectUriDescription": "Por favor, complete la dirección API de la URL redirigida después de pasar con éxito la autenticación de Apple. No use / al final.",
+    "teamId": "ID del equipo",
+    "teamIdDescription": "ID de equipo de desarrolladores de Apple",
+    "title": "Inicio de sesión con Apple"
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saveFailed": "Error al guardar",
+    "saveSuccess": "Guardado con éxito"
+  },
+  "communicationMethods": "Communication Methods",
+  "device": {
+    "blockVirtualMachine": "Bloquear Máquina Virtual",
+    "blockVirtualMachineDescription": "Cuando está habilitado, se evitará que los dispositivos se ejecuten en máquinas virtuales o emuladores",
+    "communicationKey": "Clave de Comunicación",
+    "communicationKeyDescription": "La clave de comunicación se utiliza para la comunicación segura entre dispositivos y servidores",
+    "description": "Autenticar usuarios con identificadores de dispositivos",
+    "enable": "Habilitar",
+    "enableDescription": "Después de habilitar, se admiten múltiples identificadores de dispositivos como IMEI/IDFA/IDFV/AndroidID/dirección MAC para el inicio de sesión y el registro",
+    "enableSecurity": "Habilitar Cifrado de Comunicación",
+    "enableSecurityDescription": "Cuando está habilitado, la comunicación entre dispositivos y servidores será cifrada",
+    "showAds": "Mostrar Anuncios",
+    "showAdsDescription": "Cuando está habilitado, se mostrarán anuncios en los dispositivos",
+    "title": "Autenticación de Dispositivos"
+  },
+  "deviceAuthMethods": "Device Authentication Methods",
+  "email": {
+    "basicSettings": "Configuraciones Básicas",
+    "description": "Autenticar usuarios con direcciones de correo electrónico",
+    "emailSuffixWhitelist": "Lista blanca de sufijos de correo electrónico",
+    "emailSuffixWhitelistDescription": "Cuando está habilitado, solo los correos electrónicos con sufijos en la lista pueden registrarse",
+    "emailVerification": "Verificación de correo electrónico",
+    "emailVerificationDescription": "Cuando esté habilitado, los usuarios deberán verificar su correo electrónico",
+    "enable": "Habilitar",
+    "enableDescription": "Después de habilitar, se activarán las funciones de registro por correo electrónico, inicio de sesión, vinculación y desvinculación.",
+    "expirationEmailTemplate": "Plantilla de Aviso de Expiración",
+    "expirationTemplate": "Aviso de Expiración",
+    "inputPlaceholder": "Ingrese valor...",
+    "logs": "Registros",
+    "logsDescription": "Ver historial de correos electrónicos enviados y su estado",
+    "maintenanceEmailTemplate": "Plantilla de Aviso de Mantenimiento",
+    "maintenanceTemplate": "Aviso de Mantenimiento",
+    "sendFailure": "Error al enviar el correo electrónico de prueba, por favor verifica la configuración.",
+    "sendSuccess": "Correo de prueba enviado con éxito.",
+    "sendTestEmail": "Enviar correo electrónico de prueba",
+    "sendTestEmailDescription": "Envía un correo electrónico de prueba para verificar la configuración.",
+    "senderAddress": "Dirección del Remitente",
+    "senderAddressDescription": "La dirección de correo electrónico predeterminada utilizada para enviar correos electrónicos.",
+    "smtpAccount": "Cuenta SMTP",
+    "smtpAccountDescription": "La cuenta de correo electrónico utilizada para la autenticación.",
+    "smtpEncryptionMethod": "Método de Cifrado SMTP",
+    "smtpEncryptionMethodDescription": "Elija si desea habilitar el cifrado SSL/TLS.",
+    "smtpPassword": "Contraseña SMTP",
+    "smtpPasswordDescription": "La contraseña para la cuenta SMTP.",
+    "smtpServerAddress": "Dirección del servidor SMTP",
+    "smtpServerAddressDescription": "Especifique la dirección del servidor utilizada para enviar correos electrónicos.",
+    "smtpServerPort": "Puerto del Servidor SMTP",
+    "smtpServerPortDescription": "Especifique el puerto utilizado para conectarse al servidor SMTP.",
+    "smtpSettings": "Configuraciones SMTP",
+    "templateVariables": {
+      "code": {
+        "description": "Código de verificación de 6 dígitos",
+        "title": "Código de Verificación"
+      },
+      "expire": {
+        "description": "Tiempo de validez del código de verificación (minutos)",
+        "title": "Período de Validez"
+      },
+      "expireDate": {
+        "description": "Fecha de expiración del servicio, recuerda a los usuarios cuándo expira el servicio",
+        "title": "Fecha de Expiración"
+      },
+      "maintenanceDate": {
+        "description": "Fecha de mantenimiento del sistema, muestra la fecha de inicio del mantenimiento",
+        "title": "Fecha de Mantenimiento"
+      },
+      "maintenanceTime": {
+        "description": "Tiempo estimado de mantenimiento, muestra el período o duración del mantenimiento",
+        "title": "Duración del Mantenimiento"
+      },
+      "siteLogo": {
+        "description": "URL de la imagen del logo del sitio web",
+        "title": "Logo del Sitio"
+      },
+      "siteName": {
+        "description": "Nombre actual del sitio web",
+        "title": "Nombre del Sitio"
+      },
+      "title": "Variables de Plantilla de Correo Electrónico",
+      "type": {
+        "conditionalSyntax": "Soporta sintaxis condicional para cambiar contenido según el tipo",
+        "description": "Identificador de tipo de correo electrónico, 1 para código de verificación de registro, otros para código de verificación de restablecimiento de contraseña",
+        "title": "Tipo de Correo Electrónico"
+      }
+    },
+    "title": "Autenticación por Correo Electrónico",
+    "trafficExceedEmailTemplate": "Plantilla de Aviso de Límite de Tráfico",
+    "trafficTemplate": "Límite de Tráfico",
+    "verifyEmailTemplate": "Plantilla de Correo Electrónico de Verificación",
+    "verifyTemplate": "Correo Electrónico de Verificación",
+    "whitelistSuffixes": "Sufijos de la lista blanca",
+    "whitelistSuffixesDescription": "Utilizado para la verificación de correo electrónico durante el registro; uno por línea",
+    "whitelistSuffixesPlaceholder": "Introduce los sufijos de correo electrónico, uno por línea"
+  },
+  "facebook": {
+    "clientId": "ID de Cliente",
+    "clientIdDescription": "ID de la aplicación de Facebook desde la Consola de Desarrolladores de Facebook",
+    "clientSecret": "Secreto del Cliente",
+    "clientSecretDescription": "Secreto de la aplicación de Facebook desde la Consola de Desarrolladores de Facebook",
+    "description": "Autenticar usuarios con cuentas de Facebook",
+    "enable": "Habilitar",
+    "enableDescription": "Después de habilitar, los usuarios pueden iniciar sesión con su cuenta de Facebook",
+    "title": "Inicio de sesión con Facebook"
+  },
+  "github": {
+    "clientId": "ID de Cliente de GitHub",
+    "clientIdDescription": "El ID de cliente de la configuración de tu aplicación OAuth de GitHub",
+    "clientSecret": "Secreto del Cliente de GitHub",
+    "clientSecretDescription": "El secreto del cliente de la configuración de tu aplicación OAuth de GitHub",
+    "description": "Autenticar usuarios con cuentas de GitHub",
+    "enable": "Habilitar la autenticación de GitHub",
+    "enableDescription": "Permitir a los usuarios iniciar sesión con sus cuentas de GitHub",
+    "title": "Inicio de sesión con GitHub"
+  },
+  "google": {
+    "clientId": "ID de Cliente",
+    "clientIdDescription": "ID de cliente de Google OAuth 2.0 desde la Consola de Google Cloud",
+    "clientSecret": "Secreto del Cliente",
+    "clientSecretDescription": "Secreto del cliente de Google OAuth 2.0 desde la Consola de Google Cloud",
+    "description": "Autenticar usuarios con cuentas de Google",
+    "enable": "Habilitar",
+    "enableDescription": "Después de habilitar, los usuarios pueden iniciar sesión con su cuenta de Google",
+    "title": "Inicio de sesión con Google"
+  },
+  "log": {
+    "content": "Contenido",
+    "createdAt": "Creado En",
+    "emailLog": "Registro de Correo Electrónico",
+    "mobileLog": "Registro Móvil",
+    "platform": "Plataforma",
+    "sendFailed": "Fallido",
+    "sendSuccess": "Éxito",
+    "status": "Estado",
+    "subject": "Asunto",
+    "to": "Destinatario",
+    "updatedAt": "Actualizado En"
+  },
+  "phone": {
+    "accessLabel": "Acceso",
+    "applyPlatform": "Aplicar Plataforma",
+    "description": "Autenticar usuarios con números de teléfono",
+    "enable": "Habilitar",
+    "enableTip": "Después de habilitar, se activarán las funciones de registro, inicio de sesión, vinculación y desvinculación del teléfono móvil",
+    "endpointLabel": "Punto final",
+    "logs": "Registros",
+    "logsDescription": "Ver historial de mensajes SMS enviados y su estado",
+    "phoneNumberLabel": "Número de Teléfono",
+    "placeholders": {
+      "template": "Su código de verificación es {code}, válido por 5 minutos"
+    },
+    "platform": "Plataforma de SMS",
+    "platformConfigTip": "Por favor, complete la configuración proporcionada de {key}",
+    "platformTip": "Por favor, seleccione la plataforma de SMS",
+    "secretLabel": "Secreto",
+    "sendFailed": "Envío fallido",
+    "sendSuccess": "Envío exitoso",
+    "settings": "Configuración",
+    "signNameLabel": "Nombre de firma",
+    "template": "Plantilla de SMS",
+    "templateCodeLabel": "Código de plantilla",
+    "templateTip": "Por favor, complete la plantilla de SMS, mantenga {code} en el medio, de lo contrario, la función de SMS no funcionará",
+    "testSms": "Enviar SMS de prueba",
+    "testSmsPhone": "Ingrese número de teléfono",
+    "testSmsTip": "Envía un SMS de prueba para verificar tu configuración",
+    "title": "Autenticación por Teléfono",
+    "updateSuccess": "Actualización Exitosa",
+    "whitelistAreaCode": "Código de área en lista blanca",
+    "whitelistAreaCodeTip": "Por favor, introduce los códigos de área en la lista blanca, por ejemplo, 1, 852, 886, 888",
+    "whitelistValidation": "Verificación de lista blanca",
+    "whitelistValidationTip": "Cuando está habilitado, solo los códigos de área en la lista blanca pueden enviar SMS"
+  },
+  "socialAuthMethods": "Social Authentication Methods",
+  "telegram": {
+    "clientId": "ID del Bot",
+    "clientIdDescription": "ID del Bot de Telegram, lo puedes obtener de @BotFather",
+    "clientSecret": "Token del Bot",
+    "clientSecretDescription": "Token del Bot de Telegram, lo puedes obtener de @BotFather",
+    "description": "Autenticar usuarios con cuentas de Telegram",
+    "enable": "Habilitar",
+    "enableDescription": "Después de habilitar, se activarán las funciones de registro, inicio de sesión, vinculación y desvinculación de teléfonos móviles",
+    "title": "Inicio de sesión con Telegram"
+  }
+}

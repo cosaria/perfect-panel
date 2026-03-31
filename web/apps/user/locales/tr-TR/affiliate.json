@@ -1,0 +1,11 @@
+{
+  "commissionInfo": "İstatistiksel tutar, davet komisyonu otomatik olarak bakiyeye aktarılır",
+  "commissionRate": "Komisyon Oranı",
+  "copyInviteLink": "Davet Bağlantısını Kopyala",
+  "copySuccess": "Kopyalama Başarılı",
+  "inviteCode": "davetKodu",
+  "inviteRecords": "Davet Kayıtları",
+  "registrationTime": "Kayıt Zamanı",
+  "totalCommission": "Toplam Komisyon",
+  "userIdentifier": "Kullanıcı Tanımlayıcı"
+}

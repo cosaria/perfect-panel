@@ -1,0 +1,132 @@
+{
+  "actions": {
+    "add": "Add",
+    "batchDelete": "Batch Delete",
+    "batchDeleteSuccess": "Successfully deleted {count} clients",
+    "batchDeleteWarning": "Are you sure you want to delete the selected {count} clients?",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "confirmDelete": "Confirm Delete",
+    "createSuccess": "Created successfully",
+    "delete": "Delete",
+    "deleteFailed": "Delete failed",
+    "deleteSuccess": "Deleted successfully",
+    "deleteWarning": "This operation cannot be undone. Are you sure you want to delete this client?",
+    "edit": "Edit",
+    "save": "Save",
+    "saveFailed": "Save failed",
+    "update": "Update",
+    "updateSuccess": "Updated successfully"
+  },
+  "config": {
+    "title": "Subscription Configuration",
+    "description": "Manage subscription system settings",
+    "singleSubscriptionMode": "Single Subscription Mode",
+    "singleSubscriptionModeDescription": "Limit users to one active subscription. Existing subscriptions unaffected",
+    "subscriptionDomain": "Subscription Domain",
+    "subscriptionDomainDescription": "Custom domain for subscription links",
+    "subscriptionDomainPlaceholder": "Enter subscription domain, one per line",
+    "subscriptionPath": "Subscription Path",
+    "subscriptionPathDescription": "Custom path for subscription endpoints (better performance after system restart)",
+    "subscriptionPathPlaceholder": "Enter subscription path",
+    "updateError": "Update failed",
+    "updateSuccess": "Settings updated successfully",
+    "userAgentLimit": "{userAgent} Restriction",
+    "userAgentLimitDescription": "Enable access restrictions based on {userAgent}",
+    "userAgentList": "{userAgent} Whitelist",
+    "userAgentListDescription": "Allowed {userAgent} for subscription access, one per line. Configured application {userAgent} will be automatically included",
+    "userAgentListPlaceholder": "Enter allowed {userAgent}, one per line",
+    "wildcardResolution": "Wildcard Resolution",
+    "wildcardResolutionDescription": "Enable wildcard domain resolution for subscriptions"
+  },
+  "form": {
+    "addTitle": "Add Client",
+    "editTitle": "Edit Client",
+    "tabs": {
+      "basic": "Basic Info",
+      "template": "Templates",
+      "download": "Downloads"
+    },
+    "fields": {
+      "icon": "Icon",
+      "name": "Name",
+      "description": "Description",
+      "outputFormat": "Output Format",
+      "scheme": "URL Scheme",
+      "template": "Subscription File Template"
+    },
+    "descriptions": {
+      "icon": "Icon URL or base64 encoding",
+      "name": "Client display name",
+      "userAgentPrefix": "Client identifier for distinguishing different clients",
+      "description": "Detailed client description",
+      "outputFormat": "Subscription configuration file format",
+      "scheme": {
+        "title": "URL Scheme template",
+        "variables": "Supports variables:",
+        "urlVariable": "subscription URL",
+        "nameVariable": "site name",
+        "functions": "Supports functions:",
+        "urlEncoding": "URL encoding",
+        "base64Encoding": "Base64 encoding",
+        "jsonStringify": "JSON object to string"
+      },
+      "template": {
+        "title": "Go Template Syntax",
+        "description": "Use Go template syntax to generate subscription configuration files",
+        "variables": "Available variables:",
+        "siteName": "site name",
+        "subscribeName": "subscription name",
+        "nodes": "proxy nodes list",
+        "userInfo": "user info (traffic, expiry, etc.)",
+        "functions": "Template functions:",
+        "range": "iterate arrays",
+        "if": "conditional statements",
+        "sprig": "Sprig function library (string processing, dates, etc.)"
+      },
+      "downloadLink": "platform download URL"
+    },
+    "validation": {
+      "nameRequired": "Client name is required",
+      "userAgentRequiredSuffix": "is required"
+    }
+  },
+  "outputFormats": {
+    "yaml": "YAML",
+    "json": "JSON",
+    "base64": "Base64",
+    "plain": "Plain Text",
+    "conf": "CONF"
+  },
+  "platforms": {
+    "windows": "Windows",
+    "mac": "macOS",
+    "linux": "Linux",
+    "ios": "iOS",
+    "android": "Android",
+    "harmony": "HarmonyOS"
+  },
+  "protocol": {
+    "title": "Client Management"
+  },
+  "table": {
+    "columns": {
+      "default": "Default",
+      "name": "Client Name",
+      "description": "Description",
+      "outputFormat": "Output Format",
+      "supportedPlatforms": "Supported Platforms"
+    }
+  },
+  "templatePreview": {
+    "title": "Template Preview",
+    "preview": "Preview",
+    "loading": "Loading...",
+    "failed": "Preview failed",
+    "base64": {
+      "originalContent": "Original Content (Base64)",
+      "decodedContent": "Decoded Content",
+      "decodeError": "Decode failed: Content is not valid Base64 format"
+    }
+  }
+}

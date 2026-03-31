@@ -1,0 +1,32 @@
+{
+  "actions": "アクション",
+  "announcementList": "お知らせ一覧",
+  "cancel": "キャンセル",
+  "confirm": "確認",
+  "confirmDelete": "削除してもよろしいですか？",
+  "content": "内容",
+  "create": "作成",
+  "createAnnouncement": "お知らせを作成",
+  "createSuccess": "作成に成功しました",
+  "delete": "削除",
+  "deleteDescription": "一度削除すると、データは復元できません。慎重に操作してください。",
+  "deleteSuccess": "削除に成功しました",
+  "edit": "編集",
+  "editAnnouncement": "お知らせを編集",
+  "enable": "有効",
+  "form": {
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "content": "内容",
+    "contentPlaceholder": "お知らせの内容を入力してください（Markdown対応）",
+    "title": "タイトル",
+    "titlePlaceholder": "入力してください"
+  },
+  "hide": "隠す",
+  "pinned": "固定",
+  "popup": "ポップアップ",
+  "show": "表示",
+  "title": "タイトル",
+  "updateSuccess": "更新が成功しました",
+  "updatedAt": "更新日時"
+}

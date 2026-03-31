@@ -1,0 +1,26 @@
+{
+  "cancel": "Cancelar",
+  "check": "Verificar",
+  "close": "fechar",
+  "closeSuccess": "Ordem de serviço fechada com sucesso",
+  "closeWarning": "Após fechar o chamado, não será possível continuar respondendo.",
+  "confirm": "Confirmar",
+  "confirmClose": "Confirmar fechamento do chamado?",
+  "createSuccess": "Criação bem-sucedida",
+  "createTicket": "Criar Chamado",
+  "createTicketDescription": "O chamado será respondido em até 24 horas",
+  "description": "descrição",
+  "inputPlaceholder": "Digite sua mensagem",
+  "reply": "resposta",
+  "status": {
+    "0": "status",
+    "1": "Aguardando",
+    "2": "Em processamento",
+    "3": "Resolvido",
+    "4": "Fechado"
+  },
+  "submit": "Enviar",
+  "ticketList": "Lista de Chamados",
+  "title": "Título",
+  "updatedAt": "Atualizado em"
+}

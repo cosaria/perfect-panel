@@ -1,0 +1,37 @@
+{
+  "amount": "金額",
+  "couponDiscount": "クーポン割引",
+  "discount": "割引額",
+  "failed": "失敗",
+  "feeAmount": "手数料",
+  "method": "支払い方法",
+  "methods": {
+    "alipay_f2f": "支付宝（対面）",
+    "balance": "残高",
+    "epay": "イージーペイ",
+    "stripe_alipay": "Stripe（支付宝）",
+    "stripe_wechat_pay": "Stripe（微信）"
+  },
+  "orderNumber": "注文番号",
+  "status": {
+    "0": "ステータス",
+    "1": "未払い",
+    "2": "支払い済み",
+    "3": "キャンセル済み",
+    "4": "クローズ済み",
+    "5": "完了"
+  },
+  "subscribe": "購読",
+  "subscribePrice": "購読価格",
+  "total": "合計",
+  "tradeNo": "取引番号",
+  "type": {
+    "0": "タイプ",
+    "1": "新規購入",
+    "2": "更新",
+    "3": "データリセット",
+    "4": "チャージ"
+  },
+  "updateTime": "更新時間",
+  "user": "ユーザー"
+}
