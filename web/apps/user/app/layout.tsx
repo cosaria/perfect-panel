@@ -1,18 +1,19 @@
-import Providers from '@/components/providers';
-import { getGlobalConfig } from '@/services/common/common';
-import { queryUserInfo } from '@/services/user/user';
-import { Toaster } from '@workspace/ui/components/sonner';
-import '@workspace/ui/globals.css';
-import { getLangDir } from '@workspace/ui/hooks/use-lang-dir';
-import { NextIntlClientProvider } from 'next-intl';
-import { getLocale, getMessages } from 'next-intl/server';
-import { PublicEnvScript } from 'next-runtime-env';
-import { unstable_noStore as noStore } from 'next/cache';
+import { Toaster } from "@workspace/ui/components/sonner";
+import { RawHtml } from "@workspace/ui/custom-components/raw-html";
+import Providers from "@/components/providers";
+import { getGlobalConfig } from "@/services/common/common";
+import { queryUserInfo } from "@/services/user/user";
+import "@workspace/ui/globals.css";
+import { getLangDir } from "@workspace/ui/hooks/use-lang-dir";
+import { unstable_noStore as noStore } from "next/cache";
 // import { Geist, Geist_Mono } from "next/font/google";
-import { cookies } from 'next/headers';
-import { Metadata, Viewport } from 'next/types';
-import NextTopLoader from 'nextjs-toploader';
-import React from 'react';
+import { cookies } from "next/headers";
+import type { Metadata, Viewport } from "next/types";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
+import { PublicEnvScript } from "next-runtime-env";
+import NextTopLoader from "nextjs-toploader";
+import type React from "react";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -34,39 +35,39 @@ export async function generateMetadata(): Promise<Metadata> {
       site = config?.site || undefined;
     })
     .catch((error) => {
-      console.error('Error fetching global config:', error);
+      console.error("Error fetching global config:", error);
     });
 
   const defaultMetadata = {
     title: {
       default: site?.site_name || `PPanel`,
-      template: `%s | ${site?.site_name || 'PPanel'}`,
+      template: `%s | ${site?.site_name || "PPanel"}`,
     },
-    description: site?.site_desc || '',
-    keywords: site?.keywords || '',
+    description: site?.site_desc || "",
+    keywords: site?.keywords || "",
     icons: {
       icon: site?.site_logo
         ? [
             {
               url: site.site_logo,
-              sizes: 'any',
+              sizes: "any",
             },
           ]
         : [
-            { url: '/favicon.ico', sizes: '48x48' },
-            { url: '/favicon.svg', type: 'image/svg+xml' },
+            { url: "/favicon.ico", sizes: "48x48" },
+            { url: "/favicon.svg", type: "image/svg+xml" },
           ],
-      apple: site?.site_logo || '/apple-touch-icon.png',
+      apple: site?.site_logo || "/apple-touch-icon.png",
     },
-    manifest: '/site.webmanifest',
+    manifest: "/site.webmanifest",
   };
   return defaultMetadata;
 }
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
-    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+    { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
 };
 
@@ -75,17 +76,18 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const Authorization = (await cookies()).get('Authorization')?.value;
+  const Authorization = (await cookies()).get("Authorization")?.value;
 
   const locale = await getLocale();
   const messages = await getMessages();
 
-  let config, user;
+  let config: API.GetGlobalConfigResponse | undefined;
+  let user: API.User | undefined;
 
   try {
     config = await getGlobalConfig({ skipErrorHandler: true }).then((res) => res.data.data);
   } catch (error) {
-    console.log('Error fetching global config:', error);
+    console.log("Error fetching global config:", error);
   }
 
   if (Authorization) {
@@ -95,9 +97,11 @@ export default async function RootLayout({
         Authorization,
       }).then((res) => res.data.data);
     } catch (error) {
-      console.log('Error fetching user info:', error);
+      console.log("Error fetching user info:", error);
     }
   }
+
+  const customHtml = config?.site.custom_html || "";
 
   return (
     <html suppressHydrationWarning lang={locale} dir={getLangDir(locale)}>
@@ -116,10 +120,7 @@ export default async function RootLayout({
             {children}
           </Providers>
         </NextIntlClientProvider>
-        <div
-          id='custom_html'
-          dangerouslySetInnerHTML={{ __html: config?.site.custom_html || '' }}
-        />
+        <RawHtml id="custom_html" html={customHtml} />
       </body>
     </html>
   );

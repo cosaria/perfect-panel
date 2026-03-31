@@ -1,15 +1,16 @@
-import useGlobalStore from '@/config/use-global';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@workspace/ui/components/button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
-import { Input } from '@workspace/ui/components/input';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { useTranslations } from 'next-intl';
-import { Dispatch, SetStateAction, useRef } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import SendCode from '../send-code';
-import CloudFlareTurnstile, { TurnstileRef } from '../turnstile';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@workspace/ui/components/button";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@workspace/ui/components/form";
+import { Input } from "@workspace/ui/components/input";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { useTranslations } from "next-intl";
+import { type Dispatch, type SetStateAction, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import useGlobalStore from "@/config/use-global";
+import SendCode from "../send-code";
+import CloudFlareTurnstile, { type TurnstileRef } from "../turnstile";
+import type { AuthView, EmailAuthValues } from "./types";
 
 export default function ResetForm({
   loading,
@@ -19,18 +20,18 @@ export default function ResetForm({
   onSwitchForm,
 }: {
   loading?: boolean;
-  onSubmit: (data: any) => void;
-  initialValues: any;
-  setInitialValues: Dispatch<SetStateAction<any>>;
-  onSwitchForm: Dispatch<SetStateAction<'register' | 'reset' | 'login'>>;
+  onSubmit: (data: EmailAuthValues) => void;
+  initialValues: EmailAuthValues | undefined;
+  setInitialValues: Dispatch<SetStateAction<EmailAuthValues | undefined>>;
+  onSwitchForm: Dispatch<SetStateAction<AuthView>>;
 }) {
-  const t = useTranslations('auth.reset');
+  const t = useTranslations("auth.reset");
 
   const { common } = useGlobalStore();
   const { verify, auth } = common;
 
   const formSchema = z.object({
-    email: z.string().email(t('email')),
+    email: z.string().email(t("email")),
     password: z.string(),
     code: auth?.email?.enable_verify ? z.string() : z.string().nullish(),
     cf_token:
@@ -47,7 +48,7 @@ export default function ResetForm({
   const handleSubmit = form.handleSubmit((data) => {
     try {
       onSubmit(data);
-    } catch (error) {
+    } catch (_error) {
       turnstile.current?.reset();
     }
   });
@@ -55,14 +56,14 @@ export default function ResetForm({
   return (
     <>
       <Form {...form}>
-        <form onSubmit={handleSubmit} className='grid gap-6'>
+        <form onSubmit={handleSubmit} className="grid gap-6">
           <FormField
             control={form.control}
-            name='email'
+            name="email"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder='Enter your email...' type='email' {...field} />
+                  <Input placeholder="Enter your email..." type="email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -70,20 +71,20 @@ export default function ResetForm({
           />
           <FormField
             control={form.control}
-            name='code'
+            name="code"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <div className='flex items-center gap-2'>
+                  <div className="flex items-center gap-2">
                     <Input
                       disabled={loading}
-                      placeholder='Enter code...'
-                      type='text'
+                      placeholder="Enter code..."
+                      type="text"
                       {...field}
                       value={field.value as string}
                     />
                     <SendCode
-                      type='email'
+                      type="email"
                       params={{
                         ...form.getValues(),
                         type: 2,
@@ -97,11 +98,11 @@ export default function ResetForm({
           />
           <FormField
             control={form.control}
-            name='password'
+            name="password"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder='Enter your new password...' type='password' {...field} />
+                  <Input placeholder="Enter your new password..." type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -110,34 +111,34 @@ export default function ResetForm({
           {verify.enable_reset_password_verify && (
             <FormField
               control={form.control}
-              name='cf_token'
+              name="cf_token"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <CloudFlareTurnstile id='reset' {...field} ref={turnstile} />
+                    <CloudFlareTurnstile id="reset" {...field} ref={turnstile} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           )}
-          <Button type='submit' disabled={loading}>
-            {loading && <Icon icon='mdi:loading' className='animate-spin' />}
-            {t('title')}
+          <Button type="submit" disabled={loading}>
+            {loading && <Icon icon="mdi:loading" className="animate-spin" />}
+            {t("title")}
           </Button>
         </form>
       </Form>
-      <div className='mt-4 text-right text-sm'>
-        {t('existingAccount')}&nbsp;
+      <div className="mt-4 text-right text-sm">
+        {t("existingAccount")}&nbsp;
         <Button
-          variant='link'
-          className='p-0'
+          variant="link"
+          className="p-0"
           onClick={() => {
             setInitialValues(undefined);
-            onSwitchForm('login');
+            onSwitchForm("login");
           }}
         >
-          {t('switchToLogin')}
+          {t("switchToLogin")}
         </Button>
       </div>
     </>

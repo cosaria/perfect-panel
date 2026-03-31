@@ -1,16 +1,16 @@
-// @ts-ignore
+// @ts-expect-error
 /* eslint-disable */
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 /** Update announcement PUT /v1/admin/announcement/ */
 export async function updateAnnouncement(
   body: API.UpdateAnnouncementRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: any }>('/v1/admin/announcement/', {
-    method: 'PUT',
+  return request<API.Response & { data?: unknown }>("/v1/admin/announcement/", {
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -20,12 +20,12 @@ export async function updateAnnouncement(
 /** Create announcement POST /v1/admin/announcement/ */
 export async function createAnnouncement(
   body: API.CreateAnnouncementRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: any }>('/v1/admin/announcement/', {
-    method: 'POST',
+  return request<API.Response & { data?: unknown }>("/v1/admin/announcement/", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -35,12 +35,12 @@ export async function createAnnouncement(
 /** Delete announcement DELETE /v1/admin/announcement/ */
 export async function deleteAnnouncement(
   body: API.DeleteAnnouncementRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: any }>('/v1/admin/announcement/', {
-    method: 'DELETE',
+  return request<API.Response & { data?: unknown }>("/v1/admin/announcement/", {
+    method: "DELETE",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -51,10 +51,10 @@ export async function deleteAnnouncement(
 export async function getAnnouncement(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetAnnouncementParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.Announcement }>('/v1/admin/announcement/detail', {
-    method: 'GET',
+  return request<API.Response & { data?: API.Announcement }>("/v1/admin/announcement/detail", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -66,12 +66,12 @@ export async function getAnnouncement(
 export async function getAnnouncementList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetAnnouncementListParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.GetAnnouncementListResponse }>(
-    '/v1/admin/announcement/list',
+    "/v1/admin/announcement/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },

@@ -1,5 +1,5 @@
-import { filterNodeList, queryNodeTag } from '@/services/admin/server';
-import { create } from 'zustand';
+import { create } from "zustand";
+import { filterNodeList, queryNodeTag } from "@/services/admin/server";
 
 interface NodeState {
   // Data
@@ -46,7 +46,7 @@ export const useNodeStore = create<NodeState>((set, get) => ({
         nodes: data?.data?.list || [],
         loaded: true,
       });
-    } catch (error) {
+    } catch (_error) {
       // Handle error silently
       set({ loaded: true });
     } finally {
@@ -64,7 +64,7 @@ export const useNodeStore = create<NodeState>((set, get) => ({
         tags: data?.data?.tags || [],
         loadedTags: true,
       });
-    } catch (error) {
+    } catch (_error) {
       // Handle error silently
       set({ loadedTags: true });
     } finally {

@@ -1,10 +1,9 @@
-'use client';
+"use client";
 
-import { getNodeConfig, updateNodeConfig } from '@/services/admin/system';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
-import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent } from '@workspace/ui/components/card';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@workspace/ui/components/button";
+import { Card, CardContent } from "@workspace/ui/components/card";
 import {
   Form,
   FormControl,
@@ -13,15 +12,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
+} from "@workspace/ui/components/form";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select';
+} from "@workspace/ui/components/select";
 import {
   Sheet,
   SheetContent,
@@ -29,21 +28,22 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@workspace/ui/components/sheet';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { Textarea } from '@workspace/ui/components/textarea';
-import { ArrayInput } from '@workspace/ui/custom-components/dynamic-Inputs';
-import { EnhancedInput } from '@workspace/ui/custom-components/enhanced-input';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { unitConversion } from '@workspace/ui/utils';
-import { DicesIcon } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { uid } from 'radash';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
-import { SS_CIPHERS } from './form-schema';
+} from "@workspace/ui/components/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
+import { Textarea } from "@workspace/ui/components/textarea";
+import { ArrayInput } from "@workspace/ui/custom-components/dynamic-Inputs";
+import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { unitConversion } from "@workspace/ui/utils";
+import { DicesIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { uid } from "radash";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { getNodeConfig, updateNodeConfig } from "@/services/admin/system";
+import { SS_CIPHERS } from "./form-schema";
 
 const dnsConfigSchema = z.object({
   proto: z.string(), // z.enum(['tcp', 'udp', 'tls', 'https', 'quic']),
@@ -66,20 +66,34 @@ const nodeConfigSchema = z.object({
   node_pull_interval: z.number().optional(),
   node_push_interval: z.number().optional(),
   traffic_report_threshold: z.number().optional(),
-  ip_strategy: z.enum(['prefer_ipv4', 'prefer_ipv6']).optional(),
+  ip_strategy: z.enum(["prefer_ipv4", "prefer_ipv6"]).optional(),
   dns: z.array(dnsConfigSchema).optional(),
   block: z.array(z.string()).optional(),
   outbound: z.array(outboundConfigSchema).optional(),
 });
 type NodeConfigFormData = z.infer<typeof nodeConfigSchema>;
+type DnsArrayInputValue = {
+  proto?: string;
+  address?: string;
+  domains?: string | string[];
+};
+type OutboundArrayInputValue = {
+  name?: string;
+  protocol?: string;
+  address?: string;
+  port?: number;
+  cipher?: string;
+  password?: string;
+  rules?: string | string[];
+};
 
 export default function ServerConfig() {
-  const t = useTranslations('servers');
+  const t = useTranslations("servers");
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const { data: cfgResp, refetch: refetchCfg } = useQuery({
-    queryKey: ['getNodeConfig'],
+    queryKey: ["getNodeConfig"],
     queryFn: async () => {
       const { data } = await getNodeConfig();
       return data.data as API.NodeConfig | undefined;
@@ -90,11 +104,11 @@ export default function ServerConfig() {
   const form = useForm<NodeConfigFormData>({
     resolver: zodResolver(nodeConfigSchema),
     defaultValues: {
-      node_secret: '',
+      node_secret: "",
       node_pull_interval: undefined,
       node_push_interval: undefined,
       traffic_report_threshold: undefined,
-      ip_strategy: 'prefer_ipv4',
+      ip_strategy: "prefer_ipv4",
       dns: [],
       block: [],
       outbound: [],
@@ -104,12 +118,12 @@ export default function ServerConfig() {
   useEffect(() => {
     if (cfgResp) {
       form.reset({
-        node_secret: cfgResp.node_secret ?? '',
+        node_secret: cfgResp.node_secret ?? "",
         node_pull_interval: cfgResp.node_pull_interval as number | undefined,
         node_push_interval: cfgResp.node_push_interval as number | undefined,
         traffic_report_threshold: cfgResp.traffic_report_threshold as number | undefined,
         ip_strategy:
-          (cfgResp.ip_strategy as 'prefer_ipv4' | 'prefer_ipv6' | undefined) || 'prefer_ipv4',
+          (cfgResp.ip_strategy as "prefer_ipv4" | "prefer_ipv6" | undefined) || "prefer_ipv4",
         dns: cfgResp.dns || [],
         block: cfgResp.block || [],
         outbound: cfgResp.outbound || [],
@@ -121,7 +135,7 @@ export default function ServerConfig() {
     setSaving(true);
     try {
       await updateNodeConfig(values as API.NodeConfig);
-      toast.success(t('server_config.saveSuccess'));
+      toast.success(t("server_config.saveSuccess"));
       await refetchCfg();
       setOpen(false);
     } finally {
@@ -133,69 +147,69 @@ export default function ServerConfig() {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Card>
-          <CardContent className='p-4'>
-            <div className='flex cursor-pointer items-center justify-between'>
-              <div className='flex items-center gap-3'>
-                <div className='bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg'>
-                  <Icon icon='mdi:resistor-nodes' className='text-primary h-5 w-5' />
+          <CardContent className="p-4">
+            <div className="flex cursor-pointer items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+                  <Icon icon="mdi:resistor-nodes" className="text-primary h-5 w-5" />
                 </div>
-                <div className='flex-1'>
-                  <p className='font-medium'>{t('server_config.title')}</p>
-                  <p className='text-muted-foreground truncate text-sm'>
-                    {t('server_config.description')}
+                <div className="flex-1">
+                  <p className="font-medium">{t("server_config.title")}</p>
+                  <p className="text-muted-foreground truncate text-sm">
+                    {t("server_config.description")}
                   </p>
                 </div>
               </div>
-              <Icon icon='mdi:chevron-right' className='size-6' />
+              <Icon icon="mdi:chevron-right" className="size-6" />
             </div>
           </CardContent>
         </Card>
       </SheetTrigger>
 
-      <SheetContent className='w-[720px] max-w-full md:max-w-screen-md'>
+      <SheetContent className="w-[720px] max-w-full md:max-w-screen-md">
         <SheetHeader>
-          <SheetTitle>{t('server_config.title')}</SheetTitle>
+          <SheetTitle>{t("server_config.title")}</SheetTitle>
         </SheetHeader>
 
-        <ScrollArea className='-mx-6 h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6'>
-          <Tabs defaultValue='basic' className='pt-4'>
-            <TabsList className='grid w-full grid-cols-4'>
-              <TabsTrigger value='basic'>{t('server_config.tabs.basic')}</TabsTrigger>
-              <TabsTrigger value='dns'>{t('server_config.tabs.dns')}</TabsTrigger>
-              <TabsTrigger value='outbound'>{t('server_config.tabs.outbound')}</TabsTrigger>
-              <TabsTrigger value='block'>{t('server_config.tabs.block')}</TabsTrigger>
+        <ScrollArea className="-mx-6 h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6">
+          <Tabs defaultValue="basic" className="pt-4">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="basic">{t("server_config.tabs.basic")}</TabsTrigger>
+              <TabsTrigger value="dns">{t("server_config.tabs.dns")}</TabsTrigger>
+              <TabsTrigger value="outbound">{t("server_config.tabs.outbound")}</TabsTrigger>
+              <TabsTrigger value="block">{t("server_config.tabs.block")}</TabsTrigger>
             </TabsList>
 
             <Form {...form}>
-              <form id='server-config-form' onSubmit={form.handleSubmit(onSubmit)} className='mt-4'>
-                <TabsContent value='basic' className='space-y-4'>
+              <form id="server-config-form" onSubmit={form.handleSubmit(onSubmit)} className="mt-4">
+                <TabsContent value="basic" className="space-y-4">
                   <FormField
                     control={form.control}
-                    name='node_secret'
+                    name="node_secret"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('server_config.fields.communication_key')}</FormLabel>
+                        <FormLabel>{t("server_config.fields.communication_key")}</FormLabel>
                         <FormControl>
                           <EnhancedInput
-                            placeholder={t('server_config.fields.communication_key_placeholder')}
-                            value={field.value || ''}
+                            placeholder={t("server_config.fields.communication_key_placeholder")}
+                            value={field.value || ""}
                             onValueChange={field.onChange}
                             suffix={
-                              <div className='bg-muted flex h-9 items-center px-3'>
+                              <div className="bg-muted flex h-9 items-center px-3">
                                 <DicesIcon
                                   onClick={() => {
                                     const id = uid(32).toLowerCase();
                                     const formatted = `${id.slice(0, 8)}-${id.slice(8, 12)}-${id.slice(12, 16)}-${id.slice(16, 20)}-${id.slice(20)}`;
-                                    form.setValue('node_secret', formatted);
+                                    form.setValue("node_secret", formatted);
                                   }}
-                                  className='cursor-pointer'
+                                  className="cursor-pointer"
                                 />
                               </div>
                             }
                           />
                         </FormControl>
                         <FormDescription>
-                          {t('server_config.fields.communication_key_desc')}
+                          {t("server_config.fields.communication_key_desc")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -204,22 +218,22 @@ export default function ServerConfig() {
 
                   <FormField
                     control={form.control}
-                    name='node_pull_interval'
+                    name="node_pull_interval"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('server_config.fields.node_pull_interval')}</FormLabel>
+                        <FormLabel>{t("server_config.fields.node_pull_interval")}</FormLabel>
                         <FormControl>
                           <EnhancedInput
-                            type='number'
+                            type="number"
                             min={0}
-                            suffix='S'
-                            value={field.value as any}
+                            suffix="S"
+                            value={field.value}
                             onValueChange={field.onChange}
-                            placeholder={t('server_config.fields.communication_key_placeholder')}
+                            placeholder={t("server_config.fields.communication_key_placeholder")}
                           />
                         </FormControl>
                         <FormDescription>
-                          {t('server_config.fields.node_pull_interval_desc')}
+                          {t("server_config.fields.node_pull_interval_desc")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -228,23 +242,23 @@ export default function ServerConfig() {
 
                   <FormField
                     control={form.control}
-                    name='node_push_interval'
+                    name="node_push_interval"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('server_config.fields.node_push_interval')}</FormLabel>
+                        <FormLabel>{t("server_config.fields.node_push_interval")}</FormLabel>
                         <FormControl>
                           <EnhancedInput
-                            type='number'
+                            type="number"
                             min={0}
-                            suffix='S'
+                            suffix="S"
                             step={0.1}
-                            value={field.value as any}
+                            value={field.value}
                             onValueChange={field.onChange}
-                            placeholder={t('server_config.fields.communication_key_placeholder')}
+                            placeholder={t("server_config.fields.communication_key_placeholder")}
                           />
                         </FormControl>
                         <FormDescription>
-                          {t('server_config.fields.node_push_interval_desc')}
+                          {t("server_config.fields.node_push_interval_desc")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -253,24 +267,24 @@ export default function ServerConfig() {
 
                   <FormField
                     control={form.control}
-                    name='traffic_report_threshold'
+                    name="traffic_report_threshold"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('server_config.fields.traffic_report_threshold')}</FormLabel>
+                        <FormLabel>{t("server_config.fields.traffic_report_threshold")}</FormLabel>
                         <FormControl>
                           <EnhancedInput
-                            type='number'
+                            type="number"
                             min={0}
-                            suffix='MB'
-                            value={unitConversion('bitsToMb', field.value as number | undefined)}
+                            suffix="MB"
+                            value={unitConversion("bitsToMb", field.value as number | undefined)}
                             onValueChange={(value) => {
-                              field.onChange(unitConversion('mbToBits', value));
+                              field.onChange(unitConversion("mbToBits", value));
                             }}
-                            placeholder='1'
+                            placeholder="1"
                           />
                         </FormControl>
                         <FormDescription>
-                          {t('server_config.fields.traffic_report_threshold_desc')}
+                          {t("server_config.fields.traffic_report_threshold_desc")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -278,32 +292,32 @@ export default function ServerConfig() {
                   />
                 </TabsContent>
 
-                <TabsContent value='dns' className='space-y-4'>
+                <TabsContent value="dns" className="space-y-4">
                   <FormField
                     control={form.control}
-                    name='ip_strategy'
+                    name="ip_strategy"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('server_config.fields.ip_strategy')}</FormLabel>
+                        <FormLabel>{t("server_config.fields.ip_strategy")}</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue
-                                placeholder={t('server_config.fields.ip_strategy_placeholder')}
+                                placeholder={t("server_config.fields.ip_strategy_placeholder")}
                               />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value='prefer_ipv4'>
-                              {t('server_config.fields.ip_strategy_ipv4')}
+                            <SelectItem value="prefer_ipv4">
+                              {t("server_config.fields.ip_strategy_ipv4")}
                             </SelectItem>
-                            <SelectItem value='prefer_ipv6'>
-                              {t('server_config.fields.ip_strategy_ipv6')}
+                            <SelectItem value="prefer_ipv6">
+                              {t("server_config.fields.ip_strategy_ipv6")}
                             </SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>
-                          {t('server_config.fields.ip_strategy_desc')}
+                          {t("server_config.fields.ip_strategy_desc")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -312,45 +326,49 @@ export default function ServerConfig() {
 
                   <FormField
                     control={form.control}
-                    name='dns'
+                    name="dns"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('server_config.fields.dns_config')}</FormLabel>
+                        <FormLabel>{t("server_config.fields.dns_config")}</FormLabel>
                         <FormControl>
                           <ArrayInput
-                            className='grid grid-cols-2 gap-2'
+                            className="grid grid-cols-2 gap-2"
                             fields={[
                               {
-                                name: 'proto',
-                                type: 'select',
-                                placeholder: t('server_config.fields.dns_proto_placeholder'),
+                                name: "proto",
+                                type: "select",
+                                placeholder: t("server_config.fields.dns_proto_placeholder"),
                                 options: [
-                                  { label: 'TCP', value: 'tcp' },
-                                  { label: 'UDP', value: 'udp' },
-                                  { label: 'TLS', value: 'tls' },
-                                  { label: 'HTTPS', value: 'https' },
-                                  { label: 'QUIC', value: 'quic' },
+                                  { label: "TCP", value: "tcp" },
+                                  { label: "UDP", value: "udp" },
+                                  { label: "TLS", value: "tls" },
+                                  { label: "HTTPS", value: "https" },
+                                  { label: "QUIC", value: "quic" },
                                 ],
                               },
-                              { name: 'address', type: 'text', placeholder: '8.8.8.8:53' },
                               {
-                                name: 'domains',
-                                type: 'textarea',
-                                className: 'col-span-2',
-                                placeholder: t('server_config.fields.dns_domains_placeholder'),
+                                name: "address",
+                                type: "text",
+                                placeholder: "8.8.8.8:53",
+                              },
+                              {
+                                name: "domains",
+                                type: "textarea",
+                                className: "col-span-2",
+                                placeholder: t("server_config.fields.dns_domains_placeholder"),
                               },
                             ]}
                             value={(field.value || []).map((item) => ({
                               ...item,
-                              domains: Array.isArray(item.domains) ? item.domains.join('\n') : '',
+                              domains: Array.isArray(item.domains) ? item.domains.join("\n") : "",
                             }))}
                             onChange={(values) => {
-                              const converted = values.map((item: any) => ({
+                              const converted = values.map((item: DnsArrayInputValue) => ({
                                 proto: item.proto,
                                 address: item.address,
                                 domains:
-                                  typeof item.domains === 'string'
-                                    ? item.domains.split('\n').map((d: string) => d.trim())
+                                  typeof item.domains === "string"
+                                    ? item.domains.split("\n").map((d: string) => d.trim())
                                     : item.domains || [],
                               }));
                               field.onChange(converted);
@@ -363,89 +381,93 @@ export default function ServerConfig() {
                   />
                 </TabsContent>
 
-                <TabsContent value='outbound' className='space-y-4'>
+                <TabsContent value="outbound" className="space-y-4">
                   <FormField
                     control={form.control}
-                    name='outbound'
+                    name="outbound"
                     render={({ field }) => {
                       return (
                         <FormItem>
                           <FormControl>
                             <ArrayInput
-                              className='grid grid-cols-2 gap-2'
+                              className="grid grid-cols-2 gap-2"
                               fields={[
                                 {
-                                  name: 'name',
-                                  type: 'text',
-                                  className: 'col-span-2',
-                                  placeholder: t('server_config.fields.outbound_name_placeholder'),
+                                  name: "name",
+                                  type: "text",
+                                  className: "col-span-2",
+                                  placeholder: t("server_config.fields.outbound_name_placeholder"),
                                 },
                                 {
-                                  name: 'protocol',
-                                  type: 'select',
+                                  name: "protocol",
+                                  type: "select",
                                   placeholder: t(
-                                    'server_config.fields.outbound_protocol_placeholder',
+                                    "server_config.fields.outbound_protocol_placeholder",
                                   ),
                                   options: [
-                                    { label: 'HTTP', value: 'http' },
-                                    { label: 'SOCKS', value: 'socks' },
-                                    { label: 'Shadowsocks', value: 'shadowsocks' },
-                                    { label: 'Brook', value: 'brook' },
-                                    { label: 'Snell', value: 'snell' },
-                                    { label: 'VMess', value: 'vmess' },
-                                    { label: 'VLESS', value: 'vless' },
-                                    { label: 'Trojan', value: 'trojan' },
-                                    { label: 'WireGuard', value: 'wireguard' },
-                                    { label: 'Hysteria', value: 'hysteria' },
-                                    { label: 'TUIC', value: 'tuic' },
-                                    { label: 'AnyTLS', value: 'anytls' },
-                                    { label: 'Naive', value: 'naive' },
-                                    { label: 'Direct', value: 'direct' },
-                                    { label: 'Reject', value: 'reject' },
+                                    { label: "HTTP", value: "http" },
+                                    { label: "SOCKS", value: "socks" },
+                                    {
+                                      label: "Shadowsocks",
+                                      value: "shadowsocks",
+                                    },
+                                    { label: "Brook", value: "brook" },
+                                    { label: "Snell", value: "snell" },
+                                    { label: "VMess", value: "vmess" },
+                                    { label: "VLESS", value: "vless" },
+                                    { label: "Trojan", value: "trojan" },
+                                    { label: "WireGuard", value: "wireguard" },
+                                    { label: "Hysteria", value: "hysteria" },
+                                    { label: "TUIC", value: "tuic" },
+                                    { label: "AnyTLS", value: "anytls" },
+                                    { label: "Naive", value: "naive" },
+                                    { label: "Direct", value: "direct" },
+                                    { label: "Reject", value: "reject" },
                                   ],
                                 },
                                 {
-                                  name: 'cipher',
-                                  type: 'select',
+                                  name: "cipher",
+                                  type: "select",
                                   options: SS_CIPHERS.map((cipher) => ({
                                     label: cipher,
                                     value: cipher,
                                   })),
-                                  visible: (item: Record<string, any>) =>
-                                    item.protocol === 'shadowsocks',
+                                  visible: (item: Record<string, unknown>) =>
+                                    typeof item.protocol === "string" &&
+                                    item.protocol === "shadowsocks",
                                 },
                                 {
-                                  name: 'address',
-                                  type: 'text',
+                                  name: "address",
+                                  type: "text",
                                   placeholder: t(
-                                    'server_config.fields.outbound_address_placeholder',
+                                    "server_config.fields.outbound_address_placeholder",
                                   ),
                                 },
                                 {
-                                  name: 'port',
-                                  type: 'number',
-                                  placeholder: t('server_config.fields.outbound_port_placeholder'),
+                                  name: "port",
+                                  type: "number",
+                                  placeholder: t("server_config.fields.outbound_port_placeholder"),
                                 },
                                 {
-                                  name: 'password',
-                                  type: 'text',
+                                  name: "password",
+                                  type: "text",
                                   placeholder: t(
-                                    'server_config.fields.outbound_password_placeholder',
+                                    "server_config.fields.outbound_password_placeholder",
                                   ),
                                 },
                                 {
-                                  name: 'rules',
-                                  type: 'textarea',
-                                  className: 'col-span-2',
-                                  placeholder: t('server_config.fields.outbound_rules_placeholder'),
+                                  name: "rules",
+                                  type: "textarea",
+                                  className: "col-span-2",
+                                  placeholder: t("server_config.fields.outbound_rules_placeholder"),
                                 },
                               ]}
                               value={(field.value || []).map((item) => ({
                                 ...item,
-                                rules: Array.isArray(item.rules) ? item.rules.join('\n') : '',
+                                rules: Array.isArray(item.rules) ? item.rules.join("\n") : "",
                               }))}
                               onChange={(values) => {
-                                const converted = values.map((item: any) => ({
+                                const converted = values.map((item: OutboundArrayInputValue) => ({
                                   name: item.name,
                                   protocol: item.protocol,
                                   address: item.address,
@@ -453,8 +475,8 @@ export default function ServerConfig() {
                                   cipher: item.cipher,
                                   password: item.password,
                                   rules:
-                                    typeof item.rules === 'string'
-                                      ? item.rules.split('\n').map((r: string) => r.trim())
+                                    typeof item.rules === "string"
+                                      ? item.rules.split("\n").map((r: string) => r.trim())
                                       : item.rules || [],
                                 }));
                                 field.onChange(converted);
@@ -468,18 +490,18 @@ export default function ServerConfig() {
                   />
                 </TabsContent>
 
-                <TabsContent value='block' className='space-y-4'>
+                <TabsContent value="block" className="space-y-4">
                   <FormField
                     control={form.control}
-                    name='block'
+                    name="block"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
                           <Textarea
-                            placeholder={t('server_config.fields.block_rules_placeholder')}
-                            value={(field.value || []).join('\n')}
+                            placeholder={t("server_config.fields.block_rules_placeholder")}
+                            value={(field.value || []).join("\n")}
                             onChange={(e) => {
-                              const lines = e.target.value.split('\n').map((line) => line.trim());
+                              const lines = e.target.value.split("\n").map((line) => line.trim());
                               field.onChange(lines);
                             }}
                             rows={10}
@@ -495,13 +517,13 @@ export default function ServerConfig() {
           </Tabs>
         </ScrollArea>
 
-        <SheetFooter className='flex-row justify-end gap-2 pt-3'>
-          <Button variant='outline' disabled={saving} onClick={() => setOpen(false)}>
-            {t('actions.cancel')}
+        <SheetFooter className="flex-row justify-end gap-2 pt-3">
+          <Button variant="outline" disabled={saving} onClick={() => setOpen(false)}>
+            {t("actions.cancel")}
           </Button>
-          <Button disabled={saving} type='submit' form='server-config-form'>
-            <Icon icon='mdi:loading' className={saving ? 'mr-2 animate-spin' : 'hidden'} />
-            {t('actions.save')}
+          <Button disabled={saving} type="submit" form="server-config-form">
+            <Icon icon="mdi:loading" className={saving ? "mr-2 animate-spin" : "hidden"} />
+            {t("actions.save")}
           </Button>
         </SheetFooter>
       </SheetContent>

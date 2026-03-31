@@ -1,16 +1,16 @@
-// @ts-ignore
+// @ts-expect-error
 /* eslint-disable */
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 /** Update Payment Method PUT /v1/admin/payment/ */
 export async function updatePaymentMethod(
   body: API.UpdatePaymentMethodRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.PaymentConfig }>('/v1/admin/payment/', {
-    method: 'PUT',
+  return request<API.Response & { data?: API.PaymentConfig }>("/v1/admin/payment/", {
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -20,12 +20,12 @@ export async function updatePaymentMethod(
 /** Create Payment Method POST /v1/admin/payment/ */
 export async function createPaymentMethod(
   body: API.CreatePaymentMethodRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.PaymentConfig }>('/v1/admin/payment/', {
-    method: 'POST',
+  return request<API.Response & { data?: API.PaymentConfig }>("/v1/admin/payment/", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -35,12 +35,12 @@ export async function createPaymentMethod(
 /** Delete Payment Method DELETE /v1/admin/payment/ */
 export async function deletePaymentMethod(
   body: API.DeletePaymentMethodRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: any }>('/v1/admin/payment/', {
-    method: 'DELETE',
+  return request<API.Response & { data?: unknown }>("/v1/admin/payment/", {
+    method: "DELETE",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -51,12 +51,12 @@ export async function deletePaymentMethod(
 export async function getPaymentMethodList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetPaymentMethodListParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.GetPaymentMethodListResponse }>(
-    '/v1/admin/payment/list',
+    "/v1/admin/payment/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -66,9 +66,9 @@ export async function getPaymentMethodList(
 }
 
 /** Get supported payment platform GET /v1/admin/payment/platform */
-export async function getPaymentPlatform(options?: { [key: string]: any }) {
-  return request<API.Response & { data?: API.PlatformResponse }>('/v1/admin/payment/platform', {
-    method: 'GET',
+export async function getPaymentPlatform(options?: Record<string, unknown>) {
+  return request<API.Response & { data?: API.PlatformResponse }>("/v1/admin/payment/platform", {
+    method: "GET",
     ...(options || {}),
   });
 }

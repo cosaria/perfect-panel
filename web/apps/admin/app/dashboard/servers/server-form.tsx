@@ -1,21 +1,20 @@
-'use client';
+"use client";
 
-import { useNode } from '@/store/node';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@workspace/ui/components/accordion';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
+} from "@workspace/ui/components/accordion";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu';
+} from "@workspace/ui/components/dropdown-menu";
 import {
   Form,
   FormControl,
@@ -23,15 +22,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
+} from "@workspace/ui/components/form";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select';
+} from "@workspace/ui/components/select";
 import {
   Sheet,
   SheetContent,
@@ -39,23 +38,56 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@workspace/ui/components/sheet';
-import { Switch } from '@workspace/ui/components/switch';
-import { EnhancedInput } from '@workspace/ui/custom-components/enhanced-input';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { cn } from '@workspace/ui/lib/utils';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { toast } from 'sonner';
+} from "@workspace/ui/components/sheet";
+import { Switch } from "@workspace/ui/components/switch";
+import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { cn } from "@workspace/ui/lib/utils";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { type Control, type UseFormReturn, useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
+import { useNode } from "@/store/node";
 import {
-  FieldConfig,
+  type FieldConfig,
   formSchema,
   getLabel,
   getProtocolDefaultConfig,
   PROTOCOL_FIELDS,
   protocols as PROTOCOLS,
-} from './form-schema';
+  type ProtocolConfig,
+  type ServerFormValues,
+} from "./form-schema";
+
+type GeneratedFieldValueMap = Record<string, string>;
+type ProtocolFieldPath = `protocols.${number}.${string}`;
+
+function isGeneratedFieldValueMap(
+  value: string | GeneratedFieldValueMap,
+): value is GeneratedFieldValueMap {
+  return typeof value === "object" && value !== null;
+}
+
+function applyGeneratedFieldUpdates(
+  form: UseFormReturn<ServerFormValues>,
+  protocolIndex: number,
+  updateFields: Record<string, string> | undefined,
+  result: string | GeneratedFieldValueMap,
+) {
+  if (!updateFields || !isGeneratedFieldValueMap(result)) {
+    return false;
+  }
+
+  Object.entries(updateFields).forEach(([fieldName, resultKey]) => {
+    const value = result[resultKey];
+
+    if (value !== undefined) {
+      form.setValue(`protocols.${protocolIndex}.${fieldName}` as ProtocolFieldPath, value as never);
+    }
+  });
+
+  return true;
+}
 
 function DynamicField({
   field,
@@ -66,15 +98,15 @@ function DynamicField({
   t,
 }: {
   field: FieldConfig;
-  control: any;
-  form: any;
+  control: Control<ServerFormValues>;
+  form: UseFormReturn<ServerFormValues>;
   protocolIndex: number;
-  protocolData: any;
+  protocolData: Partial<ProtocolConfig>;
   t: (key: string) => string;
 }) {
   const fieldName = `protocols.${protocolIndex}.${field.name}` as const;
 
-  if (field.condition && !field.condition(protocolData, {})) {
+  if (field.condition && !field.condition(protocolData, form.getValues())) {
     return null;
   }
 
@@ -84,7 +116,7 @@ function DynamicField({
   };
 
   switch (field.type) {
-    case 'input':
+    case "input":
       return (
         <FormField
           {...commonProps}
@@ -94,10 +126,10 @@ function DynamicField({
               <FormControl>
                 <EnhancedInput
                   {...fieldProps}
-                  type='text'
+                  type="text"
                   placeholder={
                     field.placeholder
-                      ? typeof field.placeholder === 'function'
+                      ? typeof field.placeholder === "function"
                         ? field.placeholder(t, protocolData)
                         : field.placeholder
                       : undefined
@@ -108,25 +140,31 @@ function DynamicField({
                       field.generate.functions && field.generate.functions.length > 0 ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button type='button' variant='ghost' size='sm'>
-                              <Icon icon='mdi:key' className='h-4 w-4' />
+                            <Button type="button" variant="ghost" size="sm">
+                              <Icon icon="mdi:key" className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align='end'>
-                            {field.generate.functions.map((genFunc, idx) => (
+                          <DropdownMenuContent align="end">
+                            {field.generate.functions.map((genFunc) => (
                               <DropdownMenuItem
-                                key={idx}
+                                key={
+                                  typeof genFunc.label === "string"
+                                    ? `${field.name}-${genFunc.label}`
+                                    : `${field.name}-${genFunc.function.name || "generate"}`
+                                }
                                 onClick={async () => {
                                   const result = await genFunc.function();
-                                  if (typeof result === 'string') {
+                                  if (typeof result === "string") {
                                     fieldProps.onChange(result);
-                                  } else if (field.generate!.updateFields) {
-                                    Object.entries(field.generate!.updateFields).forEach(
-                                      ([fieldName, resultKey]) => {
-                                        const fullFieldName = `protocols.${protocolIndex}.${fieldName}`;
-                                        form.setValue(fullFieldName, (result as any)[resultKey]);
-                                      },
-                                    );
+                                  } else if (
+                                    applyGeneratedFieldUpdates(
+                                      form,
+                                      protocolIndex,
+                                      field.generate?.updateFields,
+                                      result,
+                                    )
+                                  ) {
+                                    return;
                                   } else {
                                     if (result.privateKey) {
                                       fieldProps.onChange(result.privateKey);
@@ -134,7 +172,7 @@ function DynamicField({
                                   }
                                 }}
                               >
-                                {typeof genFunc.label === 'function'
+                                {typeof genFunc.label === "function"
                                   ? genFunc.label(t, protocolData)
                                   : genFunc.label}
                               </DropdownMenuItem>
@@ -143,20 +181,23 @@ function DynamicField({
                         </DropdownMenu>
                       ) : field.generate.function ? (
                         <Button
-                          type='button'
-                          variant='ghost'
-                          size='sm'
+                          type="button"
+                          variant="ghost"
+                          size="sm"
                           onClick={async () => {
-                            const result = await field.generate!.function!();
-                            if (typeof result === 'string') {
+                            const result = await field.generate?.function?.();
+                            if (typeof result === "string") {
                               fieldProps.onChange(result);
-                            } else if (field.generate!.updateFields) {
-                              Object.entries(field.generate!.updateFields).forEach(
-                                ([fieldName, resultKey]) => {
-                                  const fullFieldName = `protocols.${protocolIndex}.${fieldName}`;
-                                  form.setValue(fullFieldName, (result as any)[resultKey]);
-                                },
-                              );
+                            } else if (
+                              result &&
+                              applyGeneratedFieldUpdates(
+                                form,
+                                protocolIndex,
+                                field.generate?.updateFields,
+                                result,
+                              )
+                            ) {
+                              return;
                             } else {
                               if (result.privateKey) {
                                 fieldProps.onChange(result.privateKey);
@@ -164,7 +205,7 @@ function DynamicField({
                             }
                           }}
                         >
-                          <Icon icon='mdi:key' className='h-4 w-4' />
+                          <Icon icon="mdi:key" className="h-4 w-4" />
                         </Button>
                       ) : null
                     ) : (
@@ -179,7 +220,7 @@ function DynamicField({
         />
       );
 
-    case 'number':
+    case "number":
       return (
         <FormField
           {...commonProps}
@@ -189,14 +230,14 @@ function DynamicField({
               <FormControl>
                 <EnhancedInput
                   {...fieldProps}
-                  type='number'
+                  type="number"
                   min={field.min}
                   max={field.max}
                   step={field.step || 1}
                   suffix={field.suffix}
                   placeholder={
                     field.placeholder
-                      ? typeof field.placeholder === 'function'
+                      ? typeof field.placeholder === "function"
                         ? field.placeholder(t, protocolData)
                         : field.placeholder
                       : undefined
@@ -210,7 +251,7 @@ function DynamicField({
         />
       );
 
-    case 'select':
+    case "select":
       if (!field.options || field.options.length <= 1) {
         return null;
       }
@@ -228,7 +269,7 @@ function DynamicField({
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={t('please_select')} />
+                      <SelectValue placeholder={t("please_select")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -246,7 +287,7 @@ function DynamicField({
         />
       );
 
-    case 'switch':
+    case "switch":
       return (
         <FormField
           {...commonProps}
@@ -254,7 +295,7 @@ function DynamicField({
             <FormItem>
               <FormLabel>{t(field.label)}</FormLabel>
               <FormControl>
-                <div className='pt-2'>
+                <div className="pt-2">
                   <Switch
                     checked={!!fieldProps.value}
                     onCheckedChange={(checked) => fieldProps.onChange(checked)}
@@ -267,21 +308,21 @@ function DynamicField({
         />
       );
 
-    case 'textarea':
+    case "textarea":
       return (
         <FormField
           {...commonProps}
           render={({ field: fieldProps }) => (
-            <FormItem className='col-span-2'>
+            <FormItem className="col-span-2">
               <FormLabel>{t(field.label)}</FormLabel>
               <FormControl>
                 <textarea
                   {...fieldProps}
-                  value={fieldProps.value ?? ''}
-                  className='border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                  value={fieldProps.value ?? ""}
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   placeholder={
                     field.placeholder
-                      ? typeof field.placeholder === 'function'
+                      ? typeof field.placeholder === "function"
                         ? field.placeholder(t, protocolData)
                         : field.placeholder
                       : undefined
@@ -303,17 +344,17 @@ function DynamicField({
 function renderFieldsByGroup(
   fields: FieldConfig[],
   group: string,
-  control: any,
-  form: any,
+  control: Control<ServerFormValues>,
+  form: UseFormReturn<ServerFormValues>,
   protocolIndex: number,
-  protocolData: any,
+  protocolData: Partial<ProtocolConfig>,
   t: (key: string) => string,
 ) {
   const groupFields = fields.filter((field) => field.group === group);
   if (groupFields.length === 0) return null;
 
   return (
-    <div className='grid grid-cols-2 gap-4'>
+    <div className="grid grid-cols-2 gap-4">
       {groupFields.map((field) => (
         <DynamicField
           key={field.name}
@@ -333,10 +374,10 @@ function renderGroupCard(
   title: string,
   fields: FieldConfig[],
   group: string,
-  control: any,
-  form: any,
+  control: Control<ServerFormValues>,
+  form: UseFormReturn<ServerFormValues>,
   protocolIndex: number,
-  protocolData: any,
+  protocolData: Partial<ProtocolConfig>,
   t: (key: string) => string,
 ) {
   const groupFields = fields.filter((field) => field.group === group);
@@ -349,12 +390,12 @@ function renderGroupCard(
   if (visibleFields.length === 0) return null;
 
   return (
-    <div className='relative'>
-      <fieldset className='border-border rounded-lg border'>
-        <legend className='text-foreground bg-background ml-3 px-1 py-1 text-sm font-medium'>
+    <div className="relative">
+      <fieldset className="border-border rounded-lg border">
+        <legend className="text-foreground bg-background ml-3 px-1 py-1 text-sm font-medium">
           {t(title)}
         </legend>
-        <div className='p-4 pt-2'>
+        <div className="p-4 pt-2">
           {renderFieldsByGroup(fields, group, control, form, protocolIndex, protocolData, t)}
         </div>
       </fieldset>
@@ -370,34 +411,34 @@ export default function ServerForm(props: {
   onSubmit: (values: Partial<API.Server>) => Promise<boolean> | boolean;
 }) {
   const { trigger, title, loading, initialValues, onSubmit } = props;
-  const t = useTranslations('servers');
+  const t = useTranslations("servers");
   const [open, setOpen] = useState(false);
   const [accordionValue, setAccordionValue] = useState<string>();
 
   const { isProtocolUsedInNodes } = useNode();
 
-  const form = useForm({
+  const form = useForm<ServerFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      address: '',
-      country: '',
-      city: '',
-      protocols: [] as any[],
-      ...initialValues,
+      name: "",
+      address: "",
+      country: "",
+      city: "",
+      protocols: [],
+      ...(initialValues as Partial<ServerFormValues>),
     },
   });
   const { control } = form;
 
-  const protocolsValues = useWatch({ control, name: 'protocols' });
+  const protocolsValues = useWatch({ control, name: "protocols" });
 
   useEffect(() => {
     if (initialValues) {
       form.reset({
-        name: '',
-        address: '',
-        country: '',
-        city: '',
+        name: "",
+        address: "",
+        country: "",
+        city: "",
         ...initialValues,
         protocols: PROTOCOLS.map((type) => {
           const existingProtocol = initialValues.protocols?.find((p) => p.type === type);
@@ -407,10 +448,10 @@ export default function ServerForm(props: {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialValues]);
+  }, [initialValues, form.reset]);
 
-  async function handleSubmit(values: Record<string, any>) {
-    const filteredProtocols = (values?.protocols || []).filter((protocol: any) => {
+  async function handleSubmit(values: ServerFormValues) {
+    const filteredProtocols = values.protocols.filter((protocol) => {
       const port = Number(protocol?.port);
       return protocol && Number.isFinite(port) && port > 0 && port <= 65535;
     });
@@ -438,10 +479,10 @@ export default function ServerForm(props: {
             if (!initialValues) {
               const full = PROTOCOLS.map((t) => getProtocolDefaultConfig(t));
               form.reset({
-                name: '',
-                address: '',
-                country: '',
-                city: '',
+                name: "",
+                address: "",
+                country: "",
+                city: "",
                 protocols: full,
               });
             }
@@ -451,20 +492,20 @@ export default function ServerForm(props: {
           {trigger}
         </Button>
       </SheetTrigger>
-      <SheetContent className='w-[700px] max-w-full md:max-w-screen-md'>
+      <SheetContent className="w-[700px] max-w-full md:max-w-screen-md">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
-        <ScrollArea className='-mx-6 h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))]'>
+        <ScrollArea className="-mx-6 h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))]">
           <Form {...form}>
-            <form className='grid grid-cols-1 gap-2 px-6 pt-4'>
-              <div className='grid grid-cols-2 gap-2 md:grid-cols-4'>
+            <form className="grid grid-cols-1 gap-2 px-6 pt-4">
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                 <FormField
                   control={control}
-                  name='name'
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('name')}</FormLabel>
+                      <FormLabel>{t("name")}</FormLabel>
                       <FormControl>
                         <EnhancedInput {...field} onValueChange={(v) => field.onChange(v)} />
                       </FormControl>
@@ -474,14 +515,14 @@ export default function ServerForm(props: {
                 />
                 <FormField
                   control={control}
-                  name='address'
+                  name="address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('address')}</FormLabel>
+                      <FormLabel>{t("address")}</FormLabel>
                       <FormControl>
                         <EnhancedInput
                           {...field}
-                          placeholder={t('address_placeholder')}
+                          placeholder={t("address_placeholder")}
                           onValueChange={(v) => field.onChange(v)}
                         />
                       </FormControl>
@@ -491,10 +532,10 @@ export default function ServerForm(props: {
                 />
                 <FormField
                   control={control}
-                  name='country'
+                  name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('country')}</FormLabel>
+                      <FormLabel>{t("country")}</FormLabel>
                       <FormControl>
                         <EnhancedInput {...field} onValueChange={(v) => field.onChange(v)} />
                       </FormControl>
@@ -504,10 +545,10 @@ export default function ServerForm(props: {
                 />
                 <FormField
                   control={control}
-                  name='city'
+                  name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('city')}</FormLabel>
+                      <FormLabel>{t("city")}</FormLabel>
                       <FormControl>
                         <EnhancedInput {...field} onValueChange={(v) => field.onChange(v)} />
                       </FormControl>
@@ -516,62 +557,59 @@ export default function ServerForm(props: {
                   )}
                 />
               </div>
-              <div className='my-3'>
-                <h3 className='text-foreground text-sm font-semibold'>
-                  {t('protocol_configurations')}
+              <div className="my-3">
+                <h3 className="text-foreground text-sm font-semibold">
+                  {t("protocol_configurations")}
                 </h3>
-                <p className='text-muted-foreground mt-1 text-xs'>
-                  {t('protocol_configurations_desc')}
+                <p className="text-muted-foreground mt-1 text-xs">
+                  {t("protocol_configurations_desc")}
                 </p>
               </div>
 
               <Accordion
-                type='single'
+                type="single"
                 collapsible
-                className='w-full space-y-3'
+                className="w-full space-y-3"
                 value={accordionValue}
                 onValueChange={setAccordionValue}
               >
                 {PROTOCOLS.map((type) => {
-                  const i = Math.max(
-                    0,
-                    PROTOCOLS.findIndex((t) => t === type),
-                  );
-                  const current = (protocolsValues[i] || {}) as Record<string, any>;
+                  const i = Math.max(0, PROTOCOLS.indexOf(type));
+                  const current = protocolsValues[i] ?? getProtocolDefaultConfig(type);
                   const isEnabled = current?.enable;
                   const fields = PROTOCOL_FIELDS[type] || [];
                   return (
-                    <AccordionItem key={type} value={type} className='mb-2 rounded-lg border'>
-                      <AccordionTrigger className='px-4 py-3 hover:no-underline'>
-                        <div className='flex w-full items-center justify-between'>
-                          <div className='flex flex-col items-start gap-1'>
-                            <div className='flex items-center gap-1'>
-                              <span className='font-medium capitalize'>{type}</span>
+                    <AccordionItem key={type} value={type} className="mb-2 rounded-lg border">
+                      <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                        <div className="flex w-full items-center justify-between">
+                          <div className="flex flex-col items-start gap-1">
+                            <div className="flex items-center gap-1">
+                              <span className="font-medium capitalize">{type}</span>
                               {current.transport && (
-                                <Badge variant='secondary' className='text-xs'>
+                                <Badge variant="secondary" className="text-xs">
                                   {current.transport.toUpperCase()}
                                 </Badge>
                               )}
-                              {current.security && current.security !== 'none' && (
-                                <Badge variant='outline' className='text-xs'>
+                              {current.security && current.security !== "none" && (
+                                <Badge variant="outline" className="text-xs">
                                   {current.security.toUpperCase()}
                                 </Badge>
                               )}
-                              {current.port && <Badge className='text-xs'>{current.port}</Badge>}
+                              {current.port && <Badge className="text-xs">{current.port}</Badge>}
                             </div>
-                            <div className='flex items-center gap-1'>
+                            <div className="flex items-center gap-1">
                               <span
                                 className={cn(
-                                  'text-xs',
-                                  isEnabled ? 'text-green-500' : 'text-muted-foreground',
+                                  "text-xs",
+                                  isEnabled ? "text-green-500" : "text-muted-foreground",
                                 )}
                               >
-                                {isEnabled ? t('enabled') : t('disabled')}
+                                {isEnabled ? t("enabled") : t("disabled")}
                               </span>
                             </div>
                           </div>
                           <Switch
-                            className='mr-2'
+                            className="mr-2"
                             checked={!!isEnabled}
                             disabled={Boolean(
                               initialValues?.id &&
@@ -585,14 +623,14 @@ export default function ServerForm(props: {
                           />
                         </div>
                       </AccordionTrigger>
-                      <AccordionContent className='px-4 pb-4 pt-0'>
-                        <div className='-mx-4 space-y-4 rounded-b-lg border-t px-4 pt-4'>
-                          {renderGroupCard('basic', fields, 'basic', control, form, i, current, t)}
-                          {renderGroupCard('obfs', fields, 'obfs', control, form, i, current, t)}
+                      <AccordionContent className="px-4 pb-4 pt-0">
+                        <div className="-mx-4 space-y-4 rounded-b-lg border-t px-4 pt-4">
+                          {renderGroupCard("basic", fields, "basic", control, form, i, current, t)}
+                          {renderGroupCard("obfs", fields, "obfs", control, form, i, current, t)}
                           {renderGroupCard(
-                            'transport',
+                            "transport",
                             fields,
-                            'transport',
+                            "transport",
                             control,
                             form,
                             i,
@@ -600,9 +638,9 @@ export default function ServerForm(props: {
                             t,
                           )}
                           {renderGroupCard(
-                            'security',
+                            "security",
                             fields,
-                            'security',
+                            "security",
                             control,
                             form,
                             i,
@@ -610,9 +648,9 @@ export default function ServerForm(props: {
                             t,
                           )}
                           {renderGroupCard(
-                            'reality',
+                            "reality",
                             fields,
-                            'reality',
+                            "reality",
                             control,
                             form,
                             i,
@@ -620,9 +658,9 @@ export default function ServerForm(props: {
                             t,
                           )}
                           {renderGroupCard(
-                            'encryption',
+                            "encryption",
                             fields,
-                            'encryption',
+                            "encryption",
                             control,
                             form,
                             i,
@@ -638,9 +676,9 @@ export default function ServerForm(props: {
             </form>
           </Form>
         </ScrollArea>
-        <SheetFooter className='flex-row justify-end gap-2 pt-3'>
-          <Button variant='outline' disabled={loading} onClick={() => setOpen(false)}>
-            {t('cancel')}
+        <SheetFooter className="flex-row justify-end gap-2 pt-3">
+          <Button variant="outline" disabled={loading} onClick={() => setOpen(false)}>
+            {t("cancel")}
           </Button>
           <Button
             disabled={loading}
@@ -651,8 +689,8 @@ export default function ServerForm(props: {
               return false;
             })}
           >
-            {loading && <Icon icon='mdi:loading' className='mr-2 animate-spin' />}
-            {t('confirm')}
+            {loading && <Icon icon="mdi:loading" className="mr-2 animate-spin" />}
+            {t("confirm")}
           </Button>
         </SheetFooter>
       </SheetContent>

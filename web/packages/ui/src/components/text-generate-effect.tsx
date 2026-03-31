@@ -1,7 +1,7 @@
-'use client';
-import { cn } from '@workspace/ui/lib/utils';
-import { motion, stagger, useAnimate } from 'framer-motion';
-import { useEffect } from 'react';
+"use client";
+import { cn } from "@workspace/ui/lib/utils";
+import { motion, stagger, useAnimate } from "framer-motion";
+import { useEffect } from "react";
 
 export const TextGenerateEffect = ({
   words,
@@ -15,13 +15,13 @@ export const TextGenerateEffect = ({
   duration?: number;
 }) => {
   const [scope, animate] = useAnimate();
-  const wordsArray = words.split(' ');
+  const wordsArray = words.split(" ");
   useEffect(() => {
     animate(
-      'span',
+      "span",
       {
         opacity: 1,
-        filter: filter ? 'blur(0px)' : 'none',
+        filter: filter ? "blur(0px)" : "none",
       },
       {
         duration: duration ? duration : 1,
@@ -29,21 +29,27 @@ export const TextGenerateEffect = ({
       },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scope.current]);
+  }, [animate, duration, filter]);
 
   const renderWords = () => {
+    const keyedWords = wordsArray.reduce<Array<{ key: string; word: string }>>((result, word) => {
+      const occurrence = result.filter((item) => item.word === word).length + 1;
+      result.push({ key: `${word}-${occurrence}`, word });
+      return result;
+    }, []);
+
     return (
       <motion.div ref={scope}>
-        {wordsArray.map((word, idx) => {
+        {keyedWords.map(({ key, word }) => {
           return (
             <motion.span
-              key={word + idx}
-              className='text-black opacity-0 dark:text-white'
+              key={key}
+              className="text-black opacity-0 dark:text-white"
               style={{
-                filter: filter ? 'blur(10px)' : 'none',
+                filter: filter ? "blur(10px)" : "none",
               }}
             >
-              {word}{' '}
+              {word}{" "}
             </motion.span>
           );
         })}
@@ -52,9 +58,9 @@ export const TextGenerateEffect = ({
   };
 
   return (
-    <div className={cn('font-bold', className)}>
-      <div className='mt-4'>
-        <div className='text-2xl leading-snug tracking-wide text-black dark:text-white'>
+    <div className={cn("font-bold", className)}>
+      <div className="mt-4">
+        <div className="text-2xl leading-snug tracking-wide text-black dark:text-white">
           {renderWords()}
         </div>
       </div>

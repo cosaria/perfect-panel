@@ -1,6 +1,6 @@
-import { getSubscription } from '@/services/user/portal';
-import { getLocale } from 'next-intl/server';
-import { Content } from './content';
+import { getLocale } from "next-intl/server";
+import { getSubscription } from "@/services/user/portal";
+import { Content } from "./content";
 
 export async function ProductShowcase() {
   try {
@@ -18,7 +18,7 @@ export async function ProductShowcase() {
     if (subscriptionList.length === 0) return null;
 
     return <Content subscriptionData={subscriptionList} />;
-  } catch (error) {
+  } catch (_error) {
     return null;
   }
 }

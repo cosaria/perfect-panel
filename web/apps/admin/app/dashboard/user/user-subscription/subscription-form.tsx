@@ -1,8 +1,7 @@
-'use client';
+"use client";
 
-import { useSubscribe } from '@/store/subscribe';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@workspace/ui/components/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@workspace/ui/components/button";
 import {
   Form,
   FormControl,
@@ -10,8 +9,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
+} from "@workspace/ui/components/form";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -19,23 +18,24 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@workspace/ui/components/sheet';
-import { Combobox } from '@workspace/ui/custom-components/combobox';
-import { DatePicker } from '@workspace/ui/custom-components/date-picker';
-import { EnhancedInput } from '@workspace/ui/custom-components/enhanced-input';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { unitConversion } from '@workspace/ui/utils';
-import { useTranslations } from 'next-intl';
-import { ReactNode, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+} from "@workspace/ui/components/sheet";
+import { Combobox } from "@workspace/ui/custom-components/combobox";
+import { DatePicker } from "@workspace/ui/custom-components/date-picker";
+import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { unitConversion } from "@workspace/ui/utils";
+import { useTranslations } from "next-intl";
+import { type ReactNode, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useSubscribe } from "@/store/subscribe";
 
 interface Props {
   trigger: ReactNode;
   title: string;
   loading?: boolean;
   initialData?: API.UserSubscribe;
-  onSubmit: (values: any) => Promise<boolean>;
+  onSubmit: (values: SubscriptionFormValues) => Promise<boolean>;
 }
 
 const formSchema = z.object({
@@ -49,11 +49,13 @@ const formSchema = z.object({
   id: z.number().optional(),
 });
 
+type SubscriptionFormValues = z.infer<typeof formSchema>;
+
 export function SubscriptionForm({ trigger, title, loading, initialData, onSubmit }: Props) {
-  const t = useTranslations('user');
+  const t = useTranslations("user");
   const [open, setOpen] = useState(false);
 
-  const form = useForm({
+  const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       subscribe_id: initialData?.subscribe_id || 0,
@@ -65,7 +67,7 @@ export function SubscriptionForm({ trigger, title, loading, initialData, onSubmi
     },
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: SubscriptionFormValues) => {
     const success = await onSubmit(values);
     if (success) {
       setOpen(false);
@@ -87,30 +89,39 @@ export function SubscriptionForm({ trigger, title, loading, initialData, onSubmi
           {trigger}
         </Button>
       </SheetTrigger>
-      <SheetContent side='right'>
+      <SheetContent side="right">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
-        <ScrollArea className='h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))]'>
+        <ScrollArea className="h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))]">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className='mt-4 space-y-4'>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="mt-4 space-y-4">
               <FormField
                 control={form.control}
-                name='subscribe_id'
+                name="subscribe_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('subscription')}</FormLabel>
+                    <FormLabel>{t("subscription")}</FormLabel>
                     <FormControl>
                       <Combobox<number, false>
-                        placeholder='Select Subscription'
+                        placeholder="Select Subscription"
                         value={field.value}
                         onChange={(value) => {
                           form.setValue(field.name, value);
                         }}
-                        options={subscribes?.map((item) => ({
-                          value: item.id!,
-                          label: item.name!,
-                        }))}
+                        options={subscribes
+                          ?.filter(
+                            (
+                              item,
+                            ): item is typeof item & {
+                              id: number;
+                              name: string;
+                            } => typeof item.id === "number" && typeof item.name === "string",
+                          )
+                          .map((item) => ({
+                            value: item.id,
+                            label: item.name,
+                          }))}
                       />
                     </FormControl>
                     <FormMessage />
@@ -119,18 +130,18 @@ export function SubscriptionForm({ trigger, title, loading, initialData, onSubmi
               />
               <FormField
                 control={form.control}
-                name='traffic'
+                name="traffic"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('trafficLimit')}</FormLabel>
+                    <FormLabel>{t("trafficLimit")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
-                        placeholder={t('unlimited')}
-                        type='number'
+                        placeholder={t("unlimited")}
+                        type="number"
                         {...field}
-                        formatInput={(value) => unitConversion('bytesToGb', value)}
-                        formatOutput={(value) => unitConversion('gbToBytes', value)}
-                        suffix='GB'
+                        formatInput={(value) => unitConversion("bytesToGb", value)}
+                        formatOutput={(value) => unitConversion("gbToBytes", value)}
+                        suffix="GB"
                         onValueChange={(value) => {
                           form.setValue(field.name, value as number);
                         }}
@@ -142,18 +153,18 @@ export function SubscriptionForm({ trigger, title, loading, initialData, onSubmi
               />
               <FormField
                 control={form.control}
-                name='upload'
+                name="upload"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('uploadTraffic')}</FormLabel>
+                    <FormLabel>{t("uploadTraffic")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
-                        placeholder='0'
-                        type='number'
+                        placeholder="0"
+                        type="number"
                         {...field}
-                        formatInput={(value) => unitConversion('bytesToGb', value)}
-                        formatOutput={(value) => unitConversion('gbToBytes', value)}
-                        suffix='GB'
+                        formatInput={(value) => unitConversion("bytesToGb", value)}
+                        formatOutput={(value) => unitConversion("gbToBytes", value)}
+                        suffix="GB"
                         onValueChange={(value) => {
                           form.setValue(field.name, value as number);
                         }}
@@ -165,18 +176,18 @@ export function SubscriptionForm({ trigger, title, loading, initialData, onSubmi
               />
               <FormField
                 control={form.control}
-                name='download'
+                name="download"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('downloadTraffic')}</FormLabel>
+                    <FormLabel>{t("downloadTraffic")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
-                        placeholder='0'
-                        type='number'
+                        placeholder="0"
+                        type="number"
                         {...field}
-                        formatInput={(value) => unitConversion('bytesToGb', value)}
-                        formatOutput={(value) => unitConversion('gbToBytes', value)}
-                        suffix='GB'
+                        formatInput={(value) => unitConversion("bytesToGb", value)}
+                        formatOutput={(value) => unitConversion("gbToBytes", value)}
+                        suffix="GB"
                         onValueChange={(value) => {
                           form.setValue(field.name, value as number);
                         }}
@@ -188,19 +199,21 @@ export function SubscriptionForm({ trigger, title, loading, initialData, onSubmi
               />
               <FormField
                 control={form.control}
-                name='expired_at'
+                name="expired_at"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('expiredAt')}</FormLabel>
+                    <FormLabel>{t("expiredAt")}</FormLabel>
                     <FormControl>
                       <DatePicker
-                        placeholder={t('permanent')}
+                        placeholder={t("permanent")}
                         value={field.value ?? undefined}
                         onChange={(value) => {
                           if (value === field.value) {
                             form.setValue(field.name, 0);
+                          } else if (value !== undefined) {
+                            form.setValue(field.name, value);
                           } else {
-                            form.setValue(field.name, value!);
+                            form.setValue(field.name, 0);
                           }
                         }}
                       />
@@ -212,19 +225,19 @@ export function SubscriptionForm({ trigger, title, loading, initialData, onSubmi
             </form>
           </Form>
         </ScrollArea>
-        <SheetFooter className='flex-row justify-end gap-2 pt-3'>
+        <SheetFooter className="flex-row justify-end gap-2 pt-3">
           <Button
-            variant='outline'
+            variant="outline"
             disabled={loading}
             onClick={() => {
               setOpen(false);
             }}
           >
-            {t('cancel')}
+            {t("cancel")}
           </Button>
           <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && <Icon icon='mdi:loading' className='mr-2 animate-spin' />}
-            {t('confirm')}
+            {loading && <Icon icon="mdi:loading" className="mr-2 animate-spin" />}
+            {t("confirm")}
           </Button>
         </SheetFooter>
       </SheetContent>

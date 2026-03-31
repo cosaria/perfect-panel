@@ -1,9 +1,6 @@
-'use client';
+"use client";
 
-import { Display } from '@/components/display';
-import useGlobalStore from '@/config/use-global';
-import { resetTraffic } from '@/services/user/order';
-import { Button } from '@workspace/ui/components/button';
+import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -11,19 +8,22 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@workspace/ui/components/dialog';
-import { LoaderCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState, useTransition } from 'react';
-import PaymentMethods from './payment-methods';
+} from "@workspace/ui/components/dialog";
+import { LoaderCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useEffect, useState, useTransition } from "react";
+import { Display } from "@/components/display";
+import useGlobalStore from "@/config/use-global";
+import { resetTraffic } from "@/services/user/order";
+import PaymentMethods from "./payment-methods";
 
 interface ResetTrafficProps {
   id: number;
   replacement?: number;
 }
 export default function ResetTraffic({ id, replacement }: Readonly<ResetTrafficProps>) {
-  const t = useTranslations('subscribe');
+  const t = useTranslations("subscribe");
   const { getUserInfo } = useGlobalStore();
   const [open, setOpen] = useState<boolean>(false);
   const router = useRouter();
@@ -48,21 +48,21 @@ export default function ResetTraffic({ id, replacement }: Readonly<ResetTrafficP
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='secondary' size='sm'>
-          {t('resetTraffic')}
+        <Button variant="secondary" size="sm">
+          {t("resetTraffic")}
         </Button>
       </DialogTrigger>
-      <DialogContent className='flex h-full flex-col overflow-hidden md:h-auto'>
+      <DialogContent className="flex h-full flex-col overflow-hidden md:h-auto">
         <DialogHeader>
-          <DialogTitle>{t('resetTrafficTitle')}</DialogTitle>
-          <DialogDescription>{t('resetTrafficDescription')}</DialogDescription>
+          <DialogTitle>{t("resetTrafficTitle")}</DialogTitle>
+          <DialogDescription>{t("resetTrafficDescription")}</DialogDescription>
         </DialogHeader>
-        <div className='flex flex-col justify-between text-sm'>
-          <div className='grid gap-3'>
-            <div className='flex justify-between font-semibold'>
-              <span>{t('resetPrice')}</span>
+        <div className="flex flex-col justify-between text-sm">
+          <div className="grid gap-3">
+            <div className="flex justify-between font-semibold">
+              <span>{t("resetPrice")}</span>
               <span>
-                <Display type='currency' value={replacement} />
+                <Display type="currency" value={replacement} />
               </span>
             </div>
             <PaymentMethods
@@ -76,7 +76,7 @@ export default function ResetTraffic({ id, replacement }: Readonly<ResetTrafficP
             />
           </div>
           <Button
-            className='fixed bottom-0 left-0 w-full rounded-none md:relative md:mt-6'
+            className="fixed bottom-0 left-0 w-full rounded-none md:relative md:mt-6"
             disabled={loading}
             onClick={async () => {
               startTransition(async () => {
@@ -93,8 +93,8 @@ export default function ResetTraffic({ id, replacement }: Readonly<ResetTrafficP
               });
             }}
           >
-            {loading && <LoaderCircle className='mr-2 animate-spin' />}
-            {t('buyNow')}
+            {loading && <LoaderCircle className="mr-2 animate-spin" />}
+            {t("buyNow")}
           </Button>
         </div>
       </DialogContent>

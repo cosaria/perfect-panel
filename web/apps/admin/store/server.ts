@@ -1,5 +1,5 @@
-import { filterServerList } from '@/services/admin/server';
-import { create } from 'zustand';
+import { create } from "zustand";
+import { filterServerList } from "@/services/admin/server";
 
 interface ServerState {
   // Data
@@ -38,7 +38,7 @@ export const useServerStore = create<ServerState>((set, get) => ({
         servers: data?.data?.list || [],
         loaded: true,
       });
-    } catch (error) {
+    } catch (_error) {
       // Handle error silently
       set({ loaded: true });
     } finally {
@@ -52,15 +52,15 @@ export const useServerStore = create<ServerState>((set, get) => ({
   },
 
   getServerName: (serverId?: number) => {
-    if (!serverId) return '—';
+    if (!serverId) return "—";
     const server = get().servers.find((s) => s.id === serverId);
     return server?.name ?? `#${serverId}`;
   },
 
   getServerAddress: (serverId?: number) => {
-    if (!serverId) return '—';
+    if (!serverId) return "—";
     const server = get().servers.find((s) => s.id === serverId);
-    return server?.address ?? '—';
+    return server?.address ?? "—";
   },
 
   getServerEnabledProtocols: (serverId: number) => {
@@ -69,10 +69,10 @@ export const useServerStore = create<ServerState>((set, get) => ({
   },
 
   getProtocolPort: (serverId?: number, protocol?: string) => {
-    if (!serverId || !protocol) return '—';
+    if (!serverId || !protocol) return "—";
     const enabledProtocols = get().getServerEnabledProtocols(serverId);
     const protocolConfig = enabledProtocols.find((p) => p.type === protocol);
-    return protocolConfig?.port ? String(protocolConfig.port) : '—';
+    return protocolConfig?.port ? String(protocolConfig.port) : "—";
   },
 
   getAvailableProtocols: (serverId?: number) => {

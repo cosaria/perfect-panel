@@ -1,7 +1,14 @@
-'use client';
+"use client";
 
-import { Display } from '@/components/display';
-import { ProTable, ProTableActions } from '@/components/pro-table';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import { Switch } from "@workspace/ui/components/switch";
+import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
+import { useTranslations } from "next-intl";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { Display } from "@/components/display";
+import { ProTable, type ProTableActions } from "@/components/pro-table";
 import {
   batchDeleteSubscribe,
   createSubscribe,
@@ -9,19 +16,12 @@ import {
   getSubscribeList,
   subscribeSort,
   updateSubscribe,
-} from '@/services/admin/subscribe';
-import { useSubscribe } from '@/store/subscribe';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
-import { Switch } from '@workspace/ui/components/switch';
-import { ConfirmButton } from '@workspace/ui/custom-components/confirm-button';
-import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
-import { toast } from 'sonner';
-import SubscribeForm from './subscribe-form';
+} from "@/services/admin/subscribe";
+import { useSubscribe } from "@/store/subscribe";
+import SubscribeForm from "./subscribe-form";
 
 export default function SubscribeTable() {
-  const t = useTranslations('product');
+  const t = useTranslations("product");
   const [loading, setLoading] = useState(false);
   const ref = useRef<ProTableActions>(null);
   const { fetchSubscribes } = useSubscribe();
@@ -31,8 +31,8 @@ export default function SubscribeTable() {
       header={{
         toolbar: (
           <SubscribeForm<API.CreateSubscribeRequest>
-            trigger={t('create')}
-            title={t('createSubscribe')}
+            trigger={t("create")}
+            title={t("createSubscribe")}
             loading={loading}
             onSubmit={async (values) => {
               setLoading(true);
@@ -42,13 +42,13 @@ export default function SubscribeTable() {
                   show: false,
                   sell: false,
                 });
-                toast.success(t('createSuccess'));
+                toast.success(t("createSuccess"));
                 ref.current?.refresh();
                 fetchSubscribes();
                 setLoading(false);
 
                 return true;
-              } catch (error) {
+              } catch (_error) {
                 setLoading(false);
 
                 return false;
@@ -59,7 +59,7 @@ export default function SubscribeTable() {
       }}
       params={[
         {
-          key: 'search',
+          key: "search",
         },
       ]}
       request={async (pagination, filters) => {
@@ -74,12 +74,12 @@ export default function SubscribeTable() {
       }}
       columns={[
         {
-          accessorKey: 'show',
-          header: t('show'),
+          accessorKey: "show",
+          header: t("show"),
           cell: ({ row }) => {
             return (
               <Switch
-                defaultChecked={row.getValue('show')}
+                defaultChecked={row.getValue("show")}
                 onCheckedChange={async (checked) => {
                   await updateSubscribe({
                     ...row.original,
@@ -93,12 +93,12 @@ export default function SubscribeTable() {
           },
         },
         {
-          accessorKey: 'sell',
-          header: t('sell'),
+          accessorKey: "sell",
+          header: t("sell"),
           cell: ({ row }) => {
             return (
               <Switch
-                defaultChecked={row.getValue('sell')}
+                defaultChecked={row.getValue("sell")}
                 onCheckedChange={async (checked) => {
                   await updateSubscribe({
                     ...row.original,
@@ -112,74 +112,74 @@ export default function SubscribeTable() {
           },
         },
         {
-          accessorKey: 'name',
-          header: t('name'),
+          accessorKey: "name",
+          header: t("name"),
         },
         {
-          accessorKey: 'unit_price',
-          header: t('unitPrice'),
+          accessorKey: "unit_price",
+          header: t("unitPrice"),
           cell: ({ row }) => {
             return (
               <>
-                <Display type='currency' value={row.getValue('unit_price')} />/
-                {t(row.original.unit_time ? `form.${row.original.unit_time}` : 'form.Month')}
+                <Display type="currency" value={row.getValue("unit_price")} />/
+                {t(row.original.unit_time ? `form.${row.original.unit_time}` : "form.Month")}
               </>
             );
           },
         },
         {
-          accessorKey: 'replacement',
-          header: t('replacement'),
-          cell: ({ row }) => <Display type='currency' value={row.getValue('replacement')} />,
+          accessorKey: "replacement",
+          header: t("replacement"),
+          cell: ({ row }) => <Display type="currency" value={row.getValue("replacement")} />,
         },
         {
-          accessorKey: 'traffic',
-          header: t('traffic'),
-          cell: ({ row }) => <Display type='traffic' value={row.getValue('traffic')} unlimited />,
+          accessorKey: "traffic",
+          header: t("traffic"),
+          cell: ({ row }) => <Display type="traffic" value={row.getValue("traffic")} unlimited />,
         },
         {
-          accessorKey: 'device_limit',
-          header: t('deviceLimit'),
+          accessorKey: "device_limit",
+          header: t("deviceLimit"),
           cell: ({ row }) => (
-            <Display type='number' value={row.getValue('device_limit')} unlimited />
+            <Display type="number" value={row.getValue("device_limit")} unlimited />
           ),
         },
         {
-          accessorKey: 'inventory',
-          header: t('inventory'),
+          accessorKey: "inventory",
+          header: t("inventory"),
           cell: ({ row }) => (
             <Display
-              type='number'
-              value={row.getValue('inventory') === -1 ? 0 : row.getValue('inventory')}
+              type="number"
+              value={row.getValue("inventory") === -1 ? 0 : row.getValue("inventory")}
               unlimited
             />
           ),
         },
         {
-          accessorKey: 'quota',
-          header: t('quota'),
-          cell: ({ row }) => <Display type='number' value={row.getValue('quota')} unlimited />,
+          accessorKey: "quota",
+          header: t("quota"),
+          cell: ({ row }) => <Display type="number" value={row.getValue("quota")} unlimited />,
         },
         {
-          accessorKey: 'language',
-          header: t('language'),
+          accessorKey: "language",
+          header: t("language"),
           cell: ({ row }) => {
-            const language = row.getValue('language') as string;
-            return language ? <Badge variant='outline'>{language}</Badge> : '--';
+            const language = row.getValue("language") as string;
+            return language ? <Badge variant="outline">{language}</Badge> : "--";
           },
         },
         {
-          accessorKey: 'sold',
-          header: t('sold'),
-          cell: ({ row }) => <Badge variant='outline'>{row.getValue('sold')}</Badge>,
+          accessorKey: "sold",
+          header: t("sold"),
+          cell: ({ row }) => <Badge variant="outline">{row.getValue("sold")}</Badge>,
         },
       ]}
       actions={{
         render: (row) => [
           <SubscribeForm<API.SubscribeItem>
-            key='edit'
-            trigger={t('edit')}
-            title={t('editSubscribe')}
+            key="edit"
+            trigger={t("edit")}
+            title={t("editSubscribe")}
             loading={loading}
             initialValues={row}
             onSubmit={async (values) => {
@@ -189,12 +189,12 @@ export default function SubscribeTable() {
                   ...row,
                   ...values,
                 } as API.UpdateSubscribeRequest);
-                toast.success(t('updateSuccess'));
+                toast.success(t("updateSuccess"));
                 ref.current?.refresh();
                 fetchSubscribes();
                 setLoading(false);
                 return true;
-              } catch (error) {
+              } catch (_error) {
                 setLoading(false);
 
                 return false;
@@ -202,24 +202,28 @@ export default function SubscribeTable() {
             }}
           />,
           <ConfirmButton
-            key='delete'
-            trigger={<Button variant='destructive'>{t('delete')}</Button>}
-            title={t('confirmDelete')}
-            description={t('deleteWarning')}
+            key="delete"
+            trigger={<Button variant="destructive">{t("delete")}</Button>}
+            title={t("confirmDelete")}
+            description={t("deleteWarning")}
             onConfirm={async () => {
+              if (typeof row.id !== "number") {
+                return;
+              }
+
               await deleteSubscribe({
-                id: row.id!,
+                id: row.id,
               });
-              toast.success(t('deleteSuccess'));
+              toast.success(t("deleteSuccess"));
               ref.current?.refresh();
               fetchSubscribes();
             }}
-            cancelText={t('cancel')}
-            confirmText={t('confirm')}
+            cancelText={t("cancel")}
+            confirmText={t("confirm")}
           />,
           <Button
-            key='copy'
-            variant='secondary'
+            key="copy"
+            variant="secondary"
             onClick={async () => {
               setLoading(true);
               try {
@@ -229,37 +233,41 @@ export default function SubscribeTable() {
                   show: false,
                   sell: false,
                 } as API.CreateSubscribeRequest);
-                toast.success(t('copySuccess'));
+                toast.success(t("copySuccess"));
                 ref.current?.refresh();
                 fetchSubscribes();
                 setLoading(false);
                 return true;
-              } catch (error) {
+              } catch (_error) {
                 setLoading(false);
                 return false;
               }
             }}
           >
-            {t('copy')}
+            {t("copy")}
           </Button>,
         ],
         batchRender: (rows) => [
           <ConfirmButton
-            key='delete'
-            trigger={<Button variant='destructive'>{t('delete')}</Button>}
-            title={t('confirmDelete')}
-            description={t('deleteWarning')}
+            key="delete"
+            trigger={<Button variant="destructive">{t("delete")}</Button>}
+            title={t("confirmDelete")}
+            description={t("deleteWarning")}
             onConfirm={async () => {
+              const ids = rows
+                .map((item) => item.id)
+                .filter((id): id is number => typeof id === "number");
+
               await batchDeleteSubscribe({
-                ids: rows.map((item) => item.id) as number[],
+                ids,
               });
 
-              toast.success(t('deleteSuccess'));
+              toast.success(t("deleteSuccess"));
               ref.current?.reset();
               fetchSubscribes();
             }}
-            cancelText={t('cancel')}
-            confirmText={t('confirm')}
+            cancelText={t("cancel")}
+            confirmText={t("confirm")}
           />,
         ],
       }}
@@ -270,7 +278,12 @@ export default function SubscribeTable() {
         const originalSorts = items.map((item) => item.sort);
 
         const [movedItem] = items.splice(sourceIndex, 1);
-        items.splice(targetIndex, 0, movedItem!);
+
+        if (!movedItem) {
+          return items;
+        }
+
+        items.splice(targetIndex, 0, movedItem);
 
         const updatedItems = items.map((item, index) => {
           const originalSort = originalSorts[index];
@@ -284,7 +297,10 @@ export default function SubscribeTable() {
 
         if (changedItems.length > 0) {
           subscribeSort({
-            sort: changedItems.map((item) => ({ id: item.id, sort: item.sort })) as API.SortItem[],
+            sort: changedItems.map((item) => ({
+              id: item.id,
+              sort: item.sort,
+            })) as API.SortItem[],
           });
         }
 

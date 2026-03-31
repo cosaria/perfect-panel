@@ -1,16 +1,16 @@
-// @ts-ignore
+// @ts-expect-error
 /* eslint-disable */
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 /** Update ticket status PUT /v1/public/ticket/ */
 export async function updateUserTicketStatus(
   body: API.UpdateUserTicketStatusRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: any }>('/v1/public/ticket/', {
-    method: 'PUT',
+  return request<API.Response & { data?: unknown }>("/v1/public/ticket/", {
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -20,12 +20,12 @@ export async function updateUserTicketStatus(
 /** Create ticket POST /v1/public/ticket/ */
 export async function createUserTicket(
   body: API.CreateUserTicketRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: any }>('/v1/public/ticket/', {
-    method: 'POST',
+  return request<API.Response & { data?: unknown }>("/v1/public/ticket/", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -36,10 +36,10 @@ export async function createUserTicket(
 export async function getUserTicketDetails(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetUserTicketDetailsParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.Ticket }>('/v1/public/ticket/detail', {
-    method: 'GET',
+  return request<API.Response & { data?: API.Ticket }>("/v1/public/ticket/detail", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -50,12 +50,12 @@ export async function getUserTicketDetails(
 /** Create ticket follow POST /v1/public/ticket/follow */
 export async function createUserTicketFollow(
   body: API.CreateUserTicketFollowRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: any }>('/v1/public/ticket/follow', {
-    method: 'POST',
+  return request<API.Response & { data?: unknown }>("/v1/public/ticket/follow", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -66,12 +66,12 @@ export async function createUserTicketFollow(
 export async function getUserTicketList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetUserTicketListParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.GetUserTicketListResponse }>(
-    '/v1/public/ticket/list',
+    "/v1/public/ticket/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },

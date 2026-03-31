@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 import {
   CERT_MODES,
   ENCRYPTION_MODES,
@@ -12,7 +12,7 @@ import {
   TUIC_CONGESTION,
   TUIC_UDP_RELAY_MODES,
   XHTTP_MODES,
-} from './constants';
+} from "./constants";
 
 const nullableString = z.string().nullish();
 const nullableBool = z.boolean().nullish();
@@ -21,12 +21,12 @@ const nullableRatio = z.number().min(0).nullish();
 
 const ss = z.object({
   ratio: nullableRatio,
-  type: z.literal('shadowsocks'),
+  type: z.literal("shadowsocks"),
   enable: nullableBool,
   port: nullablePort,
   cipher: z.enum(SS_CIPHERS).nullish(),
   server_key: nullableString,
-  obfs: z.enum(['none', 'http', 'tls'] as const).nullish(),
+  obfs: z.enum(["none", "http", "tls"] as const).nullish(),
   obfs_host: nullableString,
   obfs_path: nullableString,
   cert_mode: z.enum(CERT_MODES).nullish(),
@@ -36,7 +36,7 @@ const ss = z.object({
 
 const vmess = z.object({
   ratio: nullableRatio,
-  type: z.literal('vmess'),
+  type: z.literal("vmess"),
   enable: nullableBool,
   host: nullableString,
   port: nullablePort,
@@ -54,7 +54,7 @@ const vmess = z.object({
 
 const vless = z.object({
   ratio: nullableRatio,
-  type: z.literal('vless'),
+  type: z.literal("vless"),
   enable: nullableBool,
   host: nullableString,
   port: nullablePort,
@@ -88,7 +88,7 @@ const vless = z.object({
 
 const trojan = z.object({
   ratio: nullableRatio,
-  type: z.literal('trojan'),
+  type: z.literal("trojan"),
   enable: nullableBool,
   host: nullableString,
   port: nullablePort,
@@ -106,12 +106,12 @@ const trojan = z.object({
 
 const hysteria = z.object({
   ratio: nullableRatio,
-  type: z.literal('hysteria'),
+  type: z.literal("hysteria"),
   enable: nullableBool,
   hop_ports: nullableString,
   hop_interval: z.number().nullish(),
   obfs_password: nullableString,
-  obfs: z.enum(['none', 'salamander'] as const).nullish(),
+  obfs: z.enum(["none", "salamander"] as const).nullish(),
   port: nullablePort,
   security: z.enum(SECURITY.hysteria).nullish(),
   sni: nullableString,
@@ -126,7 +126,7 @@ const hysteria = z.object({
 
 const tuic = z.object({
   ratio: nullableRatio,
-  type: z.literal('tuic'),
+  type: z.literal("tuic"),
   enable: nullableBool,
   host: nullableString,
   port: nullablePort,
@@ -145,7 +145,7 @@ const tuic = z.object({
 
 const anytls = z.object({
   ratio: nullableRatio,
-  type: z.literal('anytls'),
+  type: z.literal("anytls"),
   enable: nullableBool,
   port: nullablePort,
   security: z.enum(SECURITY.anytls).nullish(),
@@ -160,14 +160,14 @@ const anytls = z.object({
 
 const socks = z.object({
   ratio: nullableRatio,
-  type: z.literal('socks'),
+  type: z.literal("socks"),
   enable: nullableBool,
   port: nullablePort,
 });
 
 const naive = z.object({
   ratio: nullableRatio,
-  type: z.literal('naive'),
+  type: z.literal("naive"),
   enable: nullableBool,
   port: nullablePort,
   security: z.enum(SECURITY.naive).nullish(),
@@ -181,7 +181,7 @@ const naive = z.object({
 
 const http = z.object({
   ratio: nullableRatio,
-  type: z.literal('http'),
+  type: z.literal("http"),
   enable: nullableBool,
   port: nullablePort,
   security: z.enum(SECURITY.http).nullish(),
@@ -195,14 +195,14 @@ const http = z.object({
 
 const mieru = z.object({
   ratio: nullableRatio,
-  type: z.literal('mieru'),
+  type: z.literal("mieru"),
   enable: nullableBool,
   port: nullablePort,
   multiplex: z.enum(multiplexLevels).nullish(),
   transport: z.enum(TRANSPORTS.mieru).nullish(),
 });
 
-export const protocolApiScheme = z.discriminatedUnion('type', [
+export const protocolApiScheme = z.discriminatedUnion("type", [
   ss,
   vmess,
   vless,

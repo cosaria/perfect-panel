@@ -1,9 +1,7 @@
-'use client';
+"use client";
 
-import { useNode } from '@/store/node';
-import { useServer } from '@/store/server';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@workspace/ui/components/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@workspace/ui/components/button";
 import {
   Form,
   FormControl,
@@ -12,8 +10,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
+} from "@workspace/ui/components/form";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -21,44 +19,46 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@workspace/ui/components/sheet';
-import { Combobox } from '@workspace/ui/custom-components/combobox';
-import { EnhancedInput } from '@workspace/ui/custom-components/enhanced-input';
-import TagInput from '@workspace/ui/custom-components/tag-input';
-import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
+} from "@workspace/ui/components/sheet";
+import { Combobox } from "@workspace/ui/custom-components/combobox";
+import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
+import TagInput from "@workspace/ui/custom-components/tag-input";
+import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useNode } from "@/store/node";
+import { useServer } from "@/store/server";
 
 export type ProtocolName =
-  | 'shadowsocks'
-  | 'vmess'
-  | 'vless'
-  | 'trojan'
-  | 'hysteria'
-  | 'tuic'
-  | 'anytls'
-  | 'naive'
-  | 'http'
-  | 'socks'
-  | 'mieru';
+  | "shadowsocks"
+  | "vmess"
+  | "vless"
+  | "trojan"
+  | "hysteria"
+  | "tuic"
+  | "anytls"
+  | "naive"
+  | "http"
+  | "socks"
+  | "mieru";
 
 const buildSchema = (t: ReturnType<typeof useTranslations>) =>
   z.object({
-    name: z.string().trim().min(1, t('errors.nameRequired')),
+    name: z.string().trim().min(1, t("errors.nameRequired")),
     server_id: z
-      .number({ message: t('errors.serverRequired') })
+      .number({ message: t("errors.serverRequired") })
       .int()
-      .gt(0, t('errors.serverRequired'))
+      .gt(0, t("errors.serverRequired"))
       .optional(),
-    protocol: z.string().min(1, t('errors.protocolRequired')),
-    address: z.string().trim().min(1, t('errors.serverAddrRequired')),
+    protocol: z.string().min(1, t("errors.protocolRequired")),
+    address: z.string().trim().min(1, t("errors.serverAddrRequired")),
     port: z
-      .number({ message: t('errors.portRange') })
+      .number({ message: t("errors.portRange") })
       .int()
-      .min(1, t('errors.portRange'))
-      .max(65535, t('errors.portRange')),
+      .min(1, t("errors.portRange"))
+      .max(65535, t("errors.portRange")),
     tags: z.array(z.string()),
   });
 
@@ -72,7 +72,7 @@ export default function NodeForm(props: {
   onSubmit: (values: NodeFormValues) => Promise<boolean> | boolean;
 }) {
   const { trigger, title, loading, initialValues, onSubmit } = props;
-  const t = useTranslations('nodes');
+  const t = useTranslations("nodes");
   const Scheme = useMemo(() => buildSchema(t), [t]);
   const [open, setOpen] = useState(false);
 
@@ -93,17 +93,17 @@ export default function NodeForm(props: {
   const form = useForm<NodeFormValues>({
     resolver: zodResolver(Scheme),
     defaultValues: {
-      name: '',
+      name: "",
       server_id: undefined,
-      protocol: '',
-      address: '',
+      protocol: "",
+      address: "",
       port: 0,
       tags: [],
       ...initialValues,
     },
   });
 
-  const serverId = form.watch('server_id');
+  const serverId = form.watch("server_id");
 
   const { servers, getAvailableProtocols } = useServer();
   const { tags } = useNode();
@@ -115,21 +115,21 @@ export default function NodeForm(props: {
   useEffect(() => {
     if (initialValues) {
       form.reset({
-        name: '',
+        name: "",
         server_id: undefined,
-        protocol: '',
-        address: '',
+        protocol: "",
+        address: "",
         port: 0,
         tags: [],
         ...initialValues,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialValues]);
+  }, [initialValues, form.reset]);
 
   function handleServerChange(nextId?: number | null) {
     const id = nextId ?? undefined;
-    form.setValue('server_id', id);
+    form.setValue("server_id", id);
 
     if (!id) {
       setAutoFilledFields(new Set());
@@ -142,59 +142,59 @@ export default function NodeForm(props: {
     const currentValues = form.getValues();
     const fieldsToFill: string[] = [];
 
-    if (!currentValues.name || autoFilledFields.has('name')) {
-      form.setValue('name', selectedServer.name as string, { shouldDirty: false });
-      fieldsToFill.push('name');
+    if (!currentValues.name || autoFilledFields.has("name")) {
+      form.setValue("name", selectedServer.name, { shouldDirty: false });
+      fieldsToFill.push("name");
     }
 
-    if (!currentValues.address || autoFilledFields.has('address')) {
-      form.setValue('address', selectedServer.address as string, { shouldDirty: false });
-      fieldsToFill.push('address');
+    if (!currentValues.address || autoFilledFields.has("address")) {
+      form.setValue("address", selectedServer.address, { shouldDirty: false });
+      fieldsToFill.push("address");
     }
 
     const protocols = getAvailableProtocols(id);
     const firstProtocol = protocols[0];
 
-    if (firstProtocol && (!currentValues.protocol || autoFilledFields.has('protocol'))) {
-      form.setValue('protocol', firstProtocol.protocol, { shouldDirty: false });
-      fieldsToFill.push('protocol');
+    if (firstProtocol && (!currentValues.protocol || autoFilledFields.has("protocol"))) {
+      form.setValue("protocol", firstProtocol.protocol, { shouldDirty: false });
+      fieldsToFill.push("protocol");
 
-      if (!currentValues.port || currentValues.port === 0 || autoFilledFields.has('port')) {
+      if (!currentValues.port || currentValues.port === 0 || autoFilledFields.has("port")) {
         const port = firstProtocol.port || 0;
-        form.setValue('port', port, { shouldDirty: false });
-        fieldsToFill.push('port');
+        form.setValue("port", port, { shouldDirty: false });
+        fieldsToFill.push("port");
       }
     }
 
     setAutoFilledFields(new Set(fieldsToFill));
   }
 
-  const handleManualFieldChange = (fieldName: keyof NodeFormValues, value: any) => {
+  const handleManualFieldChange = (fieldName: keyof NodeFormValues, value: unknown) => {
     form.setValue(fieldName, value);
     removeAutoFilledField(fieldName);
   };
 
   function handleProtocolChange(nextProto?: ProtocolName | null) {
-    const protocol = (nextProto || '') as ProtocolName | '';
-    form.setValue('protocol', protocol);
+    const protocol = (nextProto || "") as ProtocolName | "";
+    form.setValue("protocol", protocol);
 
     if (!protocol || !serverId) {
-      removeAutoFilledField('protocol');
+      removeAutoFilledField("protocol");
       return;
     }
 
     const currentValues = form.getValues();
-    const isPortAutoFilled = autoFilledFields.has('port');
+    const isPortAutoFilled = autoFilledFields.has("port");
 
-    removeAutoFilledField('protocol');
+    removeAutoFilledField("protocol");
 
     if (!currentValues.port || currentValues.port === 0 || isPortAutoFilled) {
       const protocolData = availableProtocols.find((p) => p.protocol === protocol);
 
       if (protocolData) {
         const port = protocolData.port || 0;
-        form.setValue('port', port, { shouldDirty: false });
-        addAutoFilledField('port');
+        form.setValue("port", port, { shouldDirty: false });
+        addAutoFilledField("port");
       }
     }
   }
@@ -220,26 +220,26 @@ export default function NodeForm(props: {
         </Button>
       </SheetTrigger>
 
-      <SheetContent className='w-[560px] max-w-full'>
+      <SheetContent className="w-[560px] max-w-full">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
-        <ScrollArea className='-mx-6 h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6 pt-4'>
+        <ScrollArea className="-mx-6 h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6 pt-4">
           <Form {...form}>
-            <form className='grid grid-cols-1 gap-4'>
+            <form className="grid grid-cols-1 gap-4">
               <FormField
                 control={form.control}
-                name='server_id'
+                name="server_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('server')}</FormLabel>
+                    <FormLabel>{t("server")}</FormLabel>
                     <FormControl>
                       <Combobox<number, false>
-                        placeholder={t('select_server')}
+                        placeholder={t("select_server")}
                         value={field.value}
                         options={servers.map((s) => ({
                           value: s.id,
-                          label: `${s.name} (${(s.address as any) || ''})`,
+                          label: `${s.name} (${s.address || ""})`,
                         }))}
                         onChange={(v) => handleServerChange(v)}
                       />
@@ -250,17 +250,17 @@ export default function NodeForm(props: {
               />
               <FormField
                 control={form.control}
-                name='protocol'
+                name="protocol"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('protocol')}</FormLabel>
+                    <FormLabel>{t("protocol")}</FormLabel>
                     <FormControl>
                       <Combobox<string, false>
-                        placeholder={t('select_protocol')}
+                        placeholder={t("select_protocol")}
                         value={field.value}
                         options={availableProtocols.map((p) => ({
                           value: p.protocol,
-                          label: `${p.protocol}${p.port ? ` (${p.port})` : ''}`,
+                          label: `${p.protocol}${p.port ? ` (${p.port})` : ""}`,
                         }))}
                         onChange={(v) => handleProtocolChange((v as ProtocolName) || null)}
                       />
@@ -271,14 +271,14 @@ export default function NodeForm(props: {
               />
               <FormField
                 control={form.control}
-                name='name'
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('name')}</FormLabel>
+                    <FormLabel>{t("name")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
                         {...field}
-                        onValueChange={(v) => handleManualFieldChange('name', v as string)}
+                        onValueChange={(v) => handleManualFieldChange("name", v as string)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -288,14 +288,14 @@ export default function NodeForm(props: {
 
               <FormField
                 control={form.control}
-                name='address'
+                name="address"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('address')}</FormLabel>
+                    <FormLabel>{t("address")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
                         {...field}
-                        onValueChange={(v) => handleManualFieldChange('address', v as string)}
+                        onValueChange={(v) => handleManualFieldChange("address", v as string)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -305,18 +305,18 @@ export default function NodeForm(props: {
 
               <FormField
                 control={form.control}
-                name='port'
+                name="port"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('port')}</FormLabel>
+                    <FormLabel>{t("port")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
                         {...field}
-                        type='number'
+                        type="number"
                         min={1}
                         max={65535}
-                        placeholder='1-65535'
-                        onValueChange={(v) => handleManualFieldChange('port', Number(v))}
+                        placeholder="1-65535"
+                        onValueChange={(v) => handleManualFieldChange("port", Number(v))}
                       />
                     </FormControl>
                     <FormMessage />
@@ -325,19 +325,19 @@ export default function NodeForm(props: {
               />
               <FormField
                 control={form.control}
-                name='tags'
+                name="tags"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('tags')}</FormLabel>
+                    <FormLabel>{t("tags")}</FormLabel>
                     <FormControl>
                       <TagInput
-                        placeholder={t('tags_placeholder')}
+                        placeholder={t("tags_placeholder")}
                         value={field.value || []}
                         onChange={(v) => form.setValue(field.name, v)}
                         options={existingTags}
                       />
                     </FormControl>
-                    <FormDescription>{t('tags_description')}</FormDescription>
+                    <FormDescription>{t("tags_description")}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -346,9 +346,9 @@ export default function NodeForm(props: {
           </Form>
         </ScrollArea>
 
-        <SheetFooter className='flex-row justify-end gap-2 pt-3'>
-          <Button variant='outline' disabled={loading} onClick={() => setOpen(false)}>
-            {t('cancel')}
+        <SheetFooter className="flex-row justify-end gap-2 pt-3">
+          <Button variant="outline" disabled={loading} onClick={() => setOpen(false)}>
+            {t("cancel")}
           </Button>
           <Button
             disabled={loading}
@@ -358,7 +358,7 @@ export default function NodeForm(props: {
               return false;
             })}
           >
-            {t('confirm')}
+            {t("confirm")}
           </Button>
         </SheetFooter>
       </SheetContent>

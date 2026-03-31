@@ -1,15 +1,15 @@
-// @ts-ignore
+// @ts-expect-error
 /* eslint-disable */
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 /** Get auth method config GET /v1/admin/auth-method/config */
 export async function getAuthMethodConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetAuthMethodConfigParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.AuthMethodConfig }>('/v1/admin/auth-method/config', {
-    method: 'GET',
+  return request<API.Response & { data?: API.AuthMethodConfig }>("/v1/admin/auth-method/config", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -20,12 +20,12 @@ export async function getAuthMethodConfig(
 /** Update auth method config PUT /v1/admin/auth-method/config */
 export async function updateAuthMethodConfig(
   body: API.UpdateAuthMethodConfigRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.AuthMethodConfig }>('/v1/admin/auth-method/config', {
-    method: 'PUT',
+  return request<API.Response & { data?: API.AuthMethodConfig }>("/v1/admin/auth-method/config", {
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -33,33 +33,33 @@ export async function updateAuthMethodConfig(
 }
 
 /** Get email support platform GET /v1/admin/auth-method/email_platform */
-export async function getEmailPlatform(options?: { [key: string]: any }) {
+export async function getEmailPlatform(options?: Record<string, unknown>) {
   return request<API.Response & { data?: API.PlatformResponse }>(
-    '/v1/admin/auth-method/email_platform',
+    "/v1/admin/auth-method/email_platform",
     {
-      method: 'GET',
+      method: "GET",
       ...(options || {}),
     },
   );
 }
 
 /** Get auth method list GET /v1/admin/auth-method/list */
-export async function getAuthMethodList(options?: { [key: string]: any }) {
+export async function getAuthMethodList(options?: Record<string, unknown>) {
   return request<API.Response & { data?: API.GetAuthMethodListResponse }>(
-    '/v1/admin/auth-method/list',
+    "/v1/admin/auth-method/list",
     {
-      method: 'GET',
+      method: "GET",
       ...(options || {}),
     },
   );
 }
 
 /** Get sms support platform GET /v1/admin/auth-method/sms_platform */
-export async function getSmsPlatform(options?: { [key: string]: any }) {
+export async function getSmsPlatform(options?: Record<string, unknown>) {
   return request<API.Response & { data?: API.PlatformResponse }>(
-    '/v1/admin/auth-method/sms_platform',
+    "/v1/admin/auth-method/sms_platform",
     {
-      method: 'GET',
+      method: "GET",
       ...(options || {}),
     },
   );
@@ -68,12 +68,12 @@ export async function getSmsPlatform(options?: { [key: string]: any }) {
 /** Test email send POST /v1/admin/auth-method/test_email_send */
 export async function testEmailSend(
   body: API.TestEmailSendRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: any }>('/v1/admin/auth-method/test_email_send', {
-    method: 'POST',
+  return request<API.Response & { data?: unknown }>("/v1/admin/auth-method/test_email_send", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -81,11 +81,11 @@ export async function testEmailSend(
 }
 
 /** Test sms send POST /v1/admin/auth-method/test_sms_send */
-export async function testSmsSend(body: API.TestSmsSendRequest, options?: { [key: string]: any }) {
-  return request<API.Response & { data?: any }>('/v1/admin/auth-method/test_sms_send', {
-    method: 'POST',
+export async function testSmsSend(body: API.TestSmsSendRequest, options?: Record<string, unknown>) {
+  return request<API.Response & { data?: unknown }>("/v1/admin/auth-method/test_sms_send", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),

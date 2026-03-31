@@ -1,10 +1,10 @@
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
-import { cn } from '@workspace/ui/lib/utils';
-import { Upload } from 'lucide-react';
-import { useState } from 'react';
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import { cn } from "@workspace/ui/lib/utils";
+import { Upload } from "lucide-react";
+import { useState } from "react";
 
-type ReturnType = 'base64' | 'file';
+type ReturnType = "base64" | "file";
 
 interface UploadImageProps {
   onChange: (value: string | File) => void;
@@ -17,8 +17,8 @@ interface UploadImageProps {
 
 export const UploadImage = ({
   onChange,
-  returnType = 'base64',
-  id = 'image-upload',
+  returnType = "base64",
+  id = "image-upload",
   children,
   className,
   maxSize = 1,
@@ -50,7 +50,7 @@ export const UploadImage = ({
     try {
       if (!validateFileSize(file)) return;
 
-      if (returnType === 'base64') {
+      if (returnType === "base64") {
         const base64 = await toBase64(file);
         onChange(base64);
       } else {
@@ -81,7 +81,7 @@ export const UploadImage = ({
     try {
       if (!validateFileSize(file)) return;
 
-      if (returnType === 'base64') {
+      if (returnType === "base64") {
         const base64 = await toBase64(file);
         onChange(base64);
       } else {
@@ -94,16 +94,16 @@ export const UploadImage = ({
 
   return (
     <>
-      <Input type='file' accept='image/*' className='hidden' id={id} onChange={handleImageUpload} />
+      <Input type="file" accept="image/*" className="hidden" id={id} onChange={handleImageUpload} />
       <Label
         htmlFor={id}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={cn(
-          'cursor-pointer',
-          !children && 'flex items-center justify-center rounded-lg border-2 border-dashed p-4',
-          isDragging && 'border-primary bg-muted/50',
+          "cursor-pointer",
+          !children && "flex items-center justify-center rounded-lg border-2 border-dashed p-4",
+          isDragging && "border-primary bg-muted/50",
           className,
         )}
       >

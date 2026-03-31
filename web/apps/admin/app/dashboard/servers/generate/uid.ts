@@ -1,4 +1,4 @@
-import { uid } from 'radash';
+import { uid } from "radash";
 
 /**
  * Generate a random password

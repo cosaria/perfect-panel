@@ -1,5 +1,5 @@
-import { NEXT_PUBLIC_CDN_URL } from '@/config/constants';
-import matter from 'gray-matter';
+import matter from "gray-matter";
+import { NEXT_PUBLIC_CDN_URL } from "@/config/constants";
 
 const BASE_URL = `${NEXT_PUBLIC_CDN_URL}/gh/perfect-panel/ppanel-tutorial`;
 
@@ -41,7 +41,7 @@ export async function getTutorial(path: string): Promise<{
       content: markdown,
     };
   } catch (error) {
-    console.error('Error fetching the markdown file:', error);
+    console.error("Error fetching the markdown file:", error);
     throw error;
   }
 }
@@ -53,13 +53,13 @@ type TutorialItem = {
 };
 
 const processIcon = (item: TutorialItem) => {
-  if ('icon' in item && typeof item.icon === 'string' && !item.icon.startsWith('http')) {
+  if ("icon" in item && typeof item.icon === "string" && !item.icon.startsWith("http")) {
     item.icon = `${BASE_URL}/${item.icon}`;
   }
 };
 
 export async function getTutorialList() {
-  const { config, content } = await getTutorial('SUMMARY.md');
+  const { config, content } = await getTutorial("SUMMARY.md");
   const navigation = config as Record<string, TutorialItem[]> | undefined;
 
   if (!navigation) {
@@ -77,22 +77,22 @@ export async function getTutorialList() {
 
 function parseTutorialToMap(markdown: string): Map<string, TutorialItem[]> {
   const map = new Map<string, TutorialItem[]>();
-  let currentSection = '';
-  const lines = markdown.split('\n');
+  let currentSection = "";
+  const lines = markdown.split("\n");
 
   for (const line of lines) {
-    if (line.startsWith('## ')) {
-      currentSection = line.replace('## ', '').trim();
+    if (line.startsWith("## ")) {
+      currentSection = line.replace("## ", "").trim();
       map.set(currentSection, []);
-    } else if (line.startsWith('* ')) {
+    } else if (line.startsWith("* ")) {
       const [, text, link] = line.match(/\* \[(.*?)\]\((.*?)\)/) || [];
       if (text && link) {
         if (!map.has(currentSection)) {
           map.set(currentSection, []);
         }
-        map.get(currentSection)!.push({ title: text, path: link });
+        map.get(currentSection)?.push({ title: text, path: link });
       }
-    } else if (line.startsWith('  * ')) {
+    } else if (line.startsWith("  * ")) {
       const [, text, link] = line.match(/\* \[(.*?)\]\((.*?)\)/) || [];
       if (text && link) {
         const lastItem = map.get(currentSection)?.slice(-1)[0];
@@ -109,10 +109,10 @@ function parseTutorialToMap(markdown: string): Map<string, TutorialItem[]> {
   return map;
 }
 function getUrlPrefix(url: string): string {
-  return url.replace(/\/[^/]+\.md$/, '/');
+  return url.replace(/\/[^/]+\.md$/, "/");
 }
 function addPrefixToImageUrls(markdown: string, prefix: string): string {
-  return markdown.replace(/!\[(.*?)\]\((.*?)\)/g, (match, imgAlt, imgUrl) => {
-    return `![${imgAlt}](${imgUrl.startsWith('http') ? imgUrl : `${prefix}${imgUrl}`})`;
+  return markdown.replace(/!\[(.*?)\]\((.*?)\)/g, (_match, imgAlt, imgUrl) => {
+    return `![${imgAlt}](${imgUrl.startsWith("http") ? imgUrl : `${prefix}${imgUrl}`})`;
   });
 }

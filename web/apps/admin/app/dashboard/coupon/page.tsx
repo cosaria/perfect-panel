@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { Display } from '@/components/display';
-import { ProTable, ProTableActions } from '@/components/pro-table';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import { Switch } from "@workspace/ui/components/switch";
+import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
+import { useTranslations } from "next-intl";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { Display } from "@/components/display";
+import { ProTable, type ProTableActions } from "@/components/pro-table";
 import {
   batchDeleteCoupon,
   createCoupon,
   deleteCoupon,
   getCouponList,
   updateCoupon,
-} from '@/services/admin/coupon';
-import { useSubscribe } from '@/store/subscribe';
-import { formatDate } from '@/utils/common';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
-import { Switch } from '@workspace/ui/components/switch';
-import { ConfirmButton } from '@workspace/ui/custom-components/confirm-button';
-import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
-import { toast } from 'sonner';
-import CouponForm from './coupon-form';
+} from "@/services/admin/coupon";
+import { useSubscribe } from "@/store/subscribe";
+import { formatDate } from "@/utils/common";
+import CouponForm from "./coupon-form";
 
 export default function Page() {
-  const t = useTranslations('coupon');
+  const t = useTranslations("coupon");
   const [loading, setLoading] = useState(false);
   const { subscribes } = useSubscribe();
   const ref = useRef<ProTableActions>(null);
@@ -31,8 +31,8 @@ export default function Page() {
       header={{
         toolbar: (
           <CouponForm<API.CreateCouponRequest>
-            trigger={t('create')}
-            title={t('createCoupon')}
+            trigger={t("create")}
+            title={t("createCoupon")}
             loading={loading}
             onSubmit={async (values) => {
               setLoading(true);
@@ -41,11 +41,11 @@ export default function Page() {
                   ...values,
                   enable: false,
                 });
-                toast.success(t('createSuccess'));
+                toast.success(t("createSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
                 return true;
-              } catch (error) {
+              } catch (_error) {
                 setLoading(false);
                 return false;
               }
@@ -55,15 +55,20 @@ export default function Page() {
       }}
       params={[
         {
-          key: 'subscribe',
-          placeholder: t('subscribe'),
-          options: subscribes?.map((item) => ({
-            label: item.name!,
-            value: String(item.id),
-          })),
+          key: "subscribe",
+          placeholder: t("subscribe"),
+          options: subscribes
+            ?.filter(
+              (item): item is typeof item & { id: number; name: string } =>
+                typeof item.id === "number" && typeof item.name === "string",
+            )
+            .map((item) => ({
+              label: item.name,
+              value: String(item.id),
+            })),
         },
         {
-          key: 'search',
+          key: "search",
         },
       ]}
       request={async (pagination, filters) => {
@@ -78,12 +83,12 @@ export default function Page() {
       }}
       columns={[
         {
-          accessorKey: 'enable',
-          header: t('enable'),
+          accessorKey: "enable",
+          header: t("enable"),
           cell: ({ row }) => {
             return (
               <Switch
-                defaultChecked={row.getValue('enable')}
+                defaultChecked={row.getValue("enable")}
                 onCheckedChange={async (checked) => {
                   await updateCoupon({
                     ...row.original,
@@ -96,58 +101,58 @@ export default function Page() {
           },
         },
         {
-          accessorKey: 'name',
-          header: t('name'),
+          accessorKey: "name",
+          header: t("name"),
         },
         {
-          accessorKey: 'code',
-          header: t('code'),
+          accessorKey: "code",
+          header: t("code"),
         },
         {
-          accessorKey: 'type',
-          header: t('type'),
+          accessorKey: "type",
+          header: t("type"),
           cell: ({ row }) => (
-            <Badge variant={row.getValue('type') === 1 ? 'default' : 'secondary'}>
-              {row.getValue('type') === 1 ? t('percentage') : t('amount')}
+            <Badge variant={row.getValue("type") === 1 ? "default" : "secondary"}>
+              {row.getValue("type") === 1 ? t("percentage") : t("amount")}
             </Badge>
           ),
         },
         {
-          accessorKey: 'discount',
-          header: t('discount'),
+          accessorKey: "discount",
+          header: t("discount"),
           cell: ({ row }) => (
-            <Badge variant={row.getValue('type') === 1 ? 'default' : 'secondary'}>
-              {row.getValue('type') === 1 ? (
+            <Badge variant={row.getValue("type") === 1 ? "default" : "secondary"}>
+              {row.getValue("type") === 1 ? (
                 `${row.original.discount} %`
               ) : (
-                <Display type='currency' value={row.original.discount} />
+                <Display type="currency" value={row.original.discount} />
               )}
             </Badge>
           ),
         },
         {
-          accessorKey: 'count',
-          header: t('count'),
+          accessorKey: "count",
+          header: t("count"),
           cell: ({ row }) => (
-            <div className='flex flex-col'>
+            <div className="flex flex-col">
               <span>
-                {t('count')}: {row.original.count === 0 ? t('unlimited') : row.original.count}
+                {t("count")}: {row.original.count === 0 ? t("unlimited") : row.original.count}
               </span>
               <span>
-                {t('remainingTimes')}:{' '}
+                {t("remainingTimes")}:{" "}
                 {row.original.count === 0
-                  ? t('unlimited')
+                  ? t("unlimited")
                   : row.original.count - row.original.used_count}
               </span>
               <span>
-                {t('usedTimes')}: {row.original.used_count}
+                {t("usedTimes")}: {row.original.used_count}
               </span>
             </div>
           ),
         },
         {
-          accessorKey: 'expire',
-          header: t('validityPeriod'),
+          accessorKey: "expire",
+          header: t("validityPeriod"),
           cell: ({ row }) => {
             const { start_time, expire_time } = row.original;
             if (start_time) {
@@ -158,62 +163,62 @@ export default function Page() {
               ) : start_time ? (
                 formatDate(start_time)
               ) : (
-                '--'
+                "--"
               );
             }
-            return '--';
+            return "--";
           },
         },
       ]}
       actions={{
         render: (row) => [
           <CouponForm<API.UpdateCouponRequest>
-            key='edit'
-            trigger={t('edit')}
-            title={t('editCoupon')}
+            key="edit"
+            trigger={t("edit")}
+            title={t("editCoupon")}
             loading={loading}
             initialValues={row}
             onSubmit={async (values) => {
               setLoading(true);
               try {
                 await updateCoupon({ ...row, ...values });
-                toast.success(t('updateSuccess'));
+                toast.success(t("updateSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
                 return true;
-              } catch (error) {
+              } catch (_error) {
                 setLoading(false);
                 return false;
               }
             }}
           />,
           <ConfirmButton
-            key='delete'
-            trigger={<Button variant='destructive'>{t('delete')}</Button>}
-            title={t('confirmDelete')}
-            description={t('deleteWarning')}
+            key="delete"
+            trigger={<Button variant="destructive">{t("delete")}</Button>}
+            title={t("confirmDelete")}
+            description={t("deleteWarning")}
             onConfirm={async () => {
               await deleteCoupon({ id: row.id });
-              toast.success(t('deleteSuccess'));
+              toast.success(t("deleteSuccess"));
               ref.current?.refresh();
             }}
-            cancelText={t('cancel')}
-            confirmText={t('confirm')}
+            cancelText={t("cancel")}
+            confirmText={t("confirm")}
           />,
         ],
         batchRender: (rows) => [
           <ConfirmButton
-            key='delete'
-            trigger={<Button variant='destructive'>{t('delete')}</Button>}
-            title={t('confirmDelete')}
-            description={t('deleteWarning')}
+            key="delete"
+            trigger={<Button variant="destructive">{t("delete")}</Button>}
+            title={t("confirmDelete")}
+            description={t("deleteWarning")}
             onConfirm={async () => {
               await batchDeleteCoupon({ ids: rows.map((item) => item.id) });
-              toast.success(t('deleteSuccess'));
+              toast.success(t("deleteSuccess"));
               ref.current?.reset();
             }}
-            cancelText={t('cancel')}
-            confirmText={t('confirm')}
+            cancelText={t("cancel")}
+            confirmText={t("confirm")}
           />,
         ],
       }}

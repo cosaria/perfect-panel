@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   AlertDialog,
@@ -10,8 +10,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@workspace/ui/components/alert-dialog';
-import React, { ReactNode } from 'react';
+} from "@workspace/ui/components/alert-dialog";
+import type React from "react";
+import type { ReactNode } from "react";
 
 interface ConfirmationButtonProps {
   trigger: ReactNode;
@@ -27,8 +28,8 @@ export const ConfirmButton: React.FC<ConfirmationButtonProps> = ({
   title,
   description,
   onConfirm,
-  cancelText = 'Cancel',
-  confirmText = 'Confirm',
+  cancelText = "Cancel",
+  confirmText = "Confirm",
 }) => {
   return (
     <AlertDialog>

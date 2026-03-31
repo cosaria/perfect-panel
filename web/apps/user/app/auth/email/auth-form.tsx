@@ -1,34 +1,31 @@
-'use client';
+"use client";
 
-import { resetPassword, userLogin, userRegister } from '@/services/common/auth';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { ReactNode, useState, useTransition } from 'react';
-import { toast } from 'sonner';
-
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { type ReactNode, useState, useTransition } from "react";
+import { toast } from "sonner";
 import {
   NEXT_PUBLIC_DEFAULT_USER_EMAIL,
   NEXT_PUBLIC_DEFAULT_USER_PASSWORD,
-} from '@/config/constants';
-import { getRedirectUrl, setAuthorization } from '@/utils/common';
-import LoginForm from './login-form';
-import RegisterForm from './register-form';
-import ResetForm from './reset-form';
+} from "@/config/constants";
+import { resetPassword, userLogin, userRegister } from "@/services/common/auth";
+import { getRedirectUrl, setAuthorization } from "@/utils/common";
+import LoginForm from "./login-form";
+import RegisterForm from "./register-form";
+import ResetForm from "./reset-form";
+import type { AuthView, EmailAuthValues } from "./types";
 
 export default function EmailAuthForm() {
-  const t = useTranslations('auth');
+  const t = useTranslations("auth");
   const router = useRouter();
-  const [type, setType] = useState<'login' | 'register' | 'reset'>('login');
+  const [type, setType] = useState<AuthView>("login");
   const [loading, startTransition] = useTransition();
-  const [initialValues, setInitialValues] = useState<{
-    email?: string;
-    password?: string;
-  }>({
+  const [initialValues, setInitialValues] = useState<EmailAuthValues | undefined>({
     email: NEXT_PUBLIC_DEFAULT_USER_EMAIL,
     password: NEXT_PUBLIC_DEFAULT_USER_PASSWORD,
   });
 
-  const handleFormSubmit = async (params: any) => {
+  const handleFormSubmit = async (params: EmailAuthValues) => {
     const onLogin = async (token?: string) => {
       if (!token) return;
       setAuthorization(token);
@@ -38,25 +35,25 @@ export default function EmailAuthForm() {
     startTransition(async () => {
       try {
         switch (type) {
-          case 'login': {
+          case "login": {
             const login = await userLogin(params);
-            toast.success(t('login.success'));
+            toast.success(t("login.success"));
             onLogin(login.data.data?.token);
             break;
           }
-          case 'register': {
+          case "register": {
             const create = await userRegister(params);
-            toast.success(t('register.success'));
+            toast.success(t("register.success"));
             onLogin(create.data.data?.token);
             break;
           }
-          case 'reset':
+          case "reset":
             await resetPassword(params);
-            toast.success(t('reset.success'));
-            setType('login');
+            toast.success(t("reset.success"));
+            setType("login");
             break;
         }
-      } catch (error) {
+      } catch (_error) {
         /* empty */
       }
     });
@@ -64,7 +61,7 @@ export default function EmailAuthForm() {
 
   let UserForm: ReactNode = null;
   switch (type) {
-    case 'login':
+    case "login":
       UserForm = (
         <LoginForm
           loading={loading}
@@ -75,7 +72,7 @@ export default function EmailAuthForm() {
         />
       );
       break;
-    case 'register':
+    case "register":
       UserForm = (
         <RegisterForm
           loading={loading}
@@ -86,7 +83,7 @@ export default function EmailAuthForm() {
         />
       );
       break;
-    case 'reset':
+    case "reset":
       UserForm = (
         <ResetForm
           loading={loading}

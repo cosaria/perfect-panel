@@ -1,32 +1,33 @@
-import useGlobalStore from '@/config/use-global';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@workspace/ui/components/button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@workspace/ui/components/form';
-import { Input } from '@workspace/ui/components/input';
-import { AreaCodeSelect } from '@workspace/ui/custom-components/area-code-select';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { Markdown } from '@workspace/ui/custom-components/markdown';
-import { useTranslations } from 'next-intl';
-import { Dispatch, SetStateAction, useRef } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import SendCode from '../send-code';
-import CloudFlareTurnstile, { TurnstileRef } from '../turnstile';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@workspace/ui/components/button";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@workspace/ui/components/form";
+import { Input } from "@workspace/ui/components/input";
+import { AreaCodeSelect } from "@workspace/ui/custom-components/area-code-select";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { Markdown } from "@workspace/ui/custom-components/markdown";
+import { useTranslations } from "next-intl";
+import { type Dispatch, type SetStateAction, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import useGlobalStore from "@/config/use-global";
+import SendCode from "../send-code";
+import CloudFlareTurnstile, { type TurnstileRef } from "../turnstile";
+import type { AuthView, PhoneAuthValues } from "./types";
 
 export default function RegisterForm({
   loading,
   onSubmit,
   initialValues,
-  setInitialValues,
+  setInitialValues: _setInitialValues,
   onSwitchForm,
 }: {
   loading?: boolean;
-  onSubmit: (data: any) => void;
-  initialValues: any;
-  setInitialValues: Dispatch<SetStateAction<any>>;
-  onSwitchForm: Dispatch<SetStateAction<'register' | 'reset' | 'login'>>;
+  onSubmit: (data: PhoneAuthValues) => void;
+  initialValues: PhoneAuthValues | undefined;
+  setInitialValues: Dispatch<SetStateAction<PhoneAuthValues | undefined>>;
+  onSwitchForm: Dispatch<SetStateAction<AuthView>>;
 }) {
-  const t = useTranslations('auth.register');
+  const t = useTranslations("auth.register");
   const { common } = useGlobalStore();
   const { verify, auth, invite } = common;
   const { enable_whitelist, whitelist } = auth.mobile;
@@ -48,8 +49,8 @@ export default function RegisterForm({
       if (password !== repeat_password) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: t('passwordMismatch'),
-          path: ['repeat_password'],
+          message: t("passwordMismatch"),
+          path: ["repeat_password"],
         });
       }
     });
@@ -58,8 +59,8 @@ export default function RegisterForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...initialValues,
-      telephone_area_code: initialValues?.telephone_area_code || '1',
-      invite: localStorage.getItem('invite') || '',
+      telephone_area_code: initialValues?.telephone_area_code || "1",
+      invite: localStorage.getItem("invite") || "",
     },
   });
 
@@ -67,7 +68,7 @@ export default function RegisterForm({
   const handleSubmit = form.handleSubmit((data) => {
     try {
       onSubmit(data);
-    } catch (error) {
+    } catch (_error) {
       turnstile.current?.reset();
     }
   });
@@ -75,32 +76,32 @@ export default function RegisterForm({
   return (
     <>
       {auth.register.stop_register ? (
-        <Markdown>{t('message')}</Markdown>
+        <Markdown>{t("message")}</Markdown>
       ) : (
         <Form {...form}>
-          <form onSubmit={handleSubmit} className='grid gap-6'>
+          <form onSubmit={handleSubmit} className="grid gap-6">
             <FormField
               control={form.control}
-              name='telephone'
+              name="telephone"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className='flex'>
+                    <div className="flex">
                       <FormField
                         control={form.control}
-                        name='telephone_area_code'
+                        name="telephone_area_code"
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
                               <AreaCodeSelect
                                 simple
-                                className='w-32 rounded-r-none border-r-0'
-                                placeholder='Area code...'
+                                className="w-32 rounded-r-none border-r-0"
+                                placeholder="Area code..."
                                 value={field.value}
                                 whitelist={enable_whitelist ? whitelist : []}
                                 onChange={(value) => {
                                   if (value.phone) {
-                                    form.setValue('telephone_area_code', value.phone);
+                                    form.setValue("telephone_area_code", value.phone);
                                   }
                                 }}
                               />
@@ -110,9 +111,9 @@ export default function RegisterForm({
                         )}
                       />
                       <Input
-                        className='rounded-l-none'
-                        placeholder='Enter your telephone...'
-                        type='tel'
+                        className="rounded-l-none"
+                        placeholder="Enter your telephone..."
+                        type="tel"
                         {...field}
                       />
                     </div>
@@ -123,11 +124,11 @@ export default function RegisterForm({
             />
             <FormField
               control={form.control}
-              name='password'
+              name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder='Enter your password...' type='password' {...field} />
+                    <Input placeholder="Enter your password..." type="password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -135,14 +136,14 @@ export default function RegisterForm({
             />
             <FormField
               control={form.control}
-              name='repeat_password'
+              name="repeat_password"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
                       disabled={loading}
-                      placeholder='Enter password again...'
-                      type='password'
+                      placeholder="Enter password again..."
+                      type="password"
                       {...field}
                     />
                   </FormControl>
@@ -152,21 +153,21 @@ export default function RegisterForm({
             />
             <FormField
               control={form.control}
-              name='code'
+              name="code"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className='flex items-center gap-2'>
+                    <div className="flex items-center gap-2">
                       <Input
                         disabled={loading}
-                        placeholder='Enter code...'
-                        type='text'
+                        placeholder="Enter code..."
+                        type="text"
                         {...field}
                         value={field.value as string}
                       />
 
                       <SendCode
-                        type='phone'
+                        type="phone"
                         params={{
                           ...form.getValues(),
                           type: 1,
@@ -180,15 +181,15 @@ export default function RegisterForm({
             />
             <FormField
               control={form.control}
-              name='invite'
+              name="invite"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
-                      disabled={loading || !!localStorage.getItem('invite')}
-                      placeholder={t('invite')}
+                      disabled={loading || !!localStorage.getItem("invite")}
+                      placeholder={t("invite")}
                       {...field}
-                      value={field.value || ''}
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />
@@ -198,35 +199,35 @@ export default function RegisterForm({
             {verify.enable_register_verify && (
               <FormField
                 control={form.control}
-                name='cf_token'
+                name="cf_token"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <CloudFlareTurnstile id='register' {...field} ref={turnstile} />
+                      <CloudFlareTurnstile id="register" {...field} ref={turnstile} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             )}
-            <Button type='submit' disabled={loading}>
-              {loading && <Icon icon='mdi:loading' className='animate-spin' />}
-              {t('title')}
+            <Button type="submit" disabled={loading}>
+              {loading && <Icon icon="mdi:loading" className="animate-spin" />}
+              {t("title")}
             </Button>
           </form>
         </Form>
       )}
-      <div className='mt-4 text-right text-sm'>
-        {t('existingAccount')}&nbsp;
+      <div className="mt-4 text-right text-sm">
+        {t("existingAccount")}&nbsp;
         <Button
-          variant='link'
-          className='p-0'
+          variant="link"
+          className="p-0"
           onClick={() => {
             // setInitialValues(undefined);
-            onSwitchForm('login');
+            onSwitchForm("login");
           }}
         >
-          {t('switchToLogin')}
+          {t("switchToLogin")}
         </Button>
       </div>
     </>

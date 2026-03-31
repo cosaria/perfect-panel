@@ -1,5 +1,5 @@
-import { x25519 } from '@noble/curves/ed25519.js';
-import { toB64Url } from './util';
+import { x25519 } from "@noble/curves/ed25519.js";
+import { toB64Url } from "./util";
 
 /**
  * Generate a Reality key pair

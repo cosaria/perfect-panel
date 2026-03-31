@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@workspace/ui/components/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@workspace/ui/components/button";
 import {
   Form,
   FormControl,
@@ -9,9 +9,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form';
-import { RadioGroup, RadioGroupItem } from '@workspace/ui/components/radio-group';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
+} from "@workspace/ui/components/form";
+import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/radio-group";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -19,17 +19,17 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@workspace/ui/components/sheet';
-import { EnhancedInput } from '@workspace/ui/custom-components/enhanced-input';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+} from "@workspace/ui/components/sheet";
+import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const formSchema = z.object({
   title: z.string(),
-  type: z.enum(['image', 'video']),
+  type: z.enum(["image", "video"]),
   content: z.string(),
   description: z.string(),
   target_url: z.string().url(),
@@ -37,7 +37,9 @@ const formSchema = z.object({
   end_time: z.number(),
 });
 
-interface AdsFormProps<T> {
+type AdsFormValues = z.infer<typeof formSchema>;
+
+interface AdsFormProps<T extends AdsFormValues> {
   onSubmit: (data: T) => Promise<boolean> | boolean;
   initialValues?: T;
   loading?: boolean;
@@ -45,48 +47,48 @@ interface AdsFormProps<T> {
   title: string;
 }
 
-export default function AdsForm<T extends Record<string, any>>({
+export default function AdsForm<T extends AdsFormValues>({
   onSubmit,
   initialValues,
   loading,
   trigger,
   title,
 }: AdsFormProps<T>) {
-  const t = useTranslations('ads');
+  const t = useTranslations("ads");
   const [open, setOpen] = useState(false);
 
-  const form = useForm({
+  const form = useForm<AdsFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...initialValues,
-    } as any,
+    },
   });
 
   useEffect(() => {
     form?.reset(initialValues);
   }, [form, initialValues]);
 
-  const type = form.watch('type');
-  const startTime = form.watch('start_time');
+  const type = form.watch("type");
+  const startTime = form.watch("start_time");
 
   const renderContentField = () => {
     return (
       <FormField
         control={form.control}
-        name='content'
+        name="content"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{t('form.content')}</FormLabel>
+            <FormLabel>{t("form.content")}</FormLabel>
             <FormControl>
               <EnhancedInput
                 placeholder={
-                  type === 'image'
-                    ? 'https://example.com/image.jpg'
-                    : 'https://example.com/video.mp4'
+                  type === "image"
+                    ? "https://example.com/image.jpg"
+                    : "https://example.com/video.mp4"
                 }
                 value={field.value}
                 onValueChange={(value) => {
-                  form.setValue('content', value);
+                  form.setValue("content", value);
                 }}
               />
             </FormControl>
@@ -97,7 +99,7 @@ export default function AdsForm<T extends Record<string, any>>({
     );
   };
 
-  async function handleSubmit(data: { [x: string]: any }) {
+  async function handleSubmit(data: AdsFormValues) {
     const bool = await onSubmit(data as T);
     if (bool) setOpen(false);
   }
@@ -114,22 +116,22 @@ export default function AdsForm<T extends Record<string, any>>({
           {trigger}
         </Button>
       </SheetTrigger>
-      <SheetContent className='w-[500px] max-w-full md:max-w-screen-md'>
+      <SheetContent className="w-[500px] max-w-full md:max-w-screen-md">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
-        <ScrollArea className='-mx-6 h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]'>
+        <ScrollArea className="-mx-6 h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-4 px-6 pt-4'>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 px-6 pt-4">
               <FormField
                 control={form.control}
-                name='title'
+                name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('form.title')}</FormLabel>
+                    <FormLabel>{t("form.title")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
-                        placeholder={t('form.enterTitle')}
+                        placeholder={t("form.enterTitle")}
                         value={field.value}
                         onValueChange={(value) => {
                           form.setValue(field.name, value);
@@ -143,29 +145,29 @@ export default function AdsForm<T extends Record<string, any>>({
 
               <FormField
                 control={form.control}
-                name='type'
+                name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('form.type')}</FormLabel>
+                    <FormLabel>{t("form.type")}</FormLabel>
                     <FormControl>
                       <RadioGroup
                         defaultValue={field.value}
                         onValueChange={(value) => {
                           form.setValue(field.name, value);
                         }}
-                        className='flex gap-4'
+                        className="flex gap-4"
                       >
-                        <FormItem className='flex items-center space-x-3 space-y-0'>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value='image' />
+                            <RadioGroupItem value="image" />
                           </FormControl>
-                          <FormLabel className='font-normal'>{t('form.typeImage')}</FormLabel>
+                          <FormLabel className="font-normal">{t("form.typeImage")}</FormLabel>
                         </FormItem>
-                        <FormItem className='flex items-center space-x-3 space-y-0'>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value='video' />
+                            <RadioGroupItem value="video" />
                           </FormControl>
-                          <FormLabel className='font-normal'>{t('form.typeVideo')}</FormLabel>
+                          <FormLabel className="font-normal">{t("form.typeVideo")}</FormLabel>
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
@@ -178,13 +180,13 @@ export default function AdsForm<T extends Record<string, any>>({
 
               <FormField
                 control={form.control}
-                name='description'
+                name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('form.description')}</FormLabel>
+                    <FormLabel>{t("form.description")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
-                        placeholder={t('form.enterDescription')}
+                        placeholder={t("form.enterDescription")}
                         value={field.value}
                         onValueChange={(value) => {
                           form.setValue(field.name, value);
@@ -198,13 +200,13 @@ export default function AdsForm<T extends Record<string, any>>({
 
               <FormField
                 control={form.control}
-                name='target_url'
+                name="target_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('form.targetUrl')}</FormLabel>
+                    <FormLabel>{t("form.targetUrl")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
-                        placeholder={t('form.enterTargetUrl')}
+                        placeholder={t("form.enterTargetUrl")}
                         value={field.value}
                         onValueChange={(value) => {
                           form.setValue(field.name, value);
@@ -218,23 +220,23 @@ export default function AdsForm<T extends Record<string, any>>({
 
               <FormField
                 control={form.control}
-                name='start_time'
+                name="start_time"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('form.startTime')}</FormLabel>
+                    <FormLabel>{t("form.startTime")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
-                        type='datetime-local'
-                        step='1'
-                        placeholder={t('form.enterStartTime')}
-                        value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ''}
+                        type="datetime-local"
+                        step="1"
+                        placeholder={t("form.enterStartTime")}
+                        value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""}
                         min={Number(new Date().toISOString().slice(0, 16))}
                         onValueChange={(value) => {
                           const timestamp = value ? new Date(value).getTime() : 0;
                           form.setValue(field.name, timestamp);
-                          const endTime = form.getValues('end_time');
+                          const endTime = form.getValues("end_time");
                           if (endTime && timestamp > endTime) {
-                            form.setValue('end_time', '');
+                            form.setValue("end_time", "");
                           }
                         }}
                       />
@@ -246,18 +248,18 @@ export default function AdsForm<T extends Record<string, any>>({
 
               <FormField
                 control={form.control}
-                name='end_time'
+                name="end_time"
                 render={({ field }) => {
                   return (
                     <FormItem>
-                      <FormLabel>{t('form.endTime')}</FormLabel>
+                      <FormLabel>{t("form.endTime")}</FormLabel>
                       <FormControl>
                         <EnhancedInput
-                          type='datetime-local'
-                          step='1'
-                          placeholder={t('form.enterEndTime')}
+                          type="datetime-local"
+                          step="1"
+                          placeholder={t("form.enterEndTime")}
                           value={
-                            field.value ? new Date(field.value).toISOString().slice(0, 16) : ''
+                            field.value ? new Date(field.value).toISOString().slice(0, 16) : ""
                           }
                           min={Number(
                             startTime
@@ -280,19 +282,19 @@ export default function AdsForm<T extends Record<string, any>>({
             </form>
           </Form>
         </ScrollArea>
-        <SheetFooter className='flex-row justify-end gap-2 pt-3'>
+        <SheetFooter className="flex-row justify-end gap-2 pt-3">
           <Button
-            variant='outline'
+            variant="outline"
             disabled={loading}
             onClick={() => {
               setOpen(false);
             }}
           >
-            {t('form.cancel')}
+            {t("form.cancel")}
           </Button>
           <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && <Icon icon='mdi:loading' className='mr-2 animate-spin' />}
-            {t('form.confirm')}
+            {loading && <Icon icon="mdi:loading" className="mr-2 animate-spin" />}
+            {t("form.confirm")}
           </Button>
         </SheetFooter>
       </SheetContent>

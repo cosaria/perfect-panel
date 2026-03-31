@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
+  type SortingState,
   useReactTable,
-  VisibilityState,
-} from '@tanstack/react-table';
-import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert';
-import { Button } from '@workspace/ui/components/button';
-import { Checkbox } from '@workspace/ui/components/checkbox';
+  type VisibilityState,
+} from "@tanstack/react-table";
+import { Alert, AlertDescription, AlertTitle } from "@workspace/ui/components/alert";
+import { Button } from "@workspace/ui/components/button";
+import { Checkbox } from "@workspace/ui/components/checkbox";
 import {
   Table,
   TableBody,
@@ -22,18 +22,30 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@workspace/ui/components/table';
-import Empty from '@workspace/ui/custom-components/empty';
-import { ColumnFilter, IParams } from '@workspace/ui/custom-components/pro-table/column-filter';
-import { ColumnHeader } from '@workspace/ui/custom-components/pro-table/column-header';
-import { ColumnToggle } from '@workspace/ui/custom-components/pro-table/column-toggle';
-import { Pagination } from '@workspace/ui/custom-components/pro-table/pagination';
-import { SortableRow } from '@workspace/ui/custom-components/pro-table/sortable-row';
-import { ProTableWrapper } from '@workspace/ui/custom-components/pro-table/wrapper';
-import { cn } from '@workspace/ui/lib/utils';
-import { useSize } from 'ahooks';
-import { GripVertical, ListRestart, Loader, RefreshCcw } from 'lucide-react';
-import React, { Fragment, useEffect, useImperativeHandle, useRef, useState } from 'react';
+} from "@workspace/ui/components/table";
+import Empty from "@workspace/ui/custom-components/empty";
+import {
+  ColumnFilter,
+  type IParams,
+} from "@workspace/ui/custom-components/pro-table/column-filter";
+import { ColumnHeader } from "@workspace/ui/custom-components/pro-table/column-header";
+import { ColumnToggle } from "@workspace/ui/custom-components/pro-table/column-toggle";
+import { Pagination } from "@workspace/ui/custom-components/pro-table/pagination";
+import { SortableRow } from "@workspace/ui/custom-components/pro-table/sortable-row";
+import { ProTableWrapper } from "@workspace/ui/custom-components/pro-table/wrapper";
+import { cn } from "@workspace/ui/lib/utils";
+import { useSize } from "ahooks";
+import { GripVertical, ListRestart, Loader, RefreshCcw } from "lucide-react";
+import type React from "react";
+import {
+  Fragment,
+  isValidElement,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
 export interface ProTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -119,9 +131,9 @@ export function ProTable<
       ...(onSort
         ? [
             {
-              id: 'sortable',
+              id: "sortable",
               header: (
-                <GripVertical className='h-4 w-4 cursor-move text-gray-500 hover:text-gray-700' />
+                <GripVertical className="h-4 w-4 cursor-move text-gray-500 hover:text-gray-700" />
               ),
               enableSorting: false,
               enableHiding: false,
@@ -139,12 +151,18 @@ export function ProTable<
       ...(actions?.render
         ? ([
             {
-              id: 'actions',
+              id: "actions",
               header: texts?.actions,
               cell: ({ row }) => (
-                <div className='flex items-center justify-end gap-2'>
-                  {actions?.render?.(row.original).map((item, index) => (
-                    <Fragment key={index}>{item}</Fragment>
+                <div className="flex items-center justify-end gap-2">
+                  {actions?.render?.(row.original).map((item) => (
+                    <Fragment
+                      key={
+                        isValidElement(item) && item.key != null ? String(item.key) : String(item)
+                      }
+                    >
+                      {item}
+                    </Fragment>
                   ))}
                 </div>
               ),
@@ -176,7 +194,7 @@ export function ProTable<
     manualSorting: true,
   });
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (loading.current) return;
     loading.current = true;
     try {
@@ -190,11 +208,11 @@ export function ProTable<
       setData(response.list);
       setRowCount(response.total);
     } catch (error) {
-      console.log('Fetch data error:', error);
+      console.log("Fetch data error:", error);
     } finally {
       loading.current = false;
     }
-  };
+  }, [columnFilters, pagination.pageIndex, pagination.pageSize, request]);
   const reset = async () => {
     table.resetSorting();
     table.resetColumnFilters();
@@ -213,16 +231,15 @@ export function ProTable<
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.pageIndex, pagination.pageSize, JSON.stringify(columnFilters)]);
+  }, [fetchData]);
 
   const selectedRows = table.getSelectedRowModel().flatRows.map((row) => row.original);
   const selectedCount = selectedRows.length;
 
   return (
-    <div className='flex flex-col gap-4' ref={ref}>
+    <div className="flex flex-col gap-4" ref={ref}>
       {!header?.hidden && (
-        <div className='flex flex-wrap-reverse items-center justify-between gap-4'>
+        <div className="flex flex-wrap-reverse items-center justify-between gap-4">
           <div>
             {params ? (
               <ColumnFilter
@@ -234,12 +251,12 @@ export function ProTable<
               header?.title
             )}
           </div>
-          <div className='flex flex-1 items-center justify-end gap-2'>
-            <Button variant='outline' size='icon' onClick={fetchData}>
+          <div className="flex flex-1 items-center justify-end gap-2">
+            <Button variant="outline" size="icon" onClick={fetchData}>
               <RefreshCcw />
             </Button>
             <ColumnToggle table={table} />
-            <Button variant='outline' size='icon' onClick={reset}>
+            <Button variant="outline" size="icon" onClick={reset}>
               <ListRestart />
             </Button>
             {header?.toolbar}
@@ -248,31 +265,31 @@ export function ProTable<
       )}
 
       {selectedCount > 0 && actions?.batchRender && (
-        <Alert className='flex items-center justify-between'>
-          <AlertTitle className='m-0'>
+        <Alert className="flex items-center justify-between">
+          <AlertTitle className="m-0">
             {texts?.selectedRowsText?.(selectedCount) || `Selected ${selectedCount} rows`}
           </AlertTitle>
-          <AlertDescription className='flex gap-2'>
+          <AlertDescription className="flex gap-2">
             {actions.batchRender(selectedRows)}
           </AlertDescription>
         </Alert>
       )}
 
       <div
-        className='relative w-auto overflow-x-auto rounded-md border'
+        className="relative w-auto overflow-x-auto rounded-md border"
         style={{
           width: size?.width,
         }}
       >
         <ProTableWrapper data={data} setData={setData} onSort={onSort}>
-          <Table className='w-full'>
+          <Table className="w-full">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead
                       key={header.id}
-                      className={cn('!z-auto', getTableHeaderClass(header.column.id))}
+                      className={cn("!z-auto", getTableHeaderClass(header.column.id))}
                     >
                       <ColumnHeader
                         header={header}
@@ -294,13 +311,13 @@ export function ProTable<
                     <SortableRow
                       key={row.original.id ? String(row.original.id) : String(row.index)}
                       id={row.original.id ? String(row.original.id) : String(row.index)}
-                      data-state={row.getIsSelected() && 'selected'}
+                      data-state={row.getIsSelected() && "selected"}
                       isSortable
                     >
                       {row
                         .getVisibleCells()
                         .filter((cell) => {
-                          return cell.column.id !== 'sortable';
+                          return cell.column.id !== "sortable";
                         })
                         .map((cell) => (
                           <TableCell key={cell.id} className={getTableCellClass(cell.column.id)}>
@@ -311,7 +328,7 @@ export function ProTable<
                   ))
                 ) : (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                    <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className={getTableCellClass(cell.column.id)}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -322,7 +339,7 @@ export function ProTable<
                 )
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length + 2} className='py-24'>
+                  <TableCell colSpan={columns.length + 2} className="py-24">
                     {empty || <Empty />}
                   </TableCell>
                 </TableRow>
@@ -332,8 +349,8 @@ export function ProTable<
         </ProTableWrapper>
 
         {loading.current && (
-          <div className='bg-muted/80 absolute top-0 z-20 flex h-full w-full items-center justify-center'>
-            <Loader className='h-4 w-4 animate-spin' />
+          <div className="bg-muted/80 absolute top-0 z-20 flex h-full w-full items-center justify-center">
+            <Loader className="h-4 w-4 animate-spin" />
           </div>
         )}
       </div>
@@ -352,21 +369,21 @@ export function ProTable<
 
 function createSelectColumn<TData, TValue>(): ColumnDef<TData, TValue> {
   return {
-    id: 'selected',
+    id: "selected",
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
+        aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label='Select row'
+        aria-label="Select row"
       />
     ),
     enableSorting: false,
@@ -375,19 +392,19 @@ function createSelectColumn<TData, TValue>(): ColumnDef<TData, TValue> {
 }
 
 function getTableHeaderClass(columnId: string) {
-  if (['sortable', 'selected'].includes(columnId)) {
-    return 'sticky left-0 z-10 bg-background shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] [&:has([role=checkbox])]:pr-2';
-  } else if (columnId === 'actions') {
-    return 'sticky right-0 z-10 text-right bg-background shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]';
+  if (["sortable", "selected"].includes(columnId)) {
+    return "sticky left-0 z-10 bg-background shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] [&:has([role=checkbox])]:pr-2";
+  } else if (columnId === "actions") {
+    return "sticky right-0 z-10 text-right bg-background shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]";
   }
-  return 'truncate';
+  return "truncate";
 }
 
 function getTableCellClass(columnId: string) {
-  if (['sortable', 'selected'].includes(columnId)) {
-    return 'sticky left-0 bg-background shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]';
-  } else if (columnId === 'actions') {
-    return 'sticky right-0 bg-background shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]';
+  if (["sortable", "selected"].includes(columnId)) {
+    return "sticky left-0 bg-background shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]";
+  } else if (columnId === "actions") {
+    return "sticky right-0 bg-background shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]";
   }
-  return 'truncate';
+  return "truncate";
 }

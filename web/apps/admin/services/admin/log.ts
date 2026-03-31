@@ -1,17 +1,17 @@
-// @ts-ignore
+// @ts-expect-error
 /* eslint-disable */
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 /** Filter balance log GET /v1/admin/log/balance/list */
 export async function filterBalanceLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterBalanceLogParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.FilterBalanceLogResponse }>(
-    '/v1/admin/log/balance/list',
+    "/v1/admin/log/balance/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -24,12 +24,12 @@ export async function filterBalanceLog(
 export async function filterCommissionLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterCommissionLogParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.FilterCommissionLogResponse }>(
-    '/v1/admin/log/commission/list',
+    "/v1/admin/log/commission/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -42,10 +42,10 @@ export async function filterCommissionLog(
 export async function filterEmailLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterEmailLogParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.FilterEmailLogResponse }>('/v1/admin/log/email/list', {
-    method: 'GET',
+  return request<API.Response & { data?: API.FilterEmailLogResponse }>("/v1/admin/log/email/list", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -57,10 +57,10 @@ export async function filterEmailLog(
 export async function filterGiftLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterGiftLogParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.FilterGiftLogResponse }>('/v1/admin/log/gift/list', {
-    method: 'GET',
+  return request<API.Response & { data?: API.FilterGiftLogResponse }>("/v1/admin/log/gift/list", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -72,10 +72,10 @@ export async function filterGiftLog(
 export async function filterLoginLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterLoginLogParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.FilterLoginLogResponse }>('/v1/admin/log/login/list', {
-    method: 'GET',
+  return request<API.Response & { data?: API.FilterLoginLogResponse }>("/v1/admin/log/login/list", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -87,12 +87,12 @@ export async function filterLoginLog(
 export async function getMessageLogList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetMessageLogListParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.GetMessageLogListResponse }>(
-    '/v1/admin/log/message/list',
+    "/v1/admin/log/message/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -105,12 +105,12 @@ export async function getMessageLogList(
 export async function filterMobileLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterMobileLogParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.FilterMobileLogResponse }>(
-    '/v1/admin/log/mobile/list',
+    "/v1/admin/log/mobile/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -123,12 +123,12 @@ export async function filterMobileLog(
 export async function filterRegisterLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterRegisterLogParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.FilterRegisterLogResponse }>(
-    '/v1/admin/log/register/list',
+    "/v1/admin/log/register/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -141,12 +141,12 @@ export async function filterRegisterLog(
 export async function filterServerTrafficLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterServerTrafficLogParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.FilterServerTrafficLogResponse }>(
-    '/v1/admin/log/server/traffic/list',
+    "/v1/admin/log/server/traffic/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -156,19 +156,19 @@ export async function filterServerTrafficLog(
 }
 
 /** Get log setting GET /v1/admin/log/setting */
-export async function getLogSetting(options?: { [key: string]: any }) {
-  return request<API.Response & { data?: API.LogSetting }>('/v1/admin/log/setting', {
-    method: 'GET',
+export async function getLogSetting(options?: Record<string, unknown>) {
+  return request<API.Response & { data?: API.LogSetting }>("/v1/admin/log/setting", {
+    method: "GET",
     ...(options || {}),
   });
 }
 
 /** Update log setting POST /v1/admin/log/setting */
-export async function updateLogSetting(body: API.LogSetting, options?: { [key: string]: any }) {
-  return request<API.Response & { data?: any }>('/v1/admin/log/setting', {
-    method: 'POST',
+export async function updateLogSetting(body: API.LogSetting, options?: Record<string, unknown>) {
+  return request<API.Response & { data?: unknown }>("/v1/admin/log/setting", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -179,12 +179,12 @@ export async function updateLogSetting(body: API.LogSetting, options?: { [key: s
 export async function filterSubscribeLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterSubscribeLogParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.FilterSubscribeLogResponse }>(
-    '/v1/admin/log/subscribe/list',
+    "/v1/admin/log/subscribe/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -197,12 +197,12 @@ export async function filterSubscribeLog(
 export async function filterResetSubscribeLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterResetSubscribeLogParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.FilterResetSubscribeLogResponse }>(
-    '/v1/admin/log/subscribe/reset/list',
+    "/v1/admin/log/subscribe/reset/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -215,12 +215,12 @@ export async function filterResetSubscribeLog(
 export async function filterUserSubscribeTrafficLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterUserSubscribeTrafficLogParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.FilterSubscribeTrafficResponse }>(
-    '/v1/admin/log/subscribe/traffic/list',
+    "/v1/admin/log/subscribe/traffic/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -233,12 +233,12 @@ export async function filterUserSubscribeTrafficLog(
 export async function filterTrafficLogDetails(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.FilterTrafficLogDetailsParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.FilterTrafficLogDetailsResponse }>(
-    '/v1/admin/log/traffic/details',
+    "/v1/admin/log/traffic/details",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },

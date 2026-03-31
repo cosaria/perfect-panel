@@ -1,5 +1,5 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@workspace/ui/components/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@workspace/ui/components/button";
 import {
   Form,
   FormControl,
@@ -7,9 +7,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form';
-import { Input } from '@workspace/ui/components/input';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
+} from "@workspace/ui/components/form";
+import { Input } from "@workspace/ui/components/input";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -17,14 +17,14 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@workspace/ui/components/sheet';
-import { MarkdownEditor } from '@workspace/ui/custom-components/editor';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { TagInput } from '@workspace/ui/custom-components/tag-input';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+} from "@workspace/ui/components/sheet";
+import { MarkdownEditor } from "@workspace/ui/custom-components/editor";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { TagInput } from "@workspace/ui/custom-components/tag-input";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const formSchema = z.object({
   title: z.string(),
@@ -32,7 +32,9 @@ const formSchema = z.object({
   content: z.string().nullish(),
 });
 
-interface DocumentFormProps<T> {
+type DocumentFormValues = z.infer<typeof formSchema>;
+
+interface DocumentFormProps<T extends DocumentFormValues> {
   onSubmit: (data: T) => Promise<boolean> | boolean;
   initialValues?: T;
   loading?: boolean;
@@ -40,21 +42,21 @@ interface DocumentFormProps<T> {
   title: string;
 }
 
-export default function DocumentForm<T extends Record<string, any>>({
+export default function DocumentForm<T extends DocumentFormValues>({
   onSubmit,
   initialValues,
   loading,
   trigger,
   title,
 }: DocumentFormProps<T>) {
-  const t = useTranslations('document');
+  const t = useTranslations("document");
   const [open, setOpen] = useState(false);
-  const form = useForm({
+  const form = useForm<DocumentFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       tags: [],
       ...initialValues,
-    } as any,
+    },
   });
 
   useEffect(() => {
@@ -64,7 +66,7 @@ export default function DocumentForm<T extends Record<string, any>>({
     });
   }, [form, initialValues]);
 
-  async function handleSubmit(data: { [x: string]: any }) {
+  async function handleSubmit(data: DocumentFormValues) {
     const bool = await onSubmit(data as T);
     if (bool) setOpen(false);
   }
@@ -81,21 +83,21 @@ export default function DocumentForm<T extends Record<string, any>>({
           {trigger}
         </Button>
       </SheetTrigger>
-      <SheetContent className='w-[500px] max-w-full md:max-w-screen-md'>
+      <SheetContent className="w-[500px] max-w-full md:max-w-screen-md">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
-        <ScrollArea className='-mx-6 h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]'>
+        <ScrollArea className="-mx-6 h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-4 px-6 pt-4'>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 px-6 pt-4">
               <FormField
                 control={form.control}
-                name='title'
+                name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('form.title')}</FormLabel>
+                    <FormLabel>{t("form.title")}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('form.titlePlaceholder')} {...field} />
+                      <Input placeholder={t("form.titlePlaceholder")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -103,13 +105,13 @@ export default function DocumentForm<T extends Record<string, any>>({
               />
               <FormField
                 control={form.control}
-                name='tags'
+                name="tags"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('form.tags')}</FormLabel>
+                    <FormLabel>{t("form.tags")}</FormLabel>
                     <FormControl>
                       <TagInput
-                        placeholder={t('form.tagsPlaceholder')}
+                        placeholder={t("form.tagsPlaceholder")}
                         value={field.value}
                         onChange={(value) => form.setValue(field.name, value)}
                       />
@@ -120,10 +122,10 @@ export default function DocumentForm<T extends Record<string, any>>({
               />
               <FormField
                 control={form.control}
-                name='content'
+                name="content"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('form.content')}</FormLabel>
+                    <FormLabel>{t("form.content")}</FormLabel>
                     <FormControl>
                       <MarkdownEditor
                         value={field.value}
@@ -139,19 +141,19 @@ export default function DocumentForm<T extends Record<string, any>>({
             </form>
           </Form>
         </ScrollArea>
-        <SheetFooter className='flex-row justify-end gap-2 pt-3'>
+        <SheetFooter className="flex-row justify-end gap-2 pt-3">
           <Button
-            variant='outline'
+            variant="outline"
             disabled={loading}
             onClick={() => {
               setOpen(false);
             }}
           >
-            {t('form.cancel')}
+            {t("form.cancel")}
           </Button>
           <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && <Icon icon='mdi:loading' className='mr-2 animate-spin' />}{' '}
-            {t('form.confirm')}
+            {loading && <Icon icon="mdi:loading" className="mr-2 animate-spin" />}{" "}
+            {t("form.confirm")}
           </Button>
         </SheetFooter>
       </SheetContent>

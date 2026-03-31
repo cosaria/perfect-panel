@@ -1,10 +1,8 @@
-'use client';
+"use client";
 
-import useGlobalStore from '@/config/use-global';
-import { getPaymentPlatform } from '@/services/admin/payment';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
-import { Button } from '@workspace/ui/components/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@workspace/ui/components/button";
 import {
   Form,
   FormControl,
@@ -12,16 +10,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form';
-import { RadioGroup, RadioGroupItem } from '@workspace/ui/components/radio-group';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
+} from "@workspace/ui/components/form";
+import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/radio-group";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select';
+} from "@workspace/ui/components/select";
 import {
   Sheet,
   SheetContent,
@@ -29,15 +27,17 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@workspace/ui/components/sheet';
-import { MarkdownEditor } from '@workspace/ui/custom-components/editor';
-import { EnhancedInput } from '@workspace/ui/custom-components/enhanced-input';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { unitConversion } from '@workspace/ui/utils';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
+} from "@workspace/ui/components/sheet";
+import { MarkdownEditor } from "@workspace/ui/custom-components/editor";
+import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { unitConversion } from "@workspace/ui/utils";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import useGlobalStore from "@/config/use-global";
+import { getPaymentPlatform } from "@/services/admin/payment";
 
 interface PaymentFormProps<T> {
   trigger: React.ReactNode;
@@ -56,13 +56,13 @@ export default function PaymentForm<T>({
   onSubmit,
   isEdit,
 }: PaymentFormProps<T>) {
-  const t = useTranslations('payment');
+  const t = useTranslations("payment");
   const { common } = useGlobalStore();
   const { currency } = common;
   const [open, setOpen] = useState(false);
 
   const { data: platformData } = useQuery({
-    queryKey: ['getPaymentPlatform'],
+    queryKey: ["getPaymentPlatform"],
     queryFn: async () => {
       const { data } = await getPaymentPlatform();
       return data?.data?.list || [];
@@ -70,11 +70,11 @@ export default function PaymentForm<T>({
   });
 
   const formSchema = z.object({
-    name: z.string().min(1, { message: t('nameRequired') }),
+    name: z.string().min(1, { message: t("nameRequired") }),
     platform: z.string().optional(),
     icon: z.string().optional(),
     domain: z.string().optional(),
-    config: z.any(),
+    config: z.record(z.string(), z.unknown()),
     fee_mode: z.number().min(0).max(2),
     fee_percent: z.number().optional(),
     fee_amount: z.number().optional(),
@@ -84,35 +84,35 @@ export default function PaymentForm<T>({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      platform: '',
-      icon: '',
-      domain: '',
+      name: "",
+      platform: "",
+      icon: "",
+      domain: "",
       config: {},
       fee_mode: 0,
       fee_percent: 0,
       fee_amount: 0,
-      ...(initialValues as any),
+      ...(initialValues as Partial<z.infer<typeof formSchema>>),
     },
   });
 
-  const feeMode = form.watch('fee_mode');
-  const platformValue = form.watch('platform');
-  const configValues = form.watch('config');
+  const feeMode = form.watch("fee_mode");
+  const platformValue = form.watch("platform");
+  const configValues = form.watch("config");
 
   const currentPlatform = platformData?.find((p) => p.platform === platformValue);
   const currentFieldDescriptions = currentPlatform?.platform_field_description || {};
   const configFields = Object.keys(currentFieldDescriptions) || [];
-  const platformUrl = currentPlatform?.platform_url || '';
+  const platformUrl = currentPlatform?.platform_url || "";
 
   useEffect(() => {
     if (feeMode === 0) {
-      form.setValue('fee_amount', 0);
-      form.setValue('fee_percent', 0);
+      form.setValue("fee_amount", 0);
+      form.setValue("fee_percent", 0);
     } else if (feeMode === 1) {
-      form.setValue('fee_amount', 0);
+      form.setValue("fee_amount", 0);
     } else if (feeMode === 2) {
-      form.setValue('fee_percent', 0);
+      form.setValue("fee_percent", 0);
     }
   }, [feeMode, form]);
 
@@ -141,33 +141,33 @@ export default function PaymentForm<T>({
 
   const openPlatformUrl = () => {
     if (platformUrl) {
-      window.open(platformUrl, '_blank');
+      window.open(platformUrl, "_blank");
     }
   };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent className='w-[550px] max-w-full md:max-w-screen-md'>
+      <SheetContent className="w-[550px] max-w-full md:max-w-screen-md">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
-        <ScrollArea className='-mx-6 h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]'>
+        <ScrollArea className="-mx-6 h-[calc(100vh-48px-36px-36px-env(safe-area-inset-top))]">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-6 px-6 pt-4'>
-              <div className='space-y-4'>
-                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 px-6 pt-4">
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <FormField
                     control={form.control}
-                    name='name'
+                    name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('name')}</FormLabel>
+                        <FormLabel>{t("name")}</FormLabel>
                         <FormControl>
                           <EnhancedInput
-                            placeholder={t('namePlaceholder')}
+                            placeholder={t("namePlaceholder")}
                             value={field.value}
-                            onValueChange={(value) => form.setValue('name', value as string)}
+                            onValueChange={(value) => form.setValue("name", value as string)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -176,15 +176,15 @@ export default function PaymentForm<T>({
                   />
                   <FormField
                     control={form.control}
-                    name='icon'
+                    name="icon"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('icon')}</FormLabel>
+                        <FormLabel>{t("icon")}</FormLabel>
                         <FormControl>
                           <EnhancedInput
-                            placeholder={t('iconPlaceholder')}
+                            placeholder={t("iconPlaceholder")}
                             value={field.value}
-                            onValueChange={(value) => form.setValue('icon', value as string)}
+                            onValueChange={(value) => form.setValue("icon", value as string)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -194,15 +194,15 @@ export default function PaymentForm<T>({
                 </div>
                 <FormField
                   control={form.control}
-                  name='domain'
+                  name="domain"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('domain')}</FormLabel>
+                      <FormLabel>{t("domain")}</FormLabel>
                       <FormControl>
                         <EnhancedInput
-                          placeholder='http(s)://example.com'
+                          placeholder="http(s)://example.com"
                           value={field.value}
-                          onValueChange={(value) => form.setValue('domain', value as string)}
+                          onValueChange={(value) => form.setValue("domain", value as string)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -211,38 +211,38 @@ export default function PaymentForm<T>({
                 />
               </div>
 
-              <div className='space-y-4'>
+              <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name='fee_mode'
+                  name="fee_mode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('handlingFee')}</FormLabel>
+                      <FormLabel>{t("handlingFee")}</FormLabel>
                       <FormControl>
                         <RadioGroup
-                          onValueChange={(value) => field.onChange(parseInt(value))}
+                          onValueChange={(value) => field.onChange(parseInt(value, 10))}
                           value={field.value.toString()}
-                          className='flex flex-wrap gap-4'
+                          className="flex flex-wrap gap-4"
                         >
-                          <FormItem className='flex items-center space-x-2'>
+                          <FormItem className="flex items-center space-x-2">
                             <FormControl>
-                              <RadioGroupItem value='0' />
+                              <RadioGroupItem value="0" />
                             </FormControl>
-                            <FormLabel className='!mt-0 cursor-pointer'>{t('noFee')}</FormLabel>
+                            <FormLabel className="!mt-0 cursor-pointer">{t("noFee")}</FormLabel>
                           </FormItem>
-                          <FormItem className='flex items-center space-x-2'>
+                          <FormItem className="flex items-center space-x-2">
                             <FormControl>
-                              <RadioGroupItem value='1' />
+                              <RadioGroupItem value="1" />
                             </FormControl>
-                            <FormLabel className='!mt-0 cursor-pointer'>
-                              {t('percentFee')}
+                            <FormLabel className="!mt-0 cursor-pointer">
+                              {t("percentFee")}
                             </FormLabel>
                           </FormItem>
-                          <FormItem className='flex items-center space-x-2'>
+                          <FormItem className="flex items-center space-x-2">
                             <FormControl>
-                              <RadioGroupItem value='2' />
+                              <RadioGroupItem value="2" />
                             </FormControl>
-                            <FormLabel className='!mt-0 cursor-pointer'>{t('fixedFee')}</FormLabel>
+                            <FormLabel className="!mt-0 cursor-pointer">{t("fixedFee")}</FormLabel>
                           </FormItem>
                         </RadioGroup>
                       </FormControl>
@@ -252,18 +252,18 @@ export default function PaymentForm<T>({
                 />
 
                 {feeMode === 1 && (
-                  <div className='grid grid-cols-1 sm:w-1/2'>
+                  <div className="grid grid-cols-1 sm:w-1/2">
                     <FormField
                       control={form.control}
-                      name='fee_percent'
+                      name="fee_percent"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t('feePercent')}</FormLabel>
+                          <FormLabel>{t("feePercent")}</FormLabel>
                           <FormControl>
                             <EnhancedInput
-                              type='number'
-                              step='0.01'
-                              suffix='%'
+                              type="number"
+                              step="0.01"
+                              suffix="%"
                               value={field.value}
                               onValueChange={field.onChange}
                             />
@@ -276,22 +276,22 @@ export default function PaymentForm<T>({
                 )}
 
                 {feeMode === 2 && (
-                  <div className='grid grid-cols-1 sm:w-1/2'>
+                  <div className="grid grid-cols-1 sm:w-1/2">
                     <FormField
                       control={form.control}
-                      name='fee_amount'
+                      name="fee_amount"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t('feeAmount')}</FormLabel>
+                          <FormLabel>{t("feeAmount")}</FormLabel>
                           <FormControl>
                             <EnhancedInput
-                              type='number'
-                              step='0.01'
+                              type="number"
+                              step="0.01"
                               prefix={currency.currency_symbol}
                               suffix={currency.currency_unit}
-                              value={unitConversion('centsToDollars', field.value)}
+                              value={unitConversion("centsToDollars", field.value)}
                               onValueChange={(value) =>
-                                field.onChange(unitConversion('dollarsToCents', value))
+                                field.onChange(unitConversion("dollarsToCents", value))
                               }
                             />
                           </FormControl>
@@ -303,18 +303,18 @@ export default function PaymentForm<T>({
                 )}
               </div>
 
-              <div className='space-y-4'>
+              <div className="space-y-4">
                 {(!platformValue || platformData?.find((p) => p.platform === platformValue)) && (
                   <FormField
                     control={form.control}
-                    name='platform'
+                    name="platform"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('platform')}</FormLabel>
+                        <FormLabel>{t("platform")}</FormLabel>
                         <Select
                           onValueChange={(value) => {
-                            form.setValue('platform', value as string);
-                            form.setValue('config', {});
+                            form.setValue("platform", value as string);
+                            form.setValue("config", {});
                           }}
                           defaultValue={field.value}
                           value={field.value}
@@ -323,7 +323,7 @@ export default function PaymentForm<T>({
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t('selectPlatform')} />
+                              <SelectValue placeholder={t("selectPlatform")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -335,19 +335,19 @@ export default function PaymentForm<T>({
                           </SelectContent>
                         </Select>
                         {platformUrl ? (
-                          <div className='mt-1 flex justify-end'>
+                          <div className="mt-1 flex justify-end">
                             <Button
-                              variant='ghost'
-                              size='sm'
-                              className='h-6 px-2 text-xs'
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 px-2 text-xs"
                               onClick={openPlatformUrl}
                             >
-                              <Icon icon='tabler:external-link' className='mr-1 h-3 w-3' />
-                              {t('applyForPayment')}
+                              <Icon icon="tabler:external-link" className="mr-1 h-3 w-3" />
+                              {t("applyForPayment")}
                             </Button>
                           </div>
                         ) : (
-                          <div className='mt-1 h-6'></div>
+                          <div className="mt-1 h-6"></div>
                         )}
                         <FormMessage />
                       </FormItem>
@@ -356,25 +356,25 @@ export default function PaymentForm<T>({
                 )}
 
                 {configFields.length > 0 && (
-                  <div className='mt-4 space-y-4'>
+                  <div className="mt-4 space-y-4">
                     {configFields.map((fieldKey) => (
                       <FormItem key={fieldKey}>
                         <FormLabel>{currentFieldDescriptions[fieldKey]}</FormLabel>
                         <FormControl>
                           <EnhancedInput
-                            placeholder={t('configPlaceholder', {
+                            placeholder={t("configPlaceholder", {
                               field: currentFieldDescriptions[fieldKey],
                             })}
                             value={
                               configValues && configValues[fieldKey] !== undefined
                                 ? configValues[fieldKey]
-                                : ''
+                                : ""
                             }
-                            disabled={fieldKey === 'webhook_secret'}
+                            disabled={fieldKey === "webhook_secret"}
                             onValueChange={(value) => {
                               const newConfig = { ...configValues };
                               newConfig[fieldKey] = value;
-                              form.setValue('config', newConfig);
+                              form.setValue("config", newConfig);
                             }}
                           />
                         </FormControl>
@@ -385,10 +385,10 @@ export default function PaymentForm<T>({
 
                 <FormField
                   control={form.control}
-                  name='description'
+                  name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('description')}</FormLabel>
+                      <FormLabel>{t("description")}</FormLabel>
                       <FormControl>
                         <MarkdownEditor
                           value={field.value}
@@ -404,13 +404,13 @@ export default function PaymentForm<T>({
           </Form>
         </ScrollArea>
 
-        <SheetFooter className='flex-row justify-end gap-2 pt-3'>
-          <Button variant='outline' disabled={loading} onClick={handleClose}>
-            {t('cancel')}
+        <SheetFooter className="flex-row justify-end gap-2 pt-3">
+          <Button variant="outline" disabled={loading} onClick={handleClose}>
+            {t("cancel")}
           </Button>
           <Button disabled={loading} onClick={form.handleSubmit(handleSubmit)}>
-            {loading && <Icon icon='mdi:loading' className='mr-2 animate-spin' />}
-            {t('submit')}
+            {loading && <Icon icon="mdi:loading" className="mr-2 animate-spin" />}
+            {t("submit")}
           </Button>
         </SheetFooter>
       </SheetContent>

@@ -1,42 +1,43 @@
-'use client';
+"use client";
 
-import { ProTable, ProTableActions } from '@/components/pro-table';
-import {
-  createTicketFollow,
-  getTicket,
-  getTicketList,
-  updateTicketStatus,
-} from '@/services/admin/ticket';
-import { formatDate } from '@/utils/common';
-import { useQuery } from '@tanstack/react-query';
-import { Button } from '@workspace/ui/components/button';
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@workspace/ui/components/button";
 import {
   Drawer,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from '@workspace/ui/components/drawer';
-import { Input } from '@workspace/ui/components/input';
-import { Label } from '@workspace/ui/components/label';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
-import { ConfirmButton } from '@workspace/ui/custom-components/confirm-button';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { cn } from '@workspace/ui/lib/utils';
-import { useTranslations } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
-import { UserDetail } from '../user/user-detail';
+} from "@workspace/ui/components/drawer";
+import { Input } from "@workspace/ui/components/input";
+import { Label } from "@workspace/ui/components/label";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
+import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { cn } from "@workspace/ui/lib/utils";
+import NextImage from "next/image";
+import { useTranslations } from "next-intl";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { ProTable, type ProTableActions } from "@/components/pro-table";
+import {
+  createTicketFollow,
+  getTicket,
+  getTicketList,
+  updateTicketStatus,
+} from "@/services/admin/ticket";
+import { formatDate } from "@/utils/common";
+import { UserDetail } from "../user/user-detail";
 
 export default function Page() {
-  const t = useTranslations('ticket');
+  const t = useTranslations("ticket");
 
-  const [ticketId, setTicketId] = useState<any>(null);
+  const [ticketId, setTicketId] = useState<number | null>(null);
 
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const { data: ticket, refetch: refetchTicket } = useQuery({
-    queryKey: ['getTicket', ticketId],
+    queryKey: ["getTicket", ticketId],
     queryFn: async () => {
       const { data } = await getTicket({
         id: ticketId,
@@ -53,11 +54,11 @@ export default function Page() {
       if (scrollRef.current) {
         scrollRef.current.children[1]?.scrollTo({
           top: scrollRef.current.children[1].scrollHeight,
-          behavior: 'smooth',
+          behavior: "smooth",
         });
       }
     }, 66);
-  }, [ticket?.follow?.length]);
+  }, []);
 
   const ref = useRef<ProTableActions>(null);
   return (
@@ -65,30 +66,30 @@ export default function Page() {
       <ProTable<API.Ticket, { status: number }>
         action={ref}
         header={{
-          title: t('ticketList'),
+          title: t("ticketList"),
         }}
         columns={[
           {
-            accessorKey: 'title',
-            header: t('title'),
+            accessorKey: "title",
+            header: t("title"),
           },
           {
-            accessorKey: 'user_id',
-            header: t('user'),
+            accessorKey: "user_id",
+            header: t("user"),
             cell: ({ row }) => <UserDetail id={row.original.user_id} />,
           },
           {
-            accessorKey: 'status',
-            header: t('status.0'),
+            accessorKey: "status",
+            header: t("status.0"),
             cell: ({ row }) => (
               <span
                 className={cn(
-                  'flex items-center gap-2 before:block before:size-1.5 before:animate-pulse before:rounded-full before:ring-2 before:ring-opacity-50',
+                  "flex items-center gap-2 before:block before:size-1.5 before:animate-pulse before:rounded-full before:ring-2 before:ring-opacity-50",
                   {
-                    'before:bg-rose-500 before:ring-rose-500': row.original.status === 1,
-                    'before:bg-yellow-500 before:ring-yellow-500': row.original.status === 2,
-                    'before:bg-green-500 before:ring-green-500': row.original.status === 3,
-                    'before:bg-zinc-500 before:ring-zinc-500': row.original.status === 4,
+                    "before:bg-rose-500 before:ring-rose-500": row.original.status === 1,
+                    "before:bg-yellow-500 before:ring-yellow-500": row.original.status === 2,
+                    "before:bg-green-500 before:ring-green-500": row.original.status === 3,
+                    "before:bg-zinc-500 before:ring-zinc-500": row.original.status === 4,
                   },
                 )}
               >
@@ -97,19 +98,19 @@ export default function Page() {
             ),
           },
           {
-            accessorKey: 'updated_at',
-            header: t('updatedAt'),
-            cell: ({ row }) => formatDate(row.getValue('updated_at')),
+            accessorKey: "updated_at",
+            header: t("updatedAt"),
+            cell: ({ row }) => formatDate(row.getValue("updated_at")),
           },
         ]}
         params={[
           {
-            key: 'status',
-            placeholder: t('status.0'),
+            key: "status",
+            placeholder: t("status.0"),
             options: [
               {
-                label: t('close'),
-                value: '4',
+                label: t("close"),
+                value: "4",
               },
             ],
           },
@@ -128,30 +129,30 @@ export default function Page() {
           render(row) {
             if (row.status !== 4) {
               return [
-                <Button key='reply' onClick={() => setTicketId(row.id)}>
-                  {t('reply')}
+                <Button key="reply" onClick={() => setTicketId(row.id)}>
+                  {t("reply")}
                 </Button>,
                 <ConfirmButton
-                  key='colse'
-                  trigger={<Button variant='destructive'>{t('close')}</Button>}
-                  title={t('confirmClose')}
-                  description={t('closeWarning')}
+                  key="colse"
+                  trigger={<Button variant="destructive">{t("close")}</Button>}
+                  title={t("confirmClose")}
+                  description={t("closeWarning")}
                   onConfirm={async () => {
                     await updateTicketStatus({
                       id: row.id,
                       status: 4,
                     });
-                    toast.success(t('closeSuccess'));
+                    toast.success(t("closeSuccess"));
                     ref.current?.refresh();
                   }}
-                  cancelText={t('cancel')}
-                  confirmText={t('confirm')}
+                  cancelText={t("cancel")}
+                  confirmText={t("confirm")}
                 />,
               ];
             }
             return [
-              <Button key='check' size='sm' onClick={() => setTicketId(row.id)}>
-                {t('check')}
+              <Button key="check" size="sm" onClick={() => setTicketId(row.id)}>
+                {t("check")}
               </Button>,
             ];
           },
@@ -164,18 +165,18 @@ export default function Page() {
           if (!open) setTicketId(null);
         }}
       >
-        <DrawerContent className='container mx-auto h-screen *:select-text'>
-          <DrawerHeader className='border-b text-left'>
+        <DrawerContent className="container mx-auto h-screen *:select-text">
+          <DrawerHeader className="border-b text-left">
             <DrawerTitle>{ticket?.title}</DrawerTitle>
           </DrawerHeader>
-          <ScrollArea className='h-full overflow-hidden' ref={scrollRef}>
-            <div className='flex h-full flex-col gap-4 p-4'>
+          <ScrollArea className="h-full overflow-hidden" ref={scrollRef}>
+            <div className="flex h-full flex-col gap-4 p-4">
               {/* 显示工单描述作为第一条用户消息 */}
               {ticket?.description && (
-                <div className='flex items-center gap-4'>
-                  <div className='flex flex-col gap-1'>
-                    <p className='text-muted-foreground text-sm'>{formatDate(ticket.created_at)}</p>
-                    <p className='bg-accent w-fit rounded-lg p-2 font-medium'>
+                <div className="flex items-center gap-4">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-muted-foreground text-sm">{formatDate(ticket.created_at)}</p>
+                    <p className="bg-accent w-fit rounded-lg p-2 font-medium">
                       {ticket.description}
                     </p>
                   </div>
@@ -186,30 +187,29 @@ export default function Page() {
               {ticket?.follow?.map((item) => (
                 <div
                   key={item.id}
-                  className={cn('flex items-center gap-4', {
-                    'flex-row-reverse': item.from === 'System',
+                  className={cn("flex items-center gap-4", {
+                    "flex-row-reverse": item.from === "System",
                   })}
                 >
                   <div
-                    className={cn('flex flex-col gap-1', {
-                      'items-end': item.from === 'System',
+                    className={cn("flex flex-col gap-1", {
+                      "items-end": item.from === "System",
                     })}
                   >
-                    <p className='text-muted-foreground text-sm'>{formatDate(item.created_at)}</p>
+                    <p className="text-muted-foreground text-sm">{formatDate(item.created_at)}</p>
                     <p
-                      className={cn('bg-accent w-fit rounded-lg p-2 font-medium', {
-                        'bg-primary text-primary-foreground': item.from === 'System',
+                      className={cn("bg-accent w-fit rounded-lg p-2 font-medium", {
+                        "bg-primary text-primary-foreground": item.from === "System",
                       })}
                     >
                       {item.type === 1 && item.content}
-                      {item.type === 2 && (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={item.content!}
+                      {item.type === 2 && typeof item.content === "string" && (
+                        <NextImage
+                          src={item.content}
                           width={300}
                           height={300}
-                          className='!size-auto object-cover'
-                          alt='image'
+                          className="!size-auto object-cover"
+                          alt="attachment"
                         />
                       )}
                     </p>
@@ -221,41 +221,41 @@ export default function Page() {
           {ticket?.status !== 4 && (
             <DrawerFooter>
               <form
-                className='flex w-full flex-row items-center gap-2'
+                className="flex w-full flex-row items-center gap-2"
                 onSubmit={async (event) => {
                   event.preventDefault();
                   if (message) {
                     await createTicketFollow({
                       ticket_id: ticketId,
-                      from: 'System',
+                      from: "System",
                       type: 1,
                       content: message,
                     });
                     refetchTicket();
-                    setMessage('');
+                    setMessage("");
                   }
                 }}
               >
-                <Button type='button' variant='outline' className='p-0'>
-                  <Label htmlFor='picture' className='p-2'>
-                    <Icon icon='uil:image-upload' className='text-2xl' />
+                <Button type="button" variant="outline" className="p-0">
+                  <Label htmlFor="picture" className="p-2">
+                    <Icon icon="uil:image-upload" className="text-2xl" />
                   </Label>
                   <Input
-                    id='picture'
-                    type='file'
-                    className='hidden'
-                    accept='image/*'
+                    id="picture"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
                     onChange={(event) => {
                       const file = event.target.files?.[0];
-                      if (file && file.type.startsWith('image/')) {
+                      if (file?.type.startsWith("image/")) {
                         const reader = new FileReader();
                         reader.readAsDataURL(file);
                         reader.onload = (e) => {
                           const img = new Image();
                           img.src = e.target?.result as string;
                           img.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
+                            const canvas = document.createElement("canvas");
+                            const ctx = canvas.getContext("2d");
 
                             const maxWidth = 300;
                             const maxHeight = 300;
@@ -280,19 +280,23 @@ export default function Page() {
 
                             canvas.toBlob(
                               (blob) => {
+                                if (!blob) {
+                                  return;
+                                }
+
                                 const reader = new FileReader();
-                                reader.readAsDataURL(blob!);
+                                reader.readAsDataURL(blob);
                                 reader.onloadend = async () => {
                                   await createTicketFollow({
                                     ticket_id: ticketId,
-                                    from: 'System',
+                                    from: "System",
                                     type: 2,
                                     content: reader.result as string,
                                   });
                                   refetchTicket();
                                 };
                               },
-                              'image/webp',
+                              "image/webp",
                               0.8,
                             );
                           };
@@ -302,12 +306,12 @@ export default function Page() {
                   />
                 </Button>
                 <Input
-                  placeholder={t('inputPlaceholder')}
+                  placeholder={t("inputPlaceholder")}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
-                <Button type='submit' disabled={!message}>
-                  <Icon icon='uil:navigator' />
+                <Button type="submit" disabled={!message}>
+                  <Icon icon="uil:navigator" />
                 </Button>
               </form>
             </DrawerFooter>

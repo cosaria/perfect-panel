@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useLocale } from 'next-intl';
-import { useTheme } from 'next-themes';
-import { forwardRef, useEffect, useImperativeHandle } from 'react';
-import Turnstile, { useTurnstile } from 'react-turnstile';
+import { useLocale } from "next-intl";
+import { useTheme } from "next-themes";
+import { forwardRef, useEffect, useImperativeHandle } from "react";
+import Turnstile, { useTurnstile } from "react-turnstile";
 
-import useGlobalStore from '@/config/use-global';
+import useGlobalStore from "@/config/use-global";
 
 export type TurnstileRef = {
   reset: () => void;
@@ -34,7 +34,7 @@ const CloudFlareTurnstile = forwardRef<
   );
 
   useEffect(() => {
-    if (value === '') {
+    if (value === "") {
       turnstile.reset();
     }
   }, [turnstile, value]);
@@ -44,7 +44,7 @@ const CloudFlareTurnstile = forwardRef<
       <Turnstile
         id={id}
         sitekey={verify.turnstile_site_key}
-        theme={resolvedTheme as 'light' | 'dark'}
+        theme={resolvedTheme as "light" | "dark"}
         language={locale.toLowerCase()}
         fixedSize
         onVerify={(token) => onChange(token)}

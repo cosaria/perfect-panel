@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { type Monaco } from '@monaco-editor/react';
+import type { Monaco } from "@monaco-editor/react";
 import {
   MonacoEditor,
-  MonacoEditorProps,
-} from '@workspace/ui/custom-components/editor/monaco-editor';
-import * as monaco from 'monaco-editor';
-import DraculaTheme from 'monaco-themes/themes/Dracula.json' with { type: 'json' };
-import { useEffect, useRef } from 'react';
+  type MonacoEditorProps,
+} from "@workspace/ui/custom-components/editor/monaco-editor";
+import type * as monaco from "monaco-editor";
+import DraculaTheme from "monaco-themes/themes/Dracula.json" with { type: "json" };
+import { useCallback, useEffect, useRef } from "react";
 
-type SchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null';
+type SchemaType = "string" | "number" | "boolean" | "object" | "array" | "null";
 
 interface SchemaProperty {
   type: SchemaType;
@@ -18,7 +18,7 @@ interface SchemaProperty {
   description?: string;
 }
 
-export interface GoTemplateEditorProps extends Omit<MonacoEditorProps, 'language'> {
+export interface GoTemplateEditorProps extends Omit<MonacoEditorProps, "language"> {
   schema?: Record<string, SchemaProperty> | Record<string, unknown>;
   enableSprig?: boolean;
 }
@@ -32,16 +32,16 @@ interface CompletionItem {
 }
 
 const SORT_PREFIXES = {
-  RANGE_VAR: 'aa_var_',
-  NESTED: 'a_nested_',
-  CURRENT: 'a_current_',
-  VAR_FIELD: 'b_var_',
-  ROOT_FIELD: 'c_field_',
-  RANGE_OP: 'd_range_',
-  WITH_OP: 'd_with_',
-  ROOT_IN_RANGE: 'y_root_',
-  KEYWORD: 'z_keyword_',
-  SPRIG: 'zz_sprig_',
+  RANGE_VAR: "aa_var_",
+  NESTED: "a_nested_",
+  CURRENT: "a_current_",
+  VAR_FIELD: "b_var_",
+  ROOT_FIELD: "c_field_",
+  RANGE_OP: "d_range_",
+  WITH_OP: "d_with_",
+  ROOT_IN_RANGE: "y_root_",
+  KEYWORD: "z_keyword_",
+  SPRIG: "zz_sprig_",
 } as const;
 
 const COMPLETION_KINDS = {
@@ -75,27 +75,27 @@ const REGEX_PATTERNS = {
 
 const COMPLETION_SNIPPETS = {
   IF_BLOCK: {
-    label: 'if...end',
+    label: "if...end",
     kind: 15,
-    insertText: 'if ${1:condition}\n\t$0\nend',
+    insertText: `if \${1:condition}\n\t$0\nend`,
     insertTextRules: 4,
-    documentation: 'Create an if block',
+    documentation: "Create an if block",
     sortText: `${SORT_PREFIXES.KEYWORD}if_block`,
   },
   RANGE_BLOCK: {
-    label: 'range...end',
+    label: "range...end",
     kind: 15,
-    insertText: 'range ${1:.items}\n\t$0\nend',
+    insertText: `range \${1:.items}\n\t$0\nend`,
     insertTextRules: 4,
-    documentation: 'Create a range loop block',
+    documentation: "Create a range loop block",
     sortText: `${SORT_PREFIXES.KEYWORD}range_block`,
   },
   WITH_BLOCK: {
-    label: 'with...end',
+    label: "with...end",
     kind: 15,
-    insertText: 'with ${1:.field}\n\t$0\nend',
+    insertText: `with \${1:.field}\n\t$0\nend`,
     insertTextRules: 4,
-    documentation: 'Create a with block',
+    documentation: "Create a with block",
     sortText: `${SORT_PREFIXES.KEYWORD}with_block`,
   },
 } as const;
@@ -103,16 +103,16 @@ const COMPLETION_SNIPPETS = {
 const calculateMatchScore = (label: string, searchText: string): number => {
   if (!searchText) return 0;
 
-  if (searchText === '.') {
-    if (label.startsWith('.')) return MATCH_SCORES.DOT_FIELD;
-    if (label.startsWith('$')) return MATCH_SCORES.DOT_VARIABLE;
+  if (searchText === ".") {
+    if (label.startsWith(".")) return MATCH_SCORES.DOT_FIELD;
+    if (label.startsWith("$")) return MATCH_SCORES.DOT_VARIABLE;
     return MATCH_SCORES.OTHER;
   }
 
   const labelLower = label.toLowerCase();
   const searchLower = searchText.toLowerCase();
-  const cleanLabel = labelLower.replace(REGEX_PATTERNS.DOT_VAR_CLEAN, '');
-  const cleanSearch = searchLower.replace(REGEX_PATTERNS.DOT_VAR_CLEAN, '');
+  const cleanLabel = labelLower.replace(REGEX_PATTERNS.DOT_VAR_CLEAN, "");
+  const cleanSearch = searchLower.replace(REGEX_PATTERNS.DOT_VAR_CLEAN, "");
 
   if (cleanLabel === cleanSearch || labelLower === searchLower) {
     return MATCH_SCORES.EXACT;
@@ -158,234 +158,234 @@ const generateDynamicSortText = (
   baseCategory: string,
 ): string => {
   const matchScore = calculateMatchScore(item.label, searchText);
-  const scorePrefix = (10000 - matchScore).toString().padStart(5, '0');
+  const scorePrefix = (10000 - matchScore).toString().padStart(5, "0");
   return `${scorePrefix}_${baseCategory}_${item.label}`;
 };
 
 const GO_TEMPLATE_KEYWORDS = [
-  'if',
-  'else',
-  'end',
-  'with',
-  'range',
-  'template',
-  'define',
-  'block',
-  'include',
-  'not',
-  'and',
-  'or',
-  'eq',
-  'ne',
-  'lt',
-  'le',
-  'gt',
-  'ge',
-  'len',
-  'index',
-  'slice',
-  'printf',
-  'print',
-  'println',
+  "if",
+  "else",
+  "end",
+  "with",
+  "range",
+  "template",
+  "define",
+  "block",
+  "include",
+  "not",
+  "and",
+  "or",
+  "eq",
+  "ne",
+  "lt",
+  "le",
+  "gt",
+  "ge",
+  "len",
+  "index",
+  "slice",
+  "printf",
+  "print",
+  "println",
 ];
 
 const SPRIG_FUNCTIONS = [
-  'trim',
-  'trimAll',
-  'trimSuffix',
-  'trimPrefix',
-  'upper',
-  'lower',
-  'title',
-  'untitle',
-  'repeat',
-  'substr',
-  'nospace',
-  'trunc',
-  'abbrev',
-  'abbrevboth',
-  'initials',
-  'randAlphaNum',
-  'randAlpha',
-  'randNumeric',
-  'randAscii',
-  'wrap',
-  'wrapWith',
-  'contains',
-  'hasPrefix',
-  'hasSuffix',
-  'quote',
-  'squote',
-  'cat',
-  'indent',
-  'nindent',
-  'replace',
-  'plural',
-  'snakecase',
-  'camelcase',
-  'kebabcase',
-  'swapcase',
-  'shuffle',
+  "trim",
+  "trimAll",
+  "trimSuffix",
+  "trimPrefix",
+  "upper",
+  "lower",
+  "title",
+  "untitle",
+  "repeat",
+  "substr",
+  "nospace",
+  "trunc",
+  "abbrev",
+  "abbrevboth",
+  "initials",
+  "randAlphaNum",
+  "randAlpha",
+  "randNumeric",
+  "randAscii",
+  "wrap",
+  "wrapWith",
+  "contains",
+  "hasPrefix",
+  "hasSuffix",
+  "quote",
+  "squote",
+  "cat",
+  "indent",
+  "nindent",
+  "replace",
+  "plural",
+  "snakecase",
+  "camelcase",
+  "kebabcase",
+  "swapcase",
+  "shuffle",
 
-  'splitList',
-  'split',
-  'join',
-  'sortAlpha',
+  "splitList",
+  "split",
+  "join",
+  "sortAlpha",
 
-  'add',
-  'add1',
-  'sub',
-  'div',
-  'mod',
-  'mul',
-  'max',
-  'min',
-  'floor',
-  'ceil',
-  'round',
-  'randInt',
+  "add",
+  "add1",
+  "sub",
+  "div",
+  "mod",
+  "mul",
+  "max",
+  "min",
+  "floor",
+  "ceil",
+  "round",
+  "randInt",
 
-  'until',
-  'untilStep',
-  'seq',
+  "until",
+  "untilStep",
+  "seq",
 
-  'addf',
-  'add1f',
-  'subf',
-  'divf',
-  'mulf',
-  'maxf',
-  'minf',
+  "addf",
+  "add1f",
+  "subf",
+  "divf",
+  "mulf",
+  "maxf",
+  "minf",
 
-  'now',
-  'ago',
-  'date',
-  'dateInZone',
-  'duration',
-  'durationRound',
-  'unixEpoch',
-  'dateModify',
-  'mustDateModify',
-  'htmlDate',
-  'htmlDateInZone',
-  'toDate',
-  'mustToDate',
+  "now",
+  "ago",
+  "date",
+  "dateInZone",
+  "duration",
+  "durationRound",
+  "unixEpoch",
+  "dateModify",
+  "mustDateModify",
+  "htmlDate",
+  "htmlDateInZone",
+  "toDate",
+  "mustToDate",
 
-  'default',
-  'empty',
-  'coalesce',
-  'fromJson',
-  'toJson',
-  'toPrettyJson',
-  'toRawJson',
-  'ternary',
+  "default",
+  "empty",
+  "coalesce",
+  "fromJson",
+  "toJson",
+  "toPrettyJson",
+  "toRawJson",
+  "ternary",
 
-  'b64enc',
-  'b64dec',
-  'base32enc',
-  'base32dec',
+  "b64enc",
+  "b64dec",
+  "base32enc",
+  "base32dec",
 
-  'list',
-  'first',
-  'rest',
-  'last',
-  'initial',
-  'append',
-  'prepend',
-  'concat',
-  'reverse',
-  'uniq',
-  'without',
-  'has',
-  'compact',
-  'slice',
+  "list",
+  "first",
+  "rest",
+  "last",
+  "initial",
+  "append",
+  "prepend",
+  "concat",
+  "reverse",
+  "uniq",
+  "without",
+  "has",
+  "compact",
+  "slice",
 
-  'get',
-  'set',
-  'dict',
-  'hasKey',
-  'pluck',
-  'dig',
-  'deepCopy',
-  'keys',
-  'pick',
-  'omit',
-  'merge',
-  'mergeOverwrite',
-  'values',
+  "get",
+  "set",
+  "dict",
+  "hasKey",
+  "pluck",
+  "dig",
+  "deepCopy",
+  "keys",
+  "pick",
+  "omit",
+  "merge",
+  "mergeOverwrite",
+  "values",
 
-  'atoi',
-  'int',
-  'int64',
-  'float64',
-  'toDecimal',
-  'toString',
-  'toStrings',
+  "atoi",
+  "int",
+  "int64",
+  "float64",
+  "toDecimal",
+  "toString",
+  "toStrings",
 
-  'regexMatch',
-  'mustRegexMatch',
-  'regexFindAll',
-  'mustRegexFindAll',
-  'regexFind',
-  'mustRegexFind',
-  'regexReplaceAll',
-  'mustRegexReplaceAll',
-  'regexReplaceAllLiteral',
-  'mustRegexReplaceAllLiteral',
-  'regexSplit',
-  'mustRegexSplit',
-  'regexQuoteMeta',
+  "regexMatch",
+  "mustRegexMatch",
+  "regexFindAll",
+  "mustRegexFindAll",
+  "regexFind",
+  "mustRegexFind",
+  "regexReplaceAll",
+  "mustRegexReplaceAll",
+  "regexReplaceAllLiteral",
+  "mustRegexReplaceAllLiteral",
+  "regexSplit",
+  "mustRegexSplit",
+  "regexQuoteMeta",
 
-  'sha1sum',
-  'sha256sum',
-  'adler32sum',
-  'htpasswd',
-  'derivePassword',
-  'buildCustomCert',
-  'genCA',
-  'genCAWithKey',
-  'genSelfSignedCert',
-  'genSelfSignedCertWithKey',
-  'genSignedCert',
-  'genSignedCertWithKey',
-  'encryptAES',
-  'decryptAES',
-  'genPrivateKey',
-  'genPublicKey',
+  "sha1sum",
+  "sha256sum",
+  "adler32sum",
+  "htpasswd",
+  "derivePassword",
+  "buildCustomCert",
+  "genCA",
+  "genCAWithKey",
+  "genSelfSignedCert",
+  "genSelfSignedCertWithKey",
+  "genSignedCert",
+  "genSignedCertWithKey",
+  "encryptAES",
+  "decryptAES",
+  "genPrivateKey",
+  "genPublicKey",
 
-  'base',
-  'dir',
-  'ext',
-  'clean',
-  'isAbs',
-  'osBase',
-  'osDir',
-  'osExt',
-  'osClean',
-  'osIsAbs',
+  "base",
+  "dir",
+  "ext",
+  "clean",
+  "isAbs",
+  "osBase",
+  "osDir",
+  "osExt",
+  "osClean",
+  "osIsAbs",
 
-  'fail',
+  "fail",
 
-  'uuidv4',
+  "uuidv4",
 
-  'env',
-  'expandenv',
+  "env",
+  "expandenv",
 
-  'semver',
-  'semverCompare',
+  "semver",
+  "semverCompare",
 
-  'typeOf',
-  'typeIs',
-  'typeIsLike',
-  'kindOf',
-  'kindIs',
-  'deepEqual',
+  "typeOf",
+  "typeIs",
+  "typeIsLike",
+  "kindOf",
+  "kindIs",
+  "deepEqual",
 
-  'getHostByName',
+  "getHostByName",
 
-  'urlParse',
-  'urlJoin',
-  'urlquery',
+  "urlParse",
+  "urlJoin",
+  "urlquery",
 ];
 
 export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTemplateEditorProps) {
@@ -394,7 +394,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
     semanticTokensProvider?: monaco.IDisposable;
   }>({});
 
-  const cleanup = () => {
+  const cleanup = useCallback(() => {
     if (providersRef.current.completionProvider) {
       providersRef.current.completionProvider.dispose();
     }
@@ -402,11 +402,11 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
       providersRef.current.semanticTokensProvider.dispose();
     }
     providersRef.current = {};
-  };
+  }, []);
 
   useEffect(() => {
     return cleanup;
-  }, []);
+  }, [cleanup]);
 
   const generateSmartCompletions = (
     schema: Record<string, SchemaProperty> | Record<string, unknown> | undefined,
@@ -416,7 +416,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
     if (!schema) return [];
 
     const isSchemaProperty = (obj: unknown): obj is SchemaProperty => {
-      return obj !== null && typeof obj === 'object' && 'type' in obj;
+      return obj !== null && typeof obj === "object" && "type" in obj;
     };
 
     if (activeRangeField) {
@@ -453,13 +453,13 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
 
       if (isSchemaProperty(value)) {
         const prop = value as SchemaProperty;
-        addFieldCompletions(items, key, prop, '', false, sortPrefix);
+        addFieldCompletions(items, key, prop, "", false, sortPrefix);
       } else {
         items.push({
           label: `.${key}`,
           kind: COMPLETION_KINDS.PROPERTY,
           insertText: `.${key}`,
-          documentation: `${isInRangeContext ? '(root) ' : ''}Field: ${key}`,
+          documentation: `${isInRangeContext ? "(root) " : ""}Field: ${key}`,
           sortText: `${sortPrefix}${key}`,
         });
       }
@@ -485,18 +485,18 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
       });
     }
 
-    const fieldPath = rangeField.startsWith('.') ? rangeField.slice(1) : rangeField;
-    const pathParts = fieldPath.split('.');
+    const fieldPath = rangeField.startsWith(".") ? rangeField.slice(1) : rangeField;
+    const pathParts = fieldPath.split(".");
 
     let currentSchema: Record<string, unknown> | SchemaProperty | null = schema;
     for (const part of pathParts) {
-      if (currentSchema && typeof currentSchema === 'object' && !isSchemaProperty(currentSchema)) {
+      if (currentSchema && typeof currentSchema === "object" && !isSchemaProperty(currentSchema)) {
         const schemaObj = currentSchema as Record<string, unknown>;
         if (schemaObj[part]) {
           currentSchema = schemaObj[part] as Record<string, unknown> | SchemaProperty;
           if (
             isSchemaProperty(currentSchema) &&
-            currentSchema.type === 'object' &&
+            currentSchema.type === "object" &&
             currentSchema.properties
           ) {
             currentSchema = currentSchema.properties;
@@ -509,15 +509,15 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
       }
     }
 
-    if (isSchemaProperty(currentSchema) && currentSchema.type === 'array' && currentSchema.items) {
+    if (isSchemaProperty(currentSchema) && currentSchema.type === "array" && currentSchema.items) {
       const itemSchema = currentSchema.items;
-      if (itemSchema.type === 'object' && itemSchema.properties) {
+      if (itemSchema.type === "object" && itemSchema.properties) {
         Object.keys(itemSchema.properties).forEach((key) => {
-          const prop = itemSchema.properties![key];
+          const prop = itemSchema.properties?.[key];
 
           if (isSchemaProperty(prop)) {
             if (!rangeVariable) {
-              addFieldCompletions(items, key, prop, '', true);
+              addFieldCompletions(items, key, prop, "", true);
             }
           } else {
             if (!rangeVariable) {
@@ -566,7 +566,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
     customSortPrefix?: string,
   ) => {
     const fieldPath = prefix ? `${prefix}.${key}` : `.${key}`;
-    const contextPrefix = isRangeContext ? '(current item) ' : '';
+    const contextPrefix = isRangeContext ? "(current item) " : "";
     const sortPrefix =
       customSortPrefix || (isRangeContext ? SORT_PREFIXES.CURRENT : SORT_PREFIXES.ROOT_FIELD);
 
@@ -578,7 +578,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
       sortText: `${sortPrefix}${fieldPath}`,
     });
 
-    if (prop.type === 'array' && !isRangeContext) {
+    if (prop.type === "array" && !isRangeContext) {
       items.push({
         label: `range ${fieldPath}`,
         kind: COMPLETION_KINDS.KEYWORD,
@@ -588,7 +588,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
       });
     }
 
-    if (prop.type === 'object' && !isRangeContext) {
+    if (prop.type === "object" && !isRangeContext) {
       items.push({
         label: `with ${fieldPath}`,
         kind: COMPLETION_KINDS.KEYWORD,
@@ -609,13 +609,13 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
     const items: CompletionItem[] = [];
     let cleanPath = fieldPath;
 
-    if (cleanPath.startsWith('$')) {
-      cleanPath = cleanPath.replace(/^\$\w+\./, '');
-    } else if (cleanPath.startsWith('.')) {
+    if (cleanPath.startsWith("$")) {
+      cleanPath = cleanPath.replace(/^\$\w+\./, "");
+    } else if (cleanPath.startsWith(".")) {
       cleanPath = cleanPath.slice(1);
     }
 
-    if (!cleanPath || cleanPath === '') {
+    if (!cleanPath || cleanPath === "") {
       Object.keys(schema).forEach((key) => {
         const value = schema[key];
         if (isSchemaProperty(value)) {
@@ -639,12 +639,12 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
       return items;
     }
 
-    const pathParts = cleanPath.split('.').filter((part) => part && part.length > 0);
+    const pathParts = cleanPath.split(".").filter((part) => part && part.length > 0);
 
     let currentSchema: Record<string, unknown> | SchemaProperty | null = schema;
 
     for (const part of pathParts) {
-      if (currentSchema && typeof currentSchema === 'object' && !isSchemaProperty(currentSchema)) {
+      if (currentSchema && typeof currentSchema === "object" && !isSchemaProperty(currentSchema)) {
         const schemaObj = currentSchema as Record<string, unknown>;
         if (schemaObj[part]) {
           currentSchema = schemaObj[part] as Record<string, unknown> | SchemaProperty;
@@ -652,7 +652,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
           return items;
         }
       } else if (isSchemaProperty(currentSchema)) {
-        if (currentSchema.type === 'object' && currentSchema.properties) {
+        if (currentSchema.type === "object" && currentSchema.properties) {
           const prop = currentSchema.properties[part] as
             | SchemaProperty
             | Record<string, unknown>
@@ -672,11 +672,11 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
 
     if (
       isSchemaProperty(currentSchema) &&
-      currentSchema.type === 'object' &&
+      currentSchema.type === "object" &&
       currentSchema.properties
     ) {
       Object.keys(currentSchema.properties).forEach((key) => {
-        const prop = currentSchema.properties![key];
+        const prop = currentSchema.properties?.[key];
         if (isSchemaProperty(prop)) {
           items.push({
             label: key,
@@ -697,13 +697,13 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
       });
     } else if (
       isSchemaProperty(currentSchema) &&
-      currentSchema.type === 'array' &&
+      currentSchema.type === "array" &&
       currentSchema.items &&
-      currentSchema.items.type === 'object' &&
+      currentSchema.items.type === "object" &&
       currentSchema.items.properties
     ) {
       Object.keys(currentSchema.items.properties).forEach((key) => {
-        const prop = currentSchema.items!.properties![key];
+        const prop = currentSchema.items?.properties?.[key];
         if (isSchemaProperty(prop)) {
           items.push({
             label: key,
@@ -730,53 +730,53 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
   const handleBeforeMount = (monaco: Monaco) => {
     cleanup();
 
-    monaco.languages.register({ id: 'go-template' });
+    monaco.languages.register({ id: "go-template" });
 
-    monaco.languages.setMonarchTokensProvider('go-template', {
+    monaco.languages.setMonarchTokensProvider("go-template", {
       tokenizer: {
         root: [
-          [/\{\{\/\*/, 'comment', '@comment'],
-          [/\{\{-/, 'template-tag', '@template'],
-          [/\{\{/, 'template-tag', '@template'],
-          [/./, 'text'],
+          [/\{\{\/\*/, "comment", "@comment"],
+          [/\{\{-/, "template-tag", "@template"],
+          [/\{\{/, "template-tag", "@template"],
+          [/./, "text"],
         ],
 
         template: [
-          [/\/\*/, 'comment', '@comment'],
-          [/-\}\}/, 'template-tag', '@pop'],
-          [/\}\}/, 'template-tag', '@pop'],
-          [/"([^"\\]|\\.)*$/, 'string.invalid'],
-          [/"/, 'string', '@string'],
+          [/\/\*/, "comment", "@comment"],
+          [/-\}\}/, "template-tag", "@pop"],
+          [/\}\}/, "template-tag", "@pop"],
+          [/"([^"\\]|\\.)*$/, "string.invalid"],
+          [/"/, "string", "@string"],
           [
             /\b(if|else|end|with|range|template|define|block|include|not|and|or|eq|ne|lt|le|gt|ge|len|index|slice|printf|print|println)\b/,
-            'keyword',
+            "keyword",
           ],
-          [/\.[a-zA-Z_][a-zA-Z0-9_]*/, 'variable'],
-          [/\$[a-zA-Z_][a-zA-Z0-9_]*/, 'variable'],
-          [/\d*\.\d+([eE][-+]?\d+)?/, 'number.float'],
-          [/\d+/, 'number'],
-          [/[|:]/, 'operator'],
-          [/[a-zA-Z_][a-zA-Z0-9_]*/, 'function'],
-          [/\s+/, 'white'],
+          [/\.[a-zA-Z_][a-zA-Z0-9_]*/, "variable"],
+          [/\$[a-zA-Z_][a-zA-Z0-9_]*/, "variable"],
+          [/\d*\.\d+([eE][-+]?\d+)?/, "number.float"],
+          [/\d+/, "number"],
+          [/[|:]/, "operator"],
+          [/[a-zA-Z_][a-zA-Z0-9_]*/, "function"],
+          [/\s+/, "white"],
         ],
 
         comment: [
-          [/\*\//, 'comment', '@pop'],
-          [/./, 'comment'],
+          [/\*\//, "comment", "@pop"],
+          [/./, "comment"],
         ],
 
         string: [
-          [/[^\\"]+/, 'string'],
-          [/\\./, 'string.escape'],
-          [/"/, 'string', '@pop'],
+          [/[^\\"]+/, "string"],
+          [/\\./, "string.escape"],
+          [/"/, "string", "@pop"],
         ],
       },
     });
 
     providersRef.current.completionProvider = monaco.languages.registerCompletionItemProvider(
-      'go-template',
+      "go-template",
       {
-        triggerCharacters: ['.', ' '],
+        triggerCharacters: [".", " "],
         provideCompletionItems: (model, position) => {
           try {
             const textUntilPosition = model.getValueInRange({
@@ -787,12 +787,12 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
             });
 
             const lastOpenBrace = Math.max(
-              textUntilPosition.lastIndexOf('{{'),
-              textUntilPosition.lastIndexOf('{{-'),
+              textUntilPosition.lastIndexOf("{{"),
+              textUntilPosition.lastIndexOf("{{-"),
             );
             const lastCloseBrace = Math.max(
-              textUntilPosition.lastIndexOf('}}'),
-              textUntilPosition.lastIndexOf('-}}'),
+              textUntilPosition.lastIndexOf("}}"),
+              textUntilPosition.lastIndexOf("-}}"),
             );
             const insideTemplate = lastOpenBrace > lastCloseBrace && lastOpenBrace !== -1;
 
@@ -813,7 +813,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
             let rangeVariable: string | null = null;
             if (rangeMatches.length > endMatches.length) {
               const lastRange = rangeMatches[rangeMatches.length - 1];
-              if (lastRange && lastRange[1]) {
+              if (lastRange?.[1]) {
                 const rangeField = lastRange[1].trim();
 
                 const patterns = [REGEX_PATTERNS.RANGE_ASSIGNMENT, REGEX_PATTERNS.FIELD_PATH];
@@ -821,7 +821,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
                 for (const pattern of patterns) {
                   const match = rangeField.match(pattern);
                   if (match) {
-                    if (pattern.source.includes(':=')) {
+                    if (pattern.source.includes(":=")) {
                       rangeVariable = match[1] || null;
                       activeRangeField = match[2] || null;
                     } else {
@@ -869,9 +869,9 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
               allCompletions = [...allCompletions, ...schemaCompletions];
             }
 
-            const wordStart = textUntilPosition.lastIndexOf(' ') + 1;
-            const templateStartNormal = textUntilPosition.lastIndexOf('{{');
-            const templateStartTrim = textUntilPosition.lastIndexOf('{{-');
+            const wordStart = textUntilPosition.lastIndexOf(" ") + 1;
+            const templateStartNormal = textUntilPosition.lastIndexOf("{{");
+            const templateStartTrim = textUntilPosition.lastIndexOf("{{-");
             const templateStart =
               Math.max(templateStartNormal, templateStartTrim) +
               (templateStartTrim > templateStartNormal ? 3 : 2);
@@ -892,24 +892,24 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
             const varDotMatch = textUntilPosition.match(REGEX_PATTERNS.VAR_DOT);
             const isVarDot =
               varDotMatch &&
-              textUntilPosition.endsWith('.') &&
+              textUntilPosition.endsWith(".") &&
               schema &&
               activeRangeField &&
               rangeVariable;
 
             const isNestedField =
-              (dotMatches && textUntilPosition.endsWith('.') && schema) || isVarDot;
+              (dotMatches && textUntilPosition.endsWith(".") && schema) || isVarDot;
 
             const justTypedDot =
-              currentWordTrimmed.endsWith('.') || textUntilPosition.endsWith('.');
-            const justTypedSpace = textUntilPosition.endsWith(' ');
+              currentWordTrimmed.endsWith(".") || textUntilPosition.endsWith(".");
+            const justTypedSpace = textUntilPosition.endsWith(" ");
             let wordForFiltering = currentWordTrimmed;
             if (justTypedDot) {
               wordForFiltering = currentWordTrimmed.slice(0, -1);
             }
 
             if ((justTypedDot && activeRangeField) || isVarDot) {
-              console.log('Go Template Debug:', {
+              console.log("Go Template Debug:", {
                 justTypedDot,
                 isVarDot,
                 varDotMatch,
@@ -924,14 +924,14 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
             }
 
             if (isNestedField && schema) {
-              let fieldPath = '';
+              let fieldPath = "";
 
               if (isVarDot && varDotMatch) {
                 const variableName = varDotMatch[1];
                 if (variableName === rangeVariable && activeRangeField) {
                   fieldPath = activeRangeField;
                 }
-              } else if (dotMatches && dotMatches[1]) {
+              } else if (dotMatches?.[1]) {
                 fieldPath = dotMatches[1];
               }
 
@@ -940,7 +940,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
                   schema,
                   fieldPath,
                   (obj: unknown): obj is SchemaProperty => {
-                    return obj !== null && typeof obj === 'object' && 'type' in obj;
+                    return obj !== null && typeof obj === "object" && "type" in obj;
                   },
                 );
                 allCompletions = [...allCompletions, ...nestedCompletions];
@@ -949,8 +949,8 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
 
             const isVariableOrFieldItem = (item: CompletionItem): boolean => {
               return (
-                item.label.startsWith('$') ||
-                item.label.startsWith('.') ||
+                item.label.startsWith("$") ||
+                item.label.startsWith(".") ||
                 item.sortText?.startsWith(SORT_PREFIXES.RANGE_VAR) ||
                 item.sortText?.startsWith(SORT_PREFIXES.VAR_FIELD) ||
                 item.sortText?.startsWith(SORT_PREFIXES.ROOT_FIELD) ||
@@ -965,8 +965,8 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
 
               if (justTypedDot && activeRangeField) {
                 return (
-                  item.label.startsWith('.') ||
-                  item.label.startsWith('$') ||
+                  item.label.startsWith(".") ||
+                  item.label.startsWith("$") ||
                   item.sortText?.startsWith(SORT_PREFIXES.RANGE_VAR) ||
                   item.sortText?.startsWith(SORT_PREFIXES.VAR_FIELD) ||
                   item.sortText?.startsWith(SORT_PREFIXES.CURRENT) ||
@@ -994,7 +994,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
                 }
                 const label = item.label.toLowerCase();
                 const word = wordForFiltering.toLowerCase();
-                return label.includes(word) || label.startsWith(word) || word === '';
+                return label.includes(word) || label.startsWith(word) || word === "";
               }
 
               if (!wordForFiltering) {
@@ -1004,14 +1004,14 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
               const label = item.label.toLowerCase();
               const word = wordForFiltering.toLowerCase();
 
-              if (word.startsWith('$')) {
-                return label.startsWith('$') || label.includes(word);
+              if (word.startsWith("$")) {
+                return label.startsWith("$") || label.includes(word);
               }
 
               return (
                 label.includes(word) ||
                 label.startsWith(word) ||
-                label.replace(/[^a-zA-Z0-9]/g, '').includes(word.replace(/[^a-zA-Z0-9]/g, ''))
+                label.replace(/[^a-zA-Z0-9]/g, "").includes(word.replace(/[^a-zA-Z0-9]/g, ""))
               );
             });
 
@@ -1030,31 +1030,31 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
             const uniqueFilteredCompletions = createUniqueCompletions(filteredCompletions);
 
             const getCategoryFromSortText = (sortText: string): string => {
-              if (sortText.startsWith(SORT_PREFIXES.RANGE_VAR)) return 'var';
-              if (sortText.startsWith(SORT_PREFIXES.NESTED)) return 'nested';
-              if (sortText.startsWith(SORT_PREFIXES.CURRENT)) return 'current';
-              if (sortText.startsWith(SORT_PREFIXES.VAR_FIELD)) return 'range_var';
-              if (sortText.startsWith(SORT_PREFIXES.ROOT_FIELD)) return 'field';
-              if (sortText.startsWith(SORT_PREFIXES.RANGE_OP)) return 'range_op';
-              if (sortText.startsWith(SORT_PREFIXES.WITH_OP)) return 'with_op';
-              if (sortText.startsWith(SORT_PREFIXES.ROOT_IN_RANGE)) return 'root';
-              if (sortText.startsWith(SORT_PREFIXES.KEYWORD)) return 'keyword';
-              if (sortText.startsWith(SORT_PREFIXES.SPRIG)) return 'sprig';
-              return 'other';
+              if (sortText.startsWith(SORT_PREFIXES.RANGE_VAR)) return "var";
+              if (sortText.startsWith(SORT_PREFIXES.NESTED)) return "nested";
+              if (sortText.startsWith(SORT_PREFIXES.CURRENT)) return "current";
+              if (sortText.startsWith(SORT_PREFIXES.VAR_FIELD)) return "range_var";
+              if (sortText.startsWith(SORT_PREFIXES.ROOT_FIELD)) return "field";
+              if (sortText.startsWith(SORT_PREFIXES.RANGE_OP)) return "range_op";
+              if (sortText.startsWith(SORT_PREFIXES.WITH_OP)) return "with_op";
+              if (sortText.startsWith(SORT_PREFIXES.ROOT_IN_RANGE)) return "root";
+              if (sortText.startsWith(SORT_PREFIXES.KEYWORD)) return "keyword";
+              if (sortText.startsWith(SORT_PREFIXES.SPRIG)) return "sprig";
+              return "other";
             };
 
             const getSearchText = (): string => {
               if (isNestedField) {
-                return currentWord.split('.').pop() || '';
+                return currentWord.split(".").pop() || "";
               }
               if (justTypedDot) {
-                const afterDot = currentWord.replace(/.*\./, '');
-                return afterDot === '' && activeRangeField ? '.' : afterDot;
+                const afterDot = currentWord.replace(/.*\./, "");
+                return afterDot === "" && activeRangeField ? "." : afterDot;
               }
               if (justTypedSpace) {
-                return '';
+                return "";
               }
-              if (wordForFiltering.startsWith('.')) {
+              if (wordForFiltering.startsWith(".")) {
                 return wordForFiltering.slice(1);
               }
               return wordForFiltering;
@@ -1082,7 +1082,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
 
                 if (isNestedField) {
                   startColumn = position.column;
-                } else if (justTypedDot && item.insertText.startsWith('.')) {
+                } else if (justTypedDot && item.insertText.startsWith(".")) {
                   insertText = item.insertText.slice(1);
                   startColumn = position.column;
                 } else if (justTypedDot) {
@@ -1116,7 +1116,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
               }),
             };
           } catch (error) {
-            console.error('Go template completion error:', error);
+            console.error("Go template completion error:", error);
             return { suggestions: [] };
           }
         },
@@ -1124,15 +1124,15 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
     );
 
     providersRef.current.semanticTokensProvider =
-      monaco.languages.registerDocumentSemanticTokensProvider('go-template', {
+      monaco.languages.registerDocumentSemanticTokensProvider("go-template", {
         getLegend: () => ({
-          tokenTypes: ['variable', 'function', 'keyword', 'string', 'number'],
+          tokenTypes: ["variable", "function", "keyword", "string", "number"],
           tokenModifiers: [],
         }),
         provideDocumentSemanticTokens: (model) => {
           const tokens: number[] = [];
           const text = model.getValue();
-          const lines = text.split('\n');
+          const lines = text.split("\n");
 
           lines.forEach((line, lineIndex) => {
             const templateMatches = [...line.matchAll(/\{\{([^}]+)\}\}/g)];
@@ -1142,7 +1142,7 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
                 const startCol = match.index + 2;
                 const length = content.length;
 
-                if (content.startsWith('.') || content.startsWith('$')) {
+                if (content.startsWith(".") || content.startsWith("$")) {
                   tokens.push(lineIndex, startCol, length, 0, 0);
                 }
               }
@@ -1154,32 +1154,32 @@ export function GoTemplateEditor({ schema, enableSprig = true, ...props }: GoTem
         releaseDocumentSemanticTokens: () => {},
       });
 
-    monaco.editor.defineTheme('transparentTheme', {
-      base: DraculaTheme.base as 'vs' | 'vs-dark' | 'hc-black',
+    monaco.editor.defineTheme("transparentTheme", {
+      base: DraculaTheme.base as "vs" | "vs-dark" | "hc-black",
       inherit: DraculaTheme.inherit,
       rules: [
         ...DraculaTheme.rules,
-        { token: 'template-tag', foreground: 'FFB86C', fontStyle: 'bold' },
-        { token: 'template-keyword', foreground: 'BD93F9', fontStyle: 'bold' },
-        { token: 'template-string', foreground: 'F1FA8C' },
-        { token: 'template-function', foreground: '50FA7B' },
-        { token: 'template-variable', foreground: 'F8F8F2' },
-        { token: 'keyword', foreground: 'FF79C6' },
+        { token: "template-tag", foreground: "FFB86C", fontStyle: "bold" },
+        { token: "template-keyword", foreground: "BD93F9", fontStyle: "bold" },
+        { token: "template-string", foreground: "F1FA8C" },
+        { token: "template-function", foreground: "50FA7B" },
+        { token: "template-variable", foreground: "F8F8F2" },
+        { token: "keyword", foreground: "FF79C6" },
       ],
       colors: {
         ...DraculaTheme.colors,
-        'editor.background': '#00000000',
+        "editor.background": "#00000000",
       },
     });
   };
 
   return (
     <MonacoEditor
-      title='Go Template Editor'
-      description={`Go text/template syntax${enableSprig ? ' with Sprig functions' : ''}`}
+      title="Go Template Editor"
+      description={`Go text/template syntax${enableSprig ? " with Sprig functions" : ""}`}
       {...props}
-      language='go-template'
-      placeholder='Enter your Go template here...'
+      language="go-template"
+      placeholder="Enter your Go template here..."
       beforeMount={handleBeforeMount}
     />
   );

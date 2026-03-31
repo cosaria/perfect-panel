@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { updateUserNotifySetting } from '@/services/admin/user';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@workspace/ui/components/form';
-import { Switch } from '@workspace/ui/components/switch';
-import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import * as z from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@workspace/ui/components/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@workspace/ui/components/form";
+import { Switch } from "@workspace/ui/components/switch";
+import { useTranslations } from "next-intl";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
+import { updateUserNotifySetting } from "@/services/admin/user";
 
 const notifySettingsSchema = z.object({
   enable_balance_notify: z.boolean(),
@@ -21,7 +21,7 @@ const notifySettingsSchema = z.object({
 type NotifySettingsValues = z.infer<typeof notifySettingsSchema>;
 
 export function NotifySettingsForm({ user, refetch }: { user: API.User; refetch: () => void }) {
-  const t = useTranslations('user');
+  const t = useTranslations("user");
 
   const form = useForm<NotifySettingsValues>({
     resolver: zodResolver(notifySettingsSchema),
@@ -38,7 +38,7 @@ export function NotifySettingsForm({ user, refetch }: { user: API.User; refetch:
       ...data,
       user_id: user.id,
     });
-    toast.success(t('updateSuccess'));
+    toast.success(t("updateSuccess"));
     refetch();
   }
 
@@ -46,20 +46,20 @@ export function NotifySettingsForm({ user, refetch }: { user: API.User; refetch:
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
-          <CardHeader className='flex flex-row items-center justify-between'>
-            <CardTitle>{t('notifySettingsTitle')}</CardTitle>
-            <Button type='submit' size='sm'>
-              {t('save')}
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>{t("notifySettingsTitle")}</CardTitle>
+            <Button type="submit" size="sm">
+              {t("save")}
             </Button>
           </CardHeader>
-          <CardContent className='space-y-4'>
-            <div className='grid grid-cols-1 gap-4'>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 gap-4">
               <FormField
                 control={form.control}
-                name='enable_balance_notify'
+                name="enable_balance_notify"
                 render={({ field }) => (
-                  <FormItem className='flex items-center justify-between space-x-2'>
-                    <FormLabel>{t('balanceNotifications')}</FormLabel>
+                  <FormItem className="flex items-center justify-between space-x-2">
+                    <FormLabel>{t("balanceNotifications")}</FormLabel>
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
@@ -69,10 +69,10 @@ export function NotifySettingsForm({ user, refetch }: { user: API.User; refetch:
 
               <FormField
                 control={form.control}
-                name='enable_login_notify'
+                name="enable_login_notify"
                 render={({ field }) => (
-                  <FormItem className='flex items-center justify-between space-x-2'>
-                    <FormLabel>{t('loginNotifications')}</FormLabel>
+                  <FormItem className="flex items-center justify-between space-x-2">
+                    <FormLabel>{t("loginNotifications")}</FormLabel>
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
@@ -82,10 +82,10 @@ export function NotifySettingsForm({ user, refetch }: { user: API.User; refetch:
 
               <FormField
                 control={form.control}
-                name='enable_subscribe_notify'
+                name="enable_subscribe_notify"
                 render={({ field }) => (
-                  <FormItem className='flex items-center justify-between space-x-2'>
-                    <FormLabel>{t('subscriptionNotifications')}</FormLabel>
+                  <FormItem className="flex items-center justify-between space-x-2">
+                    <FormLabel>{t("subscriptionNotifications")}</FormLabel>
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
@@ -95,10 +95,10 @@ export function NotifySettingsForm({ user, refetch }: { user: API.User; refetch:
 
               <FormField
                 control={form.control}
-                name='enable_trade_notify'
+                name="enable_trade_notify"
                 render={({ field }) => (
-                  <FormItem className='flex items-center justify-between space-x-2'>
-                    <FormLabel>{t('tradeNotifications')}</FormLabel>
+                  <FormItem className="flex items-center justify-between space-x-2">
+                    <FormLabel>{t("tradeNotifications")}</FormLabel>
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>

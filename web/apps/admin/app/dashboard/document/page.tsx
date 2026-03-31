@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { ProTable, ProTableActions } from '@/components/pro-table';
+import { Button } from "@workspace/ui/components/button";
+import { Switch } from "@workspace/ui/components/switch";
+import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
+import { useTranslations } from "next-intl";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { ProTable, type ProTableActions } from "@/components/pro-table";
 import {
   batchDeleteDocument,
   createDocument,
   deleteDocument,
   getDocumentList,
   updateDocument,
-} from '@/services/admin/document';
-import { formatDate } from '@/utils/common';
-import { Button } from '@workspace/ui/components/button';
-import { Switch } from '@workspace/ui/components/switch';
-import { ConfirmButton } from '@workspace/ui/custom-components/confirm-button';
-import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
-import { toast } from 'sonner';
-import DocumentForm from './document-form';
+} from "@/services/admin/document";
+import { formatDate } from "@/utils/common";
+import DocumentForm from "./document-form";
 
 export default function Page() {
-  const t = useTranslations('document');
+  const t = useTranslations("document");
   const [loading, setLoading] = useState(false);
 
   const ref = useRef<ProTableActions>(null);
@@ -26,12 +26,12 @@ export default function Page() {
     <ProTable<API.Document, { tag: string; search: string }>
       action={ref}
       header={{
-        title: t('DocumentList'),
+        title: t("DocumentList"),
         toolbar: (
           <DocumentForm<API.CreateDocumentRequest>
-            key='create'
-            trigger={t('create')}
-            title={t('createDocument')}
+            key="create"
+            trigger={t("create")}
+            title={t("createDocument")}
             loading={loading}
             onSubmit={async (values) => {
               setLoading(true);
@@ -40,11 +40,11 @@ export default function Page() {
                   ...values,
                   show: false,
                 });
-                toast.success(t('createSuccess'));
+                toast.success(t("createSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
                 return true;
-              } catch (error) {
+              } catch (_error) {
                 setLoading(false);
                 return false;
               }
@@ -54,12 +54,12 @@ export default function Page() {
       }}
       columns={[
         {
-          accessorKey: 'show',
-          header: t('show'),
+          accessorKey: "show",
+          header: t("show"),
           cell: ({ row }) => {
             return (
               <Switch
-                defaultChecked={row.getValue('show')}
+                defaultChecked={row.getValue("show")}
                 onCheckedChange={async (checked) => {
                   await updateDocument({
                     ...row.original,
@@ -72,27 +72,27 @@ export default function Page() {
           },
         },
         {
-          accessorKey: 'title',
-          header: t('title'),
+          accessorKey: "title",
+          header: t("title"),
         },
         {
-          accessorKey: 'tags',
-          header: t('tags'),
-          cell: ({ row }) => row.original.tags.join(', '),
+          accessorKey: "tags",
+          header: t("tags"),
+          cell: ({ row }) => row.original.tags.join(", "),
         },
         {
-          accessorKey: 'updated_at',
-          header: t('updatedAt'),
-          cell: ({ row }) => formatDate(row.getValue('updated_at')),
+          accessorKey: "updated_at",
+          header: t("updatedAt"),
+          cell: ({ row }) => formatDate(row.getValue("updated_at")),
         },
       ]}
       params={[
         {
-          key: 'search',
+          key: "search",
         },
         {
-          key: 'tag',
-          placeholder: t('tags'),
+          key: "tag",
+          placeholder: t("tags"),
         },
       ]}
       request={async (pagination, filter) => {
@@ -106,9 +106,9 @@ export default function Page() {
         render(row) {
           return [
             <DocumentForm<API.UpdateDocumentRequest>
-              key='edit'
-              trigger={t('edit')}
-              title={t('editDocument')}
+              key="edit"
+              trigger={t("edit")}
+              title={t("editDocument")}
               loading={loading}
               initialValues={row}
               onSubmit={async (values) => {
@@ -118,49 +118,49 @@ export default function Page() {
                     ...row,
                     ...values,
                   });
-                  toast.success(t('updateSuccess'));
+                  toast.success(t("updateSuccess"));
                   ref.current?.refresh();
                   setLoading(false);
                   return true;
-                } catch (error) {
+                } catch (_error) {
                   setLoading(false);
                   return false;
                 }
               }}
             />,
             <ConfirmButton
-              key='delete'
-              trigger={<Button variant='destructive'>{t('delete')}</Button>}
-              title={t('confirmDelete')}
-              description={t('deleteDescription')}
+              key="delete"
+              trigger={<Button variant="destructive">{t("delete")}</Button>}
+              title={t("confirmDelete")}
+              description={t("deleteDescription")}
               onConfirm={async () => {
                 await deleteDocument({
                   id: row.id,
                 });
-                toast.success(t('deleteSuccess'));
+                toast.success(t("deleteSuccess"));
                 ref.current?.refresh();
               }}
-              cancelText={t('cancel')}
-              confirmText={t('confirm')}
+              cancelText={t("cancel")}
+              confirmText={t("confirm")}
             />,
           ];
         },
         batchRender(rows) {
           return [
             <ConfirmButton
-              key='delete'
-              trigger={<Button variant='destructive'>{t('delete')}</Button>}
-              title={t('confirmDelete')}
-              description={t('deleteDescription')}
+              key="delete"
+              trigger={<Button variant="destructive">{t("delete")}</Button>}
+              title={t("confirmDelete")}
+              description={t("deleteDescription")}
               onConfirm={async () => {
                 await batchDeleteDocument({
                   ids: rows.map((item) => item.id),
                 });
-                toast.success(t('deleteSuccess'));
+                toast.success(t("deleteSuccess"));
                 ref.current?.refresh();
               }}
-              cancelText={t('cancel')}
-              confirmText={t('confirm')}
+              cancelText={t("cancel")}
+              confirmText={t("confirm")}
             />,
           ];
         },

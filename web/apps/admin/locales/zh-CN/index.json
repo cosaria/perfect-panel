@@ -1,6 +1,5 @@
 {
   "currentlyOnline": "当前在线",
-  "currentlyOnline": "当前在线",
   "download": "↓",
   "email": "邮箱",
   "month": "本月",
@@ -14,9 +13,7 @@
   "online": "在线",
   "onlineServers": "在线服务器",
   "onlineTotal": "在线/总数",
-  "onlineTotal": "在线/总数",
   "onlineUsersCount": "在线用户数",
-  "pending": "待处理",
   "pending": "待处理",
   "pendingTickets": "待处理工单",
   "register": "注册",

@@ -1,6 +1,6 @@
-import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from '@/config/constants';
-import { extractDomain } from '@workspace/ui/utils';
-import { create } from 'zustand';
+import { extractDomain } from "@workspace/ui/utils";
+import { create } from "zustand";
+import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
 
 export interface GlobalStore {
   common: API.GetGlobalConfigResponse;
@@ -13,16 +13,16 @@ export interface GlobalStore {
 export const useGlobalStore = create<GlobalStore>((set, get) => ({
   common: {
     site: {
-      host: '',
-      site_name: '',
-      site_desc: '',
-      site_logo: '',
-      keywords: '',
-      custom_html: '',
-      custom_data: '',
+      host: "",
+      site_name: "",
+      site_desc: "",
+      site_logo: "",
+      keywords: "",
+      custom_html: "",
+      custom_data: "",
     },
     verify: {
-      turnstile_site_key: '',
+      turnstile_site_key: "",
       enable_login_verify: false,
       enable_register_verify: false,
       enable_reset_password_verify: false,
@@ -37,7 +37,7 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
         enable: false,
         enable_verify: false,
         enable_domain_suffix: false,
-        domain_suffix_list: '',
+        domain_suffix_list: "",
       },
       register: {
         stop_register: false,
@@ -58,16 +58,16 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
       only_first_purchase: false,
     },
     currency: {
-      currency_unit: 'USD',
-      currency_symbol: '$',
+      currency_unit: "USD",
+      currency_symbol: "$",
     },
     subscribe: {
       single_model: false,
-      subscribe_path: '',
-      subscribe_domain: '',
+      subscribe_path: "",
+      subscribe_domain: "",
       pan_domain: false,
       user_agent_limit: false,
-      user_agent_list: '',
+      user_agent_list: "",
     },
     verify_code: {
       verify_code_expire_time: 5,
@@ -89,8 +89,8 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
   getUserSubscribeUrls: (uuid: string, type?: string) => {
     const { pan_domain, subscribe_domain, subscribe_path } = get().common.subscribe || {};
     const domains = subscribe_domain
-      ? subscribe_domain.split('\n')
-      : [extractDomain(NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || '', pan_domain)];
+      ? subscribe_domain.split("\n")
+      : [extractDomain(NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "", pan_domain)];
 
     return domains.map((domain) => {
       if (pan_domain) {

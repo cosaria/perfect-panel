@@ -1,37 +1,43 @@
-'use client';
+"use client";
 
-import { Table, TableBody, TableCell, TableRow } from '@workspace/ui/components/table';
-import { useTranslations } from 'next-intl';
-import EmailBroadcastForm from './email/broadcast-form';
-import EmailTaskManager from './email/task-manager';
-import QuotaBroadcastForm from './quota/broadcast-form';
-import QuotaTaskManager from './quota/task-manager';
+import { Table, TableBody, TableCell, TableRow } from "@workspace/ui/components/table";
+import { useTranslations } from "next-intl";
+import EmailBroadcastForm from "./email/broadcast-form";
+import EmailTaskManager from "./email/task-manager";
+import QuotaBroadcastForm from "./quota/broadcast-form";
+import QuotaTaskManager from "./quota/task-manager";
 
 export default function MarketingPage() {
-  const t = useTranslations('marketing');
+  const t = useTranslations("marketing");
 
   const formSections = [
     {
-      title: t('emailMarketing'),
-      forms: [{ component: EmailBroadcastForm }, { component: EmailTaskManager }],
+      title: t("emailMarketing"),
+      forms: [
+        { key: "email-broadcast", component: EmailBroadcastForm },
+        { key: "email-task-manager", component: EmailTaskManager },
+      ],
     },
     {
-      title: t('quotaService'),
-      forms: [{ component: QuotaBroadcastForm }, { component: QuotaTaskManager }],
+      title: t("quotaService"),
+      forms: [
+        { key: "quota-broadcast", component: QuotaBroadcastForm },
+        { key: "quota-task-manager", component: QuotaTaskManager },
+      ],
     },
   ];
 
   return (
-    <div className='space-y-8'>
-      {formSections.map((section, sectionIndex) => (
-        <div key={sectionIndex}>
-          <h2 className='mb-4 text-lg font-semibold'>{section.title}</h2>
+    <div className="space-y-8">
+      {formSections.map((section) => (
+        <div key={section.title}>
+          <h2 className="mb-4 text-lg font-semibold">{section.title}</h2>
           <Table>
             <TableBody>
-              {section.forms.map((form, formIndex) => {
+              {section.forms.map((form) => {
                 const FormComponent = form.component;
                 return (
-                  <TableRow key={formIndex}>
+                  <TableRow key={form.key}>
                     <TableCell>
                       <FormComponent />
                     </TableCell>

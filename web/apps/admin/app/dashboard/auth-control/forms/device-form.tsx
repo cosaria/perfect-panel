@@ -1,9 +1,8 @@
-'use client';
+"use client";
 
-import { getAuthMethodConfig, updateAuthMethodConfig } from '@/services/admin/authMethod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
-import { Button } from '@workspace/ui/components/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@workspace/ui/components/button";
 import {
   Form,
   FormControl,
@@ -12,8 +11,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
+} from "@workspace/ui/components/form";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -21,16 +20,17 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@workspace/ui/components/sheet';
-import { Switch } from '@workspace/ui/components/switch';
-import { EnhancedInput } from '@workspace/ui/custom-components/enhanced-input';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { useTranslations } from 'next-intl';
-import { uid } from 'radash';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
+} from "@workspace/ui/components/sheet";
+import { Switch } from "@workspace/ui/components/switch";
+import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { useTranslations } from "next-intl";
+import { uid } from "radash";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { getAuthMethodConfig, updateAuthMethodConfig } from "@/services/admin/authMethod";
 
 const deviceSchema = z.object({
   id: z.number(),
@@ -49,15 +49,15 @@ const deviceSchema = z.object({
 type DeviceFormData = z.infer<typeof deviceSchema>;
 
 export default function DeviceForm() {
-  const t = useTranslations('auth-control');
+  const t = useTranslations("auth-control");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { data, refetch } = useQuery({
-    queryKey: ['getAuthMethodConfig', 'device'],
+    queryKey: ["getAuthMethodConfig", "device"],
     queryFn: async () => {
       const { data } = await getAuthMethodConfig({
-        method: 'device',
+        method: "device",
       });
       return data.data;
     },
@@ -68,13 +68,13 @@ export default function DeviceForm() {
     resolver: zodResolver(deviceSchema),
     defaultValues: {
       id: 0,
-      method: 'device',
+      method: "device",
       enabled: false,
       config: {
         show_ads: false,
         only_real_device: false,
         enable_security: false,
-        security_secret: '',
+        security_secret: "",
       },
     },
   });
@@ -89,11 +89,11 @@ export default function DeviceForm() {
     setLoading(true);
     try {
       await updateAuthMethodConfig(values as API.UpdateAuthMethodConfigRequest);
-      toast.success(t('common.saveSuccess'));
+      toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);
-    } catch (error) {
-      toast.error(t('common.saveFailed'));
+    } catch (_error) {
+      toast.error(t("common.saveFailed"));
     } finally {
       setLoading(false);
     }
@@ -102,50 +102,50 @@ export default function DeviceForm() {
   function generateSecurityKey() {
     const id = uid(32).toLowerCase();
     const formatted = `${id.slice(0, 8)}-${id.slice(8, 12)}-${id.slice(12, 16)}-${id.slice(16, 20)}-${id.slice(20)}`;
-    form.setValue('config.security_secret', formatted);
+    form.setValue("config.security_secret", formatted);
   }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <div className='flex cursor-pointer items-center justify-between transition-colors'>
-          <div className='flex items-center gap-3'>
-            <div className='bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg'>
-              <Icon icon='mdi:devices' className='text-primary h-5 w-5' />
+        <div className="flex cursor-pointer items-center justify-between transition-colors">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+              <Icon icon="mdi:devices" className="text-primary h-5 w-5" />
             </div>
-            <div className='flex-1'>
-              <p className='font-medium'>{t('device.title')}</p>
-              <p className='text-muted-foreground text-sm'>{t('device.description')}</p>
+            <div className="flex-1">
+              <p className="font-medium">{t("device.title")}</p>
+              <p className="text-muted-foreground text-sm">{t("device.description")}</p>
             </div>
           </div>
-          <Icon icon='mdi:chevron-right' className='size-6' />
+          <Icon icon="mdi:chevron-right" className="size-6" />
         </div>
       </SheetTrigger>
-      <SheetContent className='w-[600px] max-w-full md:max-w-screen-md'>
+      <SheetContent className="w-[600px] max-w-full md:max-w-screen-md">
         <SheetHeader>
-          <SheetTitle>{t('device.title')}</SheetTitle>
+          <SheetTitle>{t("device.title")}</SheetTitle>
         </SheetHeader>
-        <ScrollArea className='-mx-6 h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6'>
+        <ScrollArea className="-mx-6 h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6">
           <Form {...form}>
             <form
-              id='device-form'
+              id="device-form"
               onSubmit={form.handleSubmit(onSubmit)}
-              className='space-y-2 pt-4'
+              className="space-y-2 pt-4"
             >
               <FormField
                 control={form.control}
-                name='enabled'
+                name="enabled"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('device.enable')}</FormLabel>
+                    <FormLabel>{t("device.enable")}</FormLabel>
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
-                        className='float-end !mt-0'
+                        className="float-end !mt-0"
                       />
                     </FormControl>
-                    <FormDescription>{t('device.enableDescription')}</FormDescription>
+                    <FormDescription>{t("device.enableDescription")}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -153,18 +153,18 @@ export default function DeviceForm() {
 
               <FormField
                 control={form.control}
-                name='config.show_ads'
+                name="config.show_ads"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('device.showAds')}</FormLabel>
+                    <FormLabel>{t("device.showAds")}</FormLabel>
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
-                        className='float-end !mt-0'
+                        className="float-end !mt-0"
                       />
                     </FormControl>
-                    <FormDescription>{t('device.showAdsDescription')}</FormDescription>
+                    <FormDescription>{t("device.showAdsDescription")}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -172,18 +172,18 @@ export default function DeviceForm() {
 
               <FormField
                 control={form.control}
-                name='config.only_real_device'
+                name="config.only_real_device"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('device.blockVirtualMachine')}</FormLabel>
+                    <FormLabel>{t("device.blockVirtualMachine")}</FormLabel>
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
-                        className='float-end !mt-0'
+                        className="float-end !mt-0"
                       />
                     </FormControl>
-                    <FormDescription>{t('device.blockVirtualMachineDescription')}</FormDescription>
+                    <FormDescription>{t("device.blockVirtualMachineDescription")}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -191,18 +191,18 @@ export default function DeviceForm() {
 
               <FormField
                 control={form.control}
-                name='config.enable_security'
+                name="config.enable_security"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('device.enableSecurity')}</FormLabel>
+                    <FormLabel>{t("device.enableSecurity")}</FormLabel>
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
-                        className='float-end !mt-0'
+                        className="float-end !mt-0"
                       />
                     </FormControl>
-                    <FormDescription>{t('device.enableSecurityDescription')}</FormDescription>
+                    <FormDescription>{t("device.enableSecurityDescription")}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -210,27 +210,27 @@ export default function DeviceForm() {
 
               <FormField
                 control={form.control}
-                name='config.security_secret'
+                name="config.security_secret"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('device.communicationKey')}</FormLabel>
+                    <FormLabel>{t("device.communicationKey")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
-                        placeholder='e.g., 12345678-1234-1234-1234-123456789abc'
+                        placeholder="e.g., 12345678-1234-1234-1234-123456789abc"
                         value={field.value}
                         onValueChange={field.onChange}
                         suffix={
-                          <div className='bg-muted flex h-9 items-center text-nowrap px-3'>
+                          <div className="bg-muted flex h-9 items-center text-nowrap px-3">
                             <Icon
-                              icon='mdi:dice-multiple'
+                              icon="mdi:dice-multiple"
                               onClick={generateSecurityKey}
-                              className='size-4 cursor-pointer'
+                              className="size-4 cursor-pointer"
                             />
                           </div>
                         }
                       />
                     </FormControl>
-                    <FormDescription>{t('device.communicationKeyDescription')}</FormDescription>
+                    <FormDescription>{t("device.communicationKeyDescription")}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -238,13 +238,13 @@ export default function DeviceForm() {
             </form>
           </Form>
         </ScrollArea>
-        <SheetFooter className='flex-row justify-end gap-2 pt-3'>
-          <Button variant='outline' disabled={loading} onClick={() => setOpen(false)}>
-            {t('common.cancel')}
+        <SheetFooter className="flex-row justify-end gap-2 pt-3">
+          <Button variant="outline" disabled={loading} onClick={() => setOpen(false)}>
+            {t("common.cancel")}
           </Button>
-          <Button disabled={loading} type='submit' form='device-form'>
-            {loading && <Icon icon='mdi:loading' className='mr-2 animate-spin' />}
-            {t('common.save')}
+          <Button disabled={loading} type="submit" form="device-form">
+            {loading && <Icon icon="mdi:loading" className="mr-2 animate-spin" />}
+            {t("common.save")}
           </Button>
         </SheetFooter>
       </SheetContent>

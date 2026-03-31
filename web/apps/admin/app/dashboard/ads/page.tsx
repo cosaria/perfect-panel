@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { ProTable, ProTableActions } from '@/components/pro-table';
-import { createAds, deleteAds, getAdsList, updateAds } from '@/services/admin/ads';
-import { formatDate } from '@/utils/common';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
-import { Switch } from '@workspace/ui/components/switch';
-import { ConfirmButton } from '@workspace/ui/custom-components/confirm-button';
-import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
-import { toast } from 'sonner';
-import AdsForm from './ads-form';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import { Switch } from "@workspace/ui/components/switch";
+import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
+import { useTranslations } from "next-intl";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { ProTable, type ProTableActions } from "@/components/pro-table";
+import { createAds, deleteAds, getAdsList, updateAds } from "@/services/admin/ads";
+import { formatDate } from "@/utils/common";
+import AdsForm from "./ads-form";
 
 export default function Page() {
-  const t = useTranslations('ads');
+  const t = useTranslations("ads");
   const [loading, setLoading] = useState(false);
   const ref = useRef<ProTableActions>(null);
 
@@ -23,8 +23,8 @@ export default function Page() {
       header={{
         toolbar: (
           <AdsForm<API.CreateAdsRequest>
-            trigger={t('create')}
-            title={t('createAds')}
+            trigger={t("create")}
+            title={t("createAds")}
             loading={loading}
             onSubmit={async (values) => {
               setLoading(true);
@@ -33,11 +33,11 @@ export default function Page() {
                   ...values,
                   status: 0,
                 });
-                toast.success(t('createSuccess'));
+                toast.success(t("createSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
                 return true;
-              } catch (error) {
+              } catch (_error) {
                 setLoading(false);
                 return false;
               }
@@ -47,15 +47,15 @@ export default function Page() {
       }}
       params={[
         {
-          key: 'status',
-          placeholder: t('status'),
+          key: "status",
+          placeholder: t("status"),
           options: [
-            { label: t('enabled'), value: '1' },
-            { label: t('disabled'), value: '0' },
+            { label: t("enabled"), value: "1" },
+            { label: t("disabled"), value: "0" },
           ],
         },
         {
-          key: 'search',
+          key: "search",
         },
       ]}
       request={async (pagination, filters) => {
@@ -70,12 +70,12 @@ export default function Page() {
       }}
       columns={[
         {
-          accessorKey: 'status',
-          header: t('status'),
+          accessorKey: "status",
+          header: t("status"),
           cell: ({ row }) => {
             return (
               <Switch
-                defaultChecked={row.getValue('status') === 1}
+                defaultChecked={row.getValue("status") === 1}
                 onCheckedChange={async (checked) => {
                   await updateAds({
                     ...row.original,
@@ -88,28 +88,28 @@ export default function Page() {
           },
         },
         {
-          accessorKey: 'title',
-          header: t('title'),
+          accessorKey: "title",
+          header: t("title"),
         },
         {
-          accessorKey: 'type',
-          header: t('type'),
+          accessorKey: "type",
+          header: t("type"),
           cell: ({ row }) => {
             const type = row.original.type;
             return <Badge>{type}</Badge>;
           },
         },
         {
-          accessorKey: 'target_url',
-          header: t('targetUrl'),
+          accessorKey: "target_url",
+          header: t("targetUrl"),
         },
         {
-          accessorKey: 'description',
-          header: t('form.description'),
+          accessorKey: "description",
+          header: t("form.description"),
         },
         {
-          accessorKey: 'period',
-          header: t('validityPeriod'),
+          accessorKey: "period",
+          header: t("validityPeriod"),
           cell: ({ row }) => {
             const { start_time, end_time } = row.original;
             return (
@@ -123,37 +123,37 @@ export default function Page() {
       actions={{
         render: (row) => [
           <AdsForm<API.UpdateAdsRequest>
-            key='edit'
-            trigger={t('edit')}
-            title={t('editAds')}
+            key="edit"
+            trigger={t("edit")}
+            title={t("editAds")}
             loading={loading}
             initialValues={row}
             onSubmit={async (values) => {
               setLoading(true);
               try {
                 await updateAds({ ...row, ...values });
-                toast.success(t('updateSuccess'));
+                toast.success(t("updateSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
                 return true;
-              } catch (error) {
+              } catch (_error) {
                 setLoading(false);
                 return false;
               }
             }}
           />,
           <ConfirmButton
-            key='delete'
-            trigger={<Button variant='destructive'>{t('delete')}</Button>}
-            title={t('confirmDelete')}
-            description={t('deleteWarning')}
+            key="delete"
+            trigger={<Button variant="destructive">{t("delete")}</Button>}
+            title={t("confirmDelete")}
+            description={t("deleteWarning")}
             onConfirm={async () => {
               await deleteAds({ id: row.id });
-              toast.success(t('deleteSuccess'));
+              toast.success(t("deleteSuccess"));
               ref.current?.refresh();
             }}
-            cancelText={t('cancel')}
-            confirmText={t('confirm')}
+            cancelText={t("cancel")}
+            confirmText={t("confirm")}
           />,
         ],
       }}

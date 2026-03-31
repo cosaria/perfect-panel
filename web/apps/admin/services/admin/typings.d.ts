@@ -115,7 +115,7 @@ declare namespace API {
   type AuthMethodConfig = {
     id: number;
     method: string;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
     enabled: boolean;
   };
 
@@ -290,7 +290,7 @@ declare namespace API {
     description: string;
     icon?: string;
     domain?: string;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
     fee_mode: number;
     fee_percent?: number;
     fee_amount?: number;
@@ -1308,7 +1308,7 @@ declare namespace API {
   };
 
   type LogResponse = {
-    list: Record<string, any>;
+    list: Record<string, unknown>;
   };
 
   type LogSetting = {
@@ -1322,7 +1322,7 @@ declare namespace API {
     platform: string;
     to: string;
     subject: string;
-    content: Record<string, any>;
+    content: Record<string, unknown>;
     status: number;
     created_at: number;
   };
@@ -1446,7 +1446,7 @@ declare namespace API {
     description: string;
     icon?: string;
     domain?: string;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
     fee_mode: number;
     fee_percent?: number;
     fee_amount?: number;
@@ -1471,7 +1471,7 @@ declare namespace API {
     description: string;
     icon: string;
     domain: string;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
     fee_mode: number;
     fee_percent: number;
     fee_amount: number;
@@ -1482,7 +1482,7 @@ declare namespace API {
   type PlatformInfo = {
     platform: string;
     platform_url: string;
-    platform_field_description: Record<string, any>;
+    platform_field_description: Record<string, unknown>;
   };
 
   type PlatformResponse = {
@@ -1816,7 +1816,7 @@ declare namespace API {
     /** 消息 */
     msg?: string;
     /** 数据 */
-    data?: Record<string, any>;
+    data?: Record<string, unknown>;
   };
 
   type RevenueStatisticsResponse = {
@@ -2199,7 +2199,7 @@ declare namespace API {
   type UpdateAuthMethodConfigRequest = {
     id: number;
     method: string;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
     enabled: boolean;
   };
 
@@ -2251,7 +2251,7 @@ declare namespace API {
     description: string;
     icon?: string;
     domain?: string;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
     fee_mode: number;
     fee_percent?: number;
     fee_amount?: number;

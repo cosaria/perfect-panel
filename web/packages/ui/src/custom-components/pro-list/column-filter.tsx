@@ -1,25 +1,23 @@
-'use client';
+"use client";
 
-import { Table } from '@tanstack/react-table';
-import { Input } from '@workspace/ui/components/input';
-import { Combobox } from '@workspace/ui/custom-components/combobox';
+import type { Table } from "@tanstack/react-table";
+import { Input } from "@workspace/ui/components/input";
+import { Combobox } from "@workspace/ui/custom-components/combobox";
 
 export interface IParams {
   key: string;
   placeholder?: string;
   options?: { label: string; value: string }[];
-  type?: 'text' | 'select' | 'date';
+  type?: "text" | "select" | "date";
 }
 interface ColumnFilterProps<TData> {
   table: Table<TData>;
   params: IParams[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  filters?: any;
+  filters?: Record<string, unknown>;
 }
 
 export function ColumnFilter<TData>({ table, params, filters }: ColumnFilterProps<TData>) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateFilter = (key: string, value: any) => {
+  const updateFilter = (key: string, value: unknown) => {
     table.setColumnFilters((prev) => {
       const newFilters = prev.filter((filter) => filter.id !== key);
       if (value) {
@@ -30,7 +28,7 @@ export function ColumnFilter<TData>({ table, params, filters }: ColumnFilterProp
   };
 
   const toDateInput = (d: Date) => {
-    const pad = (n: number) => String(n).padStart(2, '0');
+    const pad = (n: number) => String(n).padStart(2, "0");
     const yyyy = d.getFullYear();
     const MM = pad(d.getMonth() + 1);
     const dd = pad(d.getDate());
@@ -38,15 +36,15 @@ export function ColumnFilter<TData>({ table, params, filters }: ColumnFilterProp
   };
 
   return (
-    <div className='flex gap-2'>
+    <div className="flex gap-2">
       {params.map((param) => {
-        if (param.options || param.type === 'select') {
+        if (param.options || param.type === "select") {
           return (
             <Combobox
               key={param.key}
-              className='w-32'
-              placeholder={param.placeholder || 'Choose...'}
-              value={filters[param.key] || ''}
+              className="w-32"
+              placeholder={param.placeholder || "Choose..."}
+              value={(filters?.[param.key] as string) || ""}
               onChange={(value) => {
                 updateFilter(param.key, value);
               }}
@@ -54,24 +52,24 @@ export function ColumnFilter<TData>({ table, params, filters }: ColumnFilterProp
             />
           );
         }
-        if (param.type === 'date') {
-          const raw = filters[param.key];
+        if (param.type === "date") {
+          const raw = filters?.[param.key];
           const inputValue =
-            typeof raw === 'number'
+            typeof raw === "number"
               ? toDateInput(new Date(raw))
-              : typeof raw === 'string'
+              : typeof raw === "string"
                 ? raw
-                : '';
+                : "";
           return (
             <Input
               key={param.key}
-              className='block w-32'
-              type='date'
+              className="block w-32"
+              type="date"
               placeholder={param.placeholder}
               value={inputValue}
               onChange={(event) => {
                 const v = event.target.value;
-                updateFilter(param.key, v || '');
+                updateFilter(param.key, v || "");
               }}
             />
           );
@@ -79,9 +77,9 @@ export function ColumnFilter<TData>({ table, params, filters }: ColumnFilterProp
         return (
           <Input
             key={param.key}
-            className='w-32'
-            placeholder={param.placeholder || 'Search...'}
-            value={filters[param.key] || ''}
+            className="w-32"
+            placeholder={param.placeholder || "Search..."}
+            value={(filters?.[param.key] as string) || ""}
             onChange={(event) => updateFilter(param.key, event.target.value)}
           />
         );

@@ -1,57 +1,61 @@
-import { XHTTP_MODES } from './constants';
-import type { ProtocolType } from './types';
+import { XHTTP_MODES } from "./constants";
+import type { ProtocolConfig, ProtocolType } from "./types";
 
-export function getProtocolDefaultConfig(proto: ProtocolType) {
+function assertNever(value: never): never {
+  throw new Error(`Unsupported protocol: ${value}`);
+}
+
+export function getProtocolDefaultConfig(proto: ProtocolType): ProtocolConfig {
   switch (proto) {
-    case 'shadowsocks':
+    case "shadowsocks":
       return {
-        type: 'shadowsocks',
+        type: "shadowsocks",
         enable: false,
         port: null,
-        cipher: 'chacha20-ietf-poly1305',
+        cipher: "chacha20-ietf-poly1305",
         server_key: null,
-        obfs: 'none',
+        obfs: "none",
         obfs_host: null,
         obfs_path: null,
         sni: null,
         allow_insecure: null,
-        cert_mode: 'none',
+        cert_mode: "none",
         cert_dns_provider: null,
         cert_dns_env: null,
         ratio: 1,
-      } as any;
-    case 'vmess':
+      };
+    case "vmess":
       return {
-        type: 'vmess',
+        type: "vmess",
         enable: false,
         host: null,
         port: null,
-        transport: 'tcp',
-        security: 'none',
+        transport: "tcp",
+        security: "none",
         path: null,
         service_name: null,
         sni: null,
         allow_insecure: null,
-        fingerprint: 'chrome',
-        cert_mode: 'none',
+        fingerprint: "chrome",
+        cert_mode: "none",
         cert_dns_provider: null,
         cert_dns_env: null,
         ratio: 1,
-      } as any;
-    case 'vless':
+      };
+    case "vless":
       return {
-        type: 'vless',
+        type: "vless",
         enable: false,
         host: null,
         port: null,
-        transport: 'tcp',
-        security: 'none',
-        flow: 'none',
+        transport: "tcp",
+        security: "none",
+        flow: "none",
         path: null,
         service_name: null,
         sni: null,
         allow_insecure: null,
-        fingerprint: 'chrome',
+        fingerprint: "chrome",
         reality_server_addr: null,
         reality_server_port: null,
         reality_private_key: null,
@@ -59,7 +63,7 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
         reality_short_id: null,
         xhttp_mode: XHTTP_MODES[0], // 'auto'
         xhttp_extra: null,
-        encryption: 'none',
+        encryption: "none",
         encryption_mode: null,
         encryption_rtt: null,
         encryption_ticket: null,
@@ -67,126 +71,126 @@ export function getProtocolDefaultConfig(proto: ProtocolType) {
         encryption_private_key: null,
         encryption_client_padding: null,
         encryption_password: null,
-        cert_mode: 'none',
+        cert_mode: "none",
         cert_dns_provider: null,
         cert_dns_env: null,
         ratio: 1,
-      } as any;
-    case 'trojan':
+      };
+    case "trojan":
       return {
-        type: 'trojan',
+        type: "trojan",
         enable: false,
         host: null,
         port: null,
-        transport: 'tcp',
-        security: 'tls',
+        transport: "tcp",
+        security: "tls",
         path: null,
         service_name: null,
         sni: null,
         allow_insecure: null,
-        fingerprint: 'chrome',
-        cert_mode: 'none',
+        fingerprint: "chrome",
+        cert_mode: "none",
         cert_dns_provider: null,
         cert_dns_env: null,
         ratio: 1,
-      } as any;
-    case 'hysteria':
+      };
+    case "hysteria":
       return {
-        type: 'hysteria',
+        type: "hysteria",
         enable: false,
         port: null,
         hop_ports: null,
         hop_interval: null,
-        obfs: 'none',
+        obfs: "none",
         obfs_password: null,
-        security: 'tls',
+        security: "tls",
         up_mbps: null,
         down_mbps: null,
         sni: null,
         allow_insecure: null,
-        fingerprint: 'chrome',
-        cert_mode: 'none',
+        fingerprint: "chrome",
+        cert_mode: "none",
         cert_dns_provider: null,
         cert_dns_env: null,
         ratio: 1,
-      } as any;
-    case 'tuic':
+      };
+    case "tuic":
       return {
-        type: 'tuic',
+        type: "tuic",
         enable: false,
         port: null,
         disable_sni: false,
         reduce_rtt: false,
-        udp_relay_mode: 'native',
-        congestion_controller: 'bbr',
-        security: 'tls',
+        udp_relay_mode: "native",
+        congestion_controller: "bbr",
+        security: "tls",
         sni: null,
         allow_insecure: false,
-        fingerprint: 'chrome',
-        cert_mode: 'none',
+        fingerprint: "chrome",
+        cert_mode: "none",
         cert_dns_provider: null,
         cert_dns_env: null,
         ratio: 1,
-      } as any;
-    case 'socks':
+      };
+    case "socks":
       return {
-        type: 'socks',
+        type: "socks",
         enable: false,
         port: null,
         ratio: 1,
-      } as any;
-    case 'naive':
+      };
+    case "naive":
       return {
-        type: 'naive',
+        type: "naive",
         enable: false,
         port: null,
-        security: 'none',
+        security: "none",
         sni: null,
         allow_insecure: null,
-        fingerprint: 'chrome',
-        cert_mode: 'none',
+        fingerprint: "chrome",
+        cert_mode: "none",
         cert_dns_provider: null,
         cert_dns_env: null,
         ratio: 1,
-      } as any;
-    case 'http':
+      };
+    case "http":
       return {
-        type: 'http',
+        type: "http",
         enable: false,
         port: null,
-        security: 'none',
+        security: "none",
         sni: null,
         allow_insecure: null,
-        fingerprint: 'chrome',
-        cert_mode: 'none',
+        fingerprint: "chrome",
+        cert_mode: "none",
         cert_dns_provider: null,
         cert_dns_env: null,
         ratio: 1,
-      } as any;
-    case 'mieru':
+      };
+    case "mieru":
       return {
-        type: 'mieru',
+        type: "mieru",
         enable: false,
         port: null,
-        multiplex: 'none',
-        transport: 'tcp',
-      } as any;
-    case 'anytls':
+        multiplex: "none",
+        transport: "tcp",
+      };
+    case "anytls":
       return {
-        type: 'anytls',
+        type: "anytls",
         enable: false,
         port: null,
-        security: 'tls',
+        security: "tls",
         padding_scheme: null,
         sni: null,
         allow_insecure: false,
-        fingerprint: 'chrome',
-        cert_mode: 'none',
+        fingerprint: "chrome",
+        cert_mode: "none",
         cert_dns_provider: null,
         cert_dns_env: null,
         ratio: 1,
-      } as any;
+      };
     default:
-      return {} as any;
+      return assertNever(proto);
   }
 }

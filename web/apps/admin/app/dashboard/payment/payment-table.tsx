@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { Display } from '@/components/display';
-import { ProTable, ProTableActions } from '@/components/pro-table';
+import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import { Switch } from "@workspace/ui/components/switch";
+import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
+import { useTranslations } from "next-intl";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { Display } from "@/components/display";
+import { ProTable, type ProTableActions } from "@/components/pro-table";
 import {
   createPaymentMethod,
   deletePaymentMethod,
   getPaymentMethodList,
   updatePaymentMethod,
-} from '@/services/admin/payment';
-import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
-import { Switch } from '@workspace/ui/components/switch';
-import { ConfirmButton } from '@workspace/ui/custom-components/confirm-button';
-import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
-import { toast } from 'sonner';
-import PaymentForm from './payment-form';
+} from "@/services/admin/payment";
+import PaymentForm from "./payment-form";
 
 export default function PaymentTable() {
-  const t = useTranslations('payment');
+  const t = useTranslations("payment");
   const [loading, setLoading] = useState(false);
   const ref = useRef<ProTableActions>(null);
 
@@ -27,11 +27,11 @@ export default function PaymentTable() {
     <ProTable<API.PaymentConfig, { search: string }>
       action={ref}
       header={{
-        title: t('paymentManagement'),
+        title: t("paymentManagement"),
         toolbar: (
           <PaymentForm<API.CreatePaymentMethodRequest>
-            trigger={<Button>{t('create')}</Button>}
-            title={t('createPayment')}
+            trigger={<Button>{t("create")}</Button>}
+            title={t("createPayment")}
             loading={loading}
             onSubmit={async (values) => {
               setLoading(true);
@@ -40,11 +40,11 @@ export default function PaymentTable() {
                   ...values,
                   enable: false,
                 });
-                toast.success(t('createSuccess'));
+                toast.success(t("createSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
                 return true;
-              } catch (error) {
+              } catch (_error) {
                 setLoading(false);
                 return false;
               }
@@ -54,12 +54,12 @@ export default function PaymentTable() {
       }}
       columns={[
         {
-          accessorKey: 'enable',
-          header: t('enable'),
+          accessorKey: "enable",
+          header: t("enable"),
           cell: ({ row }) => {
             return (
               <Switch
-                checked={Boolean(row.getValue('enable'))}
+                checked={Boolean(row.getValue("enable"))}
                 onCheckedChange={async (checked) => {
                   await updatePaymentMethod({
                     ...row.original,
@@ -72,36 +72,36 @@ export default function PaymentTable() {
           },
         },
         {
-          accessorKey: 'icon',
-          header: t('icon'),
+          accessorKey: "icon",
+          header: t("icon"),
           cell: ({ row }) => {
-            const icon = row.getValue('icon') as string;
+            const icon = row.getValue("icon") as string;
             return (
-              <Avatar className='h-8 w-8'>
-                {icon ? <AvatarImage src={icon} alt={row.getValue('name')} /> : null}
+              <Avatar className="h-8 w-8">
+                {icon ? <AvatarImage src={icon} alt={row.getValue("name")} /> : null}
                 <AvatarFallback>
-                  {(row.getValue('name') as string)?.charAt(0) || '?'}
+                  {(row.getValue("name") as string)?.charAt(0) || "?"}
                 </AvatarFallback>
               </Avatar>
             );
           },
         },
         {
-          accessorKey: 'name',
-          header: t('name'),
+          accessorKey: "name",
+          header: t("name"),
         },
         {
-          accessorKey: 'platform',
-          header: t('platform'),
+          accessorKey: "platform",
+          header: t("platform"),
           cell: ({ row }) => <Badge>{t(row.original.platform)}</Badge>,
         },
         {
-          accessorKey: 'notify_url',
-          header: t('notify_url'),
+          accessorKey: "notify_url",
+          header: t("notify_url"),
         },
         {
-          accessorKey: 'fee',
-          header: t('handlingFee'),
+          accessorKey: "fee",
+          header: t("handlingFee"),
           cell: ({ row }) => {
             const feeMode = row.original.fee_mode;
             if (feeMode === 1) {
@@ -109,18 +109,18 @@ export default function PaymentTable() {
             } else if (feeMode === 2) {
               return (
                 <Badge>
-                  <Display value={row.original.fee_amount} type='currency' />
+                  <Display value={row.original.fee_amount} type="currency" />
                 </Badge>
               );
             }
-            return '--';
+            return "--";
           },
         },
       ]}
       params={[
         {
-          key: 'search',
-          placeholder: t('searchPlaceholder'),
+          key: "search",
+          placeholder: t("searchPlaceholder"),
         },
       ]}
       request={async (pagination, filter) => {
@@ -137,9 +137,9 @@ export default function PaymentTable() {
         render: (row) => [
           <PaymentForm<API.UpdatePaymentMethodRequest>
             isEdit
-            key='edit'
-            trigger={<Button>{t('edit')}</Button>}
-            title={t('editPayment')}
+            key="edit"
+            trigger={<Button>{t("edit")}</Button>}
+            title={t("editPayment")}
             loading={loading}
             initialValues={row}
             onSubmit={async (values) => {
@@ -149,34 +149,34 @@ export default function PaymentTable() {
                   ...row,
                   ...values,
                 });
-                toast.success(t('updateSuccess'));
+                toast.success(t("updateSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
                 return true;
-              } catch (error) {
+              } catch (_error) {
                 setLoading(false);
                 return false;
               }
             }}
           />,
           <ConfirmButton
-            key='delete'
-            trigger={<Button variant='destructive'>{t('delete')}</Button>}
-            title={t('confirmDelete')}
-            description={t('deleteWarning')}
+            key="delete"
+            trigger={<Button variant="destructive">{t("delete")}</Button>}
+            title={t("confirmDelete")}
+            description={t("deleteWarning")}
             onConfirm={async () => {
               await deletePaymentMethod({
                 id: row.id,
               });
-              toast.success(t('deleteSuccess'));
+              toast.success(t("deleteSuccess"));
               ref.current?.refresh();
             }}
-            cancelText={t('cancel')}
-            confirmText={t('confirm')}
+            cancelText={t("cancel")}
+            confirmText={t("confirm")}
           />,
           <Button
-            key='copy'
-            variant='outline'
+            key="copy"
+            variant="outline"
             onClick={async () => {
               setLoading(true);
               try {
@@ -185,35 +185,35 @@ export default function PaymentTable() {
                   ...params,
                   enable: false,
                 });
-                toast.success(t('copySuccess'));
+                toast.success(t("copySuccess"));
                 ref.current?.refresh();
                 setLoading(false);
                 return true;
-              } catch (error) {
+              } catch (_error) {
                 setLoading(false);
                 return false;
               }
             }}
           >
-            {t('copy')}
+            {t("copy")}
           </Button>,
         ],
         batchRender(rows) {
           return [
             <ConfirmButton
-              key='delete'
-              trigger={<Button variant='destructive'>{t('batchDelete')}</Button>}
-              title={t('confirmDelete')}
-              description={t('deleteWarning')}
+              key="delete"
+              trigger={<Button variant="destructive">{t("batchDelete")}</Button>}
+              title={t("confirmDelete")}
+              description={t("deleteWarning")}
               onConfirm={async () => {
                 for (const row of rows) {
                   await deletePaymentMethod({ id: row.id });
                 }
-                toast.success(t('deleteSuccess'));
+                toast.success(t("deleteSuccess"));
                 ref.current?.refresh();
               }}
-              cancelText={t('cancel')}
-              confirmText={t('confirm')}
+              cancelText={t("cancel")}
+              confirmText={t("confirm")}
             />,
           ];
         },

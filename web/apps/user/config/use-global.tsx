@@ -1,7 +1,7 @@
-import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from '@/config/constants';
-import { queryUserInfo } from '@/services/user/user';
-import { extractDomain } from '@workspace/ui/utils';
-import { create } from 'zustand';
+import { extractDomain } from "@workspace/ui/utils";
+import { create } from "zustand";
+import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
+import { queryUserInfo } from "@/services/user/user";
 
 export interface GlobalStore {
   common: API.GetGlobalConfigResponse;
@@ -13,19 +13,36 @@ export interface GlobalStore {
   getAppSubLink: (url: string, schema?: string) => string;
 }
 
+function parseSchemaObjectExpression(expr: string, url: string, name: string) {
+  const processedExpr = expr
+    .replace(/\burl\b/g, JSON.stringify(url))
+    .replace(/\bname\b/g, JSON.stringify(name));
+
+  if (processedExpr.includes("server_remote")) {
+    const serverRemoteValue = `${url}, tag=${name}`;
+    return { server_remote: [serverRemoteValue] };
+  }
+
+  const normalizedExpr = processedExpr
+    .replace(/([{,]\s*)([A-Za-z_][A-Za-z0-9_]*)\s*:/g, '$1"$2":')
+    .replace(/'([^'\\]*(?:\\.[^'\\]*)*)'/g, (_match, value: string) => JSON.stringify(value));
+
+  return JSON.parse(normalizedExpr) as Record<string, unknown>;
+}
+
 export const useGlobalStore = create<GlobalStore>((set, get) => ({
   common: {
     site: {
-      host: '',
-      site_name: '',
-      site_desc: '',
-      site_logo: '',
-      keywords: '',
-      custom_html: '',
-      custom_data: '',
+      host: "",
+      site_name: "",
+      site_desc: "",
+      site_logo: "",
+      keywords: "",
+      custom_html: "",
+      custom_data: "",
     },
     verify: {
-      turnstile_site_key: '',
+      turnstile_site_key: "",
       enable_login_verify: false,
       enable_register_verify: false,
       enable_reset_password_verify: false,
@@ -40,7 +57,7 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
         enable: false,
         enable_verify: false,
         enable_domain_suffix: false,
-        domain_suffix_list: '',
+        domain_suffix_list: "",
       },
       register: {
         stop_register: false,
@@ -61,16 +78,16 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
       only_first_purchase: false,
     },
     currency: {
-      currency_unit: 'USD',
-      currency_symbol: '$',
+      currency_unit: "USD",
+      currency_symbol: "$",
     },
     subscribe: {
       single_model: false,
-      subscribe_path: '',
-      subscribe_domain: '',
+      subscribe_path: "",
+      subscribe_domain: "",
       pan_domain: false,
       user_agent_limit: false,
-      user_agent_list: '',
+      user_agent_list: "",
     },
     verify_code: {
       verify_code_expire_time: 5,
@@ -94,14 +111,14 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
       const { data } = await queryUserInfo();
       set({ user: data.data });
     } catch (error) {
-      console.error('Failed to refresh user:', error);
+      console.error("Failed to refresh user:", error);
     }
   },
   getUserSubscribe: (uuid: string, type?: string) => {
     const { pan_domain, subscribe_domain, subscribe_path } = get().common.subscribe || {};
     const domains = subscribe_domain
-      ? subscribe_domain.split('\n')
-      : [extractDomain(NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || '', pan_domain)];
+      ? subscribe_domain.split("\n")
+      : [extractDomain(NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "", pan_domain)];
 
     return domains.map((domain) => {
       if (pan_domain) {
@@ -114,14 +131,14 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
     });
   },
   getAppSubLink: (url: string, schema?: string) => {
-    const name = get().common?.site?.site_name || '';
+    const name = get().common?.site?.site_name || "";
 
-    if (!schema) return 'url';
+    if (!schema) return "url";
     try {
       let result = schema.replace(/\${url}/g, url).replace(/\${name}/g, name);
 
       const maxLoop = 10;
-      let prev;
+      let prev = "";
       let loop = 0;
       do {
         prev = result;
@@ -129,12 +146,7 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
           /\${encodeURIComponent\(JSON\.stringify\(([^)]+)\)\)}/g,
           (match, expr) => {
             try {
-              const processedExpr = expr.replace(/url/g, `"${url}"`).replace(/name/g, `"${name}"`);
-              if (processedExpr.includes('server_remote')) {
-                const serverRemoteValue = `${url}, tag=${name}`;
-                return encodeURIComponent(JSON.stringify({ server_remote: [serverRemoteValue] }));
-              }
-              const obj = eval(`(${processedExpr})`);
+              const obj = parseSchemaObjectExpression(expr, url, name);
               return encodeURIComponent(JSON.stringify(obj));
             } catch {
               return match;
@@ -143,8 +155,8 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
         );
 
         result = result.replace(/\${encodeURIComponent\(([^)]+)\)}/g, (match, expr) => {
-          if (expr === 'url') return encodeURIComponent(url);
-          if (expr === 'name') return encodeURIComponent(name);
+          if (expr === "url") return encodeURIComponent(url);
+          if (expr === "name") return encodeURIComponent(name);
           try {
             return encodeURIComponent(expr);
           } catch {
@@ -153,9 +165,9 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
         });
 
         result = result.replace(/\${window\.btoa\(([^)]+)\)}/g, (match, expr) => {
-          const btoa = typeof window !== 'undefined' ? window.btoa : (str: string) => str;
-          if (expr === 'url') return btoa(url);
-          if (expr === 'name') return btoa(name);
+          const btoa = typeof window !== "undefined" ? window.btoa : (str: string) => str;
+          if (expr === "url") return btoa(url);
+          if (expr === "name") return btoa(name);
           try {
             return btoa(expr);
           } catch {
@@ -165,13 +177,7 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
 
         result = result.replace(/\${JSON\.stringify\(([^}]+)\)}/g, (match, expr) => {
           try {
-            const processedExpr = expr.replace(/url/g, `"${url}"`).replace(/name/g, `"${name}"`);
-            if (processedExpr.includes('server_remote')) {
-              const serverRemoteValue = `${url}, tag=${name}`;
-              return JSON.stringify({ server_remote: [serverRemoteValue] });
-            }
-            const result = eval(`(${processedExpr})`);
-            return JSON.stringify(result);
+            return JSON.stringify(parseSchemaObjectExpression(expr, url, name));
           } catch {
             return match;
           }
@@ -179,8 +185,8 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
         loop++;
       } while (result !== prev && loop < maxLoop);
       return result;
-    } catch (error) {
-      return '';
+    } catch (_error) {
+      return "";
     }
   },
 }));

@@ -1,8 +1,9 @@
-import { Badge } from '@workspace/ui/components/badge';
-import { Input } from '@workspace/ui/components/input';
-import { cn } from '@workspace/ui/lib/utils';
-import { X } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import { Badge } from "@workspace/ui/components/badge";
+import { Input } from "@workspace/ui/components/input";
+import { cn } from "@workspace/ui/lib/utils";
+import { X } from "lucide-react";
+import type React from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 interface TagInputProps {
   value?: string[];
@@ -17,21 +18,22 @@ export function TagInput({
   value = [],
   onChange,
   placeholder,
-  separator = ',',
+  separator = ",",
   className,
   options = [],
 }: TagInputProps) {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [tags, setTags] = useState<string[]>(value);
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const inputId = useId();
 
   useEffect(() => {
     setTags(value.map((tag) => tag.trim()).filter((tag) => tag));
   }, [value]);
 
   function normalizeInput(input: string) {
-    return input.replace(/，/g, ',');
+    return input.replace(/，/g, ",");
   }
 
   function addTag(tagValue?: string) {
@@ -55,7 +57,7 @@ export function TagInput({
       const updatedTags = [...tags, ...tagsToAdd];
       updateTags(updatedTags);
     }
-    setInputValue('');
+    setInputValue("");
 
     if (shouldKeepOpen && options.length > 0) {
       setTimeout(() => {
@@ -67,13 +69,13 @@ export function TagInput({
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key === 'Enter' || event.key === separator || event.key === '，') {
+    if (event.key === "Enter" || event.key === separator || event.key === "，") {
       event.preventDefault();
       addTag();
-    } else if (event.key === 'Backspace' && inputValue === '') {
+    } else if (event.key === "Backspace" && inputValue === "") {
       event.preventDefault();
       handleRemoveTag(tags.length - 1);
-    } else if (event.key === 'Escape') {
+    } else if (event.key === "Escape") {
       setOpen(false);
     }
   }
@@ -103,27 +105,27 @@ export function TagInput({
     .filter((option) => !tags.includes(option))
     .filter(
       (option) =>
-        inputValue.trim() === '' || option.toLowerCase().includes(inputValue.toLowerCase()),
+        inputValue.trim() === "" || option.toLowerCase().includes(inputValue.toLowerCase()),
     );
 
   return (
-    <div className={cn('relative', className)}>
-      <div
+    <div className={cn("relative", className)}>
+      <label
+        htmlFor={inputId}
         className={cn(
-          'border-input focus-within:ring-primary flex min-h-9 w-full cursor-text flex-wrap items-center gap-2 rounded-md border bg-transparent p-2 shadow-sm transition-colors focus-within:ring-0',
+          "border-input focus-within:ring-primary flex min-h-9 w-full cursor-text flex-wrap items-center gap-2 rounded-md border bg-transparent p-2 shadow-sm transition-colors focus-within:ring-0",
         )}
-        onClick={() => inputRef.current?.focus()}
       >
         {tags.map((tag, index) => (
           <Badge
             key={tag}
-            variant='outline'
-            className='border-primary bg-primary/10 flex items-center gap-1 px-1'
+            variant="outline"
+            className="border-primary bg-primary/10 flex items-center gap-1 px-1"
             onClick={(e) => e.stopPropagation()}
           >
             {tag}
             <X
-              className='hover:text-destructive size-4 cursor-pointer rounded-sm'
+              className="hover:text-destructive size-4 cursor-pointer rounded-sm"
               onClick={(e) => {
                 e.stopPropagation();
                 handleRemoveTag(index);
@@ -131,10 +133,11 @@ export function TagInput({
             />
           </Badge>
         ))}
-        <div className='flex min-w-0 flex-1 items-center gap-2'>
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           <Input
+            id={inputId}
             ref={inputRef}
-            className='h-full min-w-0 flex-1 border-none bg-transparent p-0 shadow-none !ring-0'
+            className="h-full min-w-0 flex-1 border-none bg-transparent p-0 shadow-none !ring-0"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -144,11 +147,12 @@ export function TagInput({
           />
 
           {open && availableOptions.length > 0 && (
-            <div className='bg-popover text-popover-foreground absolute left-0 top-full z-50 max-h-60 w-full overflow-auto rounded-md border shadow-md'>
+            <div className="bg-popover text-popover-foreground absolute left-0 top-full z-50 max-h-60 w-full overflow-auto rounded-md border shadow-md">
               {availableOptions.map((option) => (
-                <div
+                <button
+                  type="button"
                   key={option}
-                  className='hover:bg-accent hover:text-accent-foreground relative flex cursor-pointer select-none items-center px-2 py-1.5 text-sm'
+                  className="hover:bg-accent hover:text-accent-foreground relative flex cursor-pointer select-none items-center px-2 py-1.5 text-sm"
                   onMouseDown={(e) => {
                     e.preventDefault();
                     addTag(option);
@@ -158,12 +162,12 @@ export function TagInput({
                   }}
                 >
                   {option}
-                </div>
+                </button>
               ))}
             </div>
           )}
         </div>
-      </div>
+      </label>
     </div>
   );
 }

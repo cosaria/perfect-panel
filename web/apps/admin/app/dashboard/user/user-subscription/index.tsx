@@ -1,32 +1,32 @@
-'use client';
+"use client";
 
-import { Display } from '@/components/display';
-import { ProTable, ProTableActions } from '@/components/pro-table';
-import useGlobalStore from '@/config/use-global';
-import {
-  createUserSubscribe,
-  deleteUserSubscribe,
-  getUserSubscribe,
-  updateUserSubscribe,
-} from '@/services/admin/user';
-import { formatDate } from '@/utils/common';
-import { Button } from '@workspace/ui/components/button';
+import { Button } from "@workspace/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu';
-import { ConfirmButton } from '@workspace/ui/custom-components/confirm-button';
-import { useTranslations } from 'next-intl';
-import Link from 'next/link';
-import { useRef, useState } from 'react';
-import { toast } from 'sonner';
-import { SubscriptionDetail } from './subscription-detail';
-import { SubscriptionForm } from './subscription-form';
+} from "@workspace/ui/components/dropdown-menu";
+import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { Display } from "@/components/display";
+import { ProTable, type ProTableActions } from "@/components/pro-table";
+import useGlobalStore from "@/config/use-global";
+import {
+  createUserSubscribe,
+  deleteUserSubscribe,
+  getUserSubscribe,
+  updateUserSubscribe,
+} from "@/services/admin/user";
+import { formatDate } from "@/utils/common";
+import { SubscriptionDetail } from "./subscription-detail";
+import { SubscriptionForm } from "./subscription-form";
 
 export default function UserSubscription({ userId }: { userId: number }) {
-  const t = useTranslations('user');
+  const t = useTranslations("user");
   const [loading, setLoading] = useState(false);
   const ref = useRef<ProTableActions>(null);
   const { getUserSubscribeUrls } = useGlobalStore();
@@ -35,12 +35,12 @@ export default function UserSubscription({ userId }: { userId: number }) {
     <ProTable<API.UserSubscribe, Record<string, unknown>>
       action={ref}
       header={{
-        title: t('subscriptionList'),
+        title: t("subscriptionList"),
         toolbar: (
           <SubscriptionForm
-            key='create'
-            trigger={t('add')}
-            title={t('createSubscription')}
+            key="create"
+            trigger={t("add")}
+            title={t("createSubscription")}
             loading={loading}
             onSubmit={async (values) => {
               setLoading(true);
@@ -48,7 +48,7 @@ export default function UserSubscription({ userId }: { userId: number }) {
                 user_id: Number(userId),
                 ...values,
               });
-              toast.success(t('createSuccess'));
+              toast.success(t("createSuccess"));
               ref.current?.refresh();
               setLoading(false);
               return true;
@@ -58,62 +58,62 @@ export default function UserSubscription({ userId }: { userId: number }) {
       }}
       columns={[
         {
-          accessorKey: 'id',
-          header: 'ID',
+          accessorKey: "id",
+          header: "ID",
         },
         {
-          accessorKey: 'name',
-          header: t('subscriptionName'),
+          accessorKey: "name",
+          header: t("subscriptionName"),
           cell: ({ row }) => row.original.subscribe.name,
         },
         {
-          accessorKey: 'upload',
-          header: t('upload'),
-          cell: ({ row }) => <Display type='traffic' value={row.getValue('upload')} />,
+          accessorKey: "upload",
+          header: t("upload"),
+          cell: ({ row }) => <Display type="traffic" value={row.getValue("upload")} />,
         },
         {
-          accessorKey: 'download',
-          header: t('download'),
-          cell: ({ row }) => <Display type='traffic' value={row.getValue('download')} />,
+          accessorKey: "download",
+          header: t("download"),
+          cell: ({ row }) => <Display type="traffic" value={row.getValue("download")} />,
         },
         {
-          accessorKey: 'traffic',
-          header: t('totalTraffic'),
-          cell: ({ row }) => <Display type='traffic' value={row.getValue('traffic')} unlimited />,
+          accessorKey: "traffic",
+          header: t("totalTraffic"),
+          cell: ({ row }) => <Display type="traffic" value={row.getValue("traffic")} unlimited />,
         },
         {
-          accessorKey: 'speed_limit',
-          header: t('speedLimit'),
+          accessorKey: "speed_limit",
+          header: t("speedLimit"),
           cell: ({ row }) => {
             const speed = row.original?.subscribe?.speed_limit;
-            return <Display type='trafficSpeed' value={speed} />;
+            return <Display type="trafficSpeed" value={speed} />;
           },
         },
         {
-          accessorKey: 'device_limit',
-          header: t('deviceLimit'),
+          accessorKey: "device_limit",
+          header: t("deviceLimit"),
           cell: ({ row }) => {
             const limit = row.original?.subscribe?.device_limit;
-            return <Display type='number' value={limit} unlimited />;
+            return <Display type="number" value={limit} unlimited />;
           },
         },
         {
-          accessorKey: 'reset_time',
-          header: t('resetTime'),
+          accessorKey: "reset_time",
+          header: t("resetTime"),
           cell: ({ row }) => {
-            return <Display type='number' value={row.getValue('reset_time')} unlimited />;
+            return <Display type="number" value={row.getValue("reset_time")} unlimited />;
           },
         },
         {
-          accessorKey: 'expire_time',
-          header: t('expireTime'),
+          accessorKey: "expire_time",
+          header: t("expireTime"),
           cell: ({ row }) =>
-            row.getValue('expire_time') ? formatDate(row.getValue('expire_time')) : t('permanent'),
+            row.getValue("expire_time") ? formatDate(row.getValue("expire_time")) : t("permanent"),
         },
         {
-          accessorKey: 'created_at',
-          header: t('createdAt'),
-          cell: ({ row }) => formatDate(row.getValue('created_at')),
+          accessorKey: "created_at",
+          header: t("createdAt"),
+          cell: ({ row }) => formatDate(row.getValue("created_at")),
         },
       ]}
       request={async (pagination) => {
@@ -130,9 +130,9 @@ export default function UserSubscription({ userId }: { userId: number }) {
         render: (row) => {
           return [
             <SubscriptionForm
-              key='edit'
-              trigger={t('edit')}
-              title={t('editSubscription')}
+              key="edit"
+              trigger={t("edit")}
+              title={t("editSubscription")}
               loading={loading}
               initialData={row}
               onSubmit={async (values) => {
@@ -142,36 +142,36 @@ export default function UserSubscription({ userId }: { userId: number }) {
                   user_subscribe_id: row.id,
                   ...values,
                 });
-                toast.success(t('updateSuccess'));
+                toast.success(t("updateSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
                 return true;
               }}
             />,
             <Button
-              key='copy'
-              variant='secondary'
+              key="copy"
+              variant="secondary"
               onClick={async () => {
-                await navigator.clipboard.writeText(getUserSubscribeUrls(row.token)[0] || '');
-                toast.success(t('copySuccess'));
+                await navigator.clipboard.writeText(getUserSubscribeUrls(row.token)[0] || "");
+                toast.success(t("copySuccess"));
               }}
             >
-              {t('copySubscription')}
+              {t("copySubscription")}
             </Button>,
             <ConfirmButton
-              key='delete'
-              trigger={<Button variant='destructive'>{t('delete')}</Button>}
-              title={t('confirmDelete')}
-              description={t('deleteSubscriptionDescription')}
+              key="delete"
+              trigger={<Button variant="destructive">{t("delete")}</Button>}
+              title={t("confirmDelete")}
+              description={t("deleteSubscriptionDescription")}
               onConfirm={async () => {
                 await deleteUserSubscribe({ user_subscribe_id: row.id });
-                toast.success(t('deleteSuccess'));
+                toast.success(t("deleteSuccess"));
                 ref.current?.refresh();
               }}
-              cancelText={t('cancel')}
-              confirmText={t('confirm')}
+              cancelText={t("cancel")}
+              confirmText={t("confirm")}
             />,
-            <RowMoreActions key='more' userId={userId} subId={row.id} />,
+            <RowMoreActions key="more" userId={userId} subId={row.id} />,
           ];
         },
       }}
@@ -181,36 +181,36 @@ export default function UserSubscription({ userId }: { userId: number }) {
 
 function RowMoreActions({ userId, subId }: { userId: number; subId: number }) {
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const t = useTranslations('user');
+  const t = useTranslations("user");
   return (
-    <div className='inline-flex'>
+    <div className="inline-flex">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant='outline'>{t('more')}</Button>
+          <Button variant="outline">{t("more")}</Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align='end'>
+        <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
             <Link href={`/dashboard/log/subscribe?user_id=${userId}&user_subscribe_id=${subId}`}>
-              {t('subscriptionLogs')}
+              {t("subscriptionLogs")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
               href={`/dashboard/log/reset-subscribe?user_id=${userId}&user_subscribe_id=${subId}`}
             >
-              {t('resetLogs')}
+              {t("resetLogs")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
               href={`/dashboard/log/subscribe-traffic?user_id=${userId}&user_subscribe_id=${subId}`}
             >
-              {t('trafficStats')}
+              {t("trafficStats")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href={`/dashboard/log/traffic-details?user_id=${userId}&subscribe_id=${subId}`}>
-              {t('trafficDetails')}
+              {t("trafficDetails")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -219,13 +219,13 @@ function RowMoreActions({ userId, subId }: { userId: number; subId: number }) {
               triggerRef.current?.click();
             }}
           >
-            {t('onlineDevices')}
+            {t("onlineDevices")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
       <SubscriptionDetail
-        trigger={<Button ref={triggerRef} className='hidden' />}
+        trigger={<Button ref={triggerRef} className="hidden" />}
         userId={userId}
         subscriptionId={subId}
       />

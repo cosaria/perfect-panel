@@ -1,6 +1,13 @@
-'use client';
+"use client";
 
-import { ProTable, ProTableActions } from '@/components/pro-table';
+import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import { Switch } from "@workspace/ui/components/switch";
+import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
+import { useTranslations } from "next-intl";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import { ProTable, type ProTableActions } from "@/components/pro-table";
 import {
   createNode,
   deleteNode,
@@ -8,20 +15,13 @@ import {
   resetSortWithNode,
   toggleNodeStatus,
   updateNode,
-} from '@/services/admin/server';
-import { useNode } from '@/store/node';
-import { useServer } from '@/store/server';
-import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
-import { Switch } from '@workspace/ui/components/switch';
-import { ConfirmButton } from '@workspace/ui/custom-components/confirm-button';
-import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
-import { toast } from 'sonner';
-import NodeForm from './node-form';
+} from "@/services/admin/server";
+import { useNode } from "@/store/node";
+import { useServer } from "@/store/server";
+import NodeForm from "./node-form";
 
 export default function NodesPage() {
-  const t = useTranslations('nodes');
+  const t = useTranslations("nodes");
   const ref = useRef<ProTableActions>(null);
   const [loading, setLoading] = useState(false);
 
@@ -33,32 +33,39 @@ export default function NodesPage() {
     <ProTable<API.Node, { search: string }>
       action={ref}
       header={{
-        title: t('pageTitle'),
+        title: t("pageTitle"),
         toolbar: (
           <NodeForm
-            trigger={t('create')}
-            title={t('drawerCreateTitle')}
+            trigger={t("create")}
+            title={t("drawerCreateTitle")}
             loading={loading}
             onSubmit={async (values) => {
+              const serverId = values.server_id;
+              const port = values.port;
+
+              if (serverId === undefined || port === undefined) {
+                return false;
+              }
+
               setLoading(true);
               try {
                 const body: API.CreateNodeRequest = {
                   name: values.name,
-                  server_id: Number(values.server_id!),
+                  server_id: Number(serverId),
                   protocol: values.protocol,
                   address: values.address,
-                  port: Number(values.port!),
+                  port: Number(port),
                   tags: values.tags || [],
                   enabled: false,
                 };
                 await createNode(body);
-                toast.success(t('created'));
+                toast.success(t("created"));
                 ref.current?.refresh();
                 fetchNodes();
                 fetchTags();
                 setLoading(false);
                 return true;
-              } catch (e) {
+              } catch (_e) {
                 setLoading(false);
                 return false;
               }
@@ -68,14 +75,14 @@ export default function NodesPage() {
       }}
       columns={[
         {
-          id: 'enabled',
-          header: t('enabled'),
+          id: "enabled",
+          header: t("enabled"),
           cell: ({ row }) => (
             <Switch
               checked={row.original.enabled}
               onCheckedChange={async (v) => {
                 await toggleNodeStatus({ id: row.original.id, enable: v });
-                toast.success(v ? t('enabled_on') : t('enabled_off'));
+                toast.success(v ? t("enabled_on") : t("enabled_off"));
                 ref.current?.refresh();
                 fetchNodes();
                 fetchTags();
@@ -83,35 +90,35 @@ export default function NodesPage() {
             />
           ),
         },
-        { accessorKey: 'name', header: t('name') },
+        { accessorKey: "name", header: t("name") },
 
         {
-          id: 'address_port',
-          header: `${t('address')}:${t('port')}`,
-          cell: ({ row }) => `${row.original.address || '—'}:${row.original.port || '—'}`,
+          id: "address_port",
+          header: `${t("address")}:${t("port")}`,
+          cell: ({ row }) => `${row.original.address || "—"}:${row.original.port || "—"}`,
         },
 
         {
-          id: 'server_id',
-          header: t('server'),
+          id: "server_id",
+          header: t("server"),
           cell: ({ row }) =>
             `${getServerName(row.original.server_id)}:${getServerAddress(row.original.server_id)}`,
         },
         {
-          id: 'protocol',
-          header: ` ${t('protocol')}:${t('port')}`,
+          id: "protocol",
+          header: ` ${t("protocol")}:${t("port")}`,
           cell: ({ row }) =>
             `${row.original.protocol}:${getProtocolPort(row.original.server_id, row.original.protocol)}`,
         },
         {
-          accessorKey: 'tags',
-          header: t('tags'),
+          accessorKey: "tags",
+          header: t("tags"),
           cell: ({ row }) => (
-            <div className='flex flex-wrap gap-1'>
+            <div className="flex flex-wrap gap-1">
               {(row.original.tags || []).length === 0
-                ? '—'
+                ? "—"
                 : row.original.tags.map((tg) => (
-                    <Badge key={tg} variant='outline'>
+                    <Badge key={tg} variant="outline">
                       {tg}
                     </Badge>
                   ))}
@@ -119,7 +126,7 @@ export default function NodesPage() {
           ),
         },
       ]}
-      params={[{ key: 'search' }]}
+      params={[{ key: "search" }]}
       request={async (pagination, filter) => {
         const { data } = await filterNodeList({
           page: pagination.page,
@@ -133,9 +140,9 @@ export default function NodesPage() {
       actions={{
         render: (row) => [
           <NodeForm
-            key='edit'
-            trigger={t('edit')}
-            title={t('drawerEditTitle')}
+            key="edit"
+            trigger={t("edit")}
+            title={t("drawerEditTitle")}
             loading={loading}
             initialValues={row}
             onSubmit={async (values) => {
@@ -144,69 +151,73 @@ export default function NodesPage() {
                 const body: API.UpdateNodeRequest = {
                   ...row,
                   ...values,
-                } as any;
+                };
                 await updateNode(body);
-                toast.success(t('updated'));
+                toast.success(t("updated"));
                 ref.current?.refresh();
                 fetchNodes();
                 fetchTags();
                 setLoading(false);
                 return true;
-              } catch (e) {
+              } catch (_e) {
                 setLoading(false);
                 return false;
               }
             }}
           />,
           <ConfirmButton
-            key='delete'
-            trigger={<Button variant='destructive'>{t('delete')}</Button>}
-            title={t('confirmDeleteTitle')}
-            description={t('confirmDeleteDesc')}
+            key="delete"
+            trigger={<Button variant="destructive">{t("delete")}</Button>}
+            title={t("confirmDeleteTitle")}
+            description={t("confirmDeleteDesc")}
             onConfirm={async () => {
-              await deleteNode({ id: row.id } as any);
-              toast.success(t('deleted'));
+              await deleteNode({ id: row.id });
+              toast.success(t("deleted"));
               ref.current?.refresh();
               fetchNodes();
               fetchTags();
             }}
-            cancelText={t('cancel')}
-            confirmText={t('confirm')}
+            cancelText={t("cancel")}
+            confirmText={t("confirm")}
           />,
           <Button
-            key='copy'
-            variant='outline'
+            key="copy"
+            variant="outline"
             onClick={async () => {
-              const { id, enabled, created_at, updated_at, sort, ...rest } = row as any;
               await createNode({
-                ...rest,
+                name: row.name,
+                server_id: row.server_id,
+                protocol: row.protocol,
+                address: row.address,
+                port: row.port,
+                tags: row.tags || [],
                 enabled: false,
               });
-              toast.success(t('copied'));
+              toast.success(t("copied"));
               ref.current?.refresh();
               fetchNodes();
               fetchTags();
             }}
           >
-            {t('copy')}
+            {t("copy")}
           </Button>,
         ],
         batchRender(rows) {
           return [
             <ConfirmButton
-              key='delete'
-              trigger={<Button variant='destructive'>{t('delete')}</Button>}
-              title={t('confirmDeleteTitle')}
-              description={t('confirmDeleteDesc')}
+              key="delete"
+              trigger={<Button variant="destructive">{t("delete")}</Button>}
+              title={t("confirmDeleteTitle")}
+              description={t("confirmDeleteDesc")}
               onConfirm={async () => {
-                await Promise.all(rows.map((r) => deleteNode({ id: r.id } as any)));
-                toast.success(t('deleted'));
+                await Promise.all(rows.map((r) => deleteNode({ id: r.id })));
+                toast.success(t("deleted"));
                 ref.current?.refresh();
                 fetchNodes();
                 fetchTags();
               }}
-              cancelText={t('cancel')}
-              confirmText={t('confirm')}
+              cancelText={t("cancel")}
+              confirmText={t("confirm")}
             />,
           ];
         },
@@ -218,7 +229,12 @@ export default function NodesPage() {
         const originalSorts = items.map((item) => item.sort);
 
         const [movedItem] = items.splice(sourceIndex, 1);
-        items.splice(targetIndex, 0, movedItem!);
+
+        if (!movedItem) {
+          return items;
+        }
+
+        items.splice(targetIndex, 0, movedItem);
 
         const updatedItems = items.map((item, index) => {
           const originalSort = originalSorts[index];
@@ -237,7 +253,7 @@ export default function NodesPage() {
               sort: item.sort,
             })) as API.SortItem[],
           });
-          toast.success(t('sorted_success'));
+          toast.success(t("sorted_success"));
         }
         return updatedItems;
       }}

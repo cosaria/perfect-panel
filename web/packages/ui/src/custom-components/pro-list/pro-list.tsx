@@ -1,21 +1,22 @@
-'use client';
+"use client";
 
 import {
-  ColumnFiltersState,
+  type ColumnFiltersState,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { Alert, AlertDescription, AlertTitle } from '@workspace/ui/components/alert';
-import { Button } from '@workspace/ui/components/button';
-import { Checkbox } from '@workspace/ui/components/checkbox';
-import Empty from '@workspace/ui/custom-components/empty';
-import { ColumnFilter, IParams } from '@workspace/ui/custom-components/pro-list/column-filter';
-import { Pagination } from '@workspace/ui/custom-components/pro-list/pagination';
-import { cn } from '@workspace/ui/lib/utils';
-import { ListRestart, Loader, RefreshCcw } from 'lucide-react';
-import React, { useEffect, useImperativeHandle, useState } from 'react';
+} from "@tanstack/react-table";
+import { Alert, AlertDescription, AlertTitle } from "@workspace/ui/components/alert";
+import { Button } from "@workspace/ui/components/button";
+import { Checkbox } from "@workspace/ui/components/checkbox";
+import Empty from "@workspace/ui/custom-components/empty";
+import { ColumnFilter, type IParams } from "@workspace/ui/custom-components/pro-list/column-filter";
+import { Pagination } from "@workspace/ui/custom-components/pro-list/pagination";
+import { cn } from "@workspace/ui/lib/utils";
+import { ListRestart, Loader, RefreshCcw } from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 export interface ProListProps<TData, TValue> {
   request: (
@@ -64,6 +65,31 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
     pageSize: 10,
   });
   const [loading, setLoading] = useState(false);
+  const itemKeyStore = useRef(new WeakMap<object, string>());
+  const primitiveKeyStore = useRef(new Map<TData, string>());
+  const nextItemKey = useRef(0);
+
+  const getItemKey = useCallback((item: TData) => {
+    if (typeof item === "object" && item !== null) {
+      const existingKey = itemKeyStore.current.get(item);
+      if (existingKey) {
+        return existingKey;
+      }
+
+      const newKey = `pro-list-object-${nextItemKey.current++}`;
+      itemKeyStore.current.set(item, newKey);
+      return newKey;
+    }
+
+    const existingKey = primitiveKeyStore.current.get(item);
+    if (existingKey) {
+      return existingKey;
+    }
+
+    const newKey = `pro-list-primitive-${nextItemKey.current++}`;
+    primitiveKeyStore.current.set(item, newKey);
+    return newKey;
+  }, []);
 
   const table = useReactTable({
     data,
@@ -84,7 +110,7 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
     rowCount: rowCount,
   });
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const response = await request(
@@ -97,11 +123,11 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
       setData(response.list);
       setRowCount(response.total);
     } catch (error) {
-      console.log('Fetch data error:', error);
+      console.log("Fetch data error:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [columnFilters, pagination.pageIndex, pagination.pageSize, request]);
 
   const reset = async () => {
     table.resetColumnFilters();
@@ -118,22 +144,21 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.pageIndex, pagination.pageSize, columnFilters]);
+  }, [fetchData]);
 
-  const handleSelectionChange = (index: number, isSelected: boolean) => {
+  const handleSelectionChange = (itemKey: string, isSelected: boolean) => {
     setRowSelection((prevSelection) => ({
       ...prevSelection,
-      [index]: isSelected,
+      [itemKey]: isSelected,
     }));
   };
 
-  const selectedRows = data.filter((_, index) => rowSelection[index]);
+  const selectedRows = data.filter((item) => rowSelection[getItemKey(item)]);
   const selectedCount = selectedRows.length;
 
   return (
-    <div className='flex max-w-full flex-col gap-4 overflow-hidden'>
-      <div className='flex flex-wrap-reverse items-center justify-between gap-4'>
+    <div className="flex max-w-full flex-col gap-4 overflow-hidden">
+      <div className="flex flex-wrap-reverse items-center justify-between gap-4">
         <div>
           {params ? (
             <ColumnFilter
@@ -145,14 +170,14 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
             header?.title
           )}
         </div>
-        <div className='flex flex-1 items-center justify-end gap-2'>
+        <div className="flex flex-1 items-center justify-end gap-2">
           {params && params?.length > 0 && (
             <>
-              <Button variant='outline' className='h-8 w-8 p-2' onClick={fetchData}>
-                <RefreshCcw className='h-4 w-4' />
+              <Button variant="outline" className="h-8 w-8 p-2" onClick={fetchData}>
+                <RefreshCcw className="h-4 w-4" />
               </Button>
-              <Button variant='outline' className='h-8 w-8 p-2' onClick={reset}>
-                <ListRestart className='h-4 w-4' />
+              <Button variant="outline" className="h-8 w-8 p-2" onClick={reset}>
+                <ListRestart className="h-4 w-4" />
               </Button>
             </>
           )}
@@ -161,42 +186,43 @@ export function ProList<TData, TValue extends Record<string, unknown>>({
       </div>
 
       {selectedCount > 0 && batchRender && (
-        <Alert className='flex items-center justify-between'>
-          <AlertTitle className='m-0'>
+        <Alert className="flex items-center justify-between">
+          <AlertTitle className="m-0">
             {texts?.selectedRowsText?.(selectedCount) || `Selected ${selectedCount} rows`}
           </AlertTitle>
-          <AlertDescription className='flex gap-2'>{batchRender(selectedRows)}</AlertDescription>
+          <AlertDescription className="flex gap-2">{batchRender(selectedRows)}</AlertDescription>
         </Alert>
       )}
 
       <div
-        className={cn('relative overflow-x-auto', {
-          'rounded-xl border': data.length === 0,
+        className={cn("relative overflow-x-auto", {
+          "rounded-xl border": data.length === 0,
         })}
       >
-        <div className='grid grid-cols-1 gap-4'>
+        <div className="grid grid-cols-1 gap-4">
           {data.length ? (
-            data.map((item, index) => {
-              const isSelected = !!rowSelection[index];
+            data.map((item) => {
+              const itemKey = getItemKey(item);
+              const isSelected = !!rowSelection[itemKey];
 
               const checkbox = (
                 <Checkbox
                   checked={isSelected}
-                  onCheckedChange={(value) => handleSelectionChange(index, !!value)}
-                  aria-label='Select row'
+                  onCheckedChange={(value) => handleSelectionChange(itemKey, !!value)}
+                  aria-label="Select row"
                 />
               );
 
-              return <div key={index}>{renderItem(item, checkbox)}</div>;
+              return <div key={itemKey}>{renderItem(item, checkbox)}</div>;
             })
           ) : (
-            <div className='flex items-center justify-center py-24'>{empty || <Empty />}</div>
+            <div className="flex items-center justify-center py-24">{empty || <Empty />}</div>
           )}
         </div>
 
         {loading && (
-          <div className='bg-muted/80 absolute top-0 z-20 flex h-full w-full items-center justify-center'>
-            <Loader className='h-4 w-4 animate-spin' />
+          <div className="bg-muted/80 absolute top-0 z-20 flex h-full w-full items-center justify-center">
+            <Loader className="h-4 w-4 animate-spin" />
           </div>
         )}
       </div>

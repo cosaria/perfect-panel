@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { sendEmailCode, sendSmsCode } from '@/services/common/common';
-import { Button } from '@workspace/ui/components/button';
-import { useCountDown } from 'ahooks';
-import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { Button } from "@workspace/ui/components/button";
+import { useCountDown } from "ahooks";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { sendEmailCode, sendSmsCode } from "@/services/common/common";
 
 interface SendCodeProps {
-  type: 'email' | 'phone';
+  type: "email" | "phone";
   params: {
     email?: string;
     type?: 1 | 2;
@@ -16,7 +16,7 @@ interface SendCodeProps {
   };
 }
 export default function SendCode({ type, params }: SendCodeProps) {
-  const t = useTranslations('auth');
+  const t = useTranslations("auth");
   const [targetDate, setTargetDate] = useState<number>();
 
   const [, { seconds }] = useCountDown({
@@ -48,7 +48,7 @@ export default function SendCode({ type, params }: SendCodeProps) {
   };
 
   const handleSendCode = async () => {
-    if (type === 'email') {
+    if (type === "email") {
       getEmailCode();
     } else {
       getPhoneCode();
@@ -56,11 +56,11 @@ export default function SendCode({ type, params }: SendCodeProps) {
   };
   const disabled =
     seconds > 0 ||
-    (type === 'email' ? !params.email : !params.telephone || !params.telephone_area_code);
+    (type === "email" ? !params.email : !params.telephone || !params.telephone_area_code);
 
   return (
-    <Button type='button' onClick={handleSendCode} disabled={disabled}>
-      {seconds > 0 ? `${seconds}s` : t('get')}
+    <Button type="button" onClick={handleSendCode} disabled={disabled}>
+      {seconds > 0 ? `${seconds}s` : t("get")}
     </Button>
   );
 }

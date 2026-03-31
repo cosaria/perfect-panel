@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { cn } from '@workspace/ui/lib/utils';
-import { AnimatePresence, motion, MotionProps } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { cn } from "@workspace/ui/lib/utils";
+import { AnimatePresence, type MotionProps, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 type CharacterSet = string[] | readonly string[];
 
@@ -26,7 +26,7 @@ interface HyperTextProps extends MotionProps {
 }
 
 const DEFAULT_CHARACTER_SET = Object.freeze(
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
 ) as readonly string[];
 
 const getRandomInt = (max: number): number => Math.floor(Math.random() * max);
@@ -36,7 +36,7 @@ export default function HyperText({
   className,
   duration = 800,
   delay = 0,
-  as: Component = 'div',
+  as: Component = "div",
   startOnView = false,
   animateOnHover = true,
   characterSet = DEFAULT_CHARACTER_SET,
@@ -46,7 +46,7 @@ export default function HyperText({
     forwardMotionProps: true,
   });
 
-  const [displayText, setDisplayText] = useState<string[]>(() => children.split(''));
+  const [displayText, setDisplayText] = useState<string[]>(() => children.split(""));
   const [isAnimating, setIsAnimating] = useState(false);
   const iterationCount = useRef(0);
   const elementRef = useRef<HTMLElement>(null);
@@ -76,7 +76,7 @@ export default function HyperText({
           observer.disconnect();
         }
       },
-      { threshold: 0.1, rootMargin: '-30% 0px -30% 0px' },
+      { threshold: 0.1, rootMargin: "-30% 0px -30% 0px" },
     );
 
     if (elementRef.current) {
@@ -97,11 +97,11 @@ export default function HyperText({
       if (iterationCount.current < maxIterations) {
         setDisplayText((currentText) =>
           currentText.map((letter, index) =>
-            letter === ' '
+            letter === " "
               ? letter
               : index <= iterationCount.current
-                ? (children[index] ?? ' ')
-                : (characterSet[getRandomInt(characterSet.length)] ?? ' '),
+                ? (children[index] ?? " ")
+                : (characterSet[getRandomInt(characterSet.length)] ?? " "),
           ),
         );
         iterationCount.current = iterationCount.current + 0.1;
@@ -117,16 +117,32 @@ export default function HyperText({
   return (
     <MotionComponent
       ref={elementRef}
-      className={cn('overflow-hidden py-2 text-4xl font-bold', className)}
+      className={cn("overflow-hidden py-2 text-4xl font-bold", className)}
       onMouseEnter={handleAnimationTrigger}
       {...props}
     >
       <AnimatePresence>
-        {displayText.map((letter, index) => (
-          <motion.span key={index} className={cn('font-mono', letter === ' ' ? 'w-3' : '')}>
-            {letter.toUpperCase()}
-          </motion.span>
-        ))}
+        {displayText
+          .reduce<{
+            counts: Map<string, number>;
+            items: Array<{ key: string; letter: string }>;
+          }>(
+            (accumulator, letter) => {
+              const occurrence = (accumulator.counts.get(letter) || 0) + 1;
+              accumulator.counts.set(letter, occurrence);
+              accumulator.items.push({
+                key: `${letter}-${occurrence}`,
+                letter,
+              });
+              return accumulator;
+            },
+            { counts: new Map(), items: [] },
+          )
+          .items.map(({ key, letter }) => (
+            <motion.span key={key} className={cn("font-mono", letter === " " ? "w-3" : "")}>
+              {letter.toUpperCase()}
+            </motion.span>
+          ))}
       </AnimatePresence>
     </MotionComponent>
   );

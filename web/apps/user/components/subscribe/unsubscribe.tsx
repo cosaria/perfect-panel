@@ -1,9 +1,7 @@
-'use client';
+"use client";
 
-import useGlobalStore from '@/config/use-global';
-import { preUnsubscribe, unsubscribe } from '@/services/user/user';
-import { useQuery } from '@tanstack/react-query';
-import { Button } from '@workspace/ui/components/button';
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -12,12 +10,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@workspace/ui/components/dialog';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { Display } from '../display';
+} from "@workspace/ui/components/dialog";
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { toast } from "sonner";
+import useGlobalStore from "@/config/use-global";
+import { preUnsubscribe, unsubscribe } from "@/services/user/user";
+import { Display } from "../display";
 
 interface UnsubscribeProps {
   id: number;
@@ -25,7 +25,7 @@ interface UnsubscribeProps {
 }
 
 export default function Unsubscribe({ id, allowDeduction }: Readonly<UnsubscribeProps>) {
-  const t = useTranslations('subscribe.unsubscribe');
+  const t = useTranslations("subscribe.unsubscribe");
   const router = useRouter();
   const { common, getUserInfo } = useGlobalStore();
   const single_model = common.subscribe.single_model;
@@ -34,7 +34,7 @@ export default function Unsubscribe({ id, allowDeduction }: Readonly<Unsubscribe
 
   const { data } = useQuery({
     enabled: Boolean(open && id && allowDeduction),
-    queryKey: ['preUnsubscribe', id],
+    queryKey: ["preUnsubscribe", id],
     queryFn: async () => {
       const { data } = await preUnsubscribe({ id });
       return data.data?.deduction_amount;
@@ -49,12 +49,12 @@ export default function Unsubscribe({ id, allowDeduction }: Readonly<Unsubscribe
           skipErrorHandler: true,
         },
       );
-      toast.success(t('success'));
+      toast.success(t("success"));
       router.refresh();
       await getUserInfo();
       setOpen(false);
-    } catch (error) {
-      toast.error(t('failed'));
+    } catch (_error) {
+      toast.error(t("failed"));
     }
   };
 
@@ -63,25 +63,25 @@ export default function Unsubscribe({ id, allowDeduction }: Readonly<Unsubscribe
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='destructive' size='sm'>
-          {t('unsubscribe')}
+        <Button variant="destructive" size="sm">
+          {t("unsubscribe")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t('confirmUnsubscribe')}</DialogTitle>
-          <DialogDescription>{t('confirmUnsubscribeDescription')}</DialogDescription>
+          <DialogTitle>{t("confirmUnsubscribe")}</DialogTitle>
+          <DialogDescription>{t("confirmUnsubscribeDescription")}</DialogDescription>
         </DialogHeader>
-        <p>{t('residualValue')}</p>
-        <p className='text-primary text-2xl font-semibold'>
-          <Display type='currency' value={data} />
+        <p>{t("residualValue")}</p>
+        <p className="text-primary text-2xl font-semibold">
+          <Display type="currency" value={data} />
         </p>
-        <p className='text-muted-foreground text-sm'>{t('unsubscribeDescription')}</p>
+        <p className="text-muted-foreground text-sm">{t("unsubscribeDescription")}</p>
         <DialogFooter>
-          <Button variant='outline' onClick={() => setOpen(false)}>
-            {t('cancel')}
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            {t("cancel")}
           </Button>
-          <Button onClick={handleSubmit}>{t('confirm')}</Button>
+          <Button onClick={handleSubmit}>{t("confirm")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

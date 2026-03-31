@@ -1,21 +1,28 @@
-import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from '@/config/constants';
-import { getTranslations } from '@/locales/utils';
-import { isBrowser } from '@workspace/ui/utils';
-import axios, { InternalAxiosRequestConfig } from 'axios';
-import { toast } from 'sonner';
-import { getAuthorization, Logout } from './common';
+import { isBrowser } from "@workspace/ui/utils";
+import axios, { type AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from "axios";
+import { toast } from "sonner";
+import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
+import { getTranslations } from "@/locales/utils";
+import { getAuthorization, Logout } from "./common";
 
-async function handleError(response: any) {
+type ErrorResponseData = {
+  code?: number;
+  message?: string;
+};
+
+async function handleError(
+  response: AxiosError<ErrorResponseData> | AxiosResponse<ErrorResponseData>,
+) {
   const code = response.data?.code;
   if ([40002, 40003, 40004, 40005].includes(code)) return Logout();
   if (response?.config?.skipErrorHandler) return;
   if (!isBrowser()) return;
 
-  const t = await getTranslations('common');
+  const t = await getTranslations("common");
   const message =
     t(`request.${code}`) !== `request.${code}`
       ? t(`request.${code}`)
-      : response.data?.message || response.message;
+      : response.data?.message || ("message" in response ? response.message : undefined);
 
   toast.error(message);
 }
@@ -49,7 +56,7 @@ requset.interceptors.response.use(
     }
     return response;
   },
-  async (error: Error) => {
+  async (error: AxiosError<ErrorResponseData>) => {
     await handleError(error);
     return Promise.reject(error);
   },

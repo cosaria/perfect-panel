@@ -1,5 +1,5 @@
-import { getSubscribeList } from '@/services/admin/subscribe';
-import { create } from 'zustand';
+import { create } from "zustand";
+import { getSubscribeList } from "@/services/admin/subscribe";
 
 interface SubscribeState {
   // Data
@@ -34,7 +34,7 @@ export const useSubscribeStore = create<SubscribeState>((set, get) => ({
         subscribes: data?.data?.list || [],
         loaded: true,
       });
-    } catch (error) {
+    } catch (_error) {
       // Handle error silently
       set({ loaded: true });
     } finally {
@@ -44,7 +44,7 @@ export const useSubscribeStore = create<SubscribeState>((set, get) => ({
 
   // Getters
   getSubscribeName: (subscribeId?: number) => {
-    if (!subscribeId) return '--';
+    if (!subscribeId) return "--";
     const subscribe = get().subscribes.find((s) => s.id === subscribeId);
     return subscribe?.name ?? `Subscribe ${subscribeId}`;
   },

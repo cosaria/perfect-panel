@@ -1,70 +1,70 @@
-const { createConfig } = require('semantic-release-config-gitmoji/lib/createConfig');
+const { createConfig } = require("semantic-release-config-gitmoji/lib/createConfig");
 
 const config = createConfig({
-  tagFormat: 'v${version}',
+  tagFormat: String.raw`v\${version}`,
   changelogTitle: `<a name="readme-top"></a>
 # Changelog`,
   releaseRules: [
     {
-      release: 'minor',
-      type: 'feat',
+      release: "minor",
+      type: "feat",
     },
     {
-      release: 'patch',
-      type: 'fix',
+      release: "patch",
+      type: "fix",
     },
     {
-      release: 'patch',
-      type: 'perf',
+      release: "patch",
+      type: "perf",
     },
     {
-      release: 'patch',
-      type: 'style',
+      release: "patch",
+      type: "style",
     },
     {
-      release: 'patch',
-      type: 'refactor',
+      release: "patch",
+      type: "refactor",
     },
     {
-      release: 'patch',
-      type: 'build',
+      release: "patch",
+      type: "build",
     },
-    { release: 'patch', scope: 'README', type: 'docs' },
-    { release: 'patch', scope: 'README.md', type: 'docs' },
-    { release: false, type: 'docs' },
-    {
-      release: false,
-      type: 'test',
-    },
+    { release: "patch", scope: "README", type: "docs" },
+    { release: "patch", scope: "README.md", type: "docs" },
+    { release: false, type: "docs" },
     {
       release: false,
-      type: 'ci',
+      type: "test",
     },
     {
       release: false,
-      type: 'chore',
+      type: "ci",
     },
     {
       release: false,
-      type: 'wip',
+      type: "chore",
     },
     {
-      release: 'major',
-      type: 'BREAKING CHANGE',
+      release: false,
+      type: "wip",
     },
     {
-      release: 'major',
-      scope: 'BREAKING CHANGE',
+      release: "major",
+      type: "BREAKING CHANGE",
     },
     {
-      release: 'major',
-      subject: '*BREAKING CHANGE*',
+      release: "major",
+      scope: "BREAKING CHANGE",
     },
-    { release: 'patch', subject: '*force release*' },
-    { release: 'patch', subject: '*force patch*' },
-    { release: 'minor', subject: '*force minor*' },
-    { release: 'major', subject: '*force major*' },
-    { release: false, subject: '*skip release*' },
+    {
+      release: "major",
+      subject: "*BREAKING CHANGE*",
+    },
+    { release: "patch", subject: "*force release*" },
+    { release: "patch", subject: "*force patch*" },
+    { release: "minor", subject: "*force minor*" },
+    { release: "major", subject: "*force major*" },
+    { release: false, subject: "*skip release*" },
   ],
 });
 

@@ -1,6 +1,6 @@
-// @ts-ignore
+// @ts-expect-error
 /* eslint-disable */
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 /** Apple Login Callback POST /v1/auth/oauth/callback/apple */
 export async function appleLoginCallback(
@@ -9,39 +9,42 @@ export async function appleLoginCallback(
     id_token: string;
     state: string;
   },
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   const formData = new FormData();
 
-  Object.keys(body).forEach((ele) => {
-    const item = (body as any)[ele];
+  for (const [key, item] of Object.entries(body)) {
+    if (item === undefined || item === null) {
+      continue;
+    }
 
-    if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
-        if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
-        } else {
-          formData.append(ele, JSON.stringify(item));
+    if (typeof item === "object" && !(item instanceof File) && !(item instanceof Blob)) {
+      if (Array.isArray(item)) {
+        for (const value of item) {
+          formData.append(key, value == null ? "" : String(value));
         }
       } else {
-        formData.append(ele, item);
+        formData.append(key, JSON.stringify(item));
       }
+      continue;
     }
-  });
 
-  return request<API.Response & { data?: any }>('/v1/auth/oauth/callback/apple', {
-    method: 'POST',
+    formData.append(key, item);
+  }
+
+  return request<API.Response & { data?: unknown }>("/v1/auth/oauth/callback/apple", {
+    method: "POST",
     data: formData,
     ...(options || {}),
   });
 }
 
 /** OAuth login POST /v1/auth/oauth/login */
-export async function oAuthLogin(body: API.OAthLoginRequest, options?: { [key: string]: any }) {
-  return request<API.Response & { data?: API.OAuthLoginResponse }>('/v1/auth/oauth/login', {
-    method: 'POST',
+export async function oAuthLogin(body: API.OAthLoginRequest, options?: Record<string, unknown>) {
+  return request<API.Response & { data?: API.OAuthLoginResponse }>("/v1/auth/oauth/login", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -51,12 +54,12 @@ export async function oAuthLogin(body: API.OAthLoginRequest, options?: { [key: s
 /** OAuth login get token POST /v1/auth/oauth/login/token */
 export async function oAuthLoginGetToken(
   body: API.OAuthLoginGetTokenRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.LoginResponse }>('/v1/auth/oauth/login/token', {
-    method: 'POST',
+  return request<API.Response & { data?: API.LoginResponse }>("/v1/auth/oauth/login/token", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),

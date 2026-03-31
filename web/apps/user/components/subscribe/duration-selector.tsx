@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import { Badge } from '@workspace/ui/components/badge';
-import { Label } from '@workspace/ui/components/label';
-import { RadioGroup, RadioGroupItem } from '@workspace/ui/components/radio-group';
-import { useTranslations } from 'next-intl';
-import React, { useCallback } from 'react';
+import { Badge } from "@workspace/ui/components/badge";
+import { Label } from "@workspace/ui/components/label";
+import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/radio-group";
+import { useTranslations } from "next-intl";
+import type React from "react";
+import { useCallback } from "react";
 
 interface DurationSelectorProps {
   quantity: number;
@@ -15,11 +16,11 @@ interface DurationSelectorProps {
 
 const DurationSelector: React.FC<DurationSelectorProps> = ({
   quantity,
-  unitTime = 'Month',
+  unitTime = "Month",
   discounts = [],
   onChange,
 }) => {
-  const t = useTranslations('subscribe');
+  const t = useTranslations("subscribe");
   const handleChange = useCallback(
     (value: string) => {
       onChange(Number(value));
@@ -28,11 +29,11 @@ const DurationSelector: React.FC<DurationSelectorProps> = ({
   );
 
   const DurationOption: React.FC<{ value: string; label: string }> = ({ value, label }) => (
-    <div className='relative'>
-      <RadioGroupItem value={value} id={value} className='peer sr-only' />
+    <div className="relative">
+      <RadioGroupItem value={value} id={value} className="peer sr-only" />
       <Label
         htmlFor={value}
-        className='border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary relative flex h-full flex-col items-center justify-center gap-2 rounded-md border-2 p-2'
+        className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary relative flex h-full flex-col items-center justify-center gap-2 rounded-md border-2 p-2"
       >
         {label}
       </Label>
@@ -44,13 +45,13 @@ const DurationSelector: React.FC<DurationSelectorProps> = ({
 
   return (
     <>
-      <div className='font-semibold'>{t('purchaseDuration')}</div>
+      <div className="font-semibold">{t("purchaseDuration")}</div>
       <RadioGroup
         value={String(quantity)}
         onValueChange={handleChange}
-        className='flex flex-wrap gap-3'
+        className="flex flex-wrap gap-3"
       >
-        {unitTime !== 'Minute' && <DurationOption value='1' label={`1 / ${t(unitTime)}`} />}
+        {unitTime !== "Minute" && <DurationOption value="1" label={`1 / ${t(unitTime)}`} />}
         {discounts?.map((item) => (
           <DurationOption
             key={item.quantity}
@@ -59,14 +60,14 @@ const DurationSelector: React.FC<DurationSelectorProps> = ({
           />
         ))}
       </RadioGroup>
-      <div className='flex items-center justify-between'>
-        <span className='text-muted-foreground text-sm'>{t('discountInfo')}:</span>
+      <div className="flex items-center justify-between">
+        <span className="text-muted-foreground text-sm">{t("discountInfo")}:</span>
         {discountPercentage > 0 ? (
-          <Badge variant='destructive' className='h-6 text-sm'>
-            -{discountPercentage}% {t('discount')}
+          <Badge variant="destructive" className="h-6 text-sm">
+            -{discountPercentage}% {t("discount")}
           </Badge>
         ) : (
-          <span className='text-muted-foreground h-6 text-sm'>--</span>
+          <span className="text-muted-foreground h-6 text-sm">--</span>
         )}
       </div>
     </>

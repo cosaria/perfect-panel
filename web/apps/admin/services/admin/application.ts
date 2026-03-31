@@ -1,16 +1,16 @@
-// @ts-ignore
+// @ts-expect-error
 /* eslint-disable */
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 /** Create subscribe application POST /v1/admin/application/ */
 export async function createSubscribeApplication(
   body: API.CreateSubscribeApplicationRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.SubscribeApplication }>('/v1/admin/application/', {
-    method: 'POST',
+  return request<API.Response & { data?: API.SubscribeApplication }>("/v1/admin/application/", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -21,12 +21,12 @@ export async function createSubscribeApplication(
 export async function previewSubscribeTemplate(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.PreviewSubscribeTemplateParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.PreviewSubscribeTemplateResponse }>(
-    '/v1/admin/application/preview',
+    "/v1/admin/application/preview",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -38,14 +38,14 @@ export async function previewSubscribeTemplate(
 /** Update subscribe application PUT /v1/admin/application/subscribe_application */
 export async function updateSubscribeApplication(
   body: API.UpdateSubscribeApplicationRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.SubscribeApplication }>(
-    '/v1/admin/application/subscribe_application',
+    "/v1/admin/application/subscribe_application",
     {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       data: body,
       ...(options || {}),
@@ -56,12 +56,12 @@ export async function updateSubscribeApplication(
 /** Delete subscribe application DELETE /v1/admin/application/subscribe_application */
 export async function deleteSubscribeApplication(
   body: API.DeleteSubscribeApplicationRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: any }>('/v1/admin/application/subscribe_application', {
-    method: 'DELETE',
+  return request<API.Response & { data?: unknown }>("/v1/admin/application/subscribe_application", {
+    method: "DELETE",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -72,12 +72,12 @@ export async function deleteSubscribeApplication(
 export async function getSubscribeApplicationList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetSubscribeApplicationListParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.GetSubscribeApplicationListResponse }>(
-    '/v1/admin/application/subscribe_application_list',
+    "/v1/admin/application/subscribe_application_list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },

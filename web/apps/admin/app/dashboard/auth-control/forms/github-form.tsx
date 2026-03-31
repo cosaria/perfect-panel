@@ -1,9 +1,8 @@
-'use client';
+"use client";
 
-import { getAuthMethodConfig, updateAuthMethodConfig } from '@/services/admin/authMethod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
-import { Button } from '@workspace/ui/components/button';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@workspace/ui/components/button";
 import {
   Form,
   FormControl,
@@ -12,8 +11,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@workspace/ui/components/form';
-import { ScrollArea } from '@workspace/ui/components/scroll-area';
+} from "@workspace/ui/components/form";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -21,15 +20,16 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@workspace/ui/components/sheet';
-import { Switch } from '@workspace/ui/components/switch';
-import { EnhancedInput } from '@workspace/ui/custom-components/enhanced-input';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
+} from "@workspace/ui/components/sheet";
+import { Switch } from "@workspace/ui/components/switch";
+import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { getAuthMethodConfig, updateAuthMethodConfig } from "@/services/admin/authMethod";
 
 const githubSchema = z.object({
   enabled: z.boolean(),
@@ -40,15 +40,15 @@ const githubSchema = z.object({
 type GithubFormData = z.infer<typeof githubSchema>;
 
 export default function GithubForm() {
-  const t = useTranslations('auth-control');
+  const t = useTranslations("auth-control");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { data, refetch } = useQuery({
-    queryKey: ['getAuthMethodConfig', 'github'],
+    queryKey: ["getAuthMethodConfig", "github"],
     queryFn: async () => {
       const { data } = await getAuthMethodConfig({
-        method: 'github',
+        method: "github",
       });
 
       return data.data;
@@ -60,8 +60,8 @@ export default function GithubForm() {
     resolver: zodResolver(githubSchema),
     defaultValues: {
       enabled: false,
-      client_id: '',
-      client_secret: '',
+      client_id: "",
+      client_secret: "",
     },
   });
 
@@ -69,8 +69,8 @@ export default function GithubForm() {
     if (data) {
       form.reset({
         enabled: data.enabled || false,
-        client_id: data.config?.client_id || '',
-        client_secret: data.config?.client_secret || '',
+        client_id: data.config?.client_id || "",
+        client_secret: data.config?.client_secret || "",
       });
     }
   }, [data, form]);
@@ -87,11 +87,11 @@ export default function GithubForm() {
           client_secret: values.client_secret,
         },
       } as API.UpdateAuthMethodConfigRequest);
-      toast.success(t('common.saveSuccess'));
+      toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);
-    } catch (error) {
-      toast.error(t('common.saveFailed'));
+    } catch (_error) {
+      toast.error(t("common.saveFailed"));
     } finally {
       setLoading(false);
     }
@@ -100,44 +100,44 @@ export default function GithubForm() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <div className='flex cursor-pointer items-center justify-between transition-colors'>
-          <div className='flex items-center gap-3'>
-            <div className='bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg'>
-              <Icon icon='mdi:github' className='text-primary h-5 w-5' />
+        <div className="flex cursor-pointer items-center justify-between transition-colors">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg">
+              <Icon icon="mdi:github" className="text-primary h-5 w-5" />
             </div>
-            <div className='flex-1'>
-              <p className='font-medium'>{t('github.title')}</p>
-              <p className='text-muted-foreground text-sm'>{t('github.description')}</p>
+            <div className="flex-1">
+              <p className="font-medium">{t("github.title")}</p>
+              <p className="text-muted-foreground text-sm">{t("github.description")}</p>
             </div>
           </div>
-          <Icon icon='mdi:chevron-right' className='size-6' />
+          <Icon icon="mdi:chevron-right" className="size-6" />
         </div>
       </SheetTrigger>
-      <SheetContent className='w-[500px] max-w-full md:max-w-screen-md'>
+      <SheetContent className="w-[500px] max-w-full md:max-w-screen-md">
         <SheetHeader>
-          <SheetTitle>{t('github.title')}</SheetTitle>
+          <SheetTitle>{t("github.title")}</SheetTitle>
         </SheetHeader>
-        <ScrollArea className='-mx-6 h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6'>
+        <ScrollArea className="-mx-6 h-[calc(100dvh-48px-36px-36px-env(safe-area-inset-top))] px-6">
           <Form {...form}>
             <form
-              id='github-form'
+              id="github-form"
               onSubmit={form.handleSubmit(onSubmit)}
-              className='space-y-2 pt-4'
+              className="space-y-2 pt-4"
             >
               <FormField
                 control={form.control}
-                name='enabled'
+                name="enabled"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('github.enable')}</FormLabel>
+                    <FormLabel>{t("github.enable")}</FormLabel>
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
-                        className='float-end !mt-0'
+                        className="float-end !mt-0"
                       />
                     </FormControl>
-                    <FormDescription>{t('github.enableDescription')}</FormDescription>
+                    <FormDescription>{t("github.enableDescription")}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -145,18 +145,18 @@ export default function GithubForm() {
 
               <FormField
                 control={form.control}
-                name='client_id'
+                name="client_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('github.clientId')}</FormLabel>
+                    <FormLabel>{t("github.clientId")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
-                        placeholder='e.g., Iv1.1234567890abcdef'
+                        placeholder="e.g., Iv1.1234567890abcdef"
                         value={field.value}
                         onValueChange={field.onChange}
                       />
                     </FormControl>
-                    <FormDescription>{t('github.clientIdDescription')}</FormDescription>
+                    <FormDescription>{t("github.clientIdDescription")}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -164,19 +164,19 @@ export default function GithubForm() {
 
               <FormField
                 control={form.control}
-                name='client_secret'
+                name="client_secret"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('github.clientSecret')}</FormLabel>
+                    <FormLabel>{t("github.clientSecret")}</FormLabel>
                     <FormControl>
                       <EnhancedInput
-                        placeholder='e.g., 1234567890abcdef1234567890abcdef12345678'
+                        placeholder="e.g., 1234567890abcdef1234567890abcdef12345678"
                         value={field.value}
                         onValueChange={field.onChange}
-                        type='password'
+                        type="password"
                       />
                     </FormControl>
-                    <FormDescription>{t('github.clientSecretDescription')}</FormDescription>
+                    <FormDescription>{t("github.clientSecretDescription")}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -184,13 +184,13 @@ export default function GithubForm() {
             </form>
           </Form>
         </ScrollArea>
-        <SheetFooter className='flex-row justify-end gap-2 pt-3'>
-          <Button variant='outline' disabled={loading} onClick={() => setOpen(false)}>
-            {t('common.cancel')}
+        <SheetFooter className="flex-row justify-end gap-2 pt-3">
+          <Button variant="outline" disabled={loading} onClick={() => setOpen(false)}>
+            {t("common.cancel")}
           </Button>
-          <Button disabled={loading} type='submit' form='github-form'>
-            {loading && <Icon icon='mdi:loading' className='mr-2 animate-spin' />}
-            {t('common.save')}
+          <Button disabled={loading} type="submit" form="github-form">
+            {loading && <Icon icon="mdi:loading" className="mr-2 animate-spin" />}
+            {t("common.save")}
           </Button>
         </SheetFooter>
       </SheetContent>

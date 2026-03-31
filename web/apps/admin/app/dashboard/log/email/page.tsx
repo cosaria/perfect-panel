@@ -1,81 +1,81 @@
-'use client';
+"use client";
 
-import { ProTable } from '@/components/pro-table';
-import { filterEmailLog } from '@/services/admin/log';
-import { formatDate } from '@/utils/common';
-import { Badge } from '@workspace/ui/components/badge';
-import { useTranslations } from 'next-intl';
-import { useSearchParams } from 'next/navigation';
+import { Badge } from "@workspace/ui/components/badge";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { ProTable } from "@/components/pro-table";
+import { filterEmailLog } from "@/services/admin/log";
+import { formatDate } from "@/utils/common";
 
 export default function EmailLogPage() {
-  const t = useTranslations('log');
+  const t = useTranslations("log");
   const sp = useSearchParams();
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
 
   const initialFilters = {
-    search: sp.get('search') || undefined,
-    date: sp.get('date') || today,
+    search: sp.get("search") || undefined,
+    date: sp.get("date") || today,
   };
   return (
-    <ProTable<API.MessageLog, { search?: string }>
-      header={{ title: t('title.email') }}
+    <ProTable<API.MessageLog, { search?: string; date?: string }>
+      header={{ title: t("title.email") }}
       initialFilters={initialFilters}
       columns={[
         {
-          accessorKey: 'platform',
-          header: t('column.platform'),
-          cell: ({ row }) => <Badge>{row.getValue('platform')}</Badge>,
+          accessorKey: "platform",
+          header: t("column.platform"),
+          cell: ({ row }) => <Badge>{row.getValue("platform")}</Badge>,
         },
-        { accessorKey: 'to', header: t('column.to') },
-        { accessorKey: 'subject', header: t('column.subject') },
+        { accessorKey: "to", header: t("column.to") },
+        { accessorKey: "subject", header: t("column.subject") },
         {
-          accessorKey: 'content',
-          header: t('column.content'),
+          accessorKey: "content",
+          header: t("column.content"),
           cell: ({ row }) => (
-            <pre className='max-w-[480px] overflow-auto whitespace-pre-wrap break-words text-xs'>
+            <pre className="max-w-[480px] overflow-auto whitespace-pre-wrap break-words text-xs">
               {JSON.stringify(row.original.content || {}, null, 2)}
             </pre>
           ),
         },
         {
-          accessorKey: 'status',
-          header: t('column.status'),
+          accessorKey: "status",
+          header: t("column.status"),
           cell: ({ row }) => {
             const status = row.original.status;
-            const getStatusVariant = (status: any) => {
+            const getStatusVariant = (status: number | undefined) => {
               if (status === 1) {
-                return 'default';
+                return "default";
               } else if (status === 0) {
-                return 'destructive';
+                return "destructive";
               }
-              return 'outline';
+              return "outline";
             };
 
-            const getStatusText = (status: any) => {
-              if (status === 1) return t('sent');
-              if (status === 0) return t('failed');
-              return t('unknown');
+            const getStatusText = (status: number | undefined) => {
+              if (status === 1) return t("sent");
+              if (status === 0) return t("failed");
+              return t("unknown");
             };
 
             return <Badge variant={getStatusVariant(status)}>{getStatusText(status)}</Badge>;
           },
         },
         {
-          accessorKey: 'created_at',
-          header: t('column.time'),
+          accessorKey: "created_at",
+          header: t("column.time"),
           cell: ({ row }) => formatDate(row.original.created_at),
         },
       ]}
-      params={[{ key: 'search' }, { key: 'date', type: 'date' }]}
+      params={[{ key: "search" }, { key: "date", type: "date" }]}
       request={async (pagination, filter) => {
         const { data } = await filterEmailLog({
           page: pagination.page,
           size: pagination.size,
           search: filter?.search,
-          date: (filter as any)?.date,
+          date: filter?.date,
         });
-        const list = ((data?.data?.list || []) as API.MessageLog[]) || [];
+        const list = (data?.data?.list || []) as API.MessageLog[];
         const total = Number(data?.data?.total || list.length);
         return { list, total };
       }}

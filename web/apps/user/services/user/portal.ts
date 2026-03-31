@@ -1,18 +1,18 @@
-// @ts-ignore
+// @ts-expect-error
 /* eslint-disable */
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 /** Purchase Checkout POST /v1/public/portal/order/checkout */
 export async function purchaseCheckout(
   body: API.CheckoutOrderRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.CheckoutOrderResponse }>(
-    '/v1/public/portal/order/checkout',
+    "/v1/public/portal/order/checkout",
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       data: body,
       ...(options || {}),
@@ -24,12 +24,12 @@ export async function purchaseCheckout(
 export async function queryPurchaseOrder(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.QueryPurchaseOrderParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.QueryPurchaseOrderResponse }>(
-    '/v1/public/portal/order/status',
+    "/v1/public/portal/order/status",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -39,11 +39,11 @@ export async function queryPurchaseOrder(
 }
 
 /** Get available payment methods GET /v1/public/portal/payment-method */
-export async function getAvailablePaymentMethods(options?: { [key: string]: any }) {
+export async function getAvailablePaymentMethods(options?: Record<string, unknown>) {
   return request<API.Response & { data?: API.GetAvailablePaymentMethodsResponse }>(
-    '/v1/public/portal/payment-method',
+    "/v1/public/portal/payment-method",
     {
-      method: 'GET',
+      method: "GET",
       ...(options || {}),
     },
   );
@@ -52,12 +52,12 @@ export async function getAvailablePaymentMethods(options?: { [key: string]: any 
 /** Pre Purchase Order POST /v1/public/portal/pre */
 export async function prePurchaseOrder(
   body: API.PrePurchaseOrderRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.PrePurchaseOrderResponse }>('/v1/public/portal/pre', {
-    method: 'POST',
+  return request<API.Response & { data?: API.PrePurchaseOrderResponse }>("/v1/public/portal/pre", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -65,13 +65,13 @@ export async function prePurchaseOrder(
 }
 
 /** Purchase subscription POST /v1/public/portal/purchase */
-export async function purchase(body: API.PortalPurchaseRequest, options?: { [key: string]: any }) {
+export async function purchase(body: API.PortalPurchaseRequest, options?: Record<string, unknown>) {
   return request<API.Response & { data?: API.PortalPurchaseResponse }>(
-    '/v1/public/portal/purchase',
+    "/v1/public/portal/purchase",
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       data: body,
       ...(options || {}),
@@ -83,12 +83,12 @@ export async function purchase(body: API.PortalPurchaseRequest, options?: { [key
 export async function getSubscription(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.GetSubscriptionParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.GetSubscriptionResponse }>(
-    '/v1/public/portal/subscribe',
+    "/v1/public/portal/subscribe",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },

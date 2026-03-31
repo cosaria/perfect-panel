@@ -1,15 +1,15 @@
-// @ts-ignore
+// @ts-expect-error
 /* eslint-disable */
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 /** Check user is exist GET /v1/auth/check */
 export async function checkUser(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.CheckUserParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.CheckUserResponse }>('/v1/auth/check', {
-    method: 'GET',
+  return request<API.Response & { data?: API.CheckUserResponse }>("/v1/auth/check", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -21,12 +21,12 @@ export async function checkUser(
 export async function checkUserTelephone(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.CheckUserTelephoneParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.TelephoneCheckUserResponse }>(
-    '/v1/auth/check/telephone',
+    "/v1/auth/check/telephone",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
@@ -36,11 +36,11 @@ export async function checkUserTelephone(
 }
 
 /** User login POST /v1/auth/login */
-export async function userLogin(body: API.UserLoginRequest, options?: { [key: string]: any }) {
-  return request<API.Response & { data?: API.LoginResponse }>('/v1/auth/login', {
-    method: 'POST',
+export async function userLogin(body: API.UserLoginRequest, options?: Record<string, unknown>) {
+  return request<API.Response & { data?: API.LoginResponse }>("/v1/auth/login", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -48,11 +48,11 @@ export async function userLogin(body: API.UserLoginRequest, options?: { [key: st
 }
 
 /** Device Login POST /v1/auth/login/device */
-export async function deviceLogin(body: API.DeviceLoginRequest, options?: { [key: string]: any }) {
-  return request<API.Response & { data?: API.LoginResponse }>('/v1/auth/login/device', {
-    method: 'POST',
+export async function deviceLogin(body: API.DeviceLoginRequest, options?: Record<string, unknown>) {
+  return request<API.Response & { data?: API.LoginResponse }>("/v1/auth/login/device", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -62,12 +62,12 @@ export async function deviceLogin(body: API.DeviceLoginRequest, options?: { [key
 /** User Telephone login POST /v1/auth/login/telephone */
 export async function telephoneLogin(
   body: API.TelephoneLoginRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.LoginResponse }>('/v1/auth/login/telephone', {
-    method: 'POST',
+  return request<API.Response & { data?: API.LoginResponse }>("/v1/auth/login/telephone", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -77,12 +77,12 @@ export async function telephoneLogin(
 /** User register POST /v1/auth/register */
 export async function userRegister(
   body: API.UserRegisterRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.LoginResponse }>('/v1/auth/register', {
-    method: 'POST',
+  return request<API.Response & { data?: API.LoginResponse }>("/v1/auth/register", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -92,12 +92,12 @@ export async function userRegister(
 /** User Telephone register POST /v1/auth/register/telephone */
 export async function telephoneUserRegister(
   body: API.TelephoneRegisterRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.LoginResponse }>('/v1/auth/register/telephone', {
-    method: 'POST',
+  return request<API.Response & { data?: API.LoginResponse }>("/v1/auth/register/telephone", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -107,12 +107,12 @@ export async function telephoneUserRegister(
 /** Reset password POST /v1/auth/reset */
 export async function resetPassword(
   body: API.ResetPasswordRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.LoginResponse }>('/v1/auth/reset', {
-    method: 'POST',
+  return request<API.Response & { data?: API.LoginResponse }>("/v1/auth/reset", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -122,12 +122,12 @@ export async function resetPassword(
 /** Reset password POST /v1/auth/reset/telephone */
 export async function telephoneResetPassword(
   body: API.TelephoneResetPasswordRequest,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
-  return request<API.Response & { data?: API.LoginResponse }>('/v1/auth/reset/telephone', {
-    method: 'POST',
+  return request<API.Response & { data?: API.LoginResponse }>("/v1/auth/reset/telephone", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),

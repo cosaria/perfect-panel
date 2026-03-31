@@ -1,66 +1,66 @@
 export const navs = [
   {
-    title: 'dashboard',
-    url: '/dashboard',
-    icon: 'uil:dashboard',
+    title: "dashboard",
+    url: "/dashboard",
+    icon: "uil:dashboard",
   },
   {
-    title: 'personal',
+    title: "personal",
     items: [
       {
-        title: 'profile',
-        url: '/profile',
-        icon: 'uil:user',
+        title: "profile",
+        url: "/profile",
+        icon: "uil:user",
       },
     ],
   },
   {
-    title: 'server',
+    title: "server",
     items: [
       {
-        url: '/subscribe',
-        icon: 'uil:shop',
-        title: 'subscribe',
+        url: "/subscribe",
+        icon: "uil:shop",
+        title: "subscribe",
       },
     ],
   },
   {
-    title: 'finance',
+    title: "finance",
     items: [
       {
-        url: '/order',
-        icon: 'uil:notes',
-        title: 'order',
+        url: "/order",
+        icon: "uil:notes",
+        title: "order",
       },
       {
-        url: '/wallet',
-        icon: 'uil:wallet',
-        title: 'wallet',
+        url: "/wallet",
+        icon: "uil:wallet",
+        title: "wallet",
       },
       {
-        url: '/affiliate',
-        icon: 'uil:users-alt',
-        title: 'affiliate',
+        url: "/affiliate",
+        icon: "uil:users-alt",
+        title: "affiliate",
       },
     ],
   },
   {
-    title: 'help',
+    title: "help",
     items: [
       {
-        url: '/document',
-        icon: 'uil:book-alt',
-        title: 'document',
+        url: "/document",
+        icon: "uil:book-alt",
+        title: "document",
       },
       {
-        url: '/announcement',
-        icon: 'uil:megaphone',
-        title: 'announcement',
+        url: "/announcement",
+        icon: "uil:megaphone",
+        title: "announcement",
       },
       {
-        url: '/ticket',
-        icon: 'uil:message',
-        title: 'ticket',
+        url: "/ticket",
+        icon: "uil:message",
+        title: "ticket",
       },
     ],
   },
@@ -83,23 +83,23 @@ export function findNavByUrl(url: string) {
 
 export const navItems = [
   {
-    url: '/profile',
-    icon: 'uil:user',
-    title: 'profile',
+    url: "/profile",
+    icon: "uil:user",
+    title: "profile",
   },
   {
-    url: '/subscribe',
-    icon: 'uil:shop',
-    title: 'subscribe',
+    url: "/subscribe",
+    icon: "uil:shop",
+    title: "subscribe",
   },
   {
-    url: '/order',
-    icon: 'uil:notes',
-    title: 'order',
+    url: "/order",
+    icon: "uil:notes",
+    title: "order",
   },
   {
-    url: '/wallet',
-    icon: 'uil:wallet',
-    title: 'wallet',
+    url: "/wallet",
+    icon: "uil:wallet",
+    title: "wallet",
   },
 ];

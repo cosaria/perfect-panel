@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Button } from '@workspace/ui/components/button';
+import { Button } from "@workspace/ui/components/button";
 import {
   Command,
   CommandEmpty,
@@ -8,11 +8,11 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@workspace/ui/components/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover';
-import { cn } from '@workspace/ui/lib/utils';
-import { BoxIcon, CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
-import * as React from 'react';
+} from "@workspace/ui/components/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover";
+import { cn } from "@workspace/ui/lib/utils";
+import { BoxIcon, CheckIcon, ChevronsUpDownIcon } from "lucide-react";
+import * as React from "react";
 
 export type Option<T = string> = {
   value: T;
@@ -35,7 +35,7 @@ type ComboboxProps<T = string, M extends boolean = false> = {
 export function Combobox<T, M extends boolean = false>({
   multiple = false as M,
   options = [],
-  placeholder = 'Select...',
+  placeholder = "Select...",
   value,
   onChange,
   className,
@@ -53,7 +53,7 @@ export function Combobox<T, M extends boolean = false>({
         onChange([...newValue, selectedValue] as OnChangeType<T, M>);
       }
     } else {
-      const newValue = selectedValue === value ? ('' as T) : selectedValue;
+      const newValue = selectedValue === value ? ("" as T) : selectedValue;
       onChange(newValue as OnChangeType<T, M>);
       setOpen(false);
     }
@@ -64,7 +64,7 @@ export function Combobox<T, M extends boolean = false>({
       const selectedLabels = options
         .filter((option) => value.includes(option.value))
         .map((option) => option.label)
-        .join(', ');
+        .join(", ");
 
       return selectedLabels;
     } else if (!multiple) {
@@ -80,20 +80,20 @@ export function Combobox<T, M extends boolean = false>({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant='outline'
-          role='combobox'
+          variant="outline"
+          role="combobox"
           aria-expanded={open}
-          className={cn('w-full items-center justify-between', className)}
+          className={cn("w-full items-center justify-between", className)}
         >
-          <span className='truncate'>{renderButtonLabel()}</span>
-          <ChevronsUpDownIcon className='ml-2 size-4 shrink-0 opacity-50' />
+          <span className="truncate">{renderButtonLabel()}</span>
+          <ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-fit p-0' align='start'>
+      <PopoverContent className="w-fit p-0" align="start">
         <Command>
-          <CommandInput placeholder='Search...' className='h-9' />
+          <CommandInput placeholder="Search..." className="h-9" />
           <CommandEmpty>
-            <BoxIcon className='inline-block text-slate-500' />
+            <BoxIcon className="inline-block text-slate-500" />
           </CommandEmpty>
           <CommandGroup>
             <CommandList>
@@ -106,14 +106,14 @@ export function Combobox<T, M extends boolean = false>({
                   {option.children || option.label}
                   <CheckIcon
                     className={cn(
-                      'ml-auto h-4 w-4',
+                      "ml-auto h-4 w-4",
                       multiple
                         ? Array.isArray(value) && value.includes(option.value)
-                          ? 'opacity-100'
-                          : 'opacity-0'
+                          ? "opacity-100"
+                          : "opacity-0"
                         : value === option.value
-                          ? 'opacity-100'
-                          : 'opacity-0',
+                          ? "opacity-100"
+                          : "opacity-0",
                     )}
                   />
                 </CommandItem>

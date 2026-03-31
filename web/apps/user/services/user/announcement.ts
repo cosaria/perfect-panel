@@ -1,17 +1,17 @@
-// @ts-ignore
+// @ts-expect-error
 /* eslint-disable */
-import request from '@/utils/request';
+import request from "@/utils/request";
 
 /** Query announcement GET /v1/public/announcement/list */
 export async function queryAnnouncement(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.QueryAnnouncementParams,
-  options?: { [key: string]: any },
+  options?: Record<string, unknown>,
 ) {
   return request<API.Response & { data?: API.QueryAnnouncementResponse }>(
-    '/v1/public/announcement/list',
+    "/v1/public/announcement/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },

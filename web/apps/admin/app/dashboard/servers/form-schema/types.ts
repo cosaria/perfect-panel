@@ -1,26 +1,36 @@
-import { protocols } from './constants';
+import type { z } from "zod";
+import type { protocols } from "./constants";
+import type { formSchema, protocolApiScheme } from "./schemas";
+
+export type ProtocolConfig = z.infer<typeof protocolApiScheme>;
+export type ServerFormValues = z.infer<typeof formSchema>;
+
+type TranslationFn = (key: string) => string;
+type ProtocolContext = Partial<ProtocolConfig>;
+type GeneratedFieldValue = string | Record<string, string>;
+type FieldDefaultValue = string | number | boolean | null;
 
 export type FieldConfig = {
   name: string;
-  type: 'input' | 'select' | 'switch' | 'number' | 'textarea';
+  type: "input" | "select" | "switch" | "number" | "textarea";
   label: string;
-  placeholder?: string | ((t: (key: string) => string, protocol: any) => string);
+  placeholder?: string | ((t: TranslationFn, protocol: ProtocolContext) => string);
   options?: readonly string[];
-  defaultValue?: any;
+  defaultValue?: FieldDefaultValue;
   min?: number;
   max?: number;
   step?: number;
   suffix?: string;
   generate?: {
-    function?: () => Promise<string | Record<string, string>> | string | Record<string, string>;
+    function?: () => Promise<GeneratedFieldValue> | GeneratedFieldValue;
     functions?: {
-      label: string | ((t: (key: string) => string, protocol: any) => string);
-      function: () => Promise<string | Record<string, string>> | string | Record<string, string>;
+      label: string | ((t: TranslationFn, protocol: ProtocolContext) => string);
+      function: () => Promise<GeneratedFieldValue> | GeneratedFieldValue;
     }[];
     updateFields?: Record<string, string>;
   };
-  condition?: (protocol: any, values: any) => boolean;
-  group?: 'basic' | 'transport' | 'security' | 'reality' | 'obfs' | 'encryption';
+  condition?: (protocol: ProtocolContext, values: Partial<ServerFormValues>) => boolean;
+  group?: "basic" | "transport" | "security" | "reality" | "obfs" | "encryption";
   gridSpan?: 1 | 2;
 };
 

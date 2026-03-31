@@ -1,8 +1,8 @@
-export * from '@workspace/ui/utils/countries';
-export * from '@workspace/ui/utils/formatting';
-export * from '@workspace/ui/utils/unit-conversions';
+export * from "@workspace/ui/utils/countries";
+export * from "@workspace/ui/utils/formatting";
+export * from "@workspace/ui/utils/unit-conversions";
 
-export const isBrowser = () => typeof window !== 'undefined';
+export const isBrowser = () => typeof window !== "undefined";
 
 /**
  * Extracts the full domain or root domain from a URL.
@@ -17,13 +17,13 @@ export function extractDomain(url: string, extractRoot = true): string | null {
     if (/^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)) {
       return hostname;
     }
-    const domainParts = hostname.split('.').filter(Boolean);
+    const domainParts = hostname.split(".").filter(Boolean);
     if (extractRoot && domainParts.length > 2) {
-      return domainParts.slice(-2).join('.');
+      return domainParts.slice(-2).join(".");
     }
     return hostname;
   } catch (error) {
-    console.error('Invalid URL:', error);
+    console.error("Invalid URL:", error);
     return null;
   }
 }

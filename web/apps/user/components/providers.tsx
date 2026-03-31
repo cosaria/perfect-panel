@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import useGlobalStore, { GlobalStore } from '@/config/use-global';
-import { Logout } from '@/utils/common';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental';
-import { ThemeProvider as NextThemesProvider } from 'next-themes';
-import React, { useEffect, useState } from 'react';
-import Loading from './loading';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import type React from "react";
+import { useEffect, useState } from "react";
+import useGlobalStore, { type GlobalStore } from "@/config/use-global";
+import { Logout } from "@/utils/common";
+import Loading from "./loading";
 
 export default function Providers({
   children,
@@ -14,8 +15,8 @@ export default function Providers({
   user,
 }: {
   children: React.ReactNode;
-  common: Partial<GlobalStore['common']>;
-  user: GlobalStore['user'];
+  common: Partial<GlobalStore["common"]>;
+  user: GlobalStore["user"];
 }) {
   const [loading, setLoading] = useState(true);
   const [queryClient] = useState(
@@ -53,14 +54,14 @@ export default function Providers({
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    const invite = searchParams.get('invite');
+    const invite = searchParams.get("invite");
     if (invite) {
-      localStorage.setItem('invite', invite);
+      localStorage.setItem("invite", invite);
     }
   }, []);
 
   return (
-    <NextThemesProvider attribute='class' defaultTheme='system' enableSystem>
+    <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryClientProvider client={queryClient}>
         <ReactQueryStreamedHydration>
           <Loading loading={loading || queryClient.isMutating() > 0} />

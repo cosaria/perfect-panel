@@ -1,6 +1,6 @@
-import { getSubscription } from '@/services/user/portal';
-import { getLocale } from 'next-intl/server';
-import Content from './content';
+import { getLocale } from "next-intl/server";
+import { getSubscription } from "@/services/user/portal";
+import Content from "./content";
 
 export default async function Page({
   searchParams,
@@ -23,7 +23,7 @@ export default async function Page({
   const subscription = subscriptionList.find((item) => item.id === Number(id));
 
   return (
-    <main className='container space-y-16'>
+    <main className="container space-y-16">
       <Content subscription={subscription} />
     </main>
   );

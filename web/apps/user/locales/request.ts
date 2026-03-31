@@ -1,11 +1,11 @@
-import { locales, NEXT_PUBLIC_DEFAULT_LANGUAGE } from '@/config/constants';
-import { getRequestConfig } from 'next-intl/server';
-import { cookies, headers } from 'next/headers';
+import { cookies, headers } from "next/headers";
+import { getRequestConfig } from "next-intl/server";
+import { locales, NEXT_PUBLIC_DEFAULT_LANGUAGE } from "@/config/constants";
 
 export default getRequestConfig(async () => {
-  const browserLocale = (await headers()).get('Accept-Language')?.split(',')?.[0] || '';
-  const defaultLocale = locales.includes(browserLocale) ? browserLocale : '';
-  const cookieLocale = (await cookies()).get('locale')?.value || '';
+  const browserLocale = (await headers()).get("Accept-Language")?.split(",")?.[0] || "";
+  const defaultLocale = locales.includes(browserLocale) ? browserLocale : "";
+  const cookieLocale = (await cookies()).get("locale")?.value || "";
 
   const locale = cookieLocale || defaultLocale || NEXT_PUBLIC_DEFAULT_LANGUAGE;
 

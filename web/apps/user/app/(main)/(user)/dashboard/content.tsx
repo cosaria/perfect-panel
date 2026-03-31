@@ -1,20 +1,12 @@
-'use client';
+"use client";
 
-import { Display } from '@/components/display';
-import Renewal from '@/components/subscribe/renewal';
-import ResetTraffic from '@/components/subscribe/reset-traffic';
-import Unsubscribe from '@/components/subscribe/unsubscribe';
-import useGlobalStore from '@/config/use-global';
-import { getClient, getStat } from '@/services/common/common';
-import { queryUserSubscribe, resetUserSubscribeToken } from '@/services/user/user';
-import { getPlatform } from '@/utils/common';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@workspace/ui/components/accordion';
+} from "@workspace/ui/components/accordion";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,51 +17,59 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@workspace/ui/components/alert-dialog';
-import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
-import { Separator } from '@workspace/ui/components/separator';
-import { Tabs, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { cn } from '@workspace/ui/lib/utils';
-import { differenceInDays, formatDate, isBrowser } from '@workspace/ui/utils';
-import { useTranslations } from 'next-intl';
-import Image from 'next/image';
-import Link from 'next/link';
-import { QRCodeCanvas } from 'qrcode.react';
-import React, { useState } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
-import { toast } from 'sonner';
-import Subscribe from '../subscribe/page';
+} from "@workspace/ui/components/alert-dialog";
+import { Button } from "@workspace/ui/components/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
+import { Separator } from "@workspace/ui/components/separator";
+import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import { cn } from "@workspace/ui/lib/utils";
+import { differenceInDays, formatDate, isBrowser } from "@workspace/ui/utils";
+import Image from "next/image";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { QRCodeCanvas } from "qrcode.react";
+import React, { useState } from "react";
+import CopyToClipboard from "react-copy-to-clipboard";
+import { toast } from "sonner";
+import { Display } from "@/components/display";
+import Renewal from "@/components/subscribe/renewal";
+import ResetTraffic from "@/components/subscribe/reset-traffic";
+import Unsubscribe from "@/components/subscribe/unsubscribe";
+import useGlobalStore from "@/config/use-global";
+import { getClient, getStat } from "@/services/common/common";
+import { queryUserSubscribe, resetUserSubscribeToken } from "@/services/user/user";
+import { getPlatform } from "@/utils/common";
+import Subscribe from "../subscribe/page";
 
 const platforms: (keyof API.DownloadLink)[] = [
-  'windows',
-  'mac',
-  'linux',
-  'ios',
-  'android',
-  'harmony',
+  "windows",
+  "mac",
+  "linux",
+  "ios",
+  "android",
+  "harmony",
 ];
 
 export default function Content() {
-  const t = useTranslations('dashboard');
+  const t = useTranslations("dashboard");
   const { getUserSubscribe, getAppSubLink } = useGlobalStore();
 
-  const [protocol, setProtocol] = useState('');
+  const [protocol, setProtocol] = useState("");
 
   const {
     data: userSubscribe = [],
     refetch,
     isLoading,
   } = useQuery({
-    queryKey: ['queryUserSubscribe'],
+    queryKey: ["queryUserSubscribe"],
     queryFn: async () => {
       const { data } = await queryUserSubscribe();
       return data.data?.list || [];
     },
   });
   const { data: applications } = useQuery({
-    queryKey: ['getClient'],
+    queryKey: ["getClient"],
     queryFn: async () => {
       const { data } = await getClient();
       return data.data?.list || [];
@@ -96,7 +96,7 @@ export default function Content() {
 
   const [platform, setPlatform] = useState<keyof API.DownloadLink>(() => {
     const detectedPlatform =
-      getPlatform() === 'macos' ? 'mac' : (getPlatform() as keyof API.DownloadLink);
+      getPlatform() === "macos" ? "mac" : (getPlatform() as keyof API.DownloadLink);
     return detectedPlatform;
   });
 
@@ -110,7 +110,7 @@ export default function Content() {
   }, [availablePlatforms, platform]);
 
   const { data } = useQuery({
-    queryKey: ['getStat'],
+    queryKey: ["getStat"],
     queryFn: async () => {
       const { data } = await getStat({
         skipErrorHandler: true,
@@ -121,58 +121,58 @@ export default function Content() {
   });
 
   const statusWatermarks = {
-    2: t('finished'),
-    3: t('expired'),
-    4: t('deducted'),
+    2: t("finished"),
+    3: t("expired"),
+    4: t("deducted"),
   };
 
   return (
     <>
       {userSubscribe.length ? (
         <>
-          <div className='flex items-center justify-between'>
-            <h2 className='flex items-center gap-1.5 font-semibold'>
-              <Icon icon='uil:servers' className='size-5' />
-              {t('mySubscriptions')}
+          <div className="flex items-center justify-between">
+            <h2 className="flex items-center gap-1.5 font-semibold">
+              <Icon icon="uil:servers" className="size-5" />
+              {t("mySubscriptions")}
             </h2>
-            <div className='flex gap-2'>
+            <div className="flex gap-2">
               <Button
-                size='sm'
-                variant='outline'
+                size="sm"
+                variant="outline"
                 onClick={() => {
                   refetch();
                 }}
-                className={isLoading ? 'animate-pulse' : ''}
+                className={isLoading ? "animate-pulse" : ""}
               >
-                <Icon icon='uil:sync' />
+                <Icon icon="uil:sync" />
               </Button>
-              <Button size='sm' asChild>
-                <Link href='/subscribe'>{t('purchaseSubscription')}</Link>
+              <Button size="sm" asChild>
+                <Link href="/subscribe">{t("purchaseSubscription")}</Link>
               </Button>
             </div>
           </div>
-          <div className='flex flex-wrap justify-between gap-4'>
+          <div className="flex flex-wrap justify-between gap-4">
             {availablePlatforms.length > 0 && (
               <Tabs
                 value={platform}
                 onValueChange={(value) => setPlatform(value as keyof API.DownloadLink)}
-                className='w-full max-w-full md:w-auto'
+                className="w-full max-w-full md:w-auto"
               >
-                <TabsList className='flex *:flex-auto'>
+                <TabsList className="flex *:flex-auto">
                   {availablePlatforms.map((item) => (
-                    <TabsTrigger value={item} key={item} className='px-1 lg:px-3'>
+                    <TabsTrigger value={item} key={item} className="px-1 lg:px-3">
                       <Icon
                         icon={`${
                           {
-                            windows: 'mdi:microsoft-windows',
-                            mac: 'uil:apple',
-                            linux: 'uil:linux',
-                            ios: 'simple-icons:ios',
-                            android: 'uil:android',
-                            harmony: 'simple-icons:harmonyos',
+                            windows: "mdi:microsoft-windows",
+                            mac: "uil:apple",
+                            linux: "uil:linux",
+                            ios: "simple-icons:ios",
+                            android: "uil:android",
+                            harmony: "simple-icons:harmonyos",
                           }[item]
                         }`}
-                        className='size-5'
+                        className="size-5"
                       />
                     </TabsTrigger>
                   ))}
@@ -183,14 +183,14 @@ export default function Content() {
               <Tabs
                 value={protocol}
                 onValueChange={setProtocol}
-                className='w-full max-w-full md:w-auto'
+                className="w-full max-w-full md:w-auto"
               >
-                <TabsList className='flex *:flex-auto'>
-                  {['all', ...(data?.protocol || [])].map((item) => (
+                <TabsList className="flex *:flex-auto">
+                  {["all", ...(data?.protocol || [])].map((item) => (
                     <TabsTrigger
-                      value={item === 'all' ? '' : item}
+                      value={item === "all" ? "" : item}
                       key={item}
-                      className='px-1 uppercase lg:px-3'
+                      className="px-1 uppercase lg:px-3"
                     >
                       {item}
                     </TabsTrigger>
@@ -203,25 +203,25 @@ export default function Content() {
             return (
               <Card
                 key={item.id}
-                className={cn('relative', {
-                  'relative opacity-80 grayscale': item.status === 3,
-                  'relative hidden opacity-60 blur-[0.3px] grayscale': item.status === 4,
+                className={cn("relative", {
+                  "relative opacity-80 grayscale": item.status === 3,
+                  "relative hidden opacity-60 blur-[0.3px] grayscale": item.status === 4,
                 })}
               >
                 {item.status >= 2 && (
                   <div
                     className={cn(
-                      'pointer-events-none absolute left-0 top-0 z-10 h-full w-full overflow-hidden mix-blend-difference',
+                      "pointer-events-none absolute left-0 top-0 z-10 h-full w-full overflow-hidden mix-blend-difference",
                       {
-                        'text-destructive': item.status === 2,
-                        'text-white': item.status === 3 || item.status === 4,
+                        "text-destructive": item.status === 2,
+                        "text-white": item.status === 3 || item.status === 4,
                       },
                     )}
                     style={{
-                      filter: 'contrast(200%) brightness(150%) invert(0.2)',
+                      filter: "contrast(200%) brightness(150%) invert(0.2)",
                     }}
                   >
-                    <div className='absolute inset-0'>
+                    <div className="absolute inset-0">
                       {Array.from({ length: 16 }).map((_, i) => {
                         const row = Math.floor(i / 4);
                         const col = i % 4;
@@ -230,12 +230,12 @@ export default function Content() {
 
                         return (
                           <span
-                            key={i}
-                            className='absolute rotate-[-30deg] whitespace-nowrap text-lg font-black opacity-40'
+                            key={`${item.id}-${row}-${col}`}
+                            className="absolute rotate-[-30deg] whitespace-nowrap text-lg font-black opacity-40"
                             style={{
                               top: `${top}%`,
                               left: `${left}%`,
-                              textShadow: '0px 0px 1px rgba(255,255,255,0.5)',
+                              textShadow: "0px 0px 1px rgba(255,255,255,0.5)",
                             }}
                           >
                             {statusWatermarks[item.status as keyof typeof statusWatermarks]}
@@ -245,38 +245,38 @@ export default function Content() {
                     </div>
                   </div>
                 )}
-                <CardHeader className='flex flex-row flex-wrap items-center justify-between gap-2 space-y-0'>
-                  <CardTitle className='font-medium'>
+                <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0">
+                  <CardTitle className="font-medium">
                     {item.subscribe.name}
-                    <p className='text-foreground/50 mt-1 text-sm'>{formatDate(item.start_time)}</p>
+                    <p className="text-foreground/50 mt-1 text-sm">{formatDate(item.start_time)}</p>
                   </CardTitle>
                   {item.status !== 4 && (
-                    <div className='flex flex-wrap gap-2'>
+                    <div className="flex flex-wrap gap-2">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button size='sm' variant='destructive'>
-                            {t('resetSubscription')}
+                          <Button size="sm" variant="destructive">
+                            {t("resetSubscription")}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>{t('prompt')}</AlertDialogTitle>
+                            <AlertDialogTitle>{t("prompt")}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              {t('confirmResetSubscription')}
+                              {t("confirmResetSubscription")}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={async () => {
                                 await resetUserSubscribeToken({
                                   user_subscribe_id: item.id,
                                 });
                                 await refetch();
-                                toast.success(t('resetSuccess'));
+                                toast.success(t("resetSuccess"));
                               }}
                             >
-                              {t('confirm')}
+                              {t("confirm")}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -289,71 +289,72 @@ export default function Content() {
                   )}
                 </CardHeader>
                 <CardContent>
-                  <ul className='grid grid-cols-2 gap-3 *:flex *:flex-col *:justify-between lg:grid-cols-4'>
+                  <ul className="grid grid-cols-2 gap-3 *:flex *:flex-col *:justify-between lg:grid-cols-4">
                     <li>
-                      <span className='text-muted-foreground'>{t('used')}</span>
-                      <span className='text-2xl font-bold'>
+                      <span className="text-muted-foreground">{t("used")}</span>
+                      <span className="text-2xl font-bold">
                         <Display
-                          type='traffic'
+                          type="traffic"
                           value={item.upload + item.download}
                           unlimited={!item.traffic}
                         />
                       </span>
                     </li>
                     <li>
-                      <span className='text-muted-foreground'>{t('totalTraffic')}</span>
-                      <span className='text-2xl font-bold'>
-                        <Display type='traffic' value={item.traffic} unlimited={!item.traffic} />
+                      <span className="text-muted-foreground">{t("totalTraffic")}</span>
+                      <span className="text-2xl font-bold">
+                        <Display type="traffic" value={item.traffic} unlimited={!item.traffic} />
                       </span>
                     </li>
                     <li>
-                      <span className='text-muted-foreground'>{t('nextResetDays')}</span>
-                      <span className='text-2xl font-semibold'>
+                      <span className="text-muted-foreground">{t("nextResetDays")}</span>
+                      <span className="text-2xl font-semibold">
                         {item.reset_time
                           ? differenceInDays(new Date(item.reset_time), new Date())
-                          : t('noReset')}
+                          : t("noReset")}
                       </span>
                     </li>
                     <li>
-                      <span className='text-muted-foreground'>{t('expirationDays')}</span>
-                      <span className='text-2xl font-semibold'>
+                      <span className="text-muted-foreground">{t("expirationDays")}</span>
+                      <span className="text-2xl font-semibold">
                         {}
                         {item.expire_time
-                          ? differenceInDays(new Date(item.expire_time), new Date()) || t('unknown')
-                          : t('noLimit')}
+                          ? differenceInDays(new Date(item.expire_time), new Date()) || t("unknown")
+                          : t("noLimit")}
                       </span>
                     </li>
                   </ul>
-                  <Separator className='mt-4' />
-                  <Accordion type='single' collapsible defaultValue='0' className='w-full'>
+                  <Separator className="mt-4" />
+                  <Accordion type="single" collapsible defaultValue="0" className="w-full">
                     {getUserSubscribe(item.token, protocol)?.map((url, index) => (
                       <AccordionItem key={url} value={String(index)}>
-                        <AccordionTrigger className='hover:no-underline'>
-                          <div className='flex w-full flex-row items-center justify-between'>
-                            <CardTitle className='text-sm font-medium'>
-                              {t('subscriptionUrl')} {index + 1}
+                        <AccordionTrigger className="hover:no-underline">
+                          <div className="flex w-full flex-row items-center justify-between">
+                            <CardTitle className="text-sm font-medium">
+                              {t("subscriptionUrl")} {index + 1}
                             </CardTitle>
 
                             <CopyToClipboard
                               text={url}
-                              onCopy={(text, result) => {
+                              onCopy={(_text, result) => {
                                 if (result) {
-                                  toast.success(t('copySuccess'));
+                                  toast.success(t("copySuccess"));
                                 }
                               }}
                             >
-                              <span
-                                className='text-primary hover:bg-accent mr-4 flex cursor-pointer rounded p-2 text-sm'
+                              <button
+                                type="button"
+                                className="text-primary hover:bg-accent mr-4 flex rounded p-2 text-sm"
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                <Icon icon='uil:copy' className='mr-2 size-5' />
-                                {t('copy')}
-                              </span>
+                                <Icon icon="uil:copy" className="mr-2 size-5" />
+                                {t("copy")}
+                              </button>
                             </CopyToClipboard>
                           </div>
                         </AccordionTrigger>
                         <AccordionContent>
-                          <div className='grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'>
+                          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                             {applications
                               ?.filter((application) => {
                                 return !!(
@@ -363,15 +364,15 @@ export default function Content() {
                               .map((application) => {
                                 const downloadUrl = application.download_link?.[platform];
 
-                                const handleCopy = (text: string, result: boolean) => {
+                                const handleCopy = (_text: string, result: boolean) => {
                                   if (result) {
                                     const href = getAppSubLink(url, application.scheme);
                                     const showSuccessMessage = () => {
                                       toast.success(
                                         <>
-                                          <p>{t('copySuccess')}</p>
+                                          <p>{t("copySuccess")}</p>
                                           <br />
-                                          <p>{t('manualImportMessage')}</p>
+                                          <p>{t("manualImportMessage")}</p>
                                         </>,
                                       );
                                     };
@@ -394,7 +395,7 @@ export default function Content() {
                                 return (
                                   <div
                                     key={application.name}
-                                    className='text-muted-foreground flex size-full flex-col items-center justify-between gap-2 text-xs'
+                                    className="text-muted-foreground flex size-full flex-col items-center justify-between gap-2 text-xs"
                                   >
                                     <span>{application.name}</span>
 
@@ -404,20 +405,20 @@ export default function Content() {
                                         alt={application.name}
                                         width={64}
                                         height={64}
-                                        className='p-1'
+                                        className="p-1"
                                       />
                                     )}
-                                    <div className='flex'>
+                                    <div className="flex">
                                       {downloadUrl && (
                                         <Button
-                                          size='sm'
-                                          variant='secondary'
+                                          size="sm"
+                                          variant="secondary"
                                           className={
-                                            application.scheme ? 'rounded-r-none px-1.5' : 'px-1.5'
+                                            application.scheme ? "rounded-r-none px-1.5" : "px-1.5"
                                           }
                                           asChild
                                         >
-                                          <Link href={downloadUrl}>{t('download')}</Link>
+                                          <Link href={downloadUrl}>{t("download")}</Link>
                                         </Button>
                                       )}
 
@@ -427,10 +428,10 @@ export default function Content() {
                                           onCopy={handleCopy}
                                         >
                                           <Button
-                                            size='sm'
-                                            className={downloadUrl ? 'rounded-l-none p-2' : 'p-2'}
+                                            size="sm"
+                                            className={downloadUrl ? "rounded-l-none p-2" : "p-2"}
                                           >
-                                            {t('import')}
+                                            {t("import")}
                                           </Button>
                                         </CopyToClipboard>
                                       )}
@@ -438,15 +439,15 @@ export default function Content() {
                                   </div>
                                 );
                               })}
-                            <div className='text-muted-foreground hidden size-full flex-col items-center justify-between gap-2 text-sm lg:flex'>
-                              <span>{t('qrCode')}</span>
+                            <div className="text-muted-foreground hidden size-full flex-col items-center justify-between gap-2 text-sm lg:flex">
+                              <span>{t("qrCode")}</span>
                               <QRCodeCanvas
                                 value={url}
                                 size={80}
-                                bgColor='transparent'
-                                fgColor='rgb(59, 130, 246)'
+                                bgColor="transparent"
+                                fgColor="rgb(59, 130, 246)"
                               />
-                              <span className='text-center'>{t('scanToSubscribe')}</span>
+                              <span className="text-center">{t("scanToSubscribe")}</span>
                             </div>
                           </div>
                         </AccordionContent>
@@ -460,9 +461,9 @@ export default function Content() {
         </>
       ) : (
         <>
-          <h2 className='flex items-center gap-1.5 font-semibold'>
-            <Icon icon='uil:shop' className='size-5' />
-            {t('purchaseSubscription')}
+          <h2 className="flex items-center gap-1.5 font-semibold">
+            <Icon icon="uil:shop" className="size-5" />
+            {t("purchaseSubscription")}
           </h2>
           <Subscribe />
         </>

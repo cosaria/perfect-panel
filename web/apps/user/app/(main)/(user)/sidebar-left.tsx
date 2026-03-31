@@ -1,5 +1,4 @@
-'use client';
-import { navs } from '@/config/navs';
+"use client";
 import {
   Sidebar,
   SidebarContent,
@@ -9,17 +8,18 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@workspace/ui/components/sidebar';
-import { Icon } from '@workspace/ui/custom-components/icon';
-import { useTranslations } from 'next-intl';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+} from "@workspace/ui/components/sidebar";
+import { Icon } from "@workspace/ui/custom-components/icon";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { navs } from "@/config/navs";
 
 export function SidebarLeft({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const t = useTranslations('menu');
+  const t = useTranslations("menu");
   const pathname = usePathname();
   return (
-    <Sidebar collapsible='none' side='left' {...props}>
+    <Sidebar collapsible="none" side="left" {...props}>
       <SidebarContent>
         <SidebarMenu>
           {navs.map((nav) => (

@@ -1,18 +1,18 @@
-import Providers from '@/components/providers';
-import { currentUser } from '@/services/admin/user';
-import { getGlobalConfig } from '@/services/common/common';
-import { Toaster } from '@workspace/ui/components/sonner';
-import '@workspace/ui/globals.css';
-import { getLangDir } from '@workspace/ui/hooks/use-lang-dir';
-import { Metadata, Viewport } from 'next';
-import { NextIntlClientProvider } from 'next-intl';
-import { getLocale, getMessages } from 'next-intl/server';
-import { PublicEnvScript } from 'next-runtime-env';
-import { unstable_noStore as noStore } from 'next/cache';
+import { Toaster } from "@workspace/ui/components/sonner";
+import Providers from "@/components/providers";
+import { currentUser } from "@/services/admin/user";
+import { getGlobalConfig } from "@/services/common/common";
+import "@workspace/ui/globals.css";
+import { getLangDir } from "@workspace/ui/hooks/use-lang-dir";
+import type { Metadata, Viewport } from "next";
+import { unstable_noStore as noStore } from "next/cache";
 // import { Geist, Geist_Mono } from 'next/font/google';
-import { cookies } from 'next/headers';
-import NextTopLoader from 'nextjs-toploader';
-import React from 'react';
+import { cookies } from "next/headers";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
+import { PublicEnvScript } from "next-runtime-env";
+import NextTopLoader from "nextjs-toploader";
+import type React from "react";
 
 // const fontSans = Geist({
 //   subsets: ['latin'],
@@ -34,30 +34,30 @@ export async function generateMetadata(): Promise<Metadata> {
       site = config?.site || undefined;
     })
     .catch((error) => {
-      console.log('Error fetching global config:', error);
+      console.log("Error fetching global config:", error);
     });
 
   const defaultMetadata = {
     title: {
       default: site?.site_name || `PPanel`,
-      template: `%s | ${site?.site_name || 'PPanel'}`,
+      template: `%s | ${site?.site_name || "PPanel"}`,
     },
-    description: site?.site_desc || '',
+    description: site?.site_desc || "",
     icons: {
       icon: site?.site_logo
         ? [
             {
               url: site.site_logo,
-              sizes: 'any',
+              sizes: "any",
             },
           ]
         : [
-            { url: '/favicon.ico', sizes: '48x48' },
-            { url: '/favicon.svg', type: 'image/svg+xml' },
+            { url: "/favicon.ico", sizes: "48x48" },
+            { url: "/favicon.svg", type: "image/svg+xml" },
           ],
-      apple: site?.site_logo || '/apple-touch-icon.png',
+      apple: site?.site_logo || "/apple-touch-icon.png",
     },
-    manifest: '/site.webmanifest',
+    manifest: "/site.webmanifest",
   };
 
   return defaultMetadata;
@@ -65,8 +65,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
-    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+    { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
 };
 
@@ -75,17 +75,18 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const Authorization = (await cookies()).get('Authorization')?.value;
+  const Authorization = (await cookies()).get("Authorization")?.value;
 
   const locale = await getLocale();
   const messages = await getMessages();
 
-  let config, user;
+  let config: API.GetGlobalConfigResponse | undefined;
+  let user: API.CurrentUser | undefined;
 
   try {
     config = await getGlobalConfig({ skipErrorHandler: true }).then((res) => res.data.data);
   } catch (error) {
-    console.log('Error fetching global config:', error);
+    console.log("Error fetching global config:", error);
   }
 
   if (Authorization) {
@@ -100,7 +101,7 @@ export default async function RootLayout({
         return undefined;
       });
     } catch (error) {
-      console.log('Error fetching current user:', error);
+      console.log("Error fetching current user:", error);
     }
   }
 

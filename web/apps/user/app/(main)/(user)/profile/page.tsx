@@ -1,10 +1,10 @@
-import ChangePassword from './change-password';
-import NotifySettings from './notify-settings';
-import ThirdPartyAccounts from './third-party-accounts';
+import ChangePassword from "./change-password";
+import NotifySettings from "./notify-settings";
+import ThirdPartyAccounts from "./third-party-accounts";
 
 export default function Page() {
   return (
-    <div className='flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:*:flex-auto'>
+    <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:*:flex-auto">
       <ThirdPartyAccounts />
       <NotifySettings />
       <ChangePassword />

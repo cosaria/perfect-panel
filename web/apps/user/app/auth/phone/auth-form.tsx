@@ -1,33 +1,34 @@
-'use client';
+"use client";
 
+import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { type ReactNode, useState, useTransition } from "react";
+import { toast } from "sonner";
 import {
   telephoneLogin,
   telephoneResetPassword,
   telephoneUserRegister,
-} from '@/services/common/auth';
-import { getRedirectUrl, setAuthorization } from '@/utils/common';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { ReactNode, useState, useTransition } from 'react';
-import { toast } from 'sonner';
-import LoginForm from './login-form';
-import RegisterForm from './register-form';
-import ResetForm from './reset-form';
+} from "@/services/common/auth";
+import { getRedirectUrl, setAuthorization } from "@/utils/common";
+import LoginForm from "./login-form";
+import RegisterForm from "./register-form";
+import ResetForm from "./reset-form";
+import type { AuthView, PhoneAuthValues } from "./types";
 
 export default function PhoneAuthForm() {
-  const t = useTranslations('auth');
+  const t = useTranslations("auth");
   const router = useRouter();
-  const [type, setType] = useState<'login' | 'register' | 'reset'>('login');
+  const [type, setType] = useState<AuthView>("login");
   const [loading, startTransition] = useTransition();
-  const [initialValues, setInitialValues] = useState<API.TelephoneLoginRequest>({
-    identifier: '',
-    telephone: '',
-    telephone_area_code: '1',
-    password: '',
-    telephone_code: '',
+  const [initialValues, setInitialValues] = useState<PhoneAuthValues>({
+    identifier: "",
+    telephone: "",
+    telephone_area_code: "1",
+    password: "",
+    telephone_code: "",
   });
 
-  const handleFormSubmit = async (params: any) => {
+  const handleFormSubmit = async (params: PhoneAuthValues) => {
     const onLogin = async (token?: string) => {
       if (!token) return;
       setAuthorization(token);
@@ -37,25 +38,25 @@ export default function PhoneAuthForm() {
     startTransition(async () => {
       try {
         switch (type) {
-          case 'login': {
+          case "login": {
             const login = await telephoneLogin(params);
-            toast.success(t('login.success'));
+            toast.success(t("login.success"));
             onLogin(login.data.data?.token);
             break;
           }
-          case 'register': {
+          case "register": {
             const create = await telephoneUserRegister(params);
-            toast.success(t('register.success'));
+            toast.success(t("register.success"));
             onLogin(create.data.data?.token);
             break;
           }
-          case 'reset':
+          case "reset":
             await telephoneResetPassword(params);
-            toast.success(t('reset.success'));
-            setType('login');
+            toast.success(t("reset.success"));
+            setType("login");
             break;
         }
-      } catch (error) {
+      } catch (_error) {
         /* empty */
       }
     });
@@ -63,7 +64,7 @@ export default function PhoneAuthForm() {
 
   let UserForm: ReactNode = null;
   switch (type) {
-    case 'login':
+    case "login":
       UserForm = (
         <LoginForm
           loading={loading}
@@ -74,7 +75,7 @@ export default function PhoneAuthForm() {
         />
       );
       break;
-    case 'register':
+    case "register":
       UserForm = (
         <RegisterForm
           loading={loading}
@@ -85,7 +86,7 @@ export default function PhoneAuthForm() {
         />
       );
       break;
-    case 'reset':
+    case "reset":
       UserForm = (
         <ResetForm
           loading={loading}
