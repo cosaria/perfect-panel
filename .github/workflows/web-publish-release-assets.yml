@@ -34,12 +34,17 @@ jobs:
         id: mode
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "tag=${{ inputs.release_tag }}" >> "$GITHUB_OUTPUT"
-            echo "noop=${{ inputs.noop_publish }}" >> "$GITHUB_OUTPUT"
+            tag_value="${{ inputs.release_tag }}"
+            noop_value="${{ inputs.noop_publish }}"
           else
-            echo "tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
-            echo "noop=false" >> "$GITHUB_OUTPUT"
+            tag_value="${{ github.event.release.tag_name }}"
+            noop_value=false
           fi
+
+          {
+            echo "tag=$tag_value"
+            echo "noop=$noop_value"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Extract version from package.json
         id: version

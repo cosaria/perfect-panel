@@ -34,12 +34,14 @@ jobs:
         id: mode
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "push=${{ inputs.noop_publish == false }}" >> "$GITHUB_OUTPUT"
+            push_value="${{ inputs.noop_publish == false }}"
           elif [ "${{ github.event_name }}" = "push" ]; then
-            echo "push=true" >> "$GITHUB_OUTPUT"
+            push_value=true
           else
-            echo "push=false" >> "$GITHUB_OUTPUT"
+            push_value=false
           fi
+
+          echo "push=$push_value" >> "$GITHUB_OUTPUT"
 
       - name: Log in to Docker Hub
         if: steps.mode.outputs.push == 'true'

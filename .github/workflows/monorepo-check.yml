@@ -46,14 +46,20 @@ jobs:
         shell: bash
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "server=${{ steps.filters.outputs.server }}" >> "$GITHUB_OUTPUT"
-            echo "web=${{ steps.filters.outputs.web }}" >> "$GITHUB_OUTPUT"
-            echo "shared=${{ steps.filters.outputs.shared }}" >> "$GITHUB_OUTPUT"
+            server_value="${{ steps.filters.outputs.server }}"
+            web_value="${{ steps.filters.outputs.web }}"
+            shared_value="${{ steps.filters.outputs.shared }}"
           else
-            echo "server=true" >> "$GITHUB_OUTPUT"
-            echo "web=true" >> "$GITHUB_OUTPUT"
-            echo "shared=true" >> "$GITHUB_OUTPUT"
+            server_value=true
+            web_value=true
+            shared_value=true
           fi
+
+          {
+            echo "server=$server_value"
+            echo "web=$web_value"
+            echo "shared=$shared_value"
+          } >> "$GITHUB_OUTPUT"
 
   workflow-validate:
     name: Workflow Validate
@@ -162,11 +168,13 @@ jobs:
             esac
           done
 
-          echo "Migration-window mode: keep this workflow non-required until it has 2 green main runs and 1 green feature PR." >> "$GITHUB_STEP_SUMMARY"
-          echo "- workflow-validate: ${WORKFLOW_RESULT}" >> "$GITHUB_STEP_SUMMARY"
-          echo "- server-validate: ${SERVER_RESULT}" >> "$GITHUB_STEP_SUMMARY"
-          echo "- web-admin-validate: ${ADMIN_RESULT}" >> "$GITHUB_STEP_SUMMARY"
-          echo "- web-user-validate: ${USER_RESULT}" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "Migration-window mode: keep this workflow non-required until it has 2 green main runs and 1 green feature PR."
+            echo "- workflow-validate: ${WORKFLOW_RESULT}"
+            echo "- server-validate: ${SERVER_RESULT}"
+            echo "- web-admin-validate: ${ADMIN_RESULT}"
+            echo "- web-user-validate: ${USER_RESULT}"
+          } >> "$GITHUB_STEP_SUMMARY"
 
           if [ "$failure" -ne 0 ]; then
             exit 1

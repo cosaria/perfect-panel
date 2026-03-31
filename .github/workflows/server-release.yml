@@ -50,9 +50,11 @@ jobs:
               ;;
           esac
 
-          echo "release_tag=$release_tag" >> "$GITHUB_OUTPUT"
-          echo "version=${release_tag#v}" >> "$GITHUB_OUTPUT"
-          echo "noop=$noop" >> "$GITHUB_OUTPUT"
+          {
+            echo "release_tag=$release_tag"
+            echo "version=${release_tag#v}"
+            echo "noop=$noop"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Get short SHA
         id: sha
@@ -171,8 +173,10 @@ jobs:
           else
             release_tag="$GITHUB_REF_NAME"
           fi
-          echo "version=${release_tag#v}" >> "$GITHUB_OUTPUT"
-          echo "build_time=$(date --iso-8601=seconds)" >> "$GITHUB_OUTPUT"
+          {
+            echo "version=${release_tag#v}"
+            echo "build_time=$(date --iso-8601=seconds)"
+          } >> "$GITHUB_OUTPUT"
 
       - uses: wangyoucao577/go-release-action@v1
         with:

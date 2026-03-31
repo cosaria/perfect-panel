@@ -31,10 +31,12 @@ jobs:
         id: mode
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "push=${{ inputs.noop_push == false }}" >> "$GITHUB_OUTPUT"
+            push_value="${{ inputs.noop_push == false }}"
           else
-            echo "push=true" >> "$GITHUB_OUTPUT"
+            push_value=true
           fi
+
+          echo "push=$push_value" >> "$GITHUB_OUTPUT"
 
       - name: Install goctl
         run: |
