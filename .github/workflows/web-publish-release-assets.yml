@@ -24,6 +24,9 @@ jobs:
     name: Web Publish Release Assets
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup Bun workspace
         uses: ./.github/actions/setup-bun
 

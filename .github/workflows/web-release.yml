@@ -25,10 +25,13 @@ jobs:
     name: Web Release
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Bun workspace
         uses: ./.github/actions/setup-bun
-        with:
-          fetch-depth: '0'
 
       - name: Build web workspace
         working-directory: web

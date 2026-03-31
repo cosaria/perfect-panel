@@ -62,8 +62,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.3'
+
       - name: Run actionlint
-        uses: rhysd/actionlint@v1
+        run: go run github.com/rhysd/actionlint/cmd/actionlint@latest
 
       - name: Check workflow contract
         run: ./script/check-workflow-contract.sh
@@ -74,6 +79,9 @@ jobs:
     needs: changes
     if: needs.changes.outputs.server == 'true' || needs.changes.outputs.shared == 'true'
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup Go workspace
         uses: ./.github/actions/setup-go
 
@@ -96,6 +104,9 @@ jobs:
     needs: changes
     if: needs.changes.outputs.web == 'true' || needs.changes.outputs.shared == 'true'
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup Bun workspace
         uses: ./.github/actions/setup-bun
 
@@ -113,6 +124,9 @@ jobs:
     needs: changes
     if: needs.changes.outputs.web == 'true' || needs.changes.outputs.shared == 'true'
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup Bun workspace
         uses: ./.github/actions/setup-bun
 

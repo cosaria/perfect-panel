@@ -1,18 +1,13 @@
 name: Setup Go Server Workspace
-description: Checkout the repository, set up Go, and download server dependencies.
+description: Set up Go and download server dependencies.
 inputs:
   fetch-depth:
-    description: Git fetch depth for checkout.
+    description: Deprecated. Checkout must happen in the workflow job before using this local action.
     required: false
     default: '1'
 runs:
   using: composite
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: ${{ inputs.fetch-depth }}
-
     - name: Setup Go
       uses: actions/setup-go@v5
       with:
