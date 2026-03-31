@@ -7,13 +7,17 @@ import (
 	"os"
 )
 
-func ReadLastNLines(path string, n int) ([]string, error) {
+func ReadLastNLines(path string, n int) (_ []string, err error) {
 	// Open the file
 	file, err := os.Open(fmt.Sprintf("%s/%s", path, accessFilename))
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func() {
+		if closeErr := file.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	// Get file size
 	fileInfo, err := file.Stat()

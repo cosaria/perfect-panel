@@ -191,7 +191,7 @@ func TestRotateLoggerClose(t *testing.T) {
 		filename, err := fs.TempFilenameWithText("foo")
 		assert.Nil(t, err)
 		if len(filename) > 0 {
-			defer os.Remove(filename)
+				defer func() { _ = os.Remove(filename) }()
 		}
 		logger, err := NewLogger(filename, new(DailyRotateRule), false)
 		assert.Nil(t, err)
@@ -213,7 +213,7 @@ func TestRotateLoggerClose(t *testing.T) {
 		filename, err := fs.TempFilenameWithText(text)
 		assert.Nil(t, err)
 		if len(filename) > 0 {
-			defer os.Remove(filename)
+			defer func() { _ = os.Remove(filename) }()
 		}
 		logger, err := NewLogger(filename, new(DailyRotateRule), false)
 		assert.Nil(t, err)
@@ -234,7 +234,7 @@ func TestRotateLoggerGetBackupFilename(t *testing.T) {
 	filename, err := fs.TempFilenameWithText("foo")
 	assert.Nil(t, err)
 	if len(filename) > 0 {
-		defer os.Remove(filename)
+		defer func() { _ = os.Remove(filename) }()
 	}
 	logger, err := NewLogger(filename, new(DailyRotateRule), false)
 	assert.Nil(t, err)
@@ -253,7 +253,7 @@ func TestRotateLoggerMayCompressFile(t *testing.T) {
 	filename, err := fs.TempFilenameWithText("foo")
 	assert.Nil(t, err)
 	if len(filename) > 0 {
-		defer os.Remove(filename)
+		defer func() { _ = os.Remove(filename) }()
 	}
 	logger, err := NewLogger(filename, new(DailyRotateRule), false)
 	assert.Nil(t, err)
@@ -274,7 +274,7 @@ func TestRotateLoggerMayCompressFileTrue(t *testing.T) {
 	logger, err := NewLogger(filename, new(DailyRotateRule), true)
 	assert.Nil(t, err)
 	if len(filename) > 0 {
-		defer os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz")
+		defer func() { _ = os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz") }()
 	}
 	logger.maybeCompressFile(filename)
 	_, err = os.Stat(filename)
@@ -288,8 +288,8 @@ func TestRotateLoggerRotate(t *testing.T) {
 	assert.Nil(t, err)
 	if len(filename) > 0 {
 		defer func() {
-			os.Remove(logger.getBackupFilename())
-			os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz")
+			_ = os.Remove(logger.getBackupFilename())
+			_ = os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz")
 		}()
 	}
 	err = logger.rotate()
@@ -314,15 +314,15 @@ func TestRotateLoggerWrite(t *testing.T) {
 	assert.Nil(t, err)
 	if len(filename) > 0 {
 		defer func() {
-			os.Remove(logger.getBackupFilename())
-			os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz")
+			_ = os.Remove(logger.getBackupFilename())
+			_ = os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz")
 		}()
 	}
 	// the following write calls cannot be changed to Write, because of DATA RACE.
 	logger.write([]byte(`foo`))
 	rule.rotatedTime = time.Now().Add(-time.Hour * 24).Format(dateFormat)
 	logger.write([]byte(`bar`))
-	logger.Close()
+	assert.NoError(t, logger.Close())
 	logger.write([]byte(`baz`))
 }
 
@@ -334,7 +334,7 @@ func TestRotateLoggerWithSizeLimitRotateRuleClose(t *testing.T) {
 	filename, err := fs.TempFilenameWithText("foo")
 	assert.Nil(t, err)
 	if len(filename) > 0 {
-		defer os.Remove(filename)
+		defer func() { _ = os.Remove(filename) }()
 	}
 	logger, err := NewLogger(filename, new(SizeLimitRotateRule), false)
 	assert.Nil(t, err)
@@ -345,7 +345,7 @@ func TestRotateLoggerGetBackupWithSizeLimitRotateRuleFilename(t *testing.T) {
 	filename, err := fs.TempFilenameWithText("foo")
 	assert.Nil(t, err)
 	if len(filename) > 0 {
-		defer os.Remove(filename)
+		defer func() { _ = os.Remove(filename) }()
 	}
 	logger, err := NewLogger(filename, new(SizeLimitRotateRule), false)
 	assert.Nil(t, err)
@@ -364,7 +364,7 @@ func TestRotateLoggerWithSizeLimitRotateRuleMayCompressFile(t *testing.T) {
 	filename, err := fs.TempFilenameWithText("foo")
 	assert.Nil(t, err)
 	if len(filename) > 0 {
-		defer os.Remove(filename)
+		defer func() { _ = os.Remove(filename) }()
 	}
 	logger, err := NewLogger(filename, new(SizeLimitRotateRule), false)
 	assert.Nil(t, err)
@@ -385,7 +385,7 @@ func TestRotateLoggerWithSizeLimitRotateRuleMayCompressFileTrue(t *testing.T) {
 	logger, err := NewLogger(filename, new(SizeLimitRotateRule), true)
 	assert.Nil(t, err)
 	if len(filename) > 0 {
-		defer os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz")
+		defer func() { _ = os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz") }()
 	}
 	logger.maybeCompressFile(filename)
 	_, err = os.Stat(filename)
@@ -401,7 +401,7 @@ func TestRotateLoggerWithSizeLimitRotateRuleMayCompressFileFailed(t *testing.T) 
 
 	filename := random.KeyNew(8, 1)
 	logger, err := NewLogger(filename, new(SizeLimitRotateRule), true)
-	defer os.Remove(filename)
+	defer func() { _ = os.Remove(filename) }()
 	if assert.NoError(t, err) {
 		assert.NotPanics(t, func() {
 			logger.maybeCompressFile(random.KeyNew(8, 1))
@@ -416,8 +416,8 @@ func TestRotateLoggerWithSizeLimitRotateRuleRotate(t *testing.T) {
 	assert.Nil(t, err)
 	if len(filename) > 0 {
 		defer func() {
-			os.Remove(logger.getBackupFilename())
-			os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz")
+			_ = os.Remove(logger.getBackupFilename())
+			_ = os.Remove(filepath.Base(logger.getBackupFilename()) + ".gz")
 		}()
 	}
 	err = logger.rotate()
@@ -450,7 +450,7 @@ func TestRotateLoggerWithSizeLimitRotateRuleWrite(t *testing.T) {
 	logger.write([]byte(`foo`))
 	rule.rotatedTime = time.Now().Add(-time.Hour * 24).Format(dateFormat)
 	logger.write([]byte(`bar`))
-	logger.Close()
+	assert.NoError(t, logger.Close())
 	logger.write([]byte(`baz`))
 }
 
@@ -523,7 +523,7 @@ func TestRotateLogger_WithExistingFile(t *testing.T) {
 	filename, err := fs.TempFilenameWithText(body)
 	assert.Nil(t, err)
 	if len(filename) > 0 {
-		defer os.Remove(filename)
+		defer func() { _ = os.Remove(filename) }()
 	}
 
 	rule := NewSizeLimitRotateRule(filename, "-", 1, 100, 3, false)
@@ -567,10 +567,10 @@ func BenchmarkRotateLogger(b *testing.B) {
 		b.FailNow()
 	}
 	defer func() {
-		dailyRotateRuleLogger.Close()
-		sizeLimitRotateRuleLogger.Close()
-		os.Remove(filename)
-		os.Remove(filename2)
+		_ = dailyRotateRuleLogger.Close()
+		_ = sizeLimitRotateRuleLogger.Close()
+		_ = os.Remove(filename)
+		_ = os.Remove(filename2)
 	}()
 
 	b.Run("daily rotate rule", func(b *testing.B) {

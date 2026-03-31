@@ -643,7 +643,7 @@ func TestSetup(t *testing.T) {
 		Encoding:    plainEncoding,
 	})
 
-	defer os.RemoveAll("CD01CB7D-2705-4F3F-889E-86219BF56F10")
+	defer func() { _ = os.RemoveAll("CD01CB7D-2705-4F3F-889E-86219BF56F10") }()
 	assert.NotNil(t, setupWithVolume(LogConf{}))
 	assert.Nil(t, setupWithVolume(LogConf{
 		ServiceName: "CD01CB7D-2705-4F3F-889E-86219BF56F10",
@@ -767,7 +767,7 @@ func BenchmarkCopyByteSlice(b *testing.B) {
 		buf = make([]byte, len(s))
 		copy(buf, s)
 	}
-	fmt.Fprint(io.Discard, buf)
+	_, _ = fmt.Fprint(io.Discard, buf)
 }
 
 func BenchmarkCopyOnWriteByteSlice(b *testing.B) {
@@ -776,7 +776,7 @@ func BenchmarkCopyOnWriteByteSlice(b *testing.B) {
 		size := len(s)
 		buf = s[:size:size]
 	}
-	fmt.Fprint(io.Discard, buf)
+	_, _ = fmt.Fprint(io.Discard, buf)
 }
 
 func BenchmarkCacheByteSlice(b *testing.B) {
