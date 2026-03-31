@@ -62,14 +62,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.25.0'
-          cache: false
-
       - name: Run actionlint
-        run: go run github.com/rhysd/actionlint/cmd/actionlint@latest
+        run: |
+          curl -fsSL -o /tmp/actionlint.tgz https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz
+          tar -xzf /tmp/actionlint.tgz -C /tmp actionlint
+          /tmp/actionlint
 
       - name: Check workflow contract
         run: ./script/check-workflow-contract.sh
