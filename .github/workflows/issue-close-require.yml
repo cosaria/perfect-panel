@@ -10,11 +10,11 @@ permissions:
 jobs:
   issue-close-require:
     permissions:
-      issues: write # for actions-cool/issues-helper to update issues
-      pull-requests: write # for actions-cool/issues-helper to update PRs
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - name: need reproduce
+      - name: fixed without reply
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'close-issues'
@@ -24,7 +24,8 @@ jobs:
             Since the issue was labeled with `✅ Fixed`, but no response in 3 days. This issue will be closed. If you have any questions, you can comment and reply.
 
             由于该 issue 被标记为已修复，同时 3 天未收到回应。现关闭 issue，若有任何问题，可评论回复。
-      - name: need reproduce
+
+      - name: need reproduce without reply
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'close-issues'
@@ -34,7 +35,8 @@ jobs:
             Since the issue was labeled with `🤔 Need Reproduce`, but no response in 3 days. This issue will be closed. If you have any questions, you can comment and reply.
 
             由于该 issue 被标记为需要更多信息，却 3 天未收到回应。现关闭 issue，若有任何问题，可评论回复。
-      - name: need reproduce
+
+      - name: wont-do without reply
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'close-issues'

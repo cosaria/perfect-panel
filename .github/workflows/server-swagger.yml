@@ -1,19 +1,40 @@
-name: Go CI/CD with goctl and Swagger
+name: Server Swagger
 
 on:
-  # release:
-  #   types: [published]
   push:
     branches:
       - develop
+    paths:
+      - 'server/apis/**'
+      - 'server/ppanel.api'
+      - '.github/workflows/server-swagger.yml'
+  workflow_dispatch:
+    inputs:
+      noop_push:
+        description: Skip pushing generated swagger files to the docs repository.
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
 
 jobs:
   build:
+    name: Server Swagger
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Resolve publish mode
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "push=${{ inputs.noop_push == false }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "push=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Install goctl
         run: |
@@ -30,7 +51,8 @@ jobs:
           chmod +x goctl-swagger
           sudo mv goctl-swagger /usr/local/bin/
 
-      - name: Generate Swagger file
+      - name: Generate swagger files
+        working-directory: server
         run: |
           mkdir -p swagger
           goctl api plugin -plugin goctl-swagger='swagger -filename common.json -pack Response -response "[{\"name\":\"code\",\"type\":\"integer\",\"description\":\"状态码\"},{\"name\":\"msg\",\"type\":\"string\",\"description\":\"消息\"},{\"name\":\"data\",\"type\":\"object\",\"description\":\"数据\",\"is_data\":true}]";' -api ./apis/swagger_common.api -dir ./swagger
@@ -38,15 +60,18 @@ jobs:
           goctl api plugin -plugin goctl-swagger='swagger -filename admin.json -pack Response -response "[{\"name\":\"code\",\"type\":\"integer\",\"description\":\"状态码\"},{\"name\":\"msg\",\"type\":\"string\",\"description\":\"消息\"},{\"name\":\"data\",\"type\":\"object\",\"description\":\"数据\",\"is_data\":true}]";' -api ./apis/swagger_admin.api -dir ./swagger
           goctl api plugin -plugin goctl-swagger='swagger -filename ppanel.json -pack Response -response "[{\"name\":\"code\",\"type\":\"integer\",\"description\":\"状态码\"},{\"name\":\"msg\",\"type\":\"string\",\"description\":\"消息\"},{\"name\":\"data\",\"type\":\"object\",\"description\":\"数据\",\"is_data\":true}]";' -api ppanel.api -dir ./swagger
           goctl api plugin -plugin goctl-swagger='swagger -filename node.json -pack Response -response "[{\"name\":\"code\",\"type\":\"integer\",\"description\":\"状态码\"},{\"name\":\"msg\",\"type\":\"string\",\"description\":\"消息\"},{\"name\":\"data\",\"type\":\"object\",\"description\":\"数据\",\"is_data\":true}]";' -api ./apis/swagger_node.api -dir ./swagger
-          
 
-      - name: Verify Swagger file
+      - name: Verify swagger files
+        working-directory: server
         run: |
           test -f ./swagger/common.json
           test -f ./swagger/user.json
           test -f ./swagger/admin.json
+          test -f ./swagger/ppanel.json
+          test -f ./swagger/node.json
 
       - name: Checkout target repository
+        if: steps.mode.outputs.push == 'true'
         uses: actions/checkout@v4
         with:
           repository: perfect-panel/ppanel-docs
@@ -54,28 +79,26 @@ jobs:
           path: ppanel-docs
           persist-credentials: true
 
-      - name: Verify or create public/swagger directory
+      - name: Copy swagger files
+        if: steps.mode.outputs.push == 'true'
         run: |
           mkdir -p ./ppanel-docs/public/swagger
+          cp -rf server/swagger/* ppanel-docs/public/swagger
 
-      - name: Copy Swagger files
-        run: |
-          cp -rf swagger/* ppanel-docs/public/swagger
-          cd ppanel-docs
-
-      - name: Check for file changes
+      - name: Commit and push swagger files
+        if: steps.mode.outputs.push == 'true'
         run: |
           cd ppanel-docs
           git add .
-          git status
-          if [ "$(git status --porcelain)" ]; then
-          echo "Changes detected in the doc repository."
-          git config user.name "GitHub Actions"
-          git config user.email "actions@ppanel.dev"
-          git commit -m "Update Swagger files"
-          git push
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "GitHub Actions"
+            git config user.email "actions@ppanel.dev"
+            git commit -m "Update Swagger files"
+            git push
           else
-          echo "No changes detected."
-          exit 0
+            echo "No changes detected."
           fi
 
+      - name: Report no-op validation
+        if: steps.mode.outputs.push != 'true'
+        run: echo "No-op mode enabled. Swagger files were generated and verified without pushing to the docs repository."

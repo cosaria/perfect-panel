@@ -1,0 +1,25 @@
+name: Setup Go Server Workspace
+description: Checkout the repository, set up Go, and download server dependencies.
+inputs:
+  fetch-depth:
+    description: Git fetch depth for checkout.
+    required: false
+    default: '1'
+runs:
+  using: composite
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: ${{ inputs.fetch-depth }}
+
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: server/go.mod
+        cache-dependency-path: server/go.sum
+
+    - name: Download server dependencies
+      shell: bash
+      working-directory: server
+      run: go mod download

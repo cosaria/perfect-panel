@@ -1,0 +1,45 @@
+name: Setup Bun Workspace
+description: Checkout the repository, set up Node and Bun, restore cache, and install web dependencies.
+inputs:
+  fetch-depth:
+    description: Git fetch depth for checkout.
+    required: false
+    default: '1'
+  node-version:
+    description: Node.js version.
+    required: false
+    default: '20'
+  bun-version:
+    description: Bun version.
+    required: false
+    default: '1.3.0'
+runs:
+  using: composite
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: ${{ inputs.fetch-depth }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    - name: Restore Bun cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.bun/install/cache
+        key: ${{ runner.os }}-bun-${{ hashFiles('web/bun.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-bun-
+
+    - name: Install web dependencies
+      shell: bash
+      working-directory: web
+      run: bun install --frozen-lockfile

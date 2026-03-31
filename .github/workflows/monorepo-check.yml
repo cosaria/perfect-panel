@@ -8,24 +8,74 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
+  changes:
+    name: Detect Changed Areas
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.normalize.outputs.server }}
+      web: ${{ steps.normalize.outputs.web }}
+      shared: ${{ steps.normalize.outputs.shared }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Filter changed files
+        if: github.event_name == 'pull_request'
+        id: filters
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            server:
+              - 'server/**'
+            web:
+              - 'web/**'
+            shared:
+              - '.github/**'
+              - 'Makefile'
+              - 'README.md'
+              - 'release-manifest.json'
+              - 'script/check-workflow-contract.sh'
+
+      - name: Normalize outputs
+        id: normalize
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "server=${{ steps.filters.outputs.server }}" >> "$GITHUB_OUTPUT"
+            echo "web=${{ steps.filters.outputs.web }}" >> "$GITHUB_OUTPUT"
+            echo "shared=${{ steps.filters.outputs.shared }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "server=true" >> "$GITHUB_OUTPUT"
+            echo "web=true" >> "$GITHUB_OUTPUT"
+            echo "shared=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  workflow-validate:
+    name: Workflow Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run actionlint
+        uses: rhysd/actionlint@v1
+
+      - name: Check workflow contract
+        run: ./script/check-workflow-contract.sh
+
   server-validate:
     name: Server Validate
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.server == 'true' || needs.changes.outputs.shared == 'true'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: server/go.mod
-          cache-dependency-path: server/go.sum
-
-      - name: Download server dependencies
-        working-directory: server
-        run: go mod download
+      - name: Setup Go workspace
+        uses: ./.github/actions/setup-go
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v8
@@ -43,31 +93,11 @@ jobs:
   web-admin-validate:
     name: Web Admin Validate
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.web == 'true' || needs.changes.outputs.shared == 'true'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.3.0
-
-      - name: Restore Bun cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('web/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-
-      - name: Install web dependencies
-        working-directory: web
-        run: bun install --frozen-lockfile
+      - name: Setup Bun workspace
+        uses: ./.github/actions/setup-bun
 
       - name: Lint admin app
         working-directory: web/apps/admin
@@ -80,31 +110,11 @@ jobs:
   web-user-validate:
     name: Web User Validate
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.web == 'true' || needs.changes.outputs.shared == 'true'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.3.0
-
-      - name: Restore Bun cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('web/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-
-      - name: Install web dependencies
-        working-directory: web
-        run: bun install --frozen-lockfile
+      - name: Setup Bun workspace
+        uses: ./.github/actions/setup-bun
 
       - name: Lint user app
         working-directory: web/apps/user
@@ -119,17 +129,33 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     needs:
+      - workflow-validate
       - server-validate
       - web-admin-validate
       - web-user-validate
     steps:
       - name: Summarize results
         env:
+          WORKFLOW_RESULT: ${{ needs.workflow-validate.result }}
           SERVER_RESULT: ${{ needs.server-validate.result }}
           ADMIN_RESULT: ${{ needs.web-admin-validate.result }}
           USER_RESULT: ${{ needs.web-user-validate.result }}
         run: |
+          failure=0
+          for result in "$WORKFLOW_RESULT" "$SERVER_RESULT" "$ADMIN_RESULT" "$USER_RESULT"; do
+            case "$result" in
+              failure|cancelled|timed_out|action_required)
+                failure=1
+                ;;
+            esac
+          done
+
           echo "Migration-window mode: keep this workflow non-required until it has 2 green main runs and 1 green feature PR." >> "$GITHUB_STEP_SUMMARY"
+          echo "- workflow-validate: ${WORKFLOW_RESULT}" >> "$GITHUB_STEP_SUMMARY"
           echo "- server-validate: ${SERVER_RESULT}" >> "$GITHUB_STEP_SUMMARY"
           echo "- web-admin-validate: ${ADMIN_RESULT}" >> "$GITHUB_STEP_SUMMARY"
           echo "- web-user-validate: ${USER_RESULT}" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$failure" -ne 0 ]; then
+            exit 1
+          fi

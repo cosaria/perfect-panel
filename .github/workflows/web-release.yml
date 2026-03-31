@@ -1,0 +1,47 @@
+name: Web Release
+
+on:
+  push:
+    branches: [main, next, beta]
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-release.yml'
+      - '.github/actions/setup-bun/**'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Run semantic-release in dry-run mode.
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Web Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Bun workspace
+        uses: ./.github/actions/setup-bun
+        with:
+          fetch-depth: '0'
+
+      - name: Build web workspace
+        working-directory: web
+        run: bun run build
+
+      - name: Run semantic-release
+        working-directory: web
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
+            bunx semantic-release --dry-run
+          else
+            bun run release
+          fi
