@@ -17,9 +17,11 @@ func FreePort() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	defer l.Close()
 	// Get the assigned port
 	addr := l.Addr().(*net.TCPAddr)
+	if err := l.Close(); err != nil {
+		return 0, err
+	}
 	return addr.Port, nil
 }
 

@@ -45,10 +45,10 @@ func (ipLoc *IPLocation) Close() error {
 	return ipLoc.DB.Close()
 }
 
-func DownloadGeoIPDatabase(url, path string) error {
+func DownloadGeoIPDatabase(url, path string) (err error) {
 
 	// 创建路径, 确保目录存在
-	err := os.MkdirAll(filepath.Dir(path), 0755)
+	err = os.MkdirAll(filepath.Dir(path), 0755)
 	if err != nil {
 		logger.Errorf("[GeoIP] Failed to create directory: %v", err.Error())
 		return err
@@ -59,14 +59,22 @@ func DownloadGeoIPDatabase(url, path string) error {
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	defer func() {
+		if closeErr := out.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	// 请求远程文件
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	// 保存文件
 	_, err = io.Copy(out, resp.Body)

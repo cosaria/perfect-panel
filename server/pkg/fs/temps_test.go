@@ -19,7 +19,9 @@ func TestTempFileWithText(t *testing.T) {
 	if f.Name() == "" {
 		t.Error("TempFileWithText returned empty file name")
 	}
-	defer os.Remove(f.Name())
+	t.Cleanup(func() {
+		assert.NoError(t, os.Remove(f.Name()))
+	})
 
 	bs, err := io.ReadAll(f)
 	assert.Nil(t, err)
@@ -39,7 +41,9 @@ func TestTempFilenameWithText(t *testing.T) {
 	if f == "" {
 		t.Error("TempFilenameWithText returned empty file name")
 	}
-	defer os.Remove(f)
+	t.Cleanup(func() {
+		assert.NoError(t, os.Remove(f))
+	})
 
 	bs, err := os.ReadFile(f)
 	assert.Nil(t, err)

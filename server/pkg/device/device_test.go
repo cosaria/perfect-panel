@@ -117,7 +117,9 @@ func TestDevice(t *testing.T) {
 	}
 
 	time.Sleep(time.Second * 20)
-	conn.Close()
+	if err := conn.Close(); err != nil {
+		t.Errorf("websocket close failed: %v", err)
+	}
 	time.Sleep(time.Second * 5)
 
 }

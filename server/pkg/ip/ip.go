@@ -69,7 +69,7 @@ func GetRegionByIp(ip string) (*GeoLocationResponse, error) {
 }
 
 // fetchGeolocation sends a request to the specified service to retrieve geolocation data.
-func fetchGeolocation(service, ip string) (*GeoLocationResponse, error) {
+func fetchGeolocation(service, ip string) (_ *GeoLocationResponse, err error) {
 	var apiURL string
 
 	// Construct the API URL based on the service.
@@ -100,7 +100,11 @@ func fetchGeolocation(service, ip string) (*GeoLocationResponse, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to send request: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil && err == nil {
+			err = fmt.Errorf("failed to close response body: %v", closeErr)
+		}
+	}()
 
 	// Decompress the response body based on Content-Encoding.
 	body, err := decompressResponse(resp)
@@ -139,15 +143,20 @@ func setHeaders(req *http.Request, host string) {
 }
 
 // decompressResponse decompresses the HTTP response body based on its Content-Encoding.
-func decompressResponse(resp *http.Response) ([]byte, error) {
-	var reader io.ReadCloser
-	var err error
+func decompressResponse(resp *http.Response) (_ []byte, err error) {
+	var reader io.Reader
+	var closeReader func() error
 
 	switch resp.Header.Get("Content-Encoding") {
 	case "gzip":
-		reader, err = gzip.NewReader(resp.Body)
+		gzipReader, gzipErr := gzip.NewReader(resp.Body)
+		if gzipErr != nil {
+			return nil, fmt.Errorf("failed to create reader: %v", gzipErr)
+		}
+		reader = gzipReader
+		closeReader = gzipReader.Close
 	case "br":
-		reader = io.NopCloser(brotli.NewReader(resp.Body))
+		reader = brotli.NewReader(resp.Body)
 	case "zstd":
 		decoder, zstdErr := zstd.NewReader(resp.Body)
 		if zstdErr != nil {
@@ -159,10 +168,13 @@ func decompressResponse(resp *http.Response) ([]byte, error) {
 		reader = resp.Body
 	}
 
-	if err != nil {
-		return nil, fmt.Errorf("failed to create reader: %v", err)
+	if closeReader != nil {
+		defer func() {
+			if closeErr := closeReader(); closeErr != nil && err == nil {
+				err = fmt.Errorf("failed to close reader: %v", closeErr)
+			}
+		}()
 	}
-	defer reader.Close()
 
 	return io.ReadAll(reader)
 }

@@ -58,6 +58,12 @@ func (dm *DeviceManager) getUserMutex(userID int64) *sync.Mutex {
 	return mu.(*sync.Mutex)
 }
 
+func closeDeviceConn(conn *websocket.Conn, userID int64, deviceID, action string) {
+	if err := conn.Close(); err != nil {
+		zap.S().Warnf("Failed to close device %s (User %d) during %s: %v", deviceID, userID, action, err)
+	}
+}
+
 // Listen to WebSocket data
 func (dm *DeviceManager) listenToDevice(userID int64, device *Device) {
 	defer func() {
@@ -159,7 +165,7 @@ func (dm *DeviceManager) AddDevice(w http.ResponseWriter, r *http.Request, sessi
 			}()
 			<-done // block and wait for callback to complete
 		}
-		oldestDevice.Conn.Close()
+		closeDeviceConn(oldestDevice.Conn, userID, oldestDevice.DeviceID, "max device eviction")
 		atomic.AddInt32(&dm.totalOnline, -1)
 	}
 
@@ -188,7 +194,7 @@ func (dm *DeviceManager) removeDevice(userID int64, deviceID string) {
 		for i, d := range devices {
 			if d.DeviceID == deviceID {
 				devices = append(devices[:i], devices[i+1:]...)
-				d.Conn.Close()
+				closeDeviceConn(d.Conn, userID, d.DeviceID, "device removal")
 				atomic.AddInt32(&dm.totalOnline, -1)
 
 				if dm.OnDeviceOffline != nil {
@@ -234,7 +240,7 @@ func (dm *DeviceManager) KickDevice(userID int64, deviceID string) {
 				<-done // block and wait for callback to complete
 			}
 			// Close WebSocket connection
-			d.Conn.Close()
+			closeDeviceConn(d.Conn, userID, d.DeviceID, "device kick")
 			atomic.AddInt32(&dm.totalOnline, -1)
 			zap.S().Infof("❌ Device %s (User %d) kicked out", d.DeviceID, userID)
 		} else {
@@ -270,7 +276,7 @@ func (dm *DeviceManager) StartHeartbeatCheck() {
 			for _, d := range devices {
 				if now.Sub(d.LastPingTime) > time.Duration(dm.heartbeatTimeout)*time.Second {
 					zap.S().Infof("⚠️ Device %s (User %d) heartbeat timeout, removed", d.DeviceID, uid)
-					d.Conn.Close()
+					closeDeviceConn(d.Conn, uid, d.DeviceID, "heartbeat timeout")
 					atomic.AddInt32(&dm.totalOnline, -1)
 
 					if dm.OnDeviceOffline != nil {
@@ -350,7 +356,7 @@ func (dm *DeviceManager) Shutdown(ctx context.Context) {
 		devices := val.([]*Device)
 
 		for _, d := range devices {
-			d.Conn.Close()
+				closeDeviceConn(d.Conn, uid, d.DeviceID, "shutdown")
 			zap.S().Infof("✅ Closed device %s (User %d)", d.DeviceID, uid)
 		}
 		dm.userDevices.Delete(uid)
