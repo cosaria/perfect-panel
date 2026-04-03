@@ -15,29 +15,8 @@ import { locales } from "@/config/constants";
 import { setLocale } from "@/utils/common";
 
 const languages = {
-  "cs-CZ": "Čeština",
-  "de-DE": "Deutsch",
   "en-US": "English",
-  "es-ES": "Español",
-  "es-MX": "Español (México)",
-  "fa-IR": "فارسی",
-  "fi-FI": "Suomi",
-  "fr-FR": "Français",
-  "hi-IN": "हिन्दी",
-  "hu-HU": "Magyar",
-  "ja-JP": "日本語",
-  "ko-KR": "한국어",
-  "no-NO": "Norsk",
-  "pl-PL": "Polski",
-  "pt-BR": "Português (Brasil)",
-  "ro-RO": "Română",
-  "ru-RU": "Русский",
-  "th-TH": "ไทย",
-  "tr-TR": "Türkçe",
-  "uk-UA": "Українська",
-  "vi-VN": "Tiếng Việt",
   "zh-CN": "简体中文",
-  "zh-HK": "繁體中文",
 } as const;
 
 export default function LanguageSwitch() {
