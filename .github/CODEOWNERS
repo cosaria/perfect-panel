@@ -1,5 +1,0 @@
-# Temporary single-owner baseline.
-# Replace each path with primary + backup owners before enabling required code-owner reviews in branch protection.
-/.github/ @cosaria
-/server/ @cosaria
-/web/ @cosaria
