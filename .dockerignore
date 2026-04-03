@@ -1,0 +1,44 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies (will be installed inside container)
+node_modules
+
+# Build outputs (will be built inside container)
+apps/*/.next
+apps/*/.turbo
+.turbo
+server/bin
+
+# IDE and editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Documentation and non-essential files
+docs
+*.md
+!packages/*/README.md
+LICENSE
+
+# Docker files (avoid recursive context)
+docker
+
+# Test and development
+coverage
+*.test.ts
+*.spec.ts
+
+# gstack local data
+.gstack

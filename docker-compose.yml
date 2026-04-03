@@ -1,0 +1,49 @@
+services:
+  server:
+    container_name: ppanel-server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./server/etc/ppanel.yaml:/app/etc/ppanel.yaml:ro
+    restart: unless-stopped
+
+  admin-web:
+    container_name: ppanel-admin-web
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      args:
+        APP_NAME: admin
+    environment:
+      NEXT_PUBLIC_API_URL: "https://api.ppanel.dev"
+    ports:
+      - "3001:3000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  user-web:
+    container_name: ppanel-user-web
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      args:
+        APP_NAME: user
+    environment:
+      NEXT_PUBLIC_API_URL: "https://api.ppanel.dev"
+    ports:
+      - "3002:3000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
