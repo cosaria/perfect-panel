@@ -23,7 +23,6 @@
     "lint": "turbo lint",
     "locale": "turbo locale && bun run format",
     "openapi": "turbo openapi && bun run format",
-    "prepare": "./scripts/prepare.sh",
     "release": "semantic-release",
     "typecheck": "turbo check-types",
     "update:deps": "./scripts/update-deps.sh",
@@ -32,11 +31,6 @@
   "commitlint": {
     "extends": [
       "@workspace/commitlint-config"
-    ]
-  },
-  "lint-staged": {
-    "*.{json,md,js,jsx,cjs,mjs,ts,tsx}": [
-      "biome check --write"
     ]
   },
   "dependencies": {
@@ -120,8 +114,6 @@
     "@workspace/typescript-config": "workspace:*",
     "autoprefixer": "^10.4.21",
     "commitlint": "^19.6.1",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.1.5",
     "postcss": "^8.5.6",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",

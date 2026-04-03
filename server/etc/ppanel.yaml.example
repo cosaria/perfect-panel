@@ -1,0 +1,289 @@
+# ============================================================================
+# PPanel Server 配置文件
+# 复制此文件为 ppanel.yaml 并填入实际值：cp ppanel.yaml.example ppanel.yaml
+# ============================================================================
+
+# 运行模式：prod（生产）/ dev（开发）
+Model: prod
+# 监听地址
+Host: 0.0.0.0
+# 监听端口
+Port: 8080
+# 调试模式，生产环境请设为 false
+Debug: false
+
+# TLS 证书配置（可选，如需 HTTPS 直连）
+TLS:
+  Enable: false
+  CertFile: ""
+  KeyFile: ""
+
+# JWT 认证
+JwtAuth:
+  # 签名密钥，务必修改为随机字符串
+  AccessSecret: "your-jwt-secret-change-me"
+  # Token 过期时间（秒），默认 7 天
+  AccessExpire: 604800
+
+# 日志配置
+Logger:
+  # 服务名称
+  ServiceName: PPanel
+  # 日志输出模式：console / file / volume（k8s 场景）
+  Mode: file
+  # 编码格式：json / plain
+  Encoding: json
+  # 时间格式
+  TimeFormat: "2006-01-02 15:04:05.000"
+  # 日志文件目录
+  Path: logs
+  # 日志级别：debug / info / warn / error
+  Level: info
+  # 单条日志最大长度（字节），0 表示不限
+  MaxContentLength: 0
+  # 是否压缩归档日志
+  Compress: false
+  # 是否记录统计信息
+  Stat: true
+  # 日志保留天数，0 表示永久保留
+  KeepDays: 0
+  # 堆栈日志冷却时间（毫秒）
+  StackCooldownMillis: 100
+  # 备份文件数量上限，0 表示不限
+  MaxBackups: 0
+  # 单个日志文件最大大小（MB），0 表示不限
+  MaxSize: 0
+  # 日志轮转规则：daily / size
+  Rotation: daily
+
+# MySQL 数据库
+MySQL:
+  # 数据库地址（host:port）
+  Addr: "127.0.0.1:3306"
+  # 用户名
+  Username: root
+  # 密码
+  Password: ""
+  # 数据库名
+  Dbname: ppanel
+  # 连接参数
+  Config: "charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
+  # 最大空闲连接数
+  MaxIdleConns: 10
+  # 最大打开连接数
+  MaxOpenConns: 10
+  # 慢查询阈值（毫秒）
+  SlowThreshold: 1000
+
+# Redis 缓存
+Redis:
+  # 地址（host:port）
+  Host: "localhost:6379"
+  # 密码，无密码留空
+  Pass: ""
+  # 数据库编号
+  DB: 0
+
+# 站点信息
+Site:
+  # 站点访问地址
+  Host: "https://example.com"
+  # 站点名称
+  SiteName: "PPanel"
+  # 站点描述
+  SiteDesc: ""
+  # 站点 Logo URL
+  SiteLogo: ""
+  # SEO 关键词
+  Keywords: ""
+  # 自定义 HTML（注入到页面的代码片段）
+  CustomHTML: ""
+  # 自定义数据（JSON 格式）
+  CustomData: ""
+
+# 节点通信配置
+Node:
+  # 节点通信密钥
+  NodeSecret: ""
+  # 节点拉取配置间隔（秒）
+  NodePullInterval: 60
+  # 节点推送数据间隔（秒）
+  NodePushInterval: 60
+  # 流量上报阈值（字节），0 表示实时上报
+  TrafficReportThreshold: 0
+  # IP 策略
+  IPStrategy: ""
+  # 自定义 DNS（数组）
+  # DNS:
+  #   - proto: udp
+  #     address: "8.8.8.8:53"
+  #     domains:
+  #       - "example.com"
+  # 屏蔽域名列表（数组）
+  # Block:
+  #   - "ads.example.com"
+  # 出站规则（数组）
+  # Outbound:
+  #   - name: default
+  #     protocol: freedom
+  #     address: ""
+  #     port: 0
+  #     password: ""
+  #     rules: []
+
+# 短信平台配置
+Mobile:
+  # 是否启用短信功能
+  Enable: false
+  # 短信平台（如 aliyun / twilio）
+  platform: ""
+  # 平台配置（JSON 格式）
+  platform_config: ""
+  # 是否启用短信验证
+  enable_verify: false
+  # 是否启用白名单
+  enable_whitelist: false
+  # 白名单列表
+  # whitelist:
+  #   - "+86"
+
+# 邮件配置
+Email:
+  # 是否启用邮件功能
+  Enable: false
+  # 邮件平台（如 smtp / mailgun / sendgrid）
+  platform: ""
+  # 平台配置（JSON 格式）
+  platform_config: ""
+  # 是否启用邮件验证
+  enable_verify: false
+  # 是否启用邮件通知
+  enable_notify: false
+  # 是否启用域名后缀限制
+  enable_domain_suffix: false
+  # 允许的邮箱域名后缀列表（逗号分隔）
+  domain_suffix_list: ""
+  # 验证码邮件模板
+  verify_email_template: ""
+  # 到期提醒邮件模板
+  expiration_email_template: ""
+  # 维护通知邮件模板
+  maintenance_email_template: ""
+  # 流量超额邮件模板
+  traffic_exceed_email_template: ""
+
+# 设备管理配置
+device:
+  # 是否启用设备管理
+  enable: true
+  # 是否展示广告
+  show_ads: false
+  # 是否启用安全校验
+  enable_security: false
+  # 是否仅允许真实设备
+  only_real_device: false
+  # 安全校验密钥
+  security_secret: ""
+
+# 人机验证（Cloudflare Turnstile）
+Verify:
+  # Turnstile Site Key
+  TurnstileSiteKey: ""
+  # Turnstile Secret Key
+  TurnstileSecret: ""
+  # 登录时是否要求验证
+  LoginVerify: false
+  # 注册时是否要求验证
+  RegisterVerify: false
+  # 重置密码时是否要求验证
+  ResetPasswordVerify: false
+
+# 验证码配置
+VerifyCode:
+  # 验证码过期时间（秒）
+  ExpireTime: 300
+  # 验证码每日发送上限
+  Limit: 15
+  # 两次发送最小间隔（秒）
+  Interval: 60
+
+# 注册配置
+Register:
+  # 是否关闭注册
+  StopRegister: false
+  # 是否启用试用
+  EnableTrial: false
+  # 试用订阅 ID
+  TrialSubscribe: 0
+  # 试用时长
+  TrialTime: 0
+  # 试用时长单位
+  TrialTimeUnit: ""
+  # 同一 IP 注册次数限制，0 表示不限
+  IpRegisterLimit: 0
+  # IP 注册限制时间窗口（秒）
+  IpRegisterLimitDuration: 0
+  # 是否启用 IP 注册限制
+  EnableIpRegisterLimit: false
+
+# 订阅配置
+Subscribe:
+  # 是否为单订阅模式
+  SingleModel: false
+  # 订阅配置路径
+  SubscribePath: "/v1/subscribe/config"
+  # 订阅域名（为空则使用 Site.Host）
+  SubscribeDomain: ""
+  # 是否启用泛域名
+  PanDomain: false
+  # 是否限制 User-Agent
+  UserAgentLimit: false
+  # 允许的 User-Agent 列表（逗号分隔）
+  UserAgentList: ""
+
+# 邀请返利配置
+Invite:
+  # 是否强制邀请码注册
+  ForcedInvite: false
+  # 返利比例（百分比）
+  ReferralPercentage: 0
+  # 是否仅首次购买返利
+  OnlyFirstPurchase: false
+
+# Telegram Bot 配置
+Telegram:
+  # 是否启用 Telegram Bot
+  Enable: false
+  # Bot ID
+  BotID: 0
+  # Bot 用户名
+  BotName: ""
+  # Bot Token
+  BotToken: ""
+  # 是否启用 Telegram 通知
+  EnableNotify: false
+  # WebHook 域名
+  WebHookDomain: ""
+
+# 日志清理
+Log:
+  # 是否自动清理日志
+  AutoClear: true
+  # 日志保留天数
+  ClearDays: 7
+
+# 货币配置
+Currency:
+  # 货币单位代码
+  Unit: CNY
+  # 货币符号
+  Symbol: "¥"
+  # 汇率 API Access Key（如使用汇率转换）
+  AccessKey: ""
+
+# 管理员初始账号（首次启动时创建）
+Administrator:
+  # 管理员邮箱
+  Email: admin@ppanel.dev
+  # 管理员密码，请务必修改
+  Password: password

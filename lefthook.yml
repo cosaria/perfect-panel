@@ -1,0 +1,36 @@
+# lefthook.yml — 根级 Git hooks 配置
+# 统管 server (Go) 和 web (Bun/Biome) 的 pre-commit 与 commit-msg hooks
+
+pre-commit:
+  parallel: true
+  commands:
+    server-fmt:
+      root: "server/"
+      glob: "*.go"
+      run: go fmt ./...
+    server-imports:
+      root: "server/"
+      glob: "*.go"
+      run: goimports -w .
+    server-lint:
+      root: "server/"
+      glob: "*.go"
+      run: golangci-lint run
+    server-vet:
+      root: "server/"
+      glob: "*.go"
+      run: go vet ./...
+    server-test:
+      root: "server/"
+      glob: "*.go"
+      run: go test -v ./...
+    web-biome:
+      root: "web/"
+      glob: "*.{json,md,js,jsx,cjs,mjs,ts,tsx}"
+      run: bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      stage_fixed: true
+
+commit-msg:
+  commands:
+    commitlint:
+      run: cd web && bunx commitlint --edit ../{1}
