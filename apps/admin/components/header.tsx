@@ -34,7 +34,7 @@ export function Header() {
                 <Fragment key={item?.title}>
                   {index !== items.length - 1 && (
                     <BreadcrumbItem>
-                      <BreadcrumbLink href={item?.url || "/dashboard"}>
+                      <BreadcrumbLink href={"url" in item ? item.url : "/dashboard"}>
                         {t(item?.title)}
                       </BreadcrumbLink>
                     </BreadcrumbItem>

@@ -8,7 +8,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type React from "react";
 import { memo } from "react";
-import { getAvailablePaymentMethods } from "@/services/user/portal";
+import { getAvailablePaymentMethods } from "@/services/user-api/sdk.gen";
 
 interface PaymentMethodsProps {
   value: number;
@@ -23,7 +23,7 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({ value, onChange, balanc
     queryKey: ["getAvailablePaymentMethods", { balance }],
     queryFn: async () => {
       const { data } = await getAvailablePaymentMethods();
-      const list = data.data?.list || [];
+      const list = data?.list || [];
       const methods = balance ? list : list.filter((item) => item.id !== -1);
       const defaultMethod = methods.find((item) => item.id)?.id;
       if (defaultMethod) onChange(defaultMethod);

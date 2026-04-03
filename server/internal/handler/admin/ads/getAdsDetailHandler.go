@@ -1,27 +1,28 @@
+// huma:migrated
 package ads
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/ads"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get Ads Detail
-func GetAdsDetailHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetAdsDetailRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetAdsDetailInput struct {
+	types.GetAdsDetailRequest
+}
 
-		ctx := c.Request.Context()
+type GetAdsDetailOutput struct {
+	Body *types.Ads
+}
+
+func GetAdsDetailHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetAdsDetailInput) (*GetAdsDetailOutput, error) {
+	return func(ctx context.Context, input *GetAdsDetailInput) (*GetAdsDetailOutput, error) {
 		l := ads.NewGetAdsDetailLogic(ctx, svcCtx)
-		resp, err := l.GetAdsDetail(&req)
-		result.HttpResult(c, resp, err)
+		resp, err := l.GetAdsDetail(&input.GetAdsDetailRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetAdsDetailOutput{Body: resp}, nil
 	}
 }

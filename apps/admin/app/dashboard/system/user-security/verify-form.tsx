@@ -29,7 +29,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getVerifyConfig, updateVerifyConfig } from "@/services/admin/system";
+import { getVerifyConfig, updateVerifyConfig } from "@/services/admin-api/sdk.gen";
+import type { VerifyConfig } from "@/services/admin-api/types.gen";
 
 const verifySchema = z.object({
   turnstile_site_key: z.string().optional(),
@@ -51,7 +52,7 @@ export default function VerifyConfig() {
     queryKey: ["getVerifyConfig"],
     queryFn: async () => {
       const { data } = await getVerifyConfig();
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -76,7 +77,7 @@ export default function VerifyConfig() {
   async function onSubmit(values: VerifyFormData) {
     setLoading(true);
     try {
-      await updateVerifyConfig(values as API.VerifyConfig);
+      await updateVerifyConfig({ body: values as VerifyConfig });
       toast.success(t("saveSuccess"));
       refetch();
       setOpen(false);

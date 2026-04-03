@@ -1,26 +1,28 @@
+// huma:migrated
 package server
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/server"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get Server Protocols
-func GetServerProtocolsHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetServerProtocolsRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetServerProtocolsInput struct {
+	types.GetServerProtocolsRequest
+}
 
-		l := server.NewGetServerProtocolsLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetServerProtocols(&req)
-		result.HttpResult(c, resp, err)
+type GetServerProtocolsOutput struct {
+	Body *types.GetServerProtocolsResponse
+}
+
+func GetServerProtocolsHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetServerProtocolsInput) (*GetServerProtocolsOutput, error) {
+	return func(ctx context.Context, input *GetServerProtocolsInput) (*GetServerProtocolsOutput, error) {
+		l := server.NewGetServerProtocolsLogic(ctx, svcCtx)
+		resp, err := l.GetServerProtocols(&input.GetServerProtocolsRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetServerProtocolsOutput{Body: resp}, nil
 	}
 }

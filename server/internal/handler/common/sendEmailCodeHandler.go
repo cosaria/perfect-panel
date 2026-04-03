@@ -1,26 +1,28 @@
+// huma:migrated
 package common
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/common"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get verification code
-func SendEmailCodeHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.SendCodeRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type SendEmailCodeInput struct {
+	Body types.SendCodeRequest
+}
 
-		l := common.NewSendEmailCodeLogic(c.Request.Context(), svcCtx)
-		resp, err := l.SendEmailCode(&req)
-		result.HttpResult(c, resp, err)
+type SendEmailCodeOutput struct {
+	Body *types.SendCodeResponse
+}
+
+func SendEmailCodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *SendEmailCodeInput) (*SendEmailCodeOutput, error) {
+	return func(ctx context.Context, input *SendEmailCodeInput) (*SendEmailCodeOutput, error) {
+		l := common.NewSendEmailCodeLogic(ctx, svcCtx)
+		resp, err := l.SendEmailCode(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &SendEmailCodeOutput{Body: resp}, nil
 	}
 }

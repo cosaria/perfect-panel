@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Delete user device
-func DeleteUserDeviceHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.DeleteUserDeivceRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type DeleteUserDeviceInput struct {
+	Body types.DeleteUserDeivceRequest
+}
 
-		l := user.NewDeleteUserDeviceLogic(c.Request.Context(), svcCtx)
-		err := l.DeleteUserDevice(&req)
-		result.HttpResult(c, nil, err)
+func DeleteUserDeviceHandler(svcCtx *svc.ServiceContext) func(context.Context, *DeleteUserDeviceInput) (*struct{}, error) {
+	return func(ctx context.Context, input *DeleteUserDeviceInput) (*struct{}, error) {
+		l := user.NewDeleteUserDeviceLogic(ctx, svcCtx)
+		if err := l.DeleteUserDevice(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

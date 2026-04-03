@@ -1,26 +1,23 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update invite config
-func UpdateInviteConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.InviteConfig
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateInviteConfigInput struct {
+	Body types.InviteConfig
+}
 
-		l := system.NewUpdateInviteConfigLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateInviteConfig(&req)
-		result.HttpResult(c, nil, err)
+func UpdateInviteConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateInviteConfigInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateInviteConfigInput) (*struct{}, error) {
+		l := system.NewUpdateInviteConfigLogic(ctx, svcCtx)
+		if err := l.UpdateInviteConfig(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

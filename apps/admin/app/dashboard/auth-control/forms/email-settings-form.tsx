@@ -36,7 +36,8 @@ import {
   getAuthMethodConfig,
   testEmailSend,
   updateAuthMethodConfig,
-} from "@/services/admin/authMethod";
+} from "@/services/admin-api/sdk.gen";
+import type { UpdateAuthMethodConfigRequest } from "@/services/admin-api/types.gen";
 
 const emailSettingsSchema = z.object({
   id: z.number(),
@@ -78,9 +79,11 @@ export default function EmailSettingsForm() {
     queryKey: ["getAuthMethodConfig", "email"],
     queryFn: async () => {
       const { data } = await getAuthMethodConfig({
-        method: "email",
+        query: {
+          method: "email",
+        },
       });
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -114,7 +117,7 @@ export default function EmailSettingsForm() {
 
   useEffect(() => {
     if (data) {
-      form.reset(data);
+      form.reset(data as EmailSettingsFormData);
     }
   }, [data, form]);
 
@@ -122,12 +125,14 @@ export default function EmailSettingsForm() {
     setLoading(true);
     try {
       await updateAuthMethodConfig({
-        ...values,
-        config: {
-          ...values.config,
-          platform: "smtp",
-        },
-      } as API.UpdateAuthMethodConfigRequest);
+        body: {
+          ...values,
+          config: {
+            ...values.config,
+            platform: "smtp",
+          },
+        } as UpdateAuthMethodConfigRequest,
+      });
       toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);
@@ -390,7 +395,7 @@ export default function EmailSettingsForm() {
                         onClick={async () => {
                           if (!testEmail) return;
                           try {
-                            await testEmailSend({ email: testEmail });
+                            await testEmailSend({ body: { email: testEmail } });
                             toast.success(t("email.sendSuccess"));
                           } catch {
                             toast.error(t("email.sendFailure"));

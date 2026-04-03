@@ -42,7 +42,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getNodeConfig, updateNodeConfig } from "@/services/admin/system";
+import { getNodeConfig, updateNodeConfig } from "@/services/admin-api/sdk.gen";
+import type { NodeConfig } from "@/services/admin-api/types.gen";
 import { SS_CIPHERS } from "./form-schema";
 
 const dnsConfigSchema = z.object({
@@ -96,7 +97,7 @@ export default function ServerConfig() {
     queryKey: ["getNodeConfig"],
     queryFn: async () => {
       const { data } = await getNodeConfig();
-      return data.data as API.NodeConfig | undefined;
+      return data as NodeConfig | undefined;
     },
     enabled: open,
   });
@@ -124,9 +125,9 @@ export default function ServerConfig() {
         traffic_report_threshold: cfgResp.traffic_report_threshold as number | undefined,
         ip_strategy:
           (cfgResp.ip_strategy as "prefer_ipv4" | "prefer_ipv6" | undefined) || "prefer_ipv4",
-        dns: cfgResp.dns || [],
+        dns: (cfgResp.dns ?? []) as NodeConfigFormData["dns"],
         block: cfgResp.block || [],
-        outbound: cfgResp.outbound || [],
+        outbound: (cfgResp.outbound ?? []) as NodeConfigFormData["outbound"],
       });
     }
   }, [cfgResp, form]);
@@ -134,7 +135,7 @@ export default function ServerConfig() {
   async function onSubmit(values: NodeConfigFormData) {
     setSaving(true);
     try {
-      await updateNodeConfig(values as API.NodeConfig);
+      await updateNodeConfig({ body: values as NodeConfig });
       toast.success(t("server_config.saveSuccess"));
       await refetchCfg();
       setOpen(false);

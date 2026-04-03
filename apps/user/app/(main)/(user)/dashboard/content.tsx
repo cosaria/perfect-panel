@@ -37,19 +37,13 @@ import Renewal from "@/components/subscribe/renewal";
 import ResetTraffic from "@/components/subscribe/reset-traffic";
 import Unsubscribe from "@/components/subscribe/unsubscribe";
 import useGlobalStore from "@/config/use-global";
-import { getClient, getStat } from "@/services/common/common";
-import { queryUserSubscribe, resetUserSubscribeToken } from "@/services/user/user";
+import { getClient, getStat } from "@/services/common-api/sdk.gen";
+import { queryUserSubscribe, resetUserSubscribeToken } from "@/services/user-api/sdk.gen";
+import type { DownloadLink } from "@/services/common-api/types.gen";
 import { getPlatform } from "@/utils/common";
 import Subscribe from "../subscribe/page";
 
-const platforms: (keyof API.DownloadLink)[] = [
-  "windows",
-  "mac",
-  "linux",
-  "ios",
-  "android",
-  "harmony",
-];
+const platforms: (keyof DownloadLink)[] = ["windows", "mac", "linux", "ios", "android", "harmony"];
 
 export default function Content() {
   const t = useTranslations("dashboard");
@@ -65,21 +59,21 @@ export default function Content() {
     queryKey: ["queryUserSubscribe"],
     queryFn: async () => {
       const { data } = await queryUserSubscribe();
-      return data.data?.list || [];
+      return data?.list || [];
     },
   });
   const { data: applications } = useQuery({
     queryKey: ["getClient"],
     queryFn: async () => {
       const { data } = await getClient();
-      return data.data?.list || [];
+      return data?.list || [];
     },
   });
 
   const availablePlatforms = React.useMemo(() => {
     if (!applications || applications.length === 0) return platforms;
 
-    const platformsSet = new Set<keyof API.DownloadLink>();
+    const platformsSet = new Set<keyof DownloadLink>();
 
     applications.forEach((app) => {
       if (app.download_link) {
@@ -94,9 +88,9 @@ export default function Content() {
     return platforms.filter((platform) => platformsSet.has(platform));
   }, [applications]);
 
-  const [platform, setPlatform] = useState<keyof API.DownloadLink>(() => {
+  const [platform, setPlatform] = useState<keyof DownloadLink>(() => {
     const detectedPlatform =
-      getPlatform() === "macos" ? "mac" : (getPlatform() as keyof API.DownloadLink);
+      getPlatform() === "macos" ? "mac" : (getPlatform() as keyof DownloadLink);
     return detectedPlatform;
   });
 
@@ -112,10 +106,8 @@ export default function Content() {
   const { data } = useQuery({
     queryKey: ["getStat"],
     queryFn: async () => {
-      const { data } = await getStat({
-        skipErrorHandler: true,
-      });
-      return data.data;
+      const { data } = await getStat();
+      return data;
     },
     refetchOnWindowFocus: false,
   });
@@ -155,7 +147,7 @@ export default function Content() {
             {availablePlatforms.length > 0 && (
               <Tabs
                 value={platform}
-                onValueChange={(value) => setPlatform(value as keyof API.DownloadLink)}
+                onValueChange={(value) => setPlatform(value as keyof DownloadLink)}
                 className="w-full max-w-full md:w-auto"
               >
                 <TabsList className="flex *:flex-auto">
@@ -270,7 +262,7 @@ export default function Content() {
                             <AlertDialogAction
                               onClick={async () => {
                                 await resetUserSubscribeToken({
-                                  user_subscribe_id: item.id,
+                                  body: { user_subscribe_id: item.id },
                                 });
                                 await refetch();
                                 toast.success(t("resetSuccess"));

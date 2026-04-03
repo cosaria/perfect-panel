@@ -1,26 +1,28 @@
+// huma:migrated
 package order
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/order"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get order
-func QueryOrderDetailHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.QueryOrderDetailRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type QueryOrderDetailInput struct {
+	types.QueryOrderDetailRequest
+}
 
-		l := order.NewQueryOrderDetailLogic(c.Request.Context(), svcCtx)
-		resp, err := l.QueryOrderDetail(&req)
-		result.HttpResult(c, resp, err)
+type QueryOrderDetailOutput struct {
+	Body *types.OrderDetail
+}
+
+func QueryOrderDetailHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryOrderDetailInput) (*QueryOrderDetailOutput, error) {
+	return func(ctx context.Context, input *QueryOrderDetailInput) (*QueryOrderDetailOutput, error) {
+		l := order.NewQueryOrderDetailLogic(ctx, svcCtx)
+		resp, err := l.QueryOrderDetail(&input.QueryOrderDetailRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &QueryOrderDetailOutput{Body: resp}, nil
 	}
 }

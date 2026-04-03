@@ -1,26 +1,28 @@
+// huma:migrated
 package marketing
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/marketing"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get batch send email task status
-func GetBatchSendEmailTaskStatusHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetBatchSendEmailTaskStatusRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetBatchSendEmailTaskStatusInput struct {
+	Body types.GetBatchSendEmailTaskStatusRequest
+}
 
-		l := marketing.NewGetBatchSendEmailTaskStatusLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetBatchSendEmailTaskStatus(&req)
-		result.HttpResult(c, resp, err)
+type GetBatchSendEmailTaskStatusOutput struct {
+	Body *types.GetBatchSendEmailTaskStatusResponse
+}
+
+func GetBatchSendEmailTaskStatusHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetBatchSendEmailTaskStatusInput) (*GetBatchSendEmailTaskStatusOutput, error) {
+	return func(ctx context.Context, input *GetBatchSendEmailTaskStatusInput) (*GetBatchSendEmailTaskStatusOutput, error) {
+		l := marketing.NewGetBatchSendEmailTaskStatusLogic(ctx, svcCtx)
+		resp, err := l.GetBatchSendEmailTaskStatus(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &GetBatchSendEmailTaskStatusOutput{Body: resp}, nil
 	}
 }

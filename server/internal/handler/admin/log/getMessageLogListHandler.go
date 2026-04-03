@@ -1,26 +1,28 @@
+// huma:migrated
 package log
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/log"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get message log list
-func GetMessageLogListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetMessageLogListRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetMessageLogListInput struct {
+	types.GetMessageLogListRequest
+}
 
-		l := log.NewGetMessageLogListLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetMessageLogList(&req)
-		result.HttpResult(c, resp, err)
+type GetMessageLogListOutput struct {
+	Body *types.GetMessageLogListResponse
+}
+
+func GetMessageLogListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetMessageLogListInput) (*GetMessageLogListOutput, error) {
+	return func(ctx context.Context, input *GetMessageLogListInput) (*GetMessageLogListOutput, error) {
+		l := log.NewGetMessageLogListLogic(ctx, svcCtx)
+		resp, err := l.GetMessageLogList(&input.GetMessageLogListRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetMessageLogListOutput{Body: resp}, nil
 	}
 }

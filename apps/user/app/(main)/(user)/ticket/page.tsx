@@ -46,7 +46,8 @@ import {
   getUserTicketDetails,
   getUserTicketList,
   updateUserTicketStatus,
-} from "@/services/user/ticket";
+} from "@/services/user-api/sdk.gen";
+import type { Ticket, CreateUserTicketRequest } from "@/services/user-api/types.gen";
 
 export default function Page() {
   const t = useTranslations("ticket");
@@ -61,8 +62,8 @@ export default function Page() {
         return undefined;
       }
 
-      const { data } = await getUserTicketDetails({ id: ticketId });
-      return data.data as API.Ticket | undefined;
+      const { data } = await getUserTicketDetails({ query: { id: ticketId } });
+      return data as Ticket | undefined;
     },
     enabled: !!ticketId,
     refetchInterval: 5000,
@@ -81,11 +82,11 @@ export default function Page() {
   }, []);
 
   const ref = useRef<ProListActions>(null);
-  const [create, setCreate] = useState<Partial<API.CreateUserTicketRequest & { open: boolean }>>();
+  const [create, setCreate] = useState<Partial<CreateUserTicketRequest & { open: boolean }>>();
 
   return (
     <>
-      <ProList<API.Ticket, { status: number }>
+      <ProList<Ticket, { status: number }>
         action={ref}
         header={{
           title: t("ticketList"),
@@ -125,8 +126,10 @@ export default function Page() {
                       }
 
                       await createUserTicket({
-                        title,
-                        description,
+                        body: {
+                          title,
+                          description,
+                        },
                       });
                       ref.current?.refresh();
                       toast.success(t("createSuccess"));
@@ -157,12 +160,14 @@ export default function Page() {
         ]}
         request={async (pagination, filters) => {
           const { data } = await getUserTicketList({
-            ...pagination,
-            ...filters,
+            body: {
+              ...pagination,
+              ...filters,
+            } as { page: number; size: number },
           });
           return {
-            list: data.data?.list || [],
-            total: data.data?.total || 0,
+            list: data?.list || [],
+            total: data?.total || 0,
           };
         }}
         renderItem={(item) => {
@@ -201,8 +206,10 @@ export default function Page() {
                         description={t("closeWarning")}
                         onConfirm={async () => {
                           await updateUserTicketStatus({
-                            id: item.id,
-                            status: 4,
+                            body: {
+                              id: item.id,
+                              status: 4,
+                            },
                           });
                           toast.success(t("closeSuccess"));
                           ref.current?.refresh();
@@ -295,10 +302,12 @@ export default function Page() {
                   event.preventDefault();
                   if (message && ticketId != null) {
                     await createUserTicketFollow({
-                      ticket_id: ticketId,
-                      from: "User",
-                      type: 1,
-                      content: message,
+                      body: {
+                        ticket_id: ticketId,
+                        from: "User",
+                        type: 1,
+                        content: message,
+                      },
                     });
                     refetchTicket();
                     setMessage("");
@@ -357,10 +366,12 @@ export default function Page() {
                                 reader.readAsDataURL(blob);
                                 reader.onloadend = async () => {
                                   await createUserTicketFollow({
-                                    ticket_id: ticketId,
-                                    from: "User",
-                                    type: 2,
-                                    content: reader.result as string,
+                                    body: {
+                                      ticket_id: ticketId,
+                                      from: "User",
+                                      type: 2,
+                                      content: reader.result as string,
+                                    },
                                   });
                                   refetchTicket();
                                 };

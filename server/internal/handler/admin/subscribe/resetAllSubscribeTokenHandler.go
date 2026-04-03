@@ -1,18 +1,24 @@
+// huma:migrated
 package subscribe
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/subscribe"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Reset all subscribe tokens
-func ResetAllSubscribeTokenHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type ResetAllSubscribeTokenOutput struct {
+	Body *types.ResetAllSubscribeTokenResponse
+}
 
-		l := subscribe.NewResetAllSubscribeTokenLogic(c.Request.Context(), svcCtx)
+func ResetAllSubscribeTokenHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*ResetAllSubscribeTokenOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*ResetAllSubscribeTokenOutput, error) {
+		l := subscribe.NewResetAllSubscribeTokenLogic(ctx, svcCtx)
 		resp, err := l.ResetAllSubscribeToken()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &ResetAllSubscribeTokenOutput{Body: resp}, nil
 	}
 }

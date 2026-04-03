@@ -1,7 +1,12 @@
 import { Toaster } from "@workspace/ui/components/sonner";
 import Providers from "@/components/providers";
-import { currentUser } from "@/services/admin/user";
-import { getGlobalConfig } from "@/services/common/common";
+import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
+import { client as adminClient } from "@/services/admin-api/client.gen";
+import { currentUser } from "@/services/admin-api/sdk.gen";
+import { client as commonClient } from "@/services/common-api/client.gen";
+import { getGlobalConfig } from "@/services/common-api/sdk.gen";
+import type { GetGlobalConfigResponse } from "@/services/common-api/types.gen";
+import type { User } from "@/services/admin-api/types.gen";
 import "@workspace/ui/globals.css";
 import { getLangDir } from "@workspace/ui/hooks/use-lang-dir";
 import type { Metadata, Viewport } from "next";
@@ -27,15 +32,18 @@ import type React from "react";
 export async function generateMetadata(): Promise<Metadata> {
   noStore();
 
-  let site: API.SiteConfig | undefined;
-  await getGlobalConfig({ skipErrorHandler: true })
-    .then((res) => {
-      const config = res.data.data;
-      site = config?.site || undefined;
-    })
-    .catch((error) => {
-      console.log("Error fetching global config:", error);
+  const baseUrl = NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "";
+
+  let site: GetGlobalConfigResponse["site"] | undefined;
+  try {
+    const { data } = await getGlobalConfig({
+      client: commonClient,
+      baseUrl: `${baseUrl}/v1/common`,
     });
+    site = data?.site || undefined;
+  } catch (error) {
+    console.log("Error fetching global config:", error);
+  }
 
   const defaultMetadata = {
     title: {
@@ -80,26 +88,31 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
 
-  let config: API.GetGlobalConfigResponse | undefined;
-  let user: API.CurrentUser | undefined;
+  const baseUrl = NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "";
+
+  let config: GetGlobalConfigResponse | undefined;
+  let user: User | undefined;
 
   try {
-    config = await getGlobalConfig({ skipErrorHandler: true }).then((res) => res.data.data);
+    const { data } = await getGlobalConfig({
+      client: commonClient,
+      baseUrl: `${baseUrl}/v1/common`,
+    });
+    config = data;
   } catch (error) {
     console.log("Error fetching global config:", error);
   }
 
   if (Authorization) {
     try {
-      user = await currentUser({
-        skipErrorHandler: true,
-        Authorization,
-      }).then((res) => {
-        if (res.data.data?.is_admin) {
-          return res.data.data;
-        }
-        return undefined;
+      const { data } = await currentUser({
+        client: adminClient,
+        baseUrl: `${baseUrl}/v1/admin`,
+        headers: { Authorization },
       });
+      if (data?.is_admin) {
+        user = data;
+      }
     } catch (error) {
       console.log("Error fetching current user:", error);
     }

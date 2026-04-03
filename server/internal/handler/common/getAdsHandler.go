@@ -1,26 +1,28 @@
+// huma:migrated
 package common
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/common"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get Ads
-func GetAdsHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetAdsRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetAdsInput struct {
+	types.GetAdsRequest
+}
 
-		l := common.NewGetAdsLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetAds(&req)
-		result.HttpResult(c, resp, err)
+type GetAdsOutput struct {
+	Body *types.GetAdsResponse
+}
+
+func GetAdsHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetAdsInput) (*GetAdsOutput, error) {
+	return func(ctx context.Context, input *GetAdsInput) (*GetAdsOutput, error) {
+		l := common.NewGetAdsLogic(ctx, svcCtx)
+		resp, err := l.GetAds(&input.GetAdsRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetAdsOutput{Body: resp}, nil
 	}
 }

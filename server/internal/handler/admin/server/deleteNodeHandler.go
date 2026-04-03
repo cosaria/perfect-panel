@@ -1,26 +1,23 @@
+// huma:migrated
 package server
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/server"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Delete Node
-func DeleteNodeHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.DeleteNodeRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type DeleteNodeInput struct {
+	Body types.DeleteNodeRequest
+}
 
-		l := server.NewDeleteNodeLogic(c.Request.Context(), svcCtx)
-		err := l.DeleteNode(&req)
-		result.HttpResult(c, nil, err)
+func DeleteNodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *DeleteNodeInput) (*struct{}, error) {
+	return func(ctx context.Context, input *DeleteNodeInput) (*struct{}, error) {
+		l := server.NewDeleteNodeLogic(ctx, svcCtx)
+		if err := l.DeleteNode(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

@@ -28,7 +28,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getVerifyCodeConfig, updateVerifyCodeConfig } from "@/services/admin/system";
+import { getVerifyCodeConfig, updateVerifyCodeConfig } from "@/services/admin-api/sdk.gen";
+import type { VerifyCodeConfig } from "@/services/admin-api/types.gen";
 
 const verifyCodeSchema = z.object({
   verify_code_expire_time: z.number().optional(),
@@ -48,7 +49,7 @@ export default function VerifyCodeConfig() {
     queryKey: ["getVerifyCodeConfig"],
     queryFn: async () => {
       const { data } = await getVerifyCodeConfig();
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -71,7 +72,7 @@ export default function VerifyCodeConfig() {
   async function onSubmit(values: VerifyCodeFormData) {
     setLoading(true);
     try {
-      await updateVerifyCodeConfig(values as API.VerifyCodeConfig);
+      await updateVerifyCodeConfig({ body: values as VerifyCodeConfig });
       toast.success(t("saveSuccess"));
       refetch();
       setOpen(false);

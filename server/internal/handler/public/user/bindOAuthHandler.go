@@ -1,26 +1,28 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Bind OAuth
-func BindOAuthHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.BindOAuthRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type BindOAuthInput struct {
+	Body types.BindOAuthRequest
+}
 
-		l := user.NewBindOAuthLogic(c.Request.Context(), svcCtx)
-		resp, err := l.BindOAuth(&req)
-		result.HttpResult(c, resp, err)
+type BindOAuthOutput struct {
+	Body *types.BindOAuthResponse
+}
+
+func BindOAuthHandler(svcCtx *svc.ServiceContext) func(context.Context, *BindOAuthInput) (*BindOAuthOutput, error) {
+	return func(ctx context.Context, input *BindOAuthInput) (*BindOAuthOutput, error) {
+		l := user.NewBindOAuthLogic(ctx, svcCtx)
+		resp, err := l.BindOAuth(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &BindOAuthOutput{Body: resp}, nil
 	}
 }

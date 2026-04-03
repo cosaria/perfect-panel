@@ -20,7 +20,8 @@ import {
   deleteUserSubscribe,
   getUserSubscribe,
   updateUserSubscribe,
-} from "@/services/admin/user";
+} from "@/services/admin-api/sdk.gen";
+import type { UserSubscribe } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 import { SubscriptionDetail } from "./subscription-detail";
 import { SubscriptionForm } from "./subscription-form";
@@ -32,7 +33,7 @@ export default function UserSubscription({ userId }: { userId: number }) {
   const { getUserSubscribeUrls } = useGlobalStore();
 
   return (
-    <ProTable<API.UserSubscribe, Record<string, unknown>>
+    <ProTable<UserSubscribe, Record<string, unknown>>
       action={ref}
       header={{
         title: t("subscriptionList"),
@@ -45,8 +46,12 @@ export default function UserSubscription({ userId }: { userId: number }) {
             onSubmit={async (values) => {
               setLoading(true);
               await createUserSubscribe({
-                user_id: Number(userId),
-                ...values,
+                body: {
+                  user_id: Number(userId),
+                  subscribe_id: values.subscribe_id ?? 0,
+                  traffic: values.traffic ?? 0,
+                  expired_at: values.expired_at ?? 0,
+                },
               });
               toast.success(t("createSuccess"));
               ref.current?.refresh();
@@ -118,12 +123,14 @@ export default function UserSubscription({ userId }: { userId: number }) {
       ]}
       request={async (pagination) => {
         const { data } = await getUserSubscribe({
-          user_id: userId,
-          ...pagination,
+          query: {
+            user_id: userId,
+            ...pagination,
+          },
         });
         return {
-          list: data.data?.list || [],
-          total: data.data?.total || 0,
+          list: data?.list || [],
+          total: data?.total || 0,
         };
       }}
       actions={{
@@ -138,9 +145,14 @@ export default function UserSubscription({ userId }: { userId: number }) {
               onSubmit={async (values) => {
                 setLoading(true);
                 await updateUserSubscribe({
-                  user_id: Number(userId),
-                  user_subscribe_id: row.id,
-                  ...values,
+                  body: {
+                    user_subscribe_id: row.id,
+                    subscribe_id: values.subscribe_id ?? 0,
+                    traffic: values.traffic ?? 0,
+                    expired_at: values.expired_at ?? 0,
+                    upload: values.upload ?? 0,
+                    download: values.download ?? 0,
+                  },
                 });
                 toast.success(t("updateSuccess"));
                 ref.current?.refresh();
@@ -164,7 +176,7 @@ export default function UserSubscription({ userId }: { userId: number }) {
               title={t("confirmDelete")}
               description={t("deleteSubscriptionDescription")}
               onConfirm={async () => {
-                await deleteUserSubscribe({ user_subscribe_id: row.id });
+                await deleteUserSubscribe({ body: { user_subscribe_id: row.id } });
                 toast.success(t("deleteSuccess"));
                 ref.current?.refresh();
               }}

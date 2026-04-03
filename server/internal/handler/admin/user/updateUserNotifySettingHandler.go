@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update user notify setting
-func UpdateUserNotifySettingHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UpdateUserNotifySettingRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateUserNotifySettingInput struct {
+	Body types.UpdateUserNotifySettingRequest
+}
 
-		l := user.NewUpdateUserNotifySettingLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateUserNotifySetting(&req)
-		result.HttpResult(c, nil, err)
+func UpdateUserNotifySettingHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateUserNotifySettingInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateUserNotifySettingInput) (*struct{}, error) {
+		l := user.NewUpdateUserNotifySettingLogic(ctx, svcCtx)
+		if err := l.UpdateUserNotifySetting(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

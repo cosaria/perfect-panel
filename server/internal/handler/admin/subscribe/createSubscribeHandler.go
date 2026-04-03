@@ -1,26 +1,23 @@
+// huma:migrated
 package subscribe
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/subscribe"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Create subscribe
-func CreateSubscribeHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.CreateSubscribeRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type CreateSubscribeInput struct {
+	Body types.CreateSubscribeRequest
+}
 
-		l := subscribe.NewCreateSubscribeLogic(c.Request.Context(), svcCtx)
-		err := l.CreateSubscribe(&req)
-		result.HttpResult(c, nil, err)
+func CreateSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateSubscribeInput) (*struct{}, error) {
+	return func(ctx context.Context, input *CreateSubscribeInput) (*struct{}, error) {
+		l := subscribe.NewCreateSubscribeLogic(ctx, svcCtx)
+		if err := l.CreateSubscribe(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

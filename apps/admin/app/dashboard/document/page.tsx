@@ -13,7 +13,12 @@ import {
   deleteDocument,
   getDocumentList,
   updateDocument,
-} from "@/services/admin/document";
+} from "@/services/admin-api/sdk.gen";
+import type {
+  CreateDocumentRequest,
+  Document,
+  UpdateDocumentRequest,
+} from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 import DocumentForm from "./document-form";
 
@@ -23,12 +28,12 @@ export default function Page() {
 
   const ref = useRef<ProTableActions>(null);
   return (
-    <ProTable<API.Document, { tag: string; search: string }>
+    <ProTable<Document, { tag: string; search: string }>
       action={ref}
       header={{
         title: t("DocumentList"),
         toolbar: (
-          <DocumentForm<API.CreateDocumentRequest>
+          <DocumentForm<CreateDocumentRequest>
             key="create"
             trigger={t("create")}
             title={t("createDocument")}
@@ -37,8 +42,10 @@ export default function Page() {
               setLoading(true);
               try {
                 await createDocument({
-                  ...values,
-                  show: false,
+                  body: {
+                    ...values,
+                    show: false,
+                  },
                 });
                 toast.success(t("createSuccess"));
                 ref.current?.refresh();
@@ -62,8 +69,10 @@ export default function Page() {
                 defaultChecked={row.getValue("show")}
                 onCheckedChange={async (checked) => {
                   await updateDocument({
-                    ...row.original,
-                    show: checked,
+                    body: {
+                      ...row.original,
+                      show: checked,
+                    },
                   });
                   ref.current?.refresh();
                 }}
@@ -78,7 +87,7 @@ export default function Page() {
         {
           accessorKey: "tags",
           header: t("tags"),
-          cell: ({ row }) => row.original.tags.join(", "),
+          cell: ({ row }) => row.original.tags?.join(", ") ?? "",
         },
         {
           accessorKey: "updated_at",
@@ -96,16 +105,16 @@ export default function Page() {
         },
       ]}
       request={async (pagination, filter) => {
-        const { data } = await getDocumentList({ ...pagination, ...filter });
+        const { data } = await getDocumentList({ query: { ...pagination, ...filter } });
         return {
-          list: data.data?.list || [],
-          total: data.data?.total || 0,
+          list: data?.list || [],
+          total: data?.total || 0,
         };
       }}
       actions={{
         render(row) {
           return [
-            <DocumentForm<API.UpdateDocumentRequest>
+            <DocumentForm<UpdateDocumentRequest>
               key="edit"
               trigger={t("edit")}
               title={t("editDocument")}
@@ -115,8 +124,10 @@ export default function Page() {
                 setLoading(true);
                 try {
                   await updateDocument({
-                    ...row,
-                    ...values,
+                    body: {
+                      ...row,
+                      ...values,
+                    },
                   });
                   toast.success(t("updateSuccess"));
                   ref.current?.refresh();
@@ -135,7 +146,9 @@ export default function Page() {
               description={t("deleteDescription")}
               onConfirm={async () => {
                 await deleteDocument({
-                  id: row.id,
+                  body: {
+                    id: row.id,
+                  },
                 });
                 toast.success(t("deleteSuccess"));
                 ref.current?.refresh();
@@ -154,7 +167,9 @@ export default function Page() {
               description={t("deleteDescription")}
               onConfirm={async () => {
                 await batchDeleteDocument({
-                  ids: rows.map((item) => item.id),
+                  body: {
+                    ids: rows.map((item) => item.id),
+                  },
                 });
                 toast.success(t("deleteSuccess"));
                 ref.current?.refresh();

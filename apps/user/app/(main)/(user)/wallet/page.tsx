@@ -9,7 +9,8 @@ import { Empty } from "@/components/empty";
 import { ProList, type ProListActions } from "@/components/pro-list";
 import Recharge from "@/components/subscribe/recharge";
 import useGlobalStore from "@/config/use-global";
-import { queryUserBalanceLog } from "@/services/user/user";
+import { queryUserBalanceLog } from "@/services/user-api/sdk.gen";
+import type { BalanceLog } from "@/services/user-api/types.gen";
 
 export default function Page() {
   const t = useTranslations("wallet");
@@ -60,16 +61,13 @@ export default function Page() {
           </div>
         </CardContent>
       </Card>
-      <ProList<API.BalanceLog, Record<string, unknown>>
+      <ProList<BalanceLog, Record<string, unknown>>
         action={ref}
         request={async (pagination, filter) => {
-          const response = await queryUserBalanceLog({
-            ...pagination,
-            ...filter,
-          });
+          const { data: response } = await queryUserBalanceLog();
           return {
-            list: response.data.data?.list || [],
-            total: response.data.data?.total || 0,
+            list: response?.list || [],
+            total: response?.total || 0,
           };
         }}
         renderItem={(item) => {

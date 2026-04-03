@@ -1,18 +1,24 @@
+// huma:migrated
 package authMethod
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/authMethod"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get email support platform
-func GetEmailPlatformHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type GetEmailPlatformOutput struct {
+	Body *types.PlatformResponse
+}
 
-		l := authMethod.NewGetEmailPlatformLogic(c.Request.Context(), svcCtx)
+func GetEmailPlatformHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetEmailPlatformOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetEmailPlatformOutput, error) {
+		l := authMethod.NewGetEmailPlatformLogic(ctx, svcCtx)
 		resp, err := l.GetEmailPlatform()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetEmailPlatformOutput{Body: resp}, nil
 	}
 }

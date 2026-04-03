@@ -62,7 +62,7 @@ export const PROTOCOL_FIELDS: Record<string, FieldConfig[]> = {
           "2022-blake3-aes-128-gcm",
           "2022-blake3-aes-256-gcm",
           "2022-blake3-chacha20-poly1305",
-        ].includes(p.cipher),
+        ].includes(p.cipher as string),
     },
     {
       name: "obfs",
@@ -170,7 +170,7 @@ export const PROTOCOL_FIELDS: Record<string, FieldConfig[]> = {
       label: "host",
       placeholder: "e.g. www.bing.com",
       group: "transport",
-      condition: (p) => ["websocket", "xhttp", "httpupgrade"].includes(p.transport),
+      condition: (p) => ["websocket", "xhttp", "httpupgrade"].includes(p.transport as string),
     },
     {
       name: "path",
@@ -178,7 +178,7 @@ export const PROTOCOL_FIELDS: Record<string, FieldConfig[]> = {
       label: "path",
       placeholder: "e.g. /path/to/obfs",
       group: "transport",
-      condition: (p) => ["websocket", "xhttp", "httpupgrade"].includes(p.transport),
+      condition: (p) => ["websocket", "xhttp", "httpupgrade"].includes(p.transport as string),
     },
     {
       name: "service_name",
@@ -287,7 +287,8 @@ export const PROTOCOL_FIELDS: Record<string, FieldConfig[]> = {
       label: "host",
       placeholder: "e.g. www.bing.com",
       group: "transport",
-      condition: (p) => ["websocket", "mkcp", "httpupgrade", "xhttp"].includes(p.transport),
+      condition: (p) =>
+        ["websocket", "mkcp", "httpupgrade", "xhttp"].includes(p.transport as string),
     },
     {
       name: "path",
@@ -295,7 +296,8 @@ export const PROTOCOL_FIELDS: Record<string, FieldConfig[]> = {
       label: "path",
       placeholder: "e.g. /path/to/obfs",
       group: "transport",
-      condition: (p) => ["websocket", "mkcp", "httpupgrade", "xhttp"].includes(p.transport),
+      condition: (p) =>
+        ["websocket", "mkcp", "httpupgrade", "xhttp"].includes(p.transport as string),
     },
     {
       name: "service_name",
@@ -545,7 +547,7 @@ export const PROTOCOL_FIELDS: Record<string, FieldConfig[]> = {
       label: "host",
       placeholder: "e.g. www.bing.com",
       group: "transport",
-      condition: (p) => ["websocket", "xhttp", "httpupgrade"].includes(p.transport),
+      condition: (p) => ["websocket", "xhttp", "httpupgrade"].includes(p.transport as string),
     },
     {
       name: "path",
@@ -553,7 +555,7 @@ export const PROTOCOL_FIELDS: Record<string, FieldConfig[]> = {
       label: "path",
       placeholder: "e.g. /path/to/obfs",
       group: "transport",
-      condition: (p) => ["websocket", "xhttp", "httpupgrade"].includes(p.transport),
+      condition: (p) => ["websocket", "xhttp", "httpupgrade"].includes(p.transport as string),
     },
     {
       name: "service_name",

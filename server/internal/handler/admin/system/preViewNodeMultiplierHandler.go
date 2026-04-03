@@ -1,18 +1,24 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// PreView Node Multiplier
-func PreViewNodeMultiplierHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type PreViewNodeMultiplierOutput struct {
+	Body *types.PreViewNodeMultiplierResponse
+}
 
-		l := system.NewPreViewNodeMultiplierLogic(c.Request.Context(), svcCtx)
+func PreViewNodeMultiplierHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*PreViewNodeMultiplierOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*PreViewNodeMultiplierOutput, error) {
+		l := system.NewPreViewNodeMultiplierLogic(ctx, svcCtx)
 		resp, err := l.PreViewNodeMultiplier()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &PreViewNodeMultiplierOutput{Body: resp}, nil
 	}
 }

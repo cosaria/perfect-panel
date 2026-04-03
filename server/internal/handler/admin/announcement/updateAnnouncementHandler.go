@@ -1,26 +1,23 @@
+// huma:migrated
 package announcement
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/announcement"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update announcement
-func UpdateAnnouncementHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UpdateAnnouncementRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateAnnouncementInput struct {
+	Body types.UpdateAnnouncementRequest
+}
 
-		l := announcement.NewUpdateAnnouncementLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateAnnouncement(&req)
-		result.HttpResult(c, nil, err)
+func UpdateAnnouncementHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateAnnouncementInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateAnnouncementInput) (*struct{}, error) {
+		l := announcement.NewUpdateAnnouncementLogic(ctx, svcCtx)
+		if err := l.UpdateAnnouncement(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

@@ -22,8 +22,10 @@ type SubscriptionDescription = {
   }>;
 };
 
+import type { Subscribe } from "@/services/user-api/types.gen";
+
 interface ProductShowcaseProps {
-  subscriptionData: API.Subscribe[];
+  subscriptionData: Subscribe[];
 }
 
 export function Content({ subscriptionData }: ProductShowcaseProps) {

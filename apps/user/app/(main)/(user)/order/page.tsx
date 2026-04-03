@@ -15,20 +15,23 @@ import { useRef } from "react";
 import { Display } from "@/components/display";
 import { Empty } from "@/components/empty";
 import { ProList, type ProListActions } from "@/components/pro-list";
-import { closeOrder, queryOrderList } from "@/services/user/order";
+import { closeOrder, queryOrderList } from "@/services/user-api/sdk.gen";
+import type { OrderDetail } from "@/services/user-api/types.gen";
 
 export default function Page() {
   const t = useTranslations("order");
 
   const ref = useRef<ProListActions>(null);
   return (
-    <ProList<API.OrderDetail, Record<string, unknown>>
+    <ProList<OrderDetail, Record<string, unknown>>
       action={ref}
       request={async (pagination, filter) => {
-        const response = await queryOrderList({ ...pagination, ...filter });
+        const { data: response } = await queryOrderList({
+          query: { ...pagination, ...filter } as { page: number; size: number },
+        });
         return {
-          list: response.data.data?.list || [],
-          total: response.data.data?.total || 0,
+          list: response?.list || [],
+          total: response?.total || 0,
         };
       }}
       renderItem={(item) => {
@@ -54,7 +57,7 @@ export default function Page() {
                       size="sm"
                       variant="destructive"
                       onClick={async () => {
-                        await closeOrder({ orderNo: item.order_no });
+                        await closeOrder({ body: { orderNo: item.order_no } });
                         ref.current?.refresh();
                       }}
                     >

@@ -1,26 +1,28 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get user subcribe devices
-func GetUserSubscribeDevicesHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetUserSubscribeDevicesRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetUserSubscribeDevicesInput struct {
+	types.GetUserSubscribeDevicesRequest
+}
 
-		l := user.NewGetUserSubscribeDevicesLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetUserSubscribeDevices(&req)
-		result.HttpResult(c, resp, err)
+type GetUserSubscribeDevicesOutput struct {
+	Body *types.GetUserSubscribeDevicesResponse
+}
+
+func GetUserSubscribeDevicesHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserSubscribeDevicesInput) (*GetUserSubscribeDevicesOutput, error) {
+	return func(ctx context.Context, input *GetUserSubscribeDevicesInput) (*GetUserSubscribeDevicesOutput, error) {
+		l := user.NewGetUserSubscribeDevicesLogic(ctx, svcCtx)
+		resp, err := l.GetUserSubscribeDevices(&input.GetUserSubscribeDevicesRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetUserSubscribeDevicesOutput{Body: resp}, nil
 	}
 }

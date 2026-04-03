@@ -2,10 +2,11 @@
 
 import { useTranslations } from "next-intl";
 import { Display } from "@/components/display";
+import type { Subscribe } from "@/services/user-api/types.gen";
 
 interface SubscribeDetailProps {
   subscribe?: Partial<
-    API.Subscribe & {
+    Subscribe & {
       name: string;
       quantity: number;
     }

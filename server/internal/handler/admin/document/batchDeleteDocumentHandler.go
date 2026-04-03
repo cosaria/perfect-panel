@@ -1,26 +1,23 @@
+// huma:migrated
 package document
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/document"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Batch delete document
-func BatchDeleteDocumentHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.BatchDeleteDocumentRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type BatchDeleteDocumentInput struct {
+	Body types.BatchDeleteDocumentRequest
+}
 
-		l := document.NewBatchDeleteDocumentLogic(c.Request.Context(), svcCtx)
-		err := l.BatchDeleteDocument(&req)
-		result.HttpResult(c, nil, err)
+func BatchDeleteDocumentHandler(svcCtx *svc.ServiceContext) func(context.Context, *BatchDeleteDocumentInput) (*struct{}, error) {
+	return func(ctx context.Context, input *BatchDeleteDocumentInput) (*struct{}, error) {
+		l := document.NewBatchDeleteDocumentLogic(ctx, svcCtx)
+		if err := l.BatchDeleteDocument(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

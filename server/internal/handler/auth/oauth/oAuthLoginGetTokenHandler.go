@@ -1,26 +1,31 @@
+// huma:migrated
 package oauth
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
+
 	"github.com/perfect-panel/server/internal/logic/auth/oauth"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// OAuth login get token
-func OAuthLoginGetTokenHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.OAuthLoginGetTokenRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type OAuthLoginGetTokenInput struct {
+	Body      types.OAuthLoginGetTokenRequest
+	IP        string `header:"X-Original-Forwarded-For" required:"false" doc:"Client IP from proxy"`
+	UserAgent string `header:"User-Agent" required:"false" doc:"User agent string"`
+}
 
-		l := oauth.NewOAuthLoginGetTokenLogic(c.Request.Context(), svcCtx)
-		resp, err := l.OAuthLoginGetToken(&req, c.ClientIP(), c.Request.UserAgent())
-		result.HttpResult(c, resp, err)
+type OAuthLoginGetTokenOutput struct {
+	Body *types.LoginResponse
+}
+
+func OAuthLoginGetTokenHandler(svcCtx *svc.ServiceContext) func(context.Context, *OAuthLoginGetTokenInput) (*OAuthLoginGetTokenOutput, error) {
+	return func(ctx context.Context, input *OAuthLoginGetTokenInput) (*OAuthLoginGetTokenOutput, error) {
+		l := oauth.NewOAuthLoginGetTokenLogic(ctx, svcCtx)
+		resp, err := l.OAuthLoginGetToken(&input.Body, input.IP, input.UserAgent)
+		if err != nil {
+			return nil, err
+		}
+		return &OAuthLoginGetTokenOutput{Body: resp}, nil
 	}
 }

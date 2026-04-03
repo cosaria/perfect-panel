@@ -55,7 +55,8 @@ import {
   deleteSubscribeApplication,
   getSubscribeApplicationList,
   updateSubscribeApplication,
-} from "@/services/admin/application";
+} from "@/services/admin-api/sdk.gen";
+import type { SubscribeApplication } from "@/services/admin-api/types.gen";
 import { subscribeSchema } from "./schema";
 import { TemplatePreview } from "./template-preview";
 
@@ -86,7 +87,7 @@ export function ProtocolForm() {
   const t = useTranslations("subscribe");
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [editingClient, setEditingClient] = useState<API.SubscribeApplication | null>(null);
+  const [editingClient, setEditingClient] = useState<SubscribeApplication | null>(null);
   const tableRef = useRef<ProTableActions>(null);
 
   const clientFormSchema = createClientFormSchema(t);
@@ -117,17 +118,19 @@ export function ProtocolForm() {
     _filter: Record<string, unknown>,
   ) => {
     const { data } = await getSubscribeApplicationList({
-      page: pagination.page,
-      size: pagination.size,
+      query: {
+        page: pagination.page,
+        size: pagination.size,
+      },
     });
 
     return {
-      list: data.data?.list || [],
-      total: data.data?.total || 0,
+      list: data?.list || [],
+      total: data?.total || 0,
     };
   };
 
-  const columns: ColumnDef<API.SubscribeApplication, unknown>[] = [
+  const columns: ColumnDef<SubscribeApplication, unknown>[] = [
     {
       accessorKey: "is_default",
       header: t("table.columns.default"),
@@ -136,8 +139,10 @@ export function ProtocolForm() {
           checked={row.original.is_default || false}
           onCheckedChange={async (checked) => {
             await updateSubscribeApplication({
-              ...row.original,
-              is_default: checked,
+              body: {
+                ...row.original,
+                is_default: checked,
+              },
             });
             tableRef.current?.refresh();
           }}
@@ -247,16 +252,16 @@ export function ProtocolForm() {
     setOpen(true);
   };
 
-  const handleEdit = (client: API.SubscribeApplication) => {
+  const handleEdit = (client: SubscribeApplication) => {
     setEditingClient(client);
     form.reset(client);
     setOpen(true);
   };
 
-  const handleDelete = async (client: API.SubscribeApplication) => {
+  const handleDelete = async (client: SubscribeApplication) => {
     setLoading(true);
     try {
-      await deleteSubscribeApplication({ id: client.id });
+      await deleteSubscribeApplication({ body: { id: client.id } });
       tableRef.current?.refresh();
       toast.success(t("actions.deleteSuccess"));
     } catch (error) {
@@ -267,10 +272,12 @@ export function ProtocolForm() {
     }
   };
 
-  const handleBatchDelete = async (clients: API.SubscribeApplication[]) => {
+  const handleBatchDelete = async (clients: SubscribeApplication[]) => {
     setLoading(true);
     try {
-      await Promise.all(clients.map((client) => deleteSubscribeApplication({ id: client.id })));
+      await Promise.all(
+        clients.map((client) => deleteSubscribeApplication({ body: { id: client.id } })),
+      );
       tableRef.current?.refresh();
       toast.success(t("actions.batchDeleteSuccess", { count: clients.length }));
     } catch (error) {
@@ -286,15 +293,19 @@ export function ProtocolForm() {
     try {
       if (editingClient) {
         await updateSubscribeApplication({
-          ...data,
-          is_default: editingClient.is_default,
-          id: editingClient.id,
+          body: {
+            ...data,
+            is_default: editingClient.is_default,
+            id: editingClient.id,
+          },
         });
         toast.success(t("actions.updateSuccess"));
       } else {
         await createSubscribeApplication({
-          ...data,
-          is_default: false,
+          body: {
+            ...data,
+            is_default: false,
+          },
         });
         toast.success(t("actions.createSuccess"));
       }
@@ -311,7 +322,7 @@ export function ProtocolForm() {
 
   return (
     <>
-      <ProTable<API.SubscribeApplication, Record<string, unknown>>
+      <ProTable<SubscribeApplication, Record<string, unknown>>
         action={tableRef}
         columns={columns}
         request={request}
@@ -340,10 +351,7 @@ export function ProtocolForm() {
               applicationId={row.id}
               output_format={row.output_format}
             />,
-            <Button
-              key="edit"
-              onClick={() => handleEdit(row as unknown as API.SubscribeApplication)}
-            >
+            <Button key="edit" onClick={() => handleEdit(row as unknown as SubscribeApplication)}>
               {t("actions.edit")}
             </Button>,
             <ConfirmButton
@@ -355,7 +363,7 @@ export function ProtocolForm() {
               }
               title={t("actions.confirmDelete")}
               description={t("actions.deleteWarning")}
-              onConfirm={() => handleDelete(row as unknown as API.SubscribeApplication)}
+              onConfirm={() => handleDelete(row as unknown as SubscribeApplication)}
               cancelText={t("actions.cancel")}
               confirmText={t("actions.confirm")}
             />,
@@ -368,7 +376,7 @@ export function ProtocolForm() {
               description={t("actions.batchDeleteWarning", {
                 count: rows.length,
               })}
-              onConfirm={() => handleBatchDelete(rows as unknown as API.SubscribeApplication[])}
+              onConfirm={() => handleBatchDelete(rows as unknown as SubscribeApplication[])}
               cancelText={t("actions.cancel")}
               confirmText={t("actions.confirm")}
             />,

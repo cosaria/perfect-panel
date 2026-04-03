@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { bindOAuthCallback } from "@/services/user/user";
+import { bindOAuthCallback } from "@/services/user-api/sdk.gen";
 import { getAllUrlParams } from "@/utils/common";
 
 interface CertificationProps {
@@ -17,8 +17,10 @@ export default function Certification({ platform, children }: CertificationProps
   useEffect(() => {
     const searchParams = getAllUrlParams();
     bindOAuthCallback({
-      method: platform,
-      callback: searchParams,
+      body: {
+        method: platform,
+        callback: searchParams,
+      },
     })
       .then((_res) => {
         router.replace("/profile");

@@ -1,17 +1,24 @@
+// huma:migrated
 package common
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/common"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get global config
-func GetGlobalConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		l := common.NewGetGlobalConfigLogic(c.Request.Context(), svcCtx)
+type GetGlobalConfigOutput struct {
+	Body *types.GetGlobalConfigResponse
+}
+
+func GetGlobalConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetGlobalConfigOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetGlobalConfigOutput, error) {
+		l := common.NewGetGlobalConfigLogic(ctx, svcCtx)
 		resp, err := l.GetGlobalConfig()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetGlobalConfigOutput{Body: resp}, nil
 	}
 }

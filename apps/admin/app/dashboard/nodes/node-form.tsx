@@ -170,7 +170,7 @@ export default function NodeForm(props: {
   }
 
   const handleManualFieldChange = (fieldName: keyof NodeFormValues, value: unknown) => {
-    form.setValue(fieldName, value);
+    form.setValue(fieldName, value as NodeFormValues[typeof fieldName]);
     removeAutoFilledField(fieldName);
   };
 

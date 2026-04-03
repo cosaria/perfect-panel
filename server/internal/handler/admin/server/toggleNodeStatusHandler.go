@@ -1,26 +1,23 @@
+// huma:migrated
 package server
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/server"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Toggle Node Status
-func ToggleNodeStatusHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.ToggleNodeStatusRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type ToggleNodeStatusInput struct {
+	Body types.ToggleNodeStatusRequest
+}
 
-		l := server.NewToggleNodeStatusLogic(c.Request.Context(), svcCtx)
-		err := l.ToggleNodeStatus(&req)
-		result.HttpResult(c, nil, err)
+func ToggleNodeStatusHandler(svcCtx *svc.ServiceContext) func(context.Context, *ToggleNodeStatusInput) (*struct{}, error) {
+	return func(ctx context.Context, input *ToggleNodeStatusInput) (*struct{}, error) {
+		l := server.NewToggleNodeStatusLogic(ctx, svcCtx)
+		if err := l.ToggleNodeStatus(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

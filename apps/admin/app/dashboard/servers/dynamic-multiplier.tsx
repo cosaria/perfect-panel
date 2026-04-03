@@ -18,18 +18,19 @@ import { Icon } from "@workspace/ui/custom-components/icon";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { getNodeMultiplier, setNodeMultiplier } from "@/services/admin/system";
+import { getNodeMultiplier, setNodeMultiplier } from "@/services/admin-api/sdk.gen";
+import type { TimePeriod } from "@/services/admin-api/types.gen";
 
 export default function DynamicMultiplier() {
   const t = useTranslations("servers");
   const [open, setOpen] = useState(false);
-  const [timeSlots, setTimeSlots] = useState<API.TimePeriod[]>([]);
+  const [timeSlots, setTimeSlots] = useState<TimePeriod[]>([]);
 
   const { data: periodsResp, refetch: refetchPeriods } = useQuery({
     queryKey: ["getNodeMultiplier"],
     queryFn: async () => {
       const { data } = await getNodeMultiplier();
-      return (data.data?.periods || []) as API.TimePeriod[];
+      return (data?.periods || []) as TimePeriod[];
     },
     enabled: open,
   });
@@ -41,7 +42,7 @@ export default function DynamicMultiplier() {
   }, [periodsResp]);
 
   async function savePeriods() {
-    await setNodeMultiplier({ periods: timeSlots });
+    await setNodeMultiplier({ body: { periods: timeSlots } });
     await refetchPeriods();
     toast.success(t("server_config.saveSuccess"));
     setOpen(false);
@@ -77,7 +78,7 @@ export default function DynamicMultiplier() {
         </SheetHeader>
         <ScrollArea className="-mx-6 h-[calc(100dvh-48px-36px-60px-env(safe-area-inset-top))] px-6">
           <div className="space-y-4 pt-4">
-            <ArrayInput<API.TimePeriod>
+            <ArrayInput<TimePeriod>
               fields={[
                 {
                   name: "start_time",

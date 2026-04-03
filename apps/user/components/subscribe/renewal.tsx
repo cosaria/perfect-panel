@@ -19,23 +19,28 @@ import CouponInput from "@/components/subscribe/coupon-input";
 import DurationSelector from "@/components/subscribe/duration-selector";
 import PaymentMethods from "@/components/subscribe/payment-methods";
 import useGlobalStore from "@/config/use-global";
-import { preCreateOrder, renewal } from "@/services/user/order";
+import { preCreateOrder, renewal } from "@/services/user-api/sdk.gen";
+import type {
+  Subscribe,
+  PurchaseOrderRequest,
+  RenewalOrderRequest,
+} from "@/services/user-api/types.gen";
 import { SubscribeBilling } from "./billing";
 import { SubscribeDetail } from "./detail";
 
 interface RenewalProps {
   id: number;
-  subscribe: API.Subscribe;
+  subscribe: Subscribe;
 }
 
-type PreCreateOrderData = Awaited<ReturnType<typeof preCreateOrder>>["data"]["data"];
+type PreCreateOrderData = Awaited<ReturnType<typeof preCreateOrder>>["data"];
 
 export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
   const t = useTranslations("subscribe");
   const { getUserInfo } = useGlobalStore();
   const [open, setOpen] = useState<boolean>(false);
   const router = useRouter();
-  const [params, setParams] = useState<Partial<API.RenewalOrderRequest>>({
+  const [params, setParams] = useState<Partial<RenewalOrderRequest>>({
     quantity: 1,
     payment: -1,
     coupon: "",
@@ -50,10 +55,12 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
     queryFn: async () => {
       try {
         const { data } = await preCreateOrder({
-          ...params,
-          subscribe_id: subscribe.id,
-        } as API.PurchaseOrderRequest);
-        const result = data.data;
+          body: {
+            ...params,
+            subscribe_id: subscribe.id,
+          } as PurchaseOrderRequest,
+        });
+        const result = data;
         if (result) {
           lastSuccessOrderRef.current = result;
         }
@@ -87,8 +94,8 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
   const handleSubmit = useCallback(async () => {
     startTransition(async () => {
       try {
-        const response = await renewal(params as API.RenewalOrderRequest);
-        const orderNo = response.data.data?.order_no;
+        const { data: response } = await renewal({ body: params as RenewalOrderRequest });
+        const orderNo = response?.order_no;
         if (orderNo) {
           getUserInfo();
           router.push(`/payment?order_no=${orderNo}`);
@@ -132,7 +139,7 @@ export default function Renewal({ id, subscribe }: Readonly<RenewalProps>) {
               <DurationSelector
                 quantity={params.quantity ?? 1}
                 unitTime={subscribe?.unit_time}
-                discounts={subscribe?.discount}
+                discounts={subscribe?.discount ?? undefined}
                 onChange={(value) => {
                   handleChange("quantity", value);
                 }}

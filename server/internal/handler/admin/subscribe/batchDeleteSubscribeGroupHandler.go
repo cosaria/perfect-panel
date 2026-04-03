@@ -1,26 +1,23 @@
+// huma:migrated
 package subscribe
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/subscribe"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Batch delete subscribe group
-func BatchDeleteSubscribeGroupHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.BatchDeleteSubscribeGroupRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type BatchDeleteSubscribeGroupInput struct {
+	Body types.BatchDeleteSubscribeGroupRequest
+}
 
-		l := subscribe.NewBatchDeleteSubscribeGroupLogic(c.Request.Context(), svcCtx)
-		err := l.BatchDeleteSubscribeGroup(&req)
-		result.HttpResult(c, nil, err)
+func BatchDeleteSubscribeGroupHandler(svcCtx *svc.ServiceContext) func(context.Context, *BatchDeleteSubscribeGroupInput) (*struct{}, error) {
+	return func(ctx context.Context, input *BatchDeleteSubscribeGroupInput) (*struct{}, error) {
+		l := subscribe.NewBatchDeleteSubscribeGroupLogic(ctx, svcCtx)
+		if err := l.BatchDeleteSubscribeGroup(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

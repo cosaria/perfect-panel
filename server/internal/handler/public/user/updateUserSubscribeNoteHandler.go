@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update User Subscribe Note
-func UpdateUserSubscribeNoteHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UpdateUserSubscribeNoteRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateUserSubscribeNoteInput struct {
+	Body types.UpdateUserSubscribeNoteRequest
+}
 
-		l := user.NewUpdateUserSubscribeNoteLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateUserSubscribeNote(&req)
-		result.HttpResult(c, nil, err)
+func UpdateUserSubscribeNoteHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateUserSubscribeNoteInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateUserSubscribeNoteInput) (*struct{}, error) {
+		l := user.NewUpdateUserSubscribeNoteLogic(ctx, svcCtx)
+		if err := l.UpdateUserSubscribeNote(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

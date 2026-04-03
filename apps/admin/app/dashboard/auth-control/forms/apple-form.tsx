@@ -30,7 +30,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getAuthMethodConfig, updateAuthMethodConfig } from "@/services/admin/authMethod";
+import { getAuthMethodConfig, updateAuthMethodConfig } from "@/services/admin-api/sdk.gen";
+import type { UpdateAuthMethodConfigRequest } from "@/services/admin-api/types.gen";
 
 const appleSchema = z.object({
   enabled: z.boolean(),
@@ -56,10 +57,12 @@ export default function AppleForm() {
     queryKey: ["getAuthMethodConfig", "apple"],
     queryFn: async () => {
       const { data } = await getAuthMethodConfig({
-        method: "apple",
+        query: {
+          method: "apple",
+        },
       });
 
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -78,32 +81,36 @@ export default function AppleForm() {
     },
   });
 
+  const cfg = data?.config as Record<string, unknown> | undefined;
+
   useEffect(() => {
     if (data) {
       form.reset({
         enabled: data.enabled || false,
         config: {
-          team_id: data.config?.team_id || "",
-          key_id: data.config?.key_id || "",
-          client_id: data.config?.client_id || "",
-          client_secret: data.config?.client_secret || "",
-          redirect_url: data.config?.redirect_url || "",
+          team_id: (cfg?.team_id as string) || "",
+          key_id: (cfg?.key_id as string) || "",
+          client_id: (cfg?.client_id as string) || "",
+          client_secret: (cfg?.client_secret as string) || "",
+          redirect_url: (cfg?.redirect_url as string) || "",
         },
       });
     }
-  }, [data, form]);
+  }, [data, form, cfg]);
 
   async function onSubmit(values: AppleFormData) {
     setLoading(true);
     try {
       await updateAuthMethodConfig({
-        ...data,
-        enabled: values.enabled,
-        config: {
-          ...data?.config,
-          ...values.config,
-        },
-      } as API.UpdateAuthMethodConfigRequest);
+        body: {
+          ...data,
+          enabled: values.enabled,
+          config: {
+            ...cfg,
+            ...values.config,
+          },
+        } as UpdateAuthMethodConfigRequest,
+      });
       toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);

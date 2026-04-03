@@ -1,18 +1,24 @@
+// huma:migrated
 package console
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/console"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Query revenue statistics
-func QueryRevenueStatisticsHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type QueryRevenueStatisticsOutput struct {
+	Body *types.RevenueStatisticsResponse
+}
 
-		l := console.NewQueryRevenueStatisticsLogic(c.Request.Context(), svcCtx)
+func QueryRevenueStatisticsHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryRevenueStatisticsOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*QueryRevenueStatisticsOutput, error) {
+		l := console.NewQueryRevenueStatisticsLogic(ctx, svcCtx)
 		resp, err := l.QueryRevenueStatistics()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &QueryRevenueStatisticsOutput{Body: resp}, nil
 	}
 }

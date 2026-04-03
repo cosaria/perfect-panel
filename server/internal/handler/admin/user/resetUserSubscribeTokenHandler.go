@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Reset user subscribe token
-func ResetUserSubscribeTokenHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.ResetUserSubscribeTokenRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type ResetUserSubscribeTokenInput struct {
+	Body types.ResetUserSubscribeTokenRequest
+}
 
-		l := user.NewResetUserSubscribeTokenLogic(c.Request.Context(), svcCtx)
-		err := l.ResetUserSubscribeToken(&req)
-		result.HttpResult(c, nil, err)
+func ResetUserSubscribeTokenHandler(svcCtx *svc.ServiceContext) func(context.Context, *ResetUserSubscribeTokenInput) (*struct{}, error) {
+	return func(ctx context.Context, input *ResetUserSubscribeTokenInput) (*struct{}, error) {
+		l := user.NewResetUserSubscribeTokenLogic(ctx, svcCtx)
+		if err := l.ResetUserSubscribeToken(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

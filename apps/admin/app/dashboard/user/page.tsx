@@ -33,7 +33,12 @@ import {
   getUserDetail,
   getUserList,
   updateUserBasicInfo,
-} from "@/services/admin/user";
+} from "@/services/admin-api/sdk.gen";
+import type {
+  CreateUserRequest,
+  UpdateUserBasiceInfoRequest,
+  User,
+} from "@/services/admin-api/types.gen";
 import { useSubscribe } from "@/store/subscribe";
 import { formatDate } from "@/utils/common";
 import { UserDetail } from "./user-detail";
@@ -59,14 +64,14 @@ export default function Page() {
   };
 
   return (
-    <ProTable<API.User, API.GetUserListParams>
+    <ProTable<User, Record<string, unknown>>
       key={initialFilters.user_id}
       action={ref}
       initialFilters={initialFilters}
       header={{
         title: t("userList"),
         toolbar: (
-          <UserForm<API.CreateUserRequest>
+          <UserForm<CreateUserRequest>
             key="create"
             trigger={t("create")}
             title={t("createUser")}
@@ -74,7 +79,7 @@ export default function Page() {
             onSubmit={async (values) => {
               setLoading(true);
               try {
-                await createUser(values);
+                await createUser({ body: values });
                 toast.success(t("createSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
@@ -111,10 +116,12 @@ export default function Page() {
                     ...rest
                   } = row.original;
                   await updateUserBasicInfo({
-                    user_id: id,
-                    ...rest,
-                    enable: checked,
-                  } as unknown as API.UpdateUserBasiceInfoRequest);
+                    body: {
+                      user_id: id,
+                      ...rest,
+                      enable: checked,
+                    } as unknown as UpdateUserBasiceInfoRequest,
+                  });
                   toast.success(t("updateSuccess"));
                   ref.current?.refresh();
                 }}
@@ -174,12 +181,14 @@ export default function Page() {
       ]}
       request={async (pagination, filter) => {
         const { data } = await getUserList({
-          ...pagination,
-          ...filter,
+          body: {
+            ...pagination,
+            ...filter,
+          },
         });
         return {
-          list: data.data?.list || [],
-          total: data.data?.total || 0,
+          list: data?.list || [],
+          total: data?.total || 0,
         };
       }}
       params={[
@@ -220,7 +229,7 @@ export default function Page() {
               title={t("confirmDelete")}
               description={t("deleteDescription")}
               onConfirm={async () => {
-                await deleteUser({ id: row.id });
+                await deleteUser({ body: { id: row.id } });
                 toast.success(t("deleteSuccess"));
                 ref.current?.refresh();
               }}
@@ -265,8 +274,8 @@ function ProfileSheet({ userId }: { userId: number }) {
     enabled: open,
     queryKey: ["user", userId],
     queryFn: async () => {
-      const { data } = await getUserDetail({ id: userId });
-      return data.data as API.User;
+      const { data } = await getUserDetail({ query: { id: userId } });
+      return data as User;
     },
   });
   return (

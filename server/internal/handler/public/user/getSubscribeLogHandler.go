@@ -1,26 +1,28 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get Subscribe Log
-func GetSubscribeLogHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetSubscribeLogRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetSubscribeLogInput struct {
+	types.GetSubscribeLogRequest
+}
 
-		l := user.NewGetSubscribeLogLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetSubscribeLog(&req)
-		result.HttpResult(c, resp, err)
+type GetSubscribeLogOutput struct {
+	Body *types.GetSubscribeLogResponse
+}
+
+func GetSubscribeLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetSubscribeLogInput) (*GetSubscribeLogOutput, error) {
+	return func(ctx context.Context, input *GetSubscribeLogInput) (*GetSubscribeLogOutput, error) {
+		l := user.NewGetSubscribeLogLogic(ctx, svcCtx)
+		resp, err := l.GetSubscribeLog(&input.GetSubscribeLogRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetSubscribeLogOutput{Body: resp}, nil
 	}
 }

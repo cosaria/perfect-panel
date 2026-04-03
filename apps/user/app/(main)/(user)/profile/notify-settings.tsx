@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import useGlobalStore from "@/config/use-global";
-import { updateUserNotify } from "@/services/user/user";
+import { updateUserNotify } from "@/services/user-api/sdk.gen";
 
 const FormSchema = z.object({
   enable_balance_notify: z.boolean(),
@@ -43,7 +43,7 @@ export default function NotifySettings() {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    await updateUserNotify(data);
+    await updateUserNotify({ body: data });
     toast.success(t("notify.updateSuccess"));
     await getUserInfo();
   }

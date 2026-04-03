@@ -28,7 +28,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getCurrencyConfig, updateCurrencyConfig } from "@/services/admin/system";
+import { getCurrencyConfig, updateCurrencyConfig } from "@/services/admin-api/sdk.gen";
+import type { CurrencyConfig } from "@/services/admin-api/types.gen";
 
 // Constants
 const EXCHANGE_RATE_HOST_URL = "https://exchangerate.host";
@@ -50,7 +51,7 @@ export default function CurrencyConfig() {
     queryKey: ["getCurrencyConfig"],
     queryFn: async () => {
       const { data } = await getCurrencyConfig();
-      return data.data;
+      return data;
     },
     enabled: open, // Only request data when the modal is open
   });
@@ -73,7 +74,7 @@ export default function CurrencyConfig() {
   async function onSubmit(values: CurrencyFormData) {
     setLoading(true);
     try {
-      await updateCurrencyConfig(values as API.CurrencyConfig);
+      await updateCurrencyConfig({ body: values as CurrencyConfig });
       toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);

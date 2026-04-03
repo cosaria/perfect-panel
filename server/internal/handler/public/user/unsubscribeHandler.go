@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Unsubscribe
-func UnsubscribeHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UnsubscribeRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UnsubscribeInput struct {
+	Body types.UnsubscribeRequest
+}
 
-		l := user.NewUnsubscribeLogic(c.Request.Context(), svcCtx)
-		err := l.Unsubscribe(&req)
-		result.HttpResult(c, nil, err)
+func UnsubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *UnsubscribeInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UnsubscribeInput) (*struct{}, error) {
+		l := user.NewUnsubscribeLogic(ctx, svcCtx)
+		if err := l.Unsubscribe(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

@@ -23,20 +23,23 @@ import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { ProTable, type ProTableActions } from "@/components/pro-table";
-import { getBatchSendEmailTaskList, stopBatchSendEmailTask } from "@/services/admin/marketing";
+import { getBatchSendEmailTaskList, stopBatchSendEmailTask } from "@/services/admin-api/sdk.gen";
+import type { BatchSendEmailTask } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
 export default function EmailTaskManager() {
   const t = useTranslations("marketing");
   const ref = useRef<ProTableActions>(null);
 
-  const [selectedTask, setSelectedTask] = useState<API.BatchSendEmailTask | null>(null);
+  const [selectedTask, setSelectedTask] = useState<BatchSendEmailTask | null>(null);
   const [open, setOpen] = useState(false);
 
   const stopTask = async (taskId: number) => {
     try {
       await stopBatchSendEmailTask({
-        id: taskId,
+        body: {
+          id: taskId,
+        },
       });
       toast.success(t("taskStoppedSuccessfully"));
       ref.current?.refresh();
@@ -85,7 +88,7 @@ export default function EmailTaskManager() {
         </SheetHeader>
         <ScrollArea className="-mx-6 h-[calc(100dvh-48px-36px-env(safe-area-inset-top))] px-6">
           <div className="mt-4 space-y-4">
-            <ProTable<API.BatchSendEmailTask, API.GetBatchSendEmailTaskListParams>
+            <ProTable<BatchSendEmailTask, Record<string, unknown>>
               action={ref}
               columns={[
                 {
@@ -126,7 +129,7 @@ export default function EmailTaskManager() {
                   accessorKey: "progress",
                   header: t("progress"),
                   cell: ({ row }) => {
-                    const task = row.original as API.BatchSendEmailTask;
+                    const task = row.original as BatchSendEmailTask;
                     const progress = task.total > 0 ? (task.current / task.total) * 100 : 0;
                     return (
                       <div className="space-y-1">
@@ -165,13 +168,15 @@ export default function EmailTaskManager() {
               ]}
               request={async (pagination, filters) => {
                 const response = await getBatchSendEmailTaskList({
-                  ...filters,
-                  page: pagination.page,
-                  size: pagination.size,
+                  body: {
+                    ...filters,
+                    page: pagination.page,
+                    size: pagination.size,
+                  },
                 });
                 return {
-                  list: response.data?.data?.list || [],
-                  total: response.data?.data?.total || 0,
+                  list: response.data?.list || [],
+                  total: response.data?.total || 0,
                 };
               }}
               params={[
@@ -204,7 +209,7 @@ export default function EmailTaskManager() {
                         <Button
                           variant="outline"
                           size="icon"
-                          onClick={() => setSelectedTask(row as API.BatchSendEmailTask)}
+                          onClick={() => setSelectedTask(row as BatchSendEmailTask)}
                         >
                           <Icon icon="mdi:eye" />
                         </Button>

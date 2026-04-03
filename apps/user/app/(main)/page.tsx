@@ -4,7 +4,8 @@ import { GlobalMap } from "@/components/main/global-map";
 import { Hero } from "@/components/main/hero";
 import { ProductShowcase } from "@/components/main/product-showcase/index";
 import { Stats } from "@/components/main/stats";
-import { queryUserInfo } from "@/services/user/user";
+import { queryUserInfo } from "@/services/user-api/sdk.gen";
+import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
 
 export default async function Home() {
   const Authorization = (await cookies()).get("Authorization")?.value;
@@ -12,10 +13,13 @@ export default async function Home() {
   if (Authorization) {
     let user = null;
     try {
-      user = await queryUserInfo({
-        skipErrorHandler: true,
-        Authorization,
-      }).then((res) => res.data.data);
+      const { data } = await queryUserInfo({
+        baseUrl: NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "",
+        headers: {
+          Authorization,
+        },
+      });
+      user = data;
     } catch (error) {
       console.log("Token validation failed:", error);
     }

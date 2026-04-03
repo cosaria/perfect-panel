@@ -28,7 +28,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getTosConfig, updateTosConfig } from "@/services/admin/system";
+import { getTosConfig, updateTosConfig } from "@/services/admin-api/sdk.gen";
+import type { TosConfig } from "@/services/admin-api/types.gen";
 
 const tosSchema = z.object({
   tos_content: z.string().optional(),
@@ -45,7 +46,7 @@ export default function TosConfig() {
     queryKey: ["getTosConfig"],
     queryFn: async () => {
       const { data } = await getTosConfig();
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -68,7 +69,7 @@ export default function TosConfig() {
   async function onSubmit(values: TosFormData) {
     setLoading(true);
     try {
-      await updateTosConfig(values as API.TosConfig);
+      await updateTosConfig({ body: values as TosConfig });
       toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);

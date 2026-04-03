@@ -1,26 +1,28 @@
+// huma:migrated
 package common
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/common"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get sms verification code
-func SendSmsCodeHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.SendSmsCodeRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type SendSmsCodeInput struct {
+	Body types.SendSmsCodeRequest
+}
 
-		l := common.NewSendSmsCodeLogic(c.Request.Context(), svcCtx)
-		resp, err := l.SendSmsCode(&req)
-		result.HttpResult(c, resp, err)
+type SendSmsCodeOutput struct {
+	Body *types.SendCodeResponse
+}
+
+func SendSmsCodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *SendSmsCodeInput) (*SendSmsCodeOutput, error) {
+	return func(ctx context.Context, input *SendSmsCodeInput) (*SendSmsCodeOutput, error) {
+		l := common.NewSendSmsCodeLogic(ctx, svcCtx)
+		resp, err := l.SendSmsCode(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &SendSmsCodeOutput{Body: resp}, nil
 	}
 }

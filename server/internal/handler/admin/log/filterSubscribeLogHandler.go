@@ -1,26 +1,28 @@
+// huma:migrated
 package log
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/log"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Filter subscribe log
-func FilterSubscribeLogHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.FilterSubscribeLogRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type FilterSubscribeLogInput struct {
+	types.FilterSubscribeLogRequest
+}
 
-		l := log.NewFilterSubscribeLogLogic(c.Request.Context(), svcCtx)
-		resp, err := l.FilterSubscribeLog(&req)
-		result.HttpResult(c, resp, err)
+type FilterSubscribeLogOutput struct {
+	Body *types.FilterSubscribeLogResponse
+}
+
+func FilterSubscribeLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterSubscribeLogInput) (*FilterSubscribeLogOutput, error) {
+	return func(ctx context.Context, input *FilterSubscribeLogInput) (*FilterSubscribeLogOutput, error) {
+		l := log.NewFilterSubscribeLogLogic(ctx, svcCtx)
+		resp, err := l.FilterSubscribeLog(&input.FilterSubscribeLogRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &FilterSubscribeLogOutput{Body: resp}, nil
 	}
 }

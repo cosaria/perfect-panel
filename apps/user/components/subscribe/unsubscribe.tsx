@@ -16,7 +16,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import useGlobalStore from "@/config/use-global";
-import { preUnsubscribe, unsubscribe } from "@/services/user/user";
+import { preUnsubscribe, unsubscribe } from "@/services/user-api/sdk.gen";
 import { Display } from "../display";
 
 interface UnsubscribeProps {
@@ -36,19 +36,14 @@ export default function Unsubscribe({ id, allowDeduction }: Readonly<Unsubscribe
     enabled: Boolean(open && id && allowDeduction),
     queryKey: ["preUnsubscribe", id],
     queryFn: async () => {
-      const { data } = await preUnsubscribe({ id });
-      return data.data?.deduction_amount;
+      const { data } = await preUnsubscribe({ body: { id } });
+      return data?.deduction_amount;
     },
   });
 
   const handleSubmit = async () => {
     try {
-      await unsubscribe(
-        { id },
-        {
-          skipErrorHandler: true,
-        },
-      );
+      await unsubscribe({ body: { id } });
       toast.success(t("success"));
       router.refresh();
       await getUserInfo();

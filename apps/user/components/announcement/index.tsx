@@ -3,7 +3,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@workspace/ui/
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { Markdown } from "@workspace/ui/custom-components/markdown";
 import { getTranslations } from "next-intl/server";
-import { queryAnnouncement } from "@/services/user/announcement";
+import { queryAnnouncement } from "@/services/user-api/sdk.gen";
+import type { Announcement as AnnouncementType } from "@/services/user-api/types.gen";
+import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
 import { Empty } from "../empty";
 
 export default async function Announcement({
@@ -13,22 +15,19 @@ export default async function Announcement({
   type: "popup" | "pinned";
   Authorization?: string;
 }) {
-  let data: API.Announcement | undefined;
+  let data: AnnouncementType | undefined;
   try {
-    data = await queryAnnouncement(
-      {
+    const { data: result } = await queryAnnouncement({
+      body: {
         page: 1,
         size: 10,
         pinned: type === "pinned",
         popup: type === "popup",
       },
-      {
-        skipErrorHandler: true,
-        Authorization,
-      },
-    ).then((res) => {
-      return res.data.data?.announcements.find((item) => item[type]);
+      baseUrl: NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "",
+      headers: Authorization ? { Authorization } : undefined,
     });
+    data = result?.announcements?.find((item) => item[type]) ?? undefined;
   } catch (_error) {
     /* empty */
   }

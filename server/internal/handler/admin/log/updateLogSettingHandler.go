@@ -1,26 +1,23 @@
+// huma:migrated
 package log
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/log"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update log setting
-func UpdateLogSettingHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.LogSetting
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateLogSettingInput struct {
+	Body types.LogSetting
+}
 
-		l := log.NewUpdateLogSettingLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateLogSetting(&req)
-		result.HttpResult(c, nil, err)
+func UpdateLogSettingHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateLogSettingInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateLogSettingInput) (*struct{}, error) {
+		l := log.NewUpdateLogSettingLogic(ctx, svcCtx)
+		if err := l.UpdateLogSetting(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

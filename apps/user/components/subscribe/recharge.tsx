@@ -16,7 +16,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import useGlobalStore from "@/config/use-global";
-import { recharge } from "@/services/user/order";
+import { recharge } from "@/services/user-api/sdk.gen";
+import type { RechargeOrderRequest } from "@/services/user-api/types.gen";
 import PaymentMethods from "./payment-methods";
 
 export default function Recharge(props: Readonly<ButtonProps>) {
@@ -28,7 +29,7 @@ export default function Recharge(props: Readonly<ButtonProps>) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, startTransition] = useTransition();
 
-  const [params, setParams] = useState<API.RechargeOrderRequest>({
+  const [params, setParams] = useState<RechargeOrderRequest>({
     amount: 0,
     payment: 1,
   });
@@ -76,8 +77,8 @@ export default function Recharge(props: Readonly<ButtonProps>) {
             onClick={() => {
               startTransition(async () => {
                 try {
-                  const response = await recharge(params);
-                  const orderNo = response.data.data?.order_no;
+                  const { data: response } = await recharge({ body: params });
+                  const orderNo = response?.order_no;
                   if (orderNo) {
                     router.push(`/payment?order_no=${orderNo}`);
                     setOpen(false);

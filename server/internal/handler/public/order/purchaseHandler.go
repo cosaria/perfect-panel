@@ -1,26 +1,28 @@
+// huma:migrated
 package order
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/order"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// purchase Subscription
-func PurchaseHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.PurchaseOrderRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type PurchaseInput struct {
+	Body types.PurchaseOrderRequest
+}
 
-		l := order.NewPurchaseLogic(c.Request.Context(), svcCtx)
-		resp, err := l.Purchase(&req)
-		result.HttpResult(c, resp, err)
+type PurchaseOutput struct {
+	Body *types.PurchaseOrderResponse
+}
+
+func PurchaseHandler(svcCtx *svc.ServiceContext) func(context.Context, *PurchaseInput) (*PurchaseOutput, error) {
+	return func(ctx context.Context, input *PurchaseInput) (*PurchaseOutput, error) {
+		l := order.NewPurchaseLogic(ctx, svcCtx)
+		resp, err := l.Purchase(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &PurchaseOutput{Body: resp}, nil
 	}
 }

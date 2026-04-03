@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/componen
 import { useLocale, useTranslations } from "next-intl";
 import { Empty } from "@/components/empty";
 import { NEXT_PUBLIC_HIDDEN_TUTORIAL_DOCUMENT } from "@/config/constants";
-import { queryDocumentList } from "@/services/user/document";
+import { queryDocumentList } from "@/services/user-api/sdk.gen";
 import { getTutorialList } from "@/utils/tutorial";
 import { DocumentButton } from "./document-button";
 import { TutorialButton } from "./tutorial-button";
@@ -17,10 +17,12 @@ export default function Page() {
   const { data } = useQuery({
     queryKey: ["queryDocumentList"],
     queryFn: async () => {
-      const response = await queryDocumentList();
-      const list = response.data.data?.list || [];
+      const { data: response } = await queryDocumentList();
+      const list = response?.list || [];
       return {
-        tags: Array.from(new Set(list.reduce((acc: string[], item) => acc.concat(item.tags), []))),
+        tags: Array.from(
+          new Set(list.reduce((acc: string[], item) => acc.concat(item.tags || []), [])),
+        ),
         list,
       };
     },
@@ -63,7 +65,7 @@ export default function Page() {
             {tags?.map((item) => (
               <TabsContent value={item} key={item}>
                 <DocumentButton
-                  items={DocumentList.filter((docs) => (item ? docs.tags.includes(item) : true))}
+                  items={DocumentList.filter((docs) => (item ? docs.tags?.includes(item) : true))}
                 />
               </TabsContent>
             ))}

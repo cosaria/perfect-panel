@@ -29,7 +29,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getAuthMethodConfig, updateAuthMethodConfig } from "@/services/admin/authMethod";
+import { getAuthMethodConfig, updateAuthMethodConfig } from "@/services/admin-api/sdk.gen";
+import type { UpdateAuthMethodConfigRequest } from "@/services/admin-api/types.gen";
 
 const telegramSchema = z.object({
   enabled: z.boolean(),
@@ -48,10 +49,12 @@ export default function TelegramForm() {
     queryKey: ["getAuthMethodConfig", "telegram"],
     queryFn: async () => {
       const { data } = await getAuthMethodConfig({
-        method: "telegram",
+        query: {
+          method: "telegram",
+        },
       });
 
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -65,28 +68,32 @@ export default function TelegramForm() {
     },
   });
 
+  const cfg = data?.config as Record<string, unknown> | undefined;
+
   useEffect(() => {
     if (data) {
       form.reset({
         enabled: data.enabled || false,
-        bot: data.config?.bot || "",
-        bot_token: data.config?.bot_token || "",
+        bot: (cfg?.bot as string) || "",
+        bot_token: (cfg?.bot_token as string) || "",
       });
     }
-  }, [data, form]);
+  }, [data, form, cfg]);
 
   async function onSubmit(values: TelegramFormData) {
     setLoading(true);
     try {
       await updateAuthMethodConfig({
-        ...data,
-        enabled: values.enabled,
-        config: {
-          ...data?.config,
-          bot: values.bot,
-          bot_token: values.bot_token,
-        },
-      } as API.UpdateAuthMethodConfigRequest);
+        body: {
+          ...data,
+          enabled: values.enabled,
+          config: {
+            ...cfg,
+            bot: values.bot,
+            bot_token: values.bot_token,
+          },
+        } as UpdateAuthMethodConfigRequest,
+      });
       toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);

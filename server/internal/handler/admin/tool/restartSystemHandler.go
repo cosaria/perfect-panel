@@ -1,18 +1,18 @@
+// huma:migrated
 package tool
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/tool"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Restart System
-func RestartSystemHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-
-		l := tool.NewRestartSystemLogic(c.Request.Context(), svcCtx)
-		err := l.RestartSystem()
-		result.HttpResult(c, nil, err)
+func RestartSystemHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*struct{}, error) {
+	return func(ctx context.Context, _ *struct{}) (*struct{}, error) {
+		l := tool.NewRestartSystemLogic(ctx, svcCtx)
+		if err := l.RestartSystem(); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

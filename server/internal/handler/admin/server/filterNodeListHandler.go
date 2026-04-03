@@ -1,26 +1,28 @@
+// huma:migrated
 package server
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/server"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Filter Node List
-func FilterNodeListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.FilterNodeListRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type FilterNodeListInput struct {
+	types.FilterNodeListRequest
+}
 
-		l := server.NewFilterNodeListLogic(c.Request.Context(), svcCtx)
-		resp, err := l.FilterNodeList(&req)
-		result.HttpResult(c, resp, err)
+type FilterNodeListOutput struct {
+	Body *types.FilterNodeListResponse
+}
+
+func FilterNodeListHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterNodeListInput) (*FilterNodeListOutput, error) {
+	return func(ctx context.Context, input *FilterNodeListInput) (*FilterNodeListOutput, error) {
+		l := server.NewFilterNodeListLogic(ctx, svcCtx)
+		resp, err := l.FilterNodeList(&input.FilterNodeListRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &FilterNodeListOutput{Body: resp}, nil
 	}
 }

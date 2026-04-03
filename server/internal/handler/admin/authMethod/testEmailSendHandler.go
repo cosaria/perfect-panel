@@ -1,26 +1,23 @@
+// huma:migrated
 package authMethod
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/authMethod"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Test email send
-func TestEmailSendHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.TestEmailSendRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type TestEmailSendInput struct {
+	Body types.TestEmailSendRequest
+}
 
-		l := authMethod.NewTestEmailSendLogic(c.Request.Context(), svcCtx)
-		err := l.TestEmailSend(&req)
-		result.HttpResult(c, nil, err)
+func TestEmailSendHandler(svcCtx *svc.ServiceContext) func(context.Context, *TestEmailSendInput) (*struct{}, error) {
+	return func(ctx context.Context, input *TestEmailSendInput) (*struct{}, error) {
+		l := authMethod.NewTestEmailSendLogic(ctx, svcCtx)
+		if err := l.TestEmailSend(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

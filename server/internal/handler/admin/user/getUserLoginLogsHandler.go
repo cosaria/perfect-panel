@@ -1,26 +1,28 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get user login logs
-func GetUserLoginLogsHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetUserLoginLogsRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetUserLoginLogsInput struct {
+	types.GetUserLoginLogsRequest
+}
 
-		l := user.NewGetUserLoginLogsLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetUserLoginLogs(&req)
-		result.HttpResult(c, resp, err)
+type GetUserLoginLogsOutput struct {
+	Body *types.GetUserLoginLogsResponse
+}
+
+func GetUserLoginLogsHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserLoginLogsInput) (*GetUserLoginLogsOutput, error) {
+	return func(ctx context.Context, input *GetUserLoginLogsInput) (*GetUserLoginLogsOutput, error) {
+		l := user.NewGetUserLoginLogsLogic(ctx, svcCtx)
+		resp, err := l.GetUserLoginLogs(&input.GetUserLoginLogsRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetUserLoginLogsOutput{Body: resp}, nil
 	}
 }

@@ -9,7 +9,8 @@ import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { updateUserNotifySetting } from "@/services/admin/user";
+import { updateUserNotifySetting } from "@/services/admin-api/sdk.gen";
+import type { User } from "@/services/admin-api/types.gen";
 
 const notifySettingsSchema = z.object({
   enable_balance_notify: z.boolean(),
@@ -20,7 +21,7 @@ const notifySettingsSchema = z.object({
 
 type NotifySettingsValues = z.infer<typeof notifySettingsSchema>;
 
-export function NotifySettingsForm({ user, refetch }: { user: API.User; refetch: () => void }) {
+export function NotifySettingsForm({ user, refetch }: { user: User; refetch: () => void }) {
   const t = useTranslations("user");
 
   const form = useForm<NotifySettingsValues>({
@@ -35,8 +36,10 @@ export function NotifySettingsForm({ user, refetch }: { user: API.User; refetch:
 
   async function onSubmit(data: NotifySettingsValues) {
     await updateUserNotifySetting({
-      ...data,
-      user_id: user.id,
+      body: {
+        ...data,
+        user_id: user.id,
+      },
     });
     toast.success(t("updateSuccess"));
     refetch();

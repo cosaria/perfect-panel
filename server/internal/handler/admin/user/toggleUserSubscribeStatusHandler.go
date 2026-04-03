@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Stop user subscribe
-func ToggleUserSubscribeStatusHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.ToggleUserSubscribeStatusRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type ToggleUserSubscribeStatusInput struct {
+	Body types.ToggleUserSubscribeStatusRequest
+}
 
-		l := user.NewToggleUserSubscribeStatusLogic(c.Request.Context(), svcCtx)
-		err := l.ToggleUserSubscribeStatus(&req)
-		result.HttpResult(c, nil, err)
+func ToggleUserSubscribeStatusHandler(svcCtx *svc.ServiceContext) func(context.Context, *ToggleUserSubscribeStatusInput) (*struct{}, error) {
+	return func(ctx context.Context, input *ToggleUserSubscribeStatusInput) (*struct{}, error) {
+		l := user.NewToggleUserSubscribeStatusLogic(ctx, svcCtx)
+		if err := l.ToggleUserSubscribeStatus(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

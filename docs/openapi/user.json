@@ -1,0 +1,5131 @@
+{
+  "components": {
+    "schemas": {
+      "Announcement": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "pinned": {
+            "type": ["boolean", "null"]
+          },
+          "popup": {
+            "type": ["boolean", "null"]
+          },
+          "show": {
+            "type": ["boolean", "null"]
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "content",
+          "show",
+          "pinned",
+          "popup",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "BalanceLog": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "balance": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "timestamp": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "type": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "user_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["type", "user_id", "amount", "balance", "timestamp"],
+        "type": "object"
+      },
+      "BindOAuthCallbackRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "callback": {},
+          "method": {
+            "type": "string"
+          }
+        },
+        "required": ["method", "callback"],
+        "type": "object"
+      },
+      "BindOAuthRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "redirect": {
+            "type": "string"
+          }
+        },
+        "required": ["method", "redirect"],
+        "type": "object"
+      },
+      "BindOAuthResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "redirect": {
+            "type": "string"
+          }
+        },
+        "required": ["redirect"],
+        "type": "object"
+      },
+      "BindTelegramResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "expired_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": ["url", "expired_at"],
+        "type": "object"
+      },
+      "CheckUserResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "exist": {
+            "type": "boolean"
+          }
+        },
+        "required": ["exist"],
+        "type": "object"
+      },
+      "CheckoutOrderRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "orderNo": {
+            "type": "string"
+          },
+          "returnUrl": {
+            "type": "string"
+          }
+        },
+        "required": ["orderNo"],
+        "type": "object"
+      },
+      "CheckoutOrderResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "checkout_url": {
+            "type": "string"
+          },
+          "stripe": {
+            "$ref": "#/components/schemas/StripePayment"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": ["type"],
+        "type": "object"
+      },
+      "CloseOrderRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "orderNo": {
+            "type": "string"
+          }
+        },
+        "required": ["orderNo"],
+        "type": "object"
+      },
+      "CommissionLog": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "timestamp": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "type": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "user_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["type", "user_id", "amount", "order_no", "timestamp"],
+        "type": "object"
+      },
+      "CommissionWithdrawRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": ["amount", "content"],
+        "type": "object"
+      },
+      "CreateUserTicketFollowRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "ticket_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "type": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": ["ticket_id", "from", "type", "content"],
+        "type": "object"
+      },
+      "CreateUserTicketRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": ["title", "description"],
+        "type": "object"
+      },
+      "DeviceLoginRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "IP": {
+            "type": "string"
+          },
+          "cf_token": {
+            "type": "string"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "user_agent": {
+            "type": "string"
+          }
+        },
+        "required": ["identifier", "IP", "user_agent", "cf_token"],
+        "type": "object"
+      },
+      "Document": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "show": {
+            "type": "boolean"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": ["array", "null"]
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["id", "title", "content", "tags", "show", "created_at", "updated_at"],
+        "type": "object"
+      },
+      "ErrorDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "location": {
+            "description": "Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'",
+            "type": "string"
+          },
+          "message": {
+            "description": "Error message text",
+            "type": "string"
+          },
+          "value": {
+            "description": "The value at the given location"
+          }
+        },
+        "type": "object"
+      },
+      "ErrorModel": {
+        "additionalProperties": false,
+        "properties": {
+          "detail": {
+            "description": "A human-readable explanation specific to this occurrence of the problem.",
+            "examples": ["Property foo is required but is missing."],
+            "type": "string"
+          },
+          "errors": {
+            "description": "Optional list of individual error details",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            },
+            "type": ["array", "null"]
+          },
+          "instance": {
+            "description": "A URI reference that identifies the specific occurrence of the problem.",
+            "examples": ["https://example.com/error-log/abc123"],
+            "format": "uri",
+            "type": "string"
+          },
+          "status": {
+            "description": "HTTP status code",
+            "examples": [400],
+            "format": "int64",
+            "type": "integer"
+          },
+          "title": {
+            "description": "A short, human-readable summary of the problem type. This value should not change between occurrences of the error.",
+            "examples": ["Bad Request"],
+            "type": "string"
+          },
+          "type": {
+            "default": "about:blank",
+            "description": "A URI reference to human-readable documentation for the error.",
+            "examples": ["https://example.com/errors/example"],
+            "format": "uri",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Follow": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "from": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "ticket_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "type": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": ["id", "ticket_id", "from", "type", "content", "created_at"],
+        "type": "object"
+      },
+      "GetAvailablePaymentMethodsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/PaymentMethod"
+            },
+            "type": ["array", "null"]
+          }
+        },
+        "required": ["list"],
+        "type": "object"
+      },
+      "GetDeviceListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/UserDevice"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["list", "total"],
+        "type": "object"
+      },
+      "GetLoginLogResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/UserLoginLog"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["list", "total"],
+        "type": "object"
+      },
+      "GetOAuthMethodsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/UserAuthMethod"
+            },
+            "type": ["array", "null"]
+          }
+        },
+        "required": ["methods"],
+        "type": "object"
+      },
+      "GetSubscribeLogResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/UserSubscribeLog"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["list", "total"],
+        "type": "object"
+      },
+      "GetSubscriptionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/Subscribe"
+            },
+            "type": ["array", "null"]
+          }
+        },
+        "required": ["list"],
+        "type": "object"
+      },
+      "GetUserTicketListRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "page": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "search": {
+            "type": "string"
+          },
+          "size": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": ["page", "size"],
+        "type": "object"
+      },
+      "GetUserTicketListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/Ticket"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["total", "list"],
+        "type": "object"
+      },
+      "LoginResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": ["token"],
+        "type": "object"
+      },
+      "OAthLoginRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "redirect": {
+            "type": "string"
+          }
+        },
+        "required": ["method", "redirect"],
+        "type": "object"
+      },
+      "OAuthLoginGetTokenRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "callback": {},
+          "method": {
+            "type": "string"
+          }
+        },
+        "required": ["method", "callback"],
+        "type": "object"
+      },
+      "OAuthLoginResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "redirect": {
+            "type": "string"
+          }
+        },
+        "required": ["redirect"],
+        "type": "object"
+      },
+      "OrderDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "commission": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "coupon": {
+            "type": "string"
+          },
+          "coupon_discount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "discount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "fee_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "gift_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "method": {
+            "type": "string"
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/PaymentMethod"
+          },
+          "price": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "quantity": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "subscribe": {
+            "$ref": "#/components/schemas/Subscribe"
+          },
+          "subscribe_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "trade_no": {
+            "type": "string"
+          },
+          "type": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "order_no",
+          "type",
+          "quantity",
+          "price",
+          "amount",
+          "gift_amount",
+          "discount",
+          "coupon",
+          "coupon_discount",
+          "payment",
+          "method",
+          "fee_amount",
+          "trade_no",
+          "status",
+          "subscribe_id",
+          "subscribe",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "PaymentMethod": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "fee_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "fee_mode": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "fee_percent": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "platform",
+          "description",
+          "icon",
+          "fee_mode",
+          "fee_percent",
+          "fee_amount"
+        ],
+        "type": "object"
+      },
+      "PortalPurchaseRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "auth_type": {
+            "type": "string"
+          },
+          "coupon": {
+            "type": "string"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "invite_code": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "payment": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "quantity": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "subscribe_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "turnstile_token": {
+            "type": "string"
+          }
+        },
+        "required": ["auth_type", "identifier", "payment", "subscribe_id", "quantity"],
+        "type": "object"
+      },
+      "PortalPurchaseResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "order_no": {
+            "type": "string"
+          }
+        },
+        "required": ["order_no"],
+        "type": "object"
+      },
+      "PreOrderResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "coupon": {
+            "type": "string"
+          },
+          "coupon_discount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "discount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "fee_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "gift_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "price": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "price",
+          "amount",
+          "discount",
+          "gift_amount",
+          "coupon",
+          "coupon_discount",
+          "fee_amount"
+        ],
+        "type": "object"
+      },
+      "PrePurchaseOrderRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "coupon": {
+            "type": "string"
+          },
+          "payment": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "quantity": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "subscribe_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["subscribe_id", "quantity"],
+        "type": "object"
+      },
+      "PrePurchaseOrderResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "coupon": {
+            "type": "string"
+          },
+          "coupon_discount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "discount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "fee_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "price": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["price", "amount", "discount", "coupon", "coupon_discount", "fee_amount"],
+        "type": "object"
+      },
+      "PreUnsubscribeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["id"],
+        "type": "object"
+      },
+      "PreUnsubscribeResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "deduction_amount": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["deduction_amount"],
+        "type": "object"
+      },
+      "PurchaseOrderRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "coupon": {
+            "type": "string"
+          },
+          "payment": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "quantity": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "subscribe_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["subscribe_id", "quantity"],
+        "type": "object"
+      },
+      "PurchaseOrderResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "order_no": {
+            "type": "string"
+          }
+        },
+        "required": ["order_no"],
+        "type": "object"
+      },
+      "QueryAnnouncementRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "page": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "pinned": {
+            "type": ["boolean", "null"]
+          },
+          "popup": {
+            "type": ["boolean", "null"]
+          },
+          "size": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["page", "size", "pinned", "popup"],
+        "type": "object"
+      },
+      "QueryAnnouncementResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "announcements": {
+            "items": {
+              "$ref": "#/components/schemas/Announcement"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["total", "announcements"],
+        "type": "object"
+      },
+      "QueryDocumentListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/Document"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["total", "list"],
+        "type": "object"
+      },
+      "QueryOrderListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/OrderDetail"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["total", "list"],
+        "type": "object"
+      },
+      "QueryPurchaseOrderResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "coupon": {
+            "type": "string"
+          },
+          "coupon_discount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "discount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "fee_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "order_no": {
+            "type": "string"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/PaymentMethod"
+          },
+          "price": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "quantity": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "subscribe": {
+            "$ref": "#/components/schemas/Subscribe"
+          },
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "order_no",
+          "subscribe",
+          "quantity",
+          "price",
+          "amount",
+          "discount",
+          "coupon",
+          "coupon_discount",
+          "fee_amount",
+          "payment",
+          "status",
+          "created_at"
+        ],
+        "type": "object"
+      },
+      "QuerySubscribeListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/Subscribe"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["list", "total"],
+        "type": "object"
+      },
+      "QueryUserAffiliateCountResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "registers": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "total_commission": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["registers", "total_commission"],
+        "type": "object"
+      },
+      "QueryUserAffiliateListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/UserAffiliate"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["list", "total"],
+        "type": "object"
+      },
+      "QueryUserBalanceLogListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/BalanceLog"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["list", "total"],
+        "type": "object"
+      },
+      "QueryUserCommissionLogListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/CommissionLog"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["list", "total"],
+        "type": "object"
+      },
+      "QueryUserSubscribeListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/UserSubscribe"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["list", "total"],
+        "type": "object"
+      },
+      "QueryUserSubscribeNodeListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/UserSubscribeInfo"
+            },
+            "type": ["array", "null"]
+          }
+        },
+        "required": ["list"],
+        "type": "object"
+      },
+      "QueryWithdrawalLogListResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/WithdrawalLog"
+            },
+            "type": ["array", "null"]
+          },
+          "total": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["list", "total"],
+        "type": "object"
+      },
+      "RechargeOrderRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "payment": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["amount", "payment"],
+        "type": "object"
+      },
+      "RechargeOrderResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "order_no": {
+            "type": "string"
+          }
+        },
+        "required": ["order_no"],
+        "type": "object"
+      },
+      "RenewalOrderRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "coupon": {
+            "type": "string"
+          },
+          "payment": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "quantity": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_subscribe_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["user_subscribe_id", "quantity", "payment"],
+        "type": "object"
+      },
+      "RenewalOrderResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "order_no": {
+            "type": "string"
+          }
+        },
+        "required": ["order_no"],
+        "type": "object"
+      },
+      "ResetPasswordRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "IP": {
+            "type": "string"
+          },
+          "LoginType": {
+            "type": "string"
+          },
+          "UserAgent": {
+            "type": "string"
+          },
+          "cf_token": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "identifier",
+          "email",
+          "password",
+          "code",
+          "IP",
+          "UserAgent",
+          "LoginType",
+          "cf_token"
+        ],
+        "type": "object"
+      },
+      "ResetTrafficOrderRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "payment": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_subscribe_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["user_subscribe_id", "payment"],
+        "type": "object"
+      },
+      "ResetTrafficOrderResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "order_no": {
+            "type": "string"
+          }
+        },
+        "required": ["order_no"],
+        "type": "object"
+      },
+      "ResetUserSubscribeTokenRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "user_subscribe_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["user_subscribe_id"],
+        "type": "object"
+      },
+      "StripePayment": {
+        "additionalProperties": false,
+        "properties": {
+          "client_secret": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "publishable_key": {
+            "type": "string"
+          }
+        },
+        "required": ["method", "client_secret", "publishable_key"],
+        "type": "object"
+      },
+      "Subscribe": {
+        "additionalProperties": false,
+        "properties": {
+          "allow_deduction": {
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "deduction_ratio": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "device_limit": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "discount": {
+            "items": {
+              "$ref": "#/components/schemas/SubscribeDiscount"
+            },
+            "type": ["array", "null"]
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "inventory": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "language": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "node_tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": ["array", "null"]
+          },
+          "nodes": {
+            "items": {
+              "format": "int64",
+              "type": "integer"
+            },
+            "type": ["array", "null"]
+          },
+          "quota": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "renewal_reset": {
+            "type": "boolean"
+          },
+          "replacement": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "reset_cycle": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "sell": {
+            "type": "boolean"
+          },
+          "show": {
+            "type": "boolean"
+          },
+          "show_original_price": {
+            "type": "boolean"
+          },
+          "sort": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "speed_limit": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "traffic": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "unit_price": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "unit_time": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "language",
+          "description",
+          "unit_price",
+          "unit_time",
+          "discount",
+          "replacement",
+          "inventory",
+          "traffic",
+          "speed_limit",
+          "device_limit",
+          "quota",
+          "nodes",
+          "node_tags",
+          "show",
+          "sell",
+          "sort",
+          "deduction_ratio",
+          "allow_deduction",
+          "reset_cycle",
+          "renewal_reset",
+          "show_original_price",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "SubscribeDiscount": {
+        "additionalProperties": false,
+        "properties": {
+          "discount": {
+            "format": "double",
+            "type": "number"
+          },
+          "quantity": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["quantity", "discount"],
+        "type": "object"
+      },
+      "TelephoneCheckUserResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "exist": {
+            "type": "boolean"
+          }
+        },
+        "required": ["exist"],
+        "type": "object"
+      },
+      "TelephoneLoginRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "IP": {
+            "type": "string"
+          },
+          "LoginType": {
+            "type": "string"
+          },
+          "UserAgent": {
+            "type": "string"
+          },
+          "cf_token": {
+            "type": "string"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "telephone": {
+            "type": "string"
+          },
+          "telephone_area_code": {
+            "type": "string"
+          },
+          "telephone_code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "identifier",
+          "telephone",
+          "telephone_code",
+          "telephone_area_code",
+          "password",
+          "IP",
+          "UserAgent",
+          "LoginType",
+          "cf_token"
+        ],
+        "type": "object"
+      },
+      "TelephoneRegisterRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "IP": {
+            "type": "string"
+          },
+          "LoginType": {
+            "type": "string"
+          },
+          "UserAgent": {
+            "type": "string"
+          },
+          "cf_token": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "invite": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "telephone": {
+            "type": "string"
+          },
+          "telephone_area_code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "identifier",
+          "telephone",
+          "telephone_area_code",
+          "password",
+          "invite",
+          "code",
+          "IP",
+          "UserAgent",
+          "LoginType",
+          "cf_token"
+        ],
+        "type": "object"
+      },
+      "TelephoneResetPasswordRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "IP": {
+            "type": "string"
+          },
+          "LoginType": {
+            "type": "string"
+          },
+          "UserAgent": {
+            "type": "string"
+          },
+          "cf_token": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "telephone": {
+            "type": "string"
+          },
+          "telephone_area_code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "identifier",
+          "telephone",
+          "telephone_area_code",
+          "password",
+          "code",
+          "IP",
+          "UserAgent",
+          "LoginType",
+          "cf_token"
+        ],
+        "type": "object"
+      },
+      "Ticket": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "follow": {
+            "items": {
+              "$ref": "#/components/schemas/Follow"
+            },
+            "type": ["array", "null"]
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["id", "title", "description", "user_id", "status", "created_at", "updated_at"],
+        "type": "object"
+      },
+      "UnbindDeviceRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["id"],
+        "type": "object"
+      },
+      "UnbindOAuthRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "method": {
+            "type": "string"
+          }
+        },
+        "required": ["method"],
+        "type": "object"
+      },
+      "UnsubscribeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["id"],
+        "type": "object"
+      },
+      "UpdateBindEmailRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": ["email"],
+        "type": "object"
+      },
+      "UpdateBindMobileRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "area_code": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          }
+        },
+        "required": ["area_code", "mobile", "code"],
+        "type": "object"
+      },
+      "UpdateUserNotifyRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "enable_balance_notify": {
+            "type": ["boolean", "null"]
+          },
+          "enable_login_notify": {
+            "type": ["boolean", "null"]
+          },
+          "enable_subscribe_notify": {
+            "type": ["boolean", "null"]
+          },
+          "enable_trade_notify": {
+            "type": ["boolean", "null"]
+          }
+        },
+        "required": [
+          "enable_balance_notify",
+          "enable_login_notify",
+          "enable_subscribe_notify",
+          "enable_trade_notify"
+        ],
+        "type": "object"
+      },
+      "UpdateUserPasswordRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": ["password"],
+        "type": "object"
+      },
+      "UpdateUserRulesRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "rules": {
+            "items": {
+              "type": "string"
+            },
+            "type": ["array", "null"]
+          }
+        },
+        "required": ["rules"],
+        "type": "object"
+      },
+      "UpdateUserSubscribeNoteRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "type": "string"
+          },
+          "user_subscribe_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["user_subscribe_id", "note"],
+        "type": "object"
+      },
+      "UpdateUserTicketStatusRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "format": "int32",
+            "minimum": 0,
+            "type": ["integer", "null"]
+          }
+        },
+        "required": ["id", "status"],
+        "type": "object"
+      },
+      "User": {
+        "additionalProperties": false,
+        "properties": {
+          "auth_methods": {
+            "items": {
+              "$ref": "#/components/schemas/UserAuthMethod"
+            },
+            "type": ["array", "null"]
+          },
+          "avatar": {
+            "type": "string"
+          },
+          "balance": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "commission": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "deleted_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "enable": {
+            "type": "boolean"
+          },
+          "enable_balance_notify": {
+            "type": "boolean"
+          },
+          "enable_login_notify": {
+            "type": "boolean"
+          },
+          "enable_subscribe_notify": {
+            "type": "boolean"
+          },
+          "enable_trade_notify": {
+            "type": "boolean"
+          },
+          "gift_amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "is_admin": {
+            "type": "boolean"
+          },
+          "only_first_purchase": {
+            "type": "boolean"
+          },
+          "refer_code": {
+            "type": "string"
+          },
+          "referer_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "referral_percentage": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "rules": {
+            "items": {
+              "type": "string"
+            },
+            "type": ["array", "null"]
+          },
+          "telegram": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_devices": {
+            "items": {
+              "$ref": "#/components/schemas/UserDevice"
+            },
+            "type": ["array", "null"]
+          }
+        },
+        "required": [
+          "id",
+          "avatar",
+          "balance",
+          "commission",
+          "referral_percentage",
+          "only_first_purchase",
+          "gift_amount",
+          "telegram",
+          "refer_code",
+          "referer_id",
+          "enable",
+          "enable_balance_notify",
+          "enable_login_notify",
+          "enable_subscribe_notify",
+          "enable_trade_notify",
+          "auth_methods",
+          "user_devices",
+          "rules",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "UserAffiliate": {
+        "additionalProperties": false,
+        "properties": {
+          "avatar": {
+            "type": "string"
+          },
+          "enable": {
+            "type": "boolean"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "registered_at": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["avatar", "identifier", "registered_at", "enable"],
+        "type": "object"
+      },
+      "UserAuthMethod": {
+        "additionalProperties": false,
+        "properties": {
+          "auth_identifier": {
+            "type": "string"
+          },
+          "auth_type": {
+            "type": "string"
+          },
+          "verified": {
+            "type": "boolean"
+          }
+        },
+        "required": ["auth_type", "auth_identifier", "verified"],
+        "type": "object"
+      },
+      "UserDevice": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "online": {
+            "type": "boolean"
+          },
+          "updated_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_agent": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ip",
+          "identifier",
+          "user_agent",
+          "online",
+          "enabled",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "UserLoginLog": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "login_ip": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "timestamp": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_agent": {
+            "type": "string"
+          },
+          "user_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["id", "user_id", "login_ip", "user_agent", "success", "timestamp"],
+        "type": "object"
+      },
+      "UserLoginRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "IP": {
+            "type": "string"
+          },
+          "LoginType": {
+            "type": "string"
+          },
+          "UserAgent": {
+            "type": "string"
+          },
+          "cf_token": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": ["identifier", "email", "password", "IP", "UserAgent", "LoginType", "cf_token"],
+        "type": "object"
+      },
+      "UserRegisterRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "IP": {
+            "type": "string"
+          },
+          "LoginType": {
+            "type": "string"
+          },
+          "UserAgent": {
+            "type": "string"
+          },
+          "cf_token": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "invite": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "identifier",
+          "email",
+          "password",
+          "invite",
+          "code",
+          "IP",
+          "UserAgent",
+          "LoginType",
+          "cf_token"
+        ],
+        "type": "object"
+      },
+      "UserSubscribe": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "download": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "expire_time": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "finished_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "order_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "reset_time": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "short": {
+            "type": "string"
+          },
+          "start_time": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "subscribe": {
+            "$ref": "#/components/schemas/Subscribe"
+          },
+          "subscribe_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "token": {
+            "type": "string"
+          },
+          "traffic": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "upload": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "order_id",
+          "subscribe_id",
+          "subscribe",
+          "start_time",
+          "expire_time",
+          "finished_at",
+          "reset_time",
+          "traffic",
+          "download",
+          "upload",
+          "token",
+          "status",
+          "short",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "UserSubscribeInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "download": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "expire_time": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "finished_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "is_try_out": {
+            "type": "boolean"
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/UserSubscribeNodeInfo"
+            },
+            "type": ["array", "null"]
+          },
+          "order_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "reset_time": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "start_time": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "subscribe_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "token": {
+            "type": "string"
+          },
+          "traffic": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "upload": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "order_id",
+          "subscribe_id",
+          "start_time",
+          "expire_time",
+          "finished_at",
+          "reset_time",
+          "traffic",
+          "download",
+          "upload",
+          "token",
+          "status",
+          "created_at",
+          "updated_at",
+          "is_try_out",
+          "nodes"
+        ],
+        "type": "object"
+      },
+      "UserSubscribeLog": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "ip": {
+            "type": "string"
+          },
+          "timestamp": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "token": {
+            "type": "string"
+          },
+          "user_agent": {
+            "type": "string"
+          },
+          "user_id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_subscribe_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "user_subscribe_id",
+          "token",
+          "ip",
+          "user_agent",
+          "timestamp"
+        ],
+        "type": "object"
+      },
+      "UserSubscribeNodeInfo": {
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "port": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "protocol": {
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": ["array", "null"]
+          },
+          "uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "uuid",
+          "protocol",
+          "port",
+          "address",
+          "tags",
+          "country",
+          "city",
+          "created_at"
+        ],
+        "type": "object"
+      },
+      "VerifyEmailRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": ["email", "code"],
+        "type": "object"
+      },
+      "WithdrawalLog": {
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "status": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "user_id": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": ["id", "user_id", "amount", "content", "status", "created_at", "updated_at"],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "title": "Perfect Panel User API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/auth/check": {
+      "get": {
+        "operationId": "checkUser",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "email",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckUserResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Check user is exist",
+        "tags": ["auth"]
+      }
+    },
+    "/v1/auth/check/telephone": {
+      "get": {
+        "operationId": "checkUserTelephone",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "telephone",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TelephoneCheckUserResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Check user telephone is exist",
+        "tags": ["auth"]
+      }
+    },
+    "/v1/auth/login": {
+      "post": {
+        "operationId": "userLogin",
+        "parameters": [
+          {
+            "description": "Client IP from proxy",
+            "in": "header",
+            "name": "X-Original-Forwarded-For",
+            "schema": {
+              "description": "Client IP from proxy",
+              "type": "string"
+            }
+          },
+          {
+            "description": "User agent string",
+            "in": "header",
+            "name": "User-Agent",
+            "schema": {
+              "description": "User agent string",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "User login",
+        "tags": ["auth"]
+      }
+    },
+    "/v1/auth/login/device": {
+      "post": {
+        "operationId": "deviceLogin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeviceLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Device Login",
+        "tags": ["auth"]
+      }
+    },
+    "/v1/auth/login/telephone": {
+      "post": {
+        "operationId": "telephoneLogin",
+        "parameters": [
+          {
+            "description": "Client IP from proxy",
+            "in": "header",
+            "name": "X-Original-Forwarded-For",
+            "schema": {
+              "description": "Client IP from proxy",
+              "type": "string"
+            }
+          },
+          {
+            "description": "User agent string",
+            "in": "header",
+            "name": "User-Agent",
+            "schema": {
+              "description": "User agent string",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelephoneLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "User Telephone login",
+        "tags": ["auth"]
+      }
+    },
+    "/v1/auth/oauth/login": {
+      "post": {
+        "operationId": "oAuthLogin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAthLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthLoginResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "OAuth login",
+        "tags": ["oauth"]
+      }
+    },
+    "/v1/auth/oauth/login/token": {
+      "post": {
+        "operationId": "oAuthLoginGetToken",
+        "parameters": [
+          {
+            "description": "Client IP from proxy",
+            "in": "header",
+            "name": "X-Original-Forwarded-For",
+            "schema": {
+              "description": "Client IP from proxy",
+              "type": "string"
+            }
+          },
+          {
+            "description": "User agent string",
+            "in": "header",
+            "name": "User-Agent",
+            "schema": {
+              "description": "User agent string",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthLoginGetTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "OAuth login get token",
+        "tags": ["oauth"]
+      }
+    },
+    "/v1/auth/register": {
+      "post": {
+        "operationId": "userRegister",
+        "parameters": [
+          {
+            "description": "Client IP from proxy",
+            "in": "header",
+            "name": "X-Original-Forwarded-For",
+            "schema": {
+              "description": "Client IP from proxy",
+              "type": "string"
+            }
+          },
+          {
+            "description": "User agent string",
+            "in": "header",
+            "name": "User-Agent",
+            "schema": {
+              "description": "User agent string",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "User register",
+        "tags": ["auth"]
+      }
+    },
+    "/v1/auth/register/telephone": {
+      "post": {
+        "operationId": "telephoneUserRegister",
+        "parameters": [
+          {
+            "description": "Client IP from proxy",
+            "in": "header",
+            "name": "X-Original-Forwarded-For",
+            "schema": {
+              "description": "Client IP from proxy",
+              "type": "string"
+            }
+          },
+          {
+            "description": "User agent string",
+            "in": "header",
+            "name": "User-Agent",
+            "schema": {
+              "description": "User agent string",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelephoneRegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "User Telephone register",
+        "tags": ["auth"]
+      }
+    },
+    "/v1/auth/reset": {
+      "post": {
+        "operationId": "resetPassword",
+        "parameters": [
+          {
+            "description": "Client IP from proxy",
+            "in": "header",
+            "name": "X-Original-Forwarded-For",
+            "schema": {
+              "description": "Client IP from proxy",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Reset password",
+        "tags": ["auth"]
+      }
+    },
+    "/v1/auth/reset/telephone": {
+      "post": {
+        "operationId": "telephoneResetPassword",
+        "parameters": [
+          {
+            "description": "Client IP from proxy",
+            "in": "header",
+            "name": "X-Original-Forwarded-For",
+            "schema": {
+              "description": "Client IP from proxy",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelephoneResetPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Reset password",
+        "tags": ["auth"]
+      }
+    },
+    "/v1/public/announcement/list": {
+      "get": {
+        "operationId": "queryAnnouncement",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryAnnouncementRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryAnnouncementResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Query announcement",
+        "tags": ["announcement"]
+      }
+    },
+    "/v1/public/document/detail": {
+      "get": {
+        "operationId": "queryDocumentDetail",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "id",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get document detail",
+        "tags": ["document"]
+      }
+    },
+    "/v1/public/document/list": {
+      "get": {
+        "operationId": "queryDocumentList",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryDocumentListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get document list",
+        "tags": ["document"]
+      }
+    },
+    "/v1/public/order/close": {
+      "post": {
+        "operationId": "closeOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloseOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Close order",
+        "tags": ["order"]
+      }
+    },
+    "/v1/public/order/detail": {
+      "get": {
+        "operationId": "queryOrderDetail",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "order_no",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDetail"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get order",
+        "tags": ["order"]
+      }
+    },
+    "/v1/public/order/list": {
+      "get": {
+        "operationId": "queryOrderList",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "size",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryOrderListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get order list",
+        "tags": ["order"]
+      }
+    },
+    "/v1/public/order/pre": {
+      "post": {
+        "operationId": "preCreateOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreOrderResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Pre create order",
+        "tags": ["order"]
+      }
+    },
+    "/v1/public/order/purchase": {
+      "post": {
+        "operationId": "purchase",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurchaseOrderResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "purchase Subscription",
+        "tags": ["order"]
+      }
+    },
+    "/v1/public/order/recharge": {
+      "post": {
+        "operationId": "recharge",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RechargeOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RechargeOrderResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Recharge",
+        "tags": ["order"]
+      }
+    },
+    "/v1/public/order/renewal": {
+      "post": {
+        "operationId": "renewal",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenewalOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RenewalOrderResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Renewal Subscription",
+        "tags": ["order"]
+      }
+    },
+    "/v1/public/order/reset": {
+      "post": {
+        "operationId": "resetTraffic",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetTrafficOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetTrafficOrderResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reset traffic",
+        "tags": ["order"]
+      }
+    },
+    "/v1/public/payment/methods": {
+      "get": {
+        "operationId": "getAvailablePaymentMethods",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAvailablePaymentMethodsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get available payment methods",
+        "tags": ["payment"]
+      }
+    },
+    "/v1/public/portal/order/checkout": {
+      "post": {
+        "operationId": "purchaseCheckout",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutOrderResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Purchase Checkout",
+        "tags": ["portal"]
+      }
+    },
+    "/v1/public/portal/order/status": {
+      "get": {
+        "operationId": "queryPurchaseOrder",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "auth_type",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "identifier",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "order_no",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryPurchaseOrderResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Query Purchase Order",
+        "tags": ["portal"]
+      }
+    },
+    "/v1/public/portal/payment-method": {
+      "get": {
+        "operationId": "portalGetAvailablePaymentMethods",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAvailablePaymentMethodsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get available payment methods",
+        "tags": ["portal"]
+      }
+    },
+    "/v1/public/portal/pre": {
+      "post": {
+        "operationId": "prePurchaseOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrePurchaseOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrePurchaseOrderResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Pre Purchase Order",
+        "tags": ["portal"]
+      }
+    },
+    "/v1/public/portal/purchase": {
+      "post": {
+        "operationId": "portalPurchase",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PortalPurchaseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortalPurchaseResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Purchase subscription",
+        "tags": ["portal"]
+      }
+    },
+    "/v1/public/portal/subscribe": {
+      "get": {
+        "operationId": "getSubscription",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "language",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSubscriptionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "summary": "Get Subscription",
+        "tags": ["portal"]
+      }
+    },
+    "/v1/public/subscribe/list": {
+      "get": {
+        "operationId": "querySubscribeList",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "language",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuerySubscribeListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get subscribe list",
+        "tags": ["subscribe"]
+      }
+    },
+    "/v1/public/subscribe/node/list": {
+      "get": {
+        "operationId": "queryUserSubscribeNodeList",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryUserSubscribeNodeListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get user subscribe node info",
+        "tags": ["subscribe"]
+      }
+    },
+    "/v1/public/ticket/detail": {
+      "get": {
+        "operationId": "getUserTicketDetails",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "id",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ticket"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get ticket detail",
+        "tags": ["ticket"]
+      }
+    },
+    "/v1/public/ticket/follow": {
+      "post": {
+        "operationId": "createUserTicketFollow",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserTicketFollowRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create ticket follow",
+        "tags": ["ticket"]
+      }
+    },
+    "/v1/public/ticket/list": {
+      "get": {
+        "operationId": "getUserTicketList",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetUserTicketListRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserTicketListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get ticket list",
+        "tags": ["ticket"]
+      }
+    },
+    "/v1/public/ticket/ticket": {
+      "post": {
+        "operationId": "createUserTicket",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserTicketRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create ticket",
+        "tags": ["ticket"]
+      },
+      "put": {
+        "operationId": "updateUserTicketStatus",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserTicketStatusRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update ticket status",
+        "tags": ["ticket"]
+      }
+    },
+    "/v1/public/user/affiliate/count": {
+      "get": {
+        "operationId": "queryUserAffiliate",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryUserAffiliateCountResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Query User Affiliate Count",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/affiliate/list": {
+      "get": {
+        "operationId": "queryUserAffiliateList",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "size",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryUserAffiliateListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Query User Affiliate List",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/balance_log": {
+      "get": {
+        "operationId": "queryUserBalanceLog",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryUserBalanceLogListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Query User Balance Log",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/bind_email": {
+      "put": {
+        "operationId": "updateBindEmail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBindEmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update Bind Email",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/bind_mobile": {
+      "put": {
+        "operationId": "updateBindMobile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBindMobileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update Bind Mobile",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/bind_oauth": {
+      "post": {
+        "operationId": "bindOAuth",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BindOAuthRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BindOAuthResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Bind OAuth",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/bind_oauth/callback": {
+      "post": {
+        "operationId": "bindOAuthCallback",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BindOAuthCallbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Bind OAuth Callback",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/bind_telegram": {
+      "get": {
+        "operationId": "bindTelegram",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BindTelegramResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Bind Telegram",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/commission_log": {
+      "get": {
+        "operationId": "queryUserCommissionLog",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "size",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryUserCommissionLogListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Query User Commission Log",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/commission_withdraw": {
+      "post": {
+        "operationId": "commissionWithdraw",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommissionWithdrawRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WithdrawalLog"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Commission Withdraw",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/devices": {
+      "get": {
+        "operationId": "getDeviceList",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDeviceListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get Device List",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/info": {
+      "get": {
+        "operationId": "queryUserInfo",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Query User Info",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/login_log": {
+      "get": {
+        "operationId": "getLoginLog",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "size",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetLoginLogResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get Login Log",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/notify": {
+      "put": {
+        "operationId": "updateUserNotify",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserNotifyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update User Notify",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/oauth_methods": {
+      "get": {
+        "operationId": "getOAuthMethods",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetOAuthMethodsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get OAuth Methods",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/password": {
+      "put": {
+        "operationId": "updateUserPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update User Password",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/rules": {
+      "put": {
+        "operationId": "updateUserRules",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRulesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update User Rules",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/subscribe": {
+      "get": {
+        "operationId": "queryUserSubscribe",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryUserSubscribeListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Query User Subscribe",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/subscribe_log": {
+      "get": {
+        "operationId": "getSubscribeLog",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "size",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSubscribeLogResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get Subscribe Log",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/subscribe_note": {
+      "put": {
+        "operationId": "updateUserSubscribeNote",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserSubscribeNoteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update User Subscribe Note",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/subscribe_token": {
+      "put": {
+        "operationId": "resetUserSubscribeToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetUserSubscribeTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reset User Subscribe Token",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/unbind_device": {
+      "put": {
+        "operationId": "unbindDevice",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnbindDeviceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Unbind Device",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/unbind_oauth": {
+      "post": {
+        "operationId": "unbindOAuth",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnbindOAuthRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Unbind OAuth",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/unbind_telegram": {
+      "post": {
+        "operationId": "unbindTelegram",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Unbind Telegram",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/unsubscribe": {
+      "post": {
+        "operationId": "unsubscribe",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnsubscribeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Unsubscribe",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/unsubscribe/pre": {
+      "post": {
+        "operationId": "preUnsubscribe",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreUnsubscribeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreUnsubscribeResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Pre Unsubscribe",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/verify_email": {
+      "post": {
+        "operationId": "verifyEmail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Verify Email",
+        "tags": ["user"]
+      }
+    },
+    "/v1/public/user/withdrawal_log": {
+      "get": {
+        "operationId": "queryWithdrawalLog",
+        "parameters": [
+          {
+            "explode": false,
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "explode": false,
+            "in": "query",
+            "name": "size",
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryWithdrawalLogListResponse"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "default": {
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Query Withdrawal Log",
+        "tags": ["user"]
+      }
+    }
+  }
+}

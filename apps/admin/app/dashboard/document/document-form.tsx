@@ -112,7 +112,7 @@ export default function DocumentForm<T extends DocumentFormValues>({
                     <FormControl>
                       <TagInput
                         placeholder={t("form.tagsPlaceholder")}
-                        value={field.value}
+                        value={field.value ?? undefined}
                         onChange={(value) => form.setValue(field.name, value)}
                       />
                     </FormControl>
@@ -128,7 +128,7 @@ export default function DocumentForm<T extends DocumentFormValues>({
                     <FormLabel>{t("form.content")}</FormLabel>
                     <FormControl>
                       <MarkdownEditor
-                        value={field.value}
+                        value={field.value ?? undefined}
                         onChange={(value) => {
                           form.setValue(field.name, value);
                         }}

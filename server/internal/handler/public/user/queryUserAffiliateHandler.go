@@ -1,18 +1,24 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Query User Affiliate Count
-func QueryUserAffiliateHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type QueryUserAffiliateOutput struct {
+	Body *types.QueryUserAffiliateCountResponse
+}
 
-		l := user.NewQueryUserAffiliateLogic(c.Request.Context(), svcCtx)
+func QueryUserAffiliateHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryUserAffiliateOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*QueryUserAffiliateOutput, error) {
+		l := user.NewQueryUserAffiliateLogic(ctx, svcCtx)
 		resp, err := l.QueryUserAffiliate()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &QueryUserAffiliateOutput{Body: resp}, nil
 	}
 }

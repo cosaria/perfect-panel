@@ -1,18 +1,24 @@
+// huma:migrated
 package subscribe
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/subscribe"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get user subscribe node info
-func QueryUserSubscribeNodeListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type QueryUserSubscribeNodeListOutput struct {
+	Body *types.QueryUserSubscribeNodeListResponse
+}
 
-		l := subscribe.NewQueryUserSubscribeNodeListLogic(c.Request.Context(), svcCtx)
+func QueryUserSubscribeNodeListHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryUserSubscribeNodeListOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*QueryUserSubscribeNodeListOutput, error) {
+		l := subscribe.NewQueryUserSubscribeNodeListLogic(ctx, svcCtx)
 		resp, err := l.QueryUserSubscribeNodeList()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &QueryUserSubscribeNodeListOutput{Body: resp}, nil
 	}
 }

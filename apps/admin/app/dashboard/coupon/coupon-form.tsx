@@ -152,7 +152,7 @@ export default function CouponForm<T extends CouponFormValues>({
                         defaultValue={String(field.value)}
                         onValueChange={(value) => {
                           form.setValue(field.name, Number(value));
-                          form.setValue("discount", "");
+                          form.setValue("discount", 0);
                         }}
                         className="flex gap-2"
                       >
@@ -235,7 +235,7 @@ export default function CouponForm<T extends CouponFormValues>({
                       <Combobox<number, true>
                         multiple
                         placeholder={t("form.selectServer")}
-                        value={field.value}
+                        value={field.value ?? undefined}
                         onChange={(value) => {
                           form.setValue(field.name, value);
                         }}

@@ -1,26 +1,23 @@
+// huma:migrated
 package server
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/server"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update Node
-func UpdateNodeHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UpdateNodeRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateNodeInput struct {
+	Body types.UpdateNodeRequest
+}
 
-		l := server.NewUpdateNodeLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateNode(&req)
-		result.HttpResult(c, nil, err)
+func UpdateNodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateNodeInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateNodeInput) (*struct{}, error) {
+		l := server.NewUpdateNodeLogic(ctx, svcCtx)
+		if err := l.UpdateNode(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { oAuthLoginGetToken } from "@/services/common/oauth";
+import { oAuthLoginGetToken } from "@/services/user-api/sdk.gen";
 import { getAllUrlParams, getRedirectUrl, setAuthorization } from "@/utils/common";
 
 interface CertificationProps {
@@ -17,11 +17,13 @@ export default function Certification({ platform, children }: CertificationProps
   useEffect(() => {
     const searchParams = getAllUrlParams();
     oAuthLoginGetToken({
-      method: platform,
-      callback: searchParams,
+      body: {
+        method: platform,
+        callback: searchParams,
+      },
     })
-      .then((res) => {
-        const token = res?.data?.data?.token;
+      .then(({ data }) => {
+        const token = data?.token;
         if (!token) {
           throw new Error("Invalid token");
         }

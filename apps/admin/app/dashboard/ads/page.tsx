@@ -8,7 +8,8 @@ import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { ProTable, type ProTableActions } from "@/components/pro-table";
-import { createAds, deleteAds, getAdsList, updateAds } from "@/services/admin/ads";
+import { createAds, deleteAds, getAdsList, updateAds } from "@/services/admin-api/sdk.gen";
+import type { Ads } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 import AdsForm from "./ads-form";
 
@@ -18,11 +19,11 @@ export default function Page() {
   const ref = useRef<ProTableActions>(null);
 
   return (
-    <ProTable<API.Ads, Record<string, unknown>>
+    <ProTable<Ads, Record<string, unknown>>
       action={ref}
       header={{
         toolbar: (
-          <AdsForm<API.CreateAdsRequest>
+          <AdsForm
             trigger={t("create")}
             title={t("createAds")}
             loading={loading}
@@ -30,8 +31,7 @@ export default function Page() {
               setLoading(true);
               try {
                 await createAds({
-                  ...values,
-                  status: 0,
+                  body: { ...values, status: 0 },
                 });
                 toast.success(t("createSuccess"));
                 ref.current?.refresh();
@@ -60,12 +60,11 @@ export default function Page() {
       ]}
       request={async (pagination, filters) => {
         const { data } = await getAdsList({
-          ...pagination,
-          ...filters,
+          body: { ...pagination, ...filters },
         });
         return {
-          list: data.data?.list || [],
-          total: data.data?.total || 0,
+          list: data?.list || [],
+          total: data?.total || 0,
         };
       }}
       columns={[
@@ -78,8 +77,7 @@ export default function Page() {
                 defaultChecked={row.getValue("status") === 1}
                 onCheckedChange={async (checked) => {
                   await updateAds({
-                    ...row.original,
-                    status: checked ? 1 : 0,
+                    body: { ...row.original, status: checked ? 1 : 0 },
                   });
                   ref.current?.refresh();
                 }}
@@ -122,16 +120,16 @@ export default function Page() {
       ]}
       actions={{
         render: (row) => [
-          <AdsForm<API.UpdateAdsRequest>
+          <AdsForm
             key="edit"
             trigger={t("edit")}
             title={t("editAds")}
             loading={loading}
-            initialValues={row}
+            initialValues={{ ...row, type: row.type as "image" | "video" }}
             onSubmit={async (values) => {
               setLoading(true);
               try {
-                await updateAds({ ...row, ...values });
+                await updateAds({ body: { ...row, ...values } });
                 toast.success(t("updateSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
@@ -148,7 +146,7 @@ export default function Page() {
             title={t("confirmDelete")}
             description={t("deleteWarning")}
             onConfirm={async () => {
-              await deleteAds({ id: row.id });
+              await deleteAds({ body: { id: row.id } });
               toast.success(t("deleteSuccess"));
               ref.current?.refresh();
             }}

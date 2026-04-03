@@ -1,18 +1,18 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// setting telegram bot
-func SettingTelegramBotHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-
-		l := system.NewSettingTelegramBotLogic(c.Request.Context(), svcCtx)
-		err := l.SettingTelegramBot()
-		result.HttpResult(c, nil, err)
+func SettingTelegramBotHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*struct{}, error) {
+	return func(ctx context.Context, _ *struct{}) (*struct{}, error) {
+		l := system.NewSettingTelegramBotLogic(ctx, svcCtx)
+		if err := l.SettingTelegramBot(); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

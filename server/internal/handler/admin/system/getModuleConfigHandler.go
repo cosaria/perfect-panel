@@ -1,18 +1,24 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// GetModuleConfigHandler Get Module Config
-func GetModuleConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type GetModuleConfigOutput struct {
+	Body *types.ModuleConfig
+}
 
-		l := system.NewGetModuleConfigLogic(c.Request.Context(), svcCtx)
+func GetModuleConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetModuleConfigOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetModuleConfigOutput, error) {
+		l := system.NewGetModuleConfigLogic(ctx, svcCtx)
 		resp, err := l.GetModuleConfig()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetModuleConfigOutput{Body: resp}, nil
 	}
 }

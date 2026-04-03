@@ -1,18 +1,24 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// get Privacy Policy Config
-func GetPrivacyPolicyConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type GetPrivacyPolicyConfigOutput struct {
+	Body *types.PrivacyPolicyConfig
+}
 
-		l := system.NewGetPrivacyPolicyConfigLogic(c.Request.Context(), svcCtx)
+func GetPrivacyPolicyConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetPrivacyPolicyConfigOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetPrivacyPolicyConfigOutput, error) {
+		l := system.NewGetPrivacyPolicyConfigLogic(ctx, svcCtx)
 		resp, err := l.GetPrivacyPolicyConfig()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetPrivacyPolicyConfigOutput{Body: resp}, nil
 	}
 }

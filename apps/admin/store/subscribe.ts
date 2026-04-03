@@ -1,9 +1,10 @@
 import { create } from "zustand";
-import { getSubscribeList } from "@/services/admin/subscribe";
+import { getSubscribeList } from "@/services/admin-api/sdk.gen";
+import type { SubscribeItem } from "@/services/admin-api/types.gen";
 
 interface SubscribeState {
   // Data
-  subscribes: API.SubscribeItem[];
+  subscribes: SubscribeItem[];
 
   // Loading states
   loading: boolean;
@@ -14,7 +15,7 @@ interface SubscribeState {
 
   // Getters
   getSubscribeName: (subscribeId?: number) => string;
-  getSubscribeById: (subscribeId: number) => API.SubscribeItem | undefined;
+  getSubscribeById: (subscribeId: number) => SubscribeItem | undefined;
 }
 
 export const useSubscribeStore = create<SubscribeState>((set, get) => ({
@@ -29,9 +30,9 @@ export const useSubscribeStore = create<SubscribeState>((set, get) => ({
 
     set({ loading: true });
     try {
-      const { data } = await getSubscribeList({ page: 1, size: 999999999 });
+      const { data } = await getSubscribeList({ query: { page: 1, size: 999999999 } });
       set({
-        subscribes: data?.data?.list || [],
+        subscribes: data?.list || [],
         loaded: true,
       });
     } catch (_error) {

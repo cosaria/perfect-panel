@@ -1,26 +1,28 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Pre Unsubscribe
-func PreUnsubscribeHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.PreUnsubscribeRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type PreUnsubscribeInput struct {
+	Body types.PreUnsubscribeRequest
+}
 
-		l := user.NewPreUnsubscribeLogic(c.Request.Context(), svcCtx)
-		resp, err := l.PreUnsubscribe(&req)
-		result.HttpResult(c, resp, err)
+type PreUnsubscribeOutput struct {
+	Body *types.PreUnsubscribeResponse
+}
+
+func PreUnsubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *PreUnsubscribeInput) (*PreUnsubscribeOutput, error) {
+	return func(ctx context.Context, input *PreUnsubscribeInput) (*PreUnsubscribeOutput, error) {
+		l := user.NewPreUnsubscribeLogic(ctx, svcCtx)
+		resp, err := l.PreUnsubscribe(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &PreUnsubscribeOutput{Body: resp}, nil
 	}
 }

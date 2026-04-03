@@ -11,7 +11,8 @@ import { useTranslations } from "next-intl";
 import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
 import { IpLink } from "@/components/ip-link";
 import { ProTable } from "@/components/pro-table";
-import { filterSubscribeLog } from "@/services/admin/log";
+import { filterSubscribeLog } from "@/services/admin-api/sdk.gen";
+import type { SubscribeLog } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
 export default function SubscribeLogPage() {
@@ -28,7 +29,7 @@ export default function SubscribeLogPage() {
       : undefined,
   };
   return (
-    <ProTable<API.SubscribeLog, { date?: string; user_id?: number; user_subscribe_id?: number }>
+    <ProTable<SubscribeLog, { date?: string; user_id?: number; user_subscribe_id?: number }>
       header={{ title: t("title.subscribe") }}
       initialFilters={initialFilters}
       columns={[
@@ -81,14 +82,17 @@ export default function SubscribeLogPage() {
       ]}
       request={async (pagination, filter) => {
         const { data } = await filterSubscribeLog({
-          page: pagination.page,
-          size: pagination.size,
-          date: filter?.date,
-          user_id: filter?.user_id,
-          user_subscribe_id: filter?.user_subscribe_id,
+          query: {
+            page: pagination.page,
+            size: pagination.size,
+            date: filter?.date || "",
+            search: "",
+            user_id: filter?.user_id ? Number(filter.user_id) : 0,
+            user_subscribe_id: filter?.user_subscribe_id ? Number(filter.user_subscribe_id) : 0,
+          },
         });
-        const list = (data?.data?.list || []) as API.SubscribeLog[];
-        const total = Number(data?.data?.total || list.length);
+        const list = (data?.list || []) as SubscribeLog[];
+        const total = Number(data?.total || list.length);
         return { list, total };
       }}
     />

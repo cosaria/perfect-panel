@@ -28,13 +28,14 @@ import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import type { UserSubscribe } from "@/services/admin-api/types.gen";
 import { useSubscribe } from "@/store/subscribe";
 
 interface Props {
   trigger: ReactNode;
   title: string;
   loading?: boolean;
-  initialData?: API.UserSubscribe;
+  initialData?: UserSubscribe;
   onSubmit: (values: SubscriptionFormValues) => Promise<boolean>;
 }
 

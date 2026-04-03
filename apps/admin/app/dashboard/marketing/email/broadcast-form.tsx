@@ -38,7 +38,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { createBatchSendEmailTask, getPreSendEmailCount } from "@/services/admin/marketing";
+import { createBatchSendEmailTask, getPreSendEmailCount } from "@/services/admin-api/sdk.gen";
+import type { CreateBatchSendEmailTaskRequest } from "@/services/admin-api/types.gen";
 
 export default function EmailBroadcastForm() {
   const t = useTranslations("marketing");
@@ -112,12 +113,14 @@ export default function EmailBroadcastForm() {
       }
 
       const response = await getPreSendEmailCount({
-        scope,
-        register_start_time,
-        register_end_time,
+        body: {
+          scope,
+          register_start_time,
+          register_end_time,
+        },
       });
 
-      const userCount = response.data?.data?.count || 0;
+      const userCount = response.data?.count || 0;
 
       // Calculate additional email count
       const additionalEmails = formData.additional || "";
@@ -189,7 +192,7 @@ export default function EmailBroadcastForm() {
       }
 
       // Prepare API request data
-      const requestData: API.CreateBatchSendEmailTaskRequest = {
+      const requestData: CreateBatchSendEmailTaskRequest = {
         subject: data.subject,
         content: data.content,
         scope: data.scope,
@@ -202,7 +205,7 @@ export default function EmailBroadcastForm() {
       };
 
       // Call API to create batch send email task
-      await createBatchSendEmailTask(requestData);
+      await createBatchSendEmailTask({ body: requestData });
 
       if (!data.scheduled || data.scheduled.trim() === "") {
         toast.success(t("emailBroadcastTaskCreatedSuccessfully"));

@@ -11,7 +11,8 @@ import { useTranslations } from "next-intl";
 import { useRef } from "react";
 import { Display } from "@/components/display";
 import { ProTable, type ProTableActions } from "@/components/pro-table";
-import { getOrderList, updateOrderStatus } from "@/services/admin/order";
+import { getOrderList, updateOrderStatus } from "@/services/admin-api/sdk.gen";
+import type { Order } from "@/services/admin-api/types.gen";
 import { useSubscribe } from "@/store/subscribe";
 import { formatDate } from "@/utils/common";
 import { UserDetail } from "../user/user-detail";
@@ -41,7 +42,7 @@ export default function Page() {
 
   return (
     <ProTable<
-      API.Order,
+      Order,
       {
         search?: string;
         status?: string;
@@ -158,8 +159,10 @@ export default function Page() {
                   value={row.original.status}
                   onChange={async (value) => {
                     await updateOrderStatus({
-                      id: row.original.id,
-                      status: value,
+                      body: {
+                        id: row.original.id,
+                        status: value,
+                      },
                     });
                     ref.current?.refresh();
                   }}
@@ -202,10 +205,18 @@ export default function Page() {
         },
       ]}
       request={async (pagination, filter) => {
-        const { data } = await getOrderList({ ...pagination, ...filter });
+        const { data } = await getOrderList({
+          query: {
+            ...pagination,
+            search: filter.search,
+            status: filter.status ? Number(filter.status) : undefined,
+            subscribe_id: filter.subscribe_id ? Number(filter.subscribe_id) : undefined,
+            user_id: filter.user_id ? Number(filter.user_id) : undefined,
+          },
+        });
         return {
-          list: data.data?.list || [],
-          total: data.data?.total || 0,
+          list: data?.list || [],
+          total: data?.total || 0,
         };
       }}
     />

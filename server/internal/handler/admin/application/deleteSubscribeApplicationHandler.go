@@ -1,26 +1,23 @@
+// huma:migrated
 package application
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/application"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Delete subscribe application
-func DeleteSubscribeApplicationHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.DeleteSubscribeApplicationRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type DeleteSubscribeApplicationInput struct {
+	Body types.DeleteSubscribeApplicationRequest
+}
 
-		l := application.NewDeleteSubscribeApplicationLogic(c.Request.Context(), svcCtx)
-		err := l.DeleteSubscribeApplication(&req)
-		result.HttpResult(c, nil, err)
+func DeleteSubscribeApplicationHandler(svcCtx *svc.ServiceContext) func(context.Context, *DeleteSubscribeApplicationInput) (*struct{}, error) {
+	return func(ctx context.Context, input *DeleteSubscribeApplicationInput) (*struct{}, error) {
+		l := application.NewDeleteSubscribeApplicationLogic(ctx, svcCtx)
+		if err := l.DeleteSubscribeApplication(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

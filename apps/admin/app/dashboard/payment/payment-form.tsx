@@ -37,7 +37,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import useGlobalStore from "@/config/use-global";
-import { getPaymentPlatform } from "@/services/admin/payment";
+import { getPaymentPlatform } from "@/services/admin-api/sdk.gen";
 
 interface PaymentFormProps<T> {
   trigger: React.ReactNode;
@@ -65,7 +65,7 @@ export default function PaymentForm<T>({
     queryKey: ["getPaymentPlatform"],
     queryFn: async () => {
       const { data } = await getPaymentPlatform();
-      return data?.data?.list || [];
+      return data?.list || [];
     },
   });
 
@@ -363,11 +363,11 @@ export default function PaymentForm<T>({
                         <FormControl>
                           <EnhancedInput
                             placeholder={t("configPlaceholder", {
-                              field: currentFieldDescriptions[fieldKey],
+                              field: currentFieldDescriptions[fieldKey] ?? "",
                             })}
                             value={
                               configValues && configValues[fieldKey] !== undefined
-                                ? configValues[fieldKey]
+                                ? String(configValues[fieldKey])
                                 : ""
                             }
                             disabled={fieldKey === "webhook_secret"}

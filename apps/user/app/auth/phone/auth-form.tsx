@@ -8,7 +8,7 @@ import {
   telephoneLogin,
   telephoneResetPassword,
   telephoneUserRegister,
-} from "@/services/common/auth";
+} from "@/services/user-api/sdk.gen";
 import { getRedirectUrl, setAuthorization } from "@/utils/common";
 import LoginForm from "./login-form";
 import RegisterForm from "./register-form";
@@ -43,16 +43,21 @@ export default function PhoneAuthForm() {
               return;
             }
 
-            const login = await telephoneLogin({
-              identifier: params.identifier ?? params.telephone,
-              telephone: params.telephone,
-              telephone_area_code: params.telephone_area_code,
-              telephone_code: params.telephone_code ?? "",
-              password: params.password ?? "",
-              cf_token: params.cf_token,
+            const { data: login } = await telephoneLogin({
+              body: {
+                identifier: params.identifier ?? params.telephone ?? "",
+                telephone: params.telephone ?? "",
+                telephone_area_code: params.telephone_area_code ?? "",
+                telephone_code: params.telephone_code ?? "",
+                password: params.password ?? "",
+                cf_token: params.cf_token ?? "",
+                IP: "",
+                LoginType: "telephone",
+                UserAgent: "",
+              },
             });
             toast.success(t("login.success"));
-            onLogin(login.data.data?.token);
+            onLogin(login?.token);
             break;
           }
           case "register": {
@@ -60,17 +65,22 @@ export default function PhoneAuthForm() {
               return;
             }
 
-            const create = await telephoneUserRegister({
-              identifier: params.identifier ?? params.telephone,
-              telephone: params.telephone,
-              telephone_area_code: params.telephone_area_code,
-              password: params.password,
-              invite: params.invite,
-              code: params.code,
-              cf_token: params.cf_token,
+            const { data: create } = await telephoneUserRegister({
+              body: {
+                identifier: params.identifier ?? params.telephone ?? "",
+                telephone: params.telephone ?? "",
+                telephone_area_code: params.telephone_area_code ?? "",
+                password: params.password ?? "",
+                invite: params.invite ?? "",
+                code: params.code ?? "",
+                cf_token: params.cf_token ?? "",
+                IP: "",
+                LoginType: "telephone",
+                UserAgent: "",
+              },
             });
             toast.success(t("register.success"));
-            onLogin(create.data.data?.token);
+            onLogin(create?.token);
             break;
           }
           case "reset":
@@ -79,12 +89,17 @@ export default function PhoneAuthForm() {
             }
 
             await telephoneResetPassword({
-              identifier: params.identifier ?? params.telephone,
-              telephone: params.telephone,
-              telephone_area_code: params.telephone_area_code,
-              password: params.password,
-              code: params.code,
-              cf_token: params.cf_token,
+              body: {
+                identifier: params.identifier ?? params.telephone ?? "",
+                telephone: params.telephone ?? "",
+                telephone_area_code: params.telephone_area_code ?? "",
+                password: params.password ?? "",
+                code: params.code ?? "",
+                cf_token: params.cf_token ?? "",
+                IP: "",
+                LoginType: "telephone",
+                UserAgent: "",
+              },
             });
             toast.success(t("reset.success"));
             setType("login");

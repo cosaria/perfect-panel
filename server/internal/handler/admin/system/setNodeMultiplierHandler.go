@@ -1,26 +1,23 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Set Node Multiplier
-func SetNodeMultiplierHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.SetNodeMultiplierRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type SetNodeMultiplierInput struct {
+	Body types.SetNodeMultiplierRequest
+}
 
-		l := system.NewSetNodeMultiplierLogic(c.Request.Context(), svcCtx)
-		err := l.SetNodeMultiplier(&req)
-		result.HttpResult(c, nil, err)
+func SetNodeMultiplierHandler(svcCtx *svc.ServiceContext) func(context.Context, *SetNodeMultiplierInput) (*struct{}, error) {
+	return func(ctx context.Context, input *SetNodeMultiplierInput) (*struct{}, error) {
+		l := system.NewSetNodeMultiplierLogic(ctx, svcCtx)
+		if err := l.SetNodeMultiplier(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

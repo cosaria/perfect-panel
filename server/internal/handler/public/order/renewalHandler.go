@@ -1,26 +1,28 @@
+// huma:migrated
 package order
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/order"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Renewal Subscription
-func RenewalHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.RenewalOrderRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type RenewalInput struct {
+	Body types.RenewalOrderRequest
+}
 
-		l := order.NewRenewalLogic(c.Request.Context(), svcCtx)
-		resp, err := l.Renewal(&req)
-		result.HttpResult(c, resp, err)
+type RenewalOutput struct {
+	Body *types.RenewalOrderResponse
+}
+
+func RenewalHandler(svcCtx *svc.ServiceContext) func(context.Context, *RenewalInput) (*RenewalOutput, error) {
+	return func(ctx context.Context, input *RenewalInput) (*RenewalOutput, error) {
+		l := order.NewRenewalLogic(ctx, svcCtx)
+		resp, err := l.Renewal(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &RenewalOutput{Body: resp}, nil
 	}
 }

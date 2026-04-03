@@ -72,9 +72,9 @@ type AppUserSubscbribeNode struct {
 }
 
 type AppleLoginCallbackRequest struct {
-	Code    string `form:"code"`
-	IDToken string `form:"id_token"`
-	State   string `form:"state"`
+	Code    string `json:"code" form:"code"`
+	IDToken string `json:"id_token" form:"id_token"`
+	State   string `json:"state" form:"state"`
 }
 
 type Application struct {
@@ -198,7 +198,7 @@ type BindTelegramResponse struct {
 }
 
 type CheckUserRequest struct {
-	Email string `form:"email" validate:"required"`
+	Email string `query:"email" json:"email"`
 }
 
 type CheckUserResponse struct {
@@ -579,7 +579,7 @@ type EmailAuthticateConfig struct {
 
 type FilterBalanceLogRequest struct {
 	FilterLogParams
-	UserId int64 `form:"user_id,optional"`
+	UserId int64 `query:"user_id" json:"user_id,omitempty"`
 }
 
 type FilterBalanceLogResponse struct {
@@ -589,7 +589,7 @@ type FilterBalanceLogResponse struct {
 
 type FilterCommissionLogRequest struct {
 	FilterLogParams
-	UserId int64 `form:"user_id,optional"`
+	UserId int64 `query:"user_id" json:"user_id,omitempty"`
 }
 
 type FilterCommissionLogResponse struct {
@@ -604,7 +604,7 @@ type FilterEmailLogResponse struct {
 
 type FilterGiftLogRequest struct {
 	FilterLogParams
-	UserId int64 `form:"user_id,optional"`
+	UserId int64 `query:"user_id" json:"user_id,omitempty"`
 }
 
 type FilterGiftLogResponse struct {
@@ -613,15 +613,15 @@ type FilterGiftLogResponse struct {
 }
 
 type FilterLogParams struct {
-	Page   int    `form:"page"`
-	Size   int    `form:"size"`
-	Date   string `form:"date,optional"`
-	Search string `form:"search,optional"`
+	Page   int    `query:"page" json:"page"`
+	Size   int    `query:"size" json:"size"`
+	Date   string `query:"date" json:"date,omitempty"`
+	Search string `query:"search" json:"search,omitempty"`
 }
 
 type FilterLoginLogRequest struct {
 	FilterLogParams
-	UserId int64 `form:"user_id,optional"`
+	UserId int64 `query:"user_id" json:"user_id,omitempty"`
 }
 
 type FilterLoginLogResponse struct {
@@ -635,9 +635,9 @@ type FilterMobileLogResponse struct {
 }
 
 type FilterNodeListRequest struct {
-	Page   int    `form:"page"`
-	Size   int    `form:"size"`
-	Search string `form:"search,omitempty"`
+	Page   int    `query:"page" json:"page"`
+	Size   int    `query:"size" json:"size"`
+	Search string `query:"search" json:"search,omitempty"`
 }
 
 type FilterNodeListResponse struct {
@@ -647,7 +647,7 @@ type FilterNodeListResponse struct {
 
 type FilterRegisterLogRequest struct {
 	FilterLogParams
-	UserId int64 `form:"user_id,optional"`
+	UserId int64 `query:"user_id" json:"user_id,omitempty"`
 }
 
 type FilterRegisterLogResponse struct {
@@ -657,7 +657,7 @@ type FilterRegisterLogResponse struct {
 
 type FilterResetSubscribeLogRequest struct {
 	FilterLogParams
-	UserSubscribeId int64 `form:"user_subscribe_id,optional"`
+	UserSubscribeId int64 `query:"user_subscribe_id" json:"user_subscribe_id,omitempty"`
 }
 
 type FilterResetSubscribeLogResponse struct {
@@ -666,9 +666,9 @@ type FilterResetSubscribeLogResponse struct {
 }
 
 type FilterServerListRequest struct {
-	Page   int    `form:"page"`
-	Size   int    `form:"size"`
-	Search string `form:"search,omitempty"`
+	Page   int    `query:"page" json:"page"`
+	Size   int    `query:"size" json:"size"`
+	Search string `query:"search" json:"search,omitempty"`
 }
 
 type FilterServerListResponse struct {
@@ -678,7 +678,7 @@ type FilterServerListResponse struct {
 
 type FilterServerTrafficLogRequest struct {
 	FilterLogParams
-	ServerId int64 `form:"server_id,optional"`
+	ServerId int64 `query:"server_id" json:"server_id,omitempty"`
 }
 
 type FilterServerTrafficLogResponse struct {
@@ -688,8 +688,8 @@ type FilterServerTrafficLogResponse struct {
 
 type FilterSubscribeLogRequest struct {
 	FilterLogParams
-	UserId          int64 `form:"user_id,optional"`
-	UserSubscribeId int64 `form:"user_subscribe_id,optional"`
+	UserId          int64 `query:"user_id" json:"user_id,omitempty"`
+	UserSubscribeId int64 `query:"user_subscribe_id" json:"user_subscribe_id,omitempty"`
 }
 
 type FilterSubscribeLogResponse struct {
@@ -699,8 +699,8 @@ type FilterSubscribeLogResponse struct {
 
 type FilterSubscribeTrafficRequest struct {
 	FilterLogParams
-	UserId          int64 `form:"user_id,optional"`
-	UserSubscribeId int64 `form:"user_subscribe_id,optional"`
+	UserId          int64 `query:"user_id" json:"user_id,omitempty"`
+	UserSubscribeId int64 `query:"user_subscribe_id" json:"user_subscribe_id,omitempty"`
 }
 
 type FilterSubscribeTrafficResponse struct {
@@ -710,9 +710,9 @@ type FilterSubscribeTrafficResponse struct {
 
 type FilterTrafficLogDetailsRequest struct {
 	FilterLogParams
-	ServerId    int64 `form:"server_id,optional"`
-	SubscribeId int64 `form:"subscribe_id,optional"`
-	UserId      int64 `form:"user_id,optional"`
+	ServerId    int64 `query:"server_id" json:"server_id,omitempty"`
+	SubscribeId int64 `query:"subscribe_id" json:"subscribe_id,omitempty"`
+	UserId      int64 `query:"user_id" json:"user_id,omitempty"`
 }
 
 type FilterTrafficLogDetailsResponse struct {
@@ -730,14 +730,14 @@ type Follow struct {
 }
 
 type GetAdsDetailRequest struct {
-	Id int64 `form:"id"`
+	Id int64 `query:"id" json:"id"`
 }
 
 type GetAdsListRequest struct {
-	Page   int    `form:"page"`
-	Size   int    `form:"size"`
-	Status *int   `form:"status,omitempty"`
-	Search string `form:"search,omitempty"`
+	Page   int    `json:"page"`
+	Size   int    `json:"size"`
+	Status *int   `json:"status,omitempty"`
+	Search string `json:"search,omitempty"`
 }
 
 type GetAdsListResponse struct {
@@ -746,8 +746,8 @@ type GetAdsListResponse struct {
 }
 
 type GetAdsRequest struct {
-	Device   string `form:"device"`
-	Position string `form:"position"`
+	Device   string `query:"device" json:"device"`
+	Position string `query:"position" json:"position"`
 }
 
 type GetAdsResponse struct {
@@ -755,12 +755,12 @@ type GetAdsResponse struct {
 }
 
 type GetAnnouncementListRequest struct {
-	Page   int64  `form:"page"`
-	Size   int64  `form:"size"`
-	Show   *bool  `form:"show,omitempty"`
-	Pinned *bool  `form:"pinned,omitempty"`
-	Popup  *bool  `form:"popup,omitempty"`
-	Search string `form:"search,omitempty"`
+	Page   int64  `json:"page"`
+	Size   int64  `json:"size"`
+	Show   *bool  `json:"show,omitempty"`
+	Pinned *bool  `json:"pinned,omitempty"`
+	Popup  *bool  `json:"popup,omitempty"`
+	Search string `json:"search,omitempty"`
 }
 
 type GetAnnouncementListResponse struct {
@@ -769,11 +769,11 @@ type GetAnnouncementListResponse struct {
 }
 
 type GetAnnouncementRequest struct {
-	Id int64 `form:"id" validate:"required"`
+	Id int64 `query:"id" json:"id"`
 }
 
 type GetAuthMethodConfigRequest struct {
-	Method string `form:"method"`
+	Method string `query:"method" json:"method"`
 }
 
 type GetAuthMethodListResponse struct {
@@ -785,10 +785,10 @@ type GetAvailablePaymentMethodsResponse struct {
 }
 
 type GetBatchSendEmailTaskListRequest struct {
-	Page   int    `form:"page"`
-	Size   int    `form:"size"`
-	Scope  *int8  `form:"scope,omitempty"`
-	Status *uint8 `form:"status,omitempty"`
+	Page   int    `json:"page"`
+	Size   int    `json:"size"`
+	Scope  *int8  `json:"scope,omitempty"`
+	Status *uint8 `json:"status,omitempty"`
 }
 
 type GetBatchSendEmailTaskListResponse struct {
@@ -808,10 +808,10 @@ type GetBatchSendEmailTaskStatusResponse struct {
 }
 
 type GetCouponListRequest struct {
-	Page      int64  `form:"page" validate:"required"`
-	Size      int64  `form:"size" validate:"required"`
-	Subscribe int64  `form:"subscribe,omitempty"`
-	Search    string `form:"search,omitempty"`
+	Page      int64 `query:"page" json:"page"`
+	Size      int64 `query:"size" json:"size"`
+	Subscribe int64  `query:"subscribe" json:"subscribe,omitempty"`
+	Search    string `query:"search" json:"search,omitempty"`
 }
 
 type GetCouponListResponse struct {
@@ -820,7 +820,7 @@ type GetCouponListResponse struct {
 }
 
 type GetDetailRequest struct {
-	Id int64 `form:"id" validate:"required"`
+	Id int64 `query:"id" json:"id"`
 }
 
 type GetDeviceListResponse struct {
@@ -829,14 +829,14 @@ type GetDeviceListResponse struct {
 }
 
 type GetDocumentDetailRequest struct {
-	Id int64 `json:"id" validate:"required"`
+	Id int64 `json:"id"`
 }
 
 type GetDocumentListRequest struct {
-	Page   int64  `form:"page" validate:"required"`
-	Size   int64  `form:"size" validate:"required"`
-	Tag    string `form:"tag,omitempty"`
-	Search string `form:"search,omitempty"`
+	Page   int64 `query:"page" json:"page"`
+	Size   int64 `query:"size" json:"size"`
+	Tag    string `query:"tag" json:"tag,omitempty"`
+	Search string `query:"search" json:"search,omitempty"`
 }
 
 type GetDocumentListResponse struct {
@@ -857,8 +857,8 @@ type GetGlobalConfigResponse struct {
 }
 
 type GetLoginLogRequest struct {
-	Page int `form:"page"`
-	Size int `form:"size"`
+	Page int `query:"page" json:"page"`
+	Size int `query:"size" json:"size"`
 }
 
 type GetLoginLogResponse struct {
@@ -867,10 +867,10 @@ type GetLoginLogResponse struct {
 }
 
 type GetMessageLogListRequest struct {
-	Page   int    `form:"page"`
-	Size   int    `form:"size"`
-	Type   uint8  `form:"type"`
-	Search string `form:"search,optional"`
+	Page   int    `query:"page" json:"page"`
+	Size   int    `query:"size" json:"size"`
+	Type   uint8  `query:"type" json:"type"`
+	Search string `query:"search" json:"search,omitempty"`
 }
 
 type GetMessageLogListResponse struct {
@@ -887,12 +887,12 @@ type GetOAuthMethodsResponse struct {
 }
 
 type GetOrderListRequest struct {
-	Page        int64  `form:"page" validate:"required"`
-	Size        int64  `form:"size" validate:"required"`
-	UserId      int64  `form:"user_id,omitempty"`
-	Status      uint8  `form:"status,omitempty"`
-	SubscribeId int64  `form:"subscribe_id,omitempty"`
-	Search      string `form:"search,omitempty"`
+	Page        int64 `query:"page" json:"page"`
+	Size        int64 `query:"size" json:"size"`
+	UserId      int64  `query:"user_id" json:"user_id,omitempty"`
+	Status      uint8  `query:"status" json:"status,omitempty"`
+	SubscribeId int64  `query:"subscribe_id" json:"subscribe_id,omitempty"`
+	Search      string `query:"search" json:"search,omitempty"`
 }
 
 type GetOrderListResponse struct {
@@ -901,11 +901,11 @@ type GetOrderListResponse struct {
 }
 
 type GetPaymentMethodListRequest struct {
-	Page     int    `form:"page"`
-	Size     int    `form:"size"`
-	Platform string `form:"platform,omitempty"`
-	Search   string `form:"search,omitempty"`
-	Enable   *bool  `form:"enable,omitempty"`
+	Page     int    `json:"page"`
+	Size     int    `json:"size"`
+	Platform string `json:"platform,omitempty"`
+	Search   string `json:"search,omitempty"`
+	Enable   *bool  `json:"enable,omitempty"`
 }
 
 type GetPaymentMethodListResponse struct {
@@ -934,7 +934,7 @@ type GetServerConfigResponse struct {
 }
 
 type GetServerProtocolsRequest struct {
-	Id int64 `form:"id"`
+	Id int64 `query:"id" json:"id"`
 }
 
 type GetServerProtocolsResponse struct {
@@ -957,8 +957,8 @@ type GetStatResponse struct {
 }
 
 type GetSubscribeApplicationListRequest struct {
-	Page int `form:"page"`
-	Size int `form:"size"`
+	Page int `query:"page" json:"page"`
+	Size int `query:"size" json:"size"`
 }
 
 type GetSubscribeApplicationListResponse struct {
@@ -972,7 +972,7 @@ type GetSubscribeClientResponse struct {
 }
 
 type GetSubscribeDetailsRequest struct {
-	Id int64 `form:"id" validate:"required"`
+	Id int64 `query:"id" json:"id"`
 }
 
 type GetSubscribeGroupListResponse struct {
@@ -981,10 +981,10 @@ type GetSubscribeGroupListResponse struct {
 }
 
 type GetSubscribeListRequest struct {
-	Page     int64  `form:"page" validate:"required"`
-	Size     int64  `form:"size" validate:"required"`
-	Language string `form:"language,omitempty"`
-	Search   string `form:"search,omitempty"`
+	Page     int64 `query:"page" json:"page"`
+	Size     int64 `query:"size" json:"size"`
+	Language string `query:"language" json:"language,omitempty"`
+	Search   string `query:"search" json:"search,omitempty"`
 }
 
 type GetSubscribeListResponse struct {
@@ -993,8 +993,8 @@ type GetSubscribeListResponse struct {
 }
 
 type GetSubscribeLogRequest struct {
-	Page int `form:"page"`
-	Size int `form:"size"`
+	Page int `query:"page" json:"page"`
+	Size int `query:"size" json:"size"`
 }
 
 type GetSubscribeLogResponse struct {
@@ -1003,7 +1003,7 @@ type GetSubscribeLogResponse struct {
 }
 
 type GetSubscriptionRequest struct {
-	Language string `form:"language"`
+	Language string `query:"language" json:"language"`
 }
 
 type GetSubscriptionResponse struct {
@@ -1011,11 +1011,11 @@ type GetSubscriptionResponse struct {
 }
 
 type GetTicketListRequest struct {
-	Page   int64  `form:"page"`
-	Size   int64  `form:"size"`
-	UserId int64  `form:"user_id,omitempty"`
-	Status *uint8 `form:"status,omitempty"`
-	Search string `form:"search,omitempty"`
+	Page   int64  `json:"page"`
+	Size   int64  `json:"size"`
+	UserId int64  `json:"user_id,omitempty"`
+	Status *uint8 `json:"status,omitempty"`
+	Search string `json:"search,omitempty"`
 }
 
 type GetTicketListResponse struct {
@@ -1024,7 +1024,7 @@ type GetTicketListResponse struct {
 }
 
 type GetTicketRequest struct {
-	Id int64 `form:"id" validate:"required"`
+	Id int64 `query:"id" json:"id"`
 }
 
 type GetTosResponse struct {
@@ -1040,13 +1040,13 @@ type GetUserAuthMethodResponse struct {
 }
 
 type GetUserListRequest struct {
-	Page            int    `form:"page"`
-	Size            int    `form:"size"`
-	Search          string `form:"search,omitempty"`
-	UserId          *int64 `form:"user_id,omitempty"`
-	Unscoped        bool   `form:"unscoped,omitempty"`
-	SubscribeId     *int64 `form:"subscribe_id,omitempty"`
-	UserSubscribeId *int64 `form:"user_subscribe_id,omitempty"`
+	Page            int    `json:"page"`
+	Size            int    `json:"size"`
+	Search          string `json:"search,omitempty"`
+	UserId          *int64 `json:"user_id,omitempty"`
+	Unscoped        bool   `json:"unscoped,omitempty"`
+	SubscribeId     *int64 `json:"subscribe_id,omitempty"`
+	UserSubscribeId *int64 `json:"user_subscribe_id,omitempty"`
 }
 
 type GetUserListResponse struct {
@@ -1055,9 +1055,9 @@ type GetUserListResponse struct {
 }
 
 type GetUserLoginLogsRequest struct {
-	Page   int   `form:"page"`
-	Size   int   `form:"size"`
-	UserId int64 `form:"user_id"`
+	Page   int   `query:"page" json:"page"`
+	Size   int   `query:"size" json:"size"`
+	UserId int64 `query:"user_id" json:"user_id"`
 }
 
 type GetUserLoginLogsResponse struct {
@@ -1066,14 +1066,14 @@ type GetUserLoginLogsResponse struct {
 }
 
 type GetUserSubscribeByIdRequest struct {
-	Id int64 `form:"id" validate:"required"`
+	Id int64 `query:"id" json:"id"`
 }
 
 type GetUserSubscribeDevicesRequest struct {
-	Page        int   `form:"page"`
-	Size        int   `form:"size"`
-	UserId      int64 `form:"user_id"`
-	SubscribeId int64 `form:"subscribe_id"`
+	Page        int   `query:"page" json:"page"`
+	Size        int   `query:"size" json:"size"`
+	UserId      int64 `query:"user_id" json:"user_id"`
+	SubscribeId int64 `query:"subscribe_id" json:"subscribe_id"`
 }
 
 type GetUserSubscribeDevicesResponse struct {
@@ -1082,9 +1082,9 @@ type GetUserSubscribeDevicesResponse struct {
 }
 
 type GetUserSubscribeListRequest struct {
-	Page   int   `form:"page"`
-	Size   int   `form:"size"`
-	UserId int64 `form:"user_id"`
+	Page   int   `query:"page" json:"page"`
+	Size   int   `query:"size" json:"size"`
+	UserId int64 `query:"user_id" json:"user_id"`
 }
 
 type GetUserSubscribeListResponse struct {
@@ -1093,10 +1093,10 @@ type GetUserSubscribeListResponse struct {
 }
 
 type GetUserSubscribeLogsRequest struct {
-	Page        int   `form:"page"`
-	Size        int   `form:"size"`
-	UserId      int64 `form:"user_id"`
-	SubscribeId int64 `form:"subscribe_id,omitempty"`
+	Page        int   `query:"page" json:"page"`
+	Size        int   `query:"size" json:"size"`
+	UserId      int64 `query:"user_id" json:"user_id"`
+	SubscribeId int64 `query:"subscribe_id" json:"subscribe_id,omitempty"`
 }
 
 type GetUserSubscribeLogsResponse struct {
@@ -1105,9 +1105,9 @@ type GetUserSubscribeLogsResponse struct {
 }
 
 type GetUserSubscribeResetTrafficLogsRequest struct {
-	Page            int   `form:"page"`
-	Size            int   `form:"size"`
-	UserSubscribeId int64 `form:"user_subscribe_id"`
+	Page            int   `query:"page" json:"page"`
+	Size            int   `query:"size" json:"size"`
+	UserSubscribeId int64 `query:"user_subscribe_id" json:"user_subscribe_id"`
 }
 
 type GetUserSubscribeResetTrafficLogsResponse struct {
@@ -1116,12 +1116,12 @@ type GetUserSubscribeResetTrafficLogsResponse struct {
 }
 
 type GetUserSubscribeTrafficLogsRequest struct {
-	Page        int   `form:"page"`
-	Size        int   `form:"size"`
-	UserId      int64 `form:"user_id"`
-	SubscribeId int64 `form:"subscribe_id"`
-	StartTime   int64 `form:"start_time"`
-	EndTime     int64 `form:"end_time"`
+	Page        int   `query:"page" json:"page"`
+	Size        int   `query:"size" json:"size"`
+	UserId      int64 `query:"user_id" json:"user_id"`
+	SubscribeId int64 `query:"subscribe_id" json:"subscribe_id"`
+	StartTime   int64 `query:"start_time" json:"start_time"`
+	EndTime     int64 `query:"end_time" json:"end_time"`
 }
 
 type GetUserSubscribeTrafficLogsResponse struct {
@@ -1130,14 +1130,14 @@ type GetUserSubscribeTrafficLogsResponse struct {
 }
 
 type GetUserTicketDetailRequest struct {
-	Id int64 `form:"id" validate:"required"`
+	Id int64 `query:"id" json:"id"`
 }
 
 type GetUserTicketListRequest struct {
-	Page   int    `form:"page"`
-	Size   int    `form:"size"`
-	Status *uint8 `form:"status,omitempty"`
-	Search string `form:"search,omitempty"`
+	Page   int    `json:"page"`
+	Size   int    `json:"size"`
+	Status *uint8 `json:"status,omitempty"`
+	Search string `json:"search,omitempty"`
 }
 
 type GetUserTicketListResponse struct {
@@ -1157,8 +1157,8 @@ type GiftLog struct {
 }
 
 type GoogleLoginCallbackRequest struct {
-	Code  string `form:"code"`
-	State string `form:"state"`
+	Code  string `json:"code" form:"code"`
+	State string `json:"state" form:"state"`
 }
 
 type HasMigrateSeverNodeResponse struct {
@@ -1474,7 +1474,7 @@ type PreViewNodeMultiplierResponse struct {
 }
 
 type PreviewSubscribeTemplateRequest struct {
-	Id int64 `form:"id"`
+	Id int64 `query:"id" json:"id"`
 }
 
 type PreviewSubscribeTemplateResponse struct {
@@ -1558,10 +1558,10 @@ type PurchaseOrderResponse struct {
 }
 
 type QueryAnnouncementRequest struct {
-	Page   int   `form:"page"`
-	Size   int   `form:"size"`
-	Pinned *bool `form:"pinned"`
-	Popup  *bool `form:"popup"`
+	Page   int   `json:"page"`
+	Size   int   `json:"size"`
+	Pinned *bool `json:"pinned"`
+	Popup  *bool `json:"popup"`
 }
 
 type QueryAnnouncementResponse struct {
@@ -1570,7 +1570,7 @@ type QueryAnnouncementResponse struct {
 }
 
 type QueryDocumentDetailRequest struct {
-	Id int64 `form:"id" validate:"required"`
+	Id int64 `query:"id" json:"id"`
 }
 
 type QueryDocumentListResponse struct {
@@ -1579,7 +1579,7 @@ type QueryDocumentListResponse struct {
 }
 
 type QueryIPLocationRequest struct {
-	IP string `form:"ip" validate:"required"`
+	IP string `query:"ip" json:"ip"`
 }
 
 type QueryIPLocationResponse struct {
@@ -1593,12 +1593,12 @@ type QueryNodeTagResponse struct {
 }
 
 type QueryOrderDetailRequest struct {
-	OrderNo string `form:"order_no" validate:"required"`
+	OrderNo string `query:"order_no" json:"order_no"`
 }
 
 type QueryOrderListRequest struct {
-	Page int `form:"page" validate:"required"`
-	Size int `form:"size" validate:"required"`
+	Page int `query:"page" json:"page"`
+	Size int `query:"size" json:"size"`
 }
 
 type QueryOrderListResponse struct {
@@ -1607,9 +1607,9 @@ type QueryOrderListResponse struct {
 }
 
 type QueryPurchaseOrderRequest struct {
-	AuthType   string `form:"auth_type"`
-	Identifier string `form:"identifier"`
-	OrderNo    string `form:"order_no"`
+	AuthType   string `query:"auth_type" json:"auth_type"`
+	Identifier string `query:"identifier" json:"identifier"`
+	OrderNo    string `query:"order_no" json:"order_no"`
 }
 
 type QueryPurchaseOrderResponse struct {
@@ -1629,9 +1629,9 @@ type QueryPurchaseOrderResponse struct {
 }
 
 type QueryQuotaTaskListRequest struct {
-	Page   int    `form:"page"`
-	Size   int    `form:"size"`
-	Status *uint8 `form:"status,omitempty"`
+	Page   int    `json:"page"`
+	Size   int    `json:"size"`
+	Status *uint8 `json:"status,omitempty"`
 }
 
 type QueryQuotaTaskListResponse struct {
@@ -1663,8 +1663,8 @@ type QueryQuotaTaskStatusResponse struct {
 
 type QueryServerConfigRequest struct {
 	ServerID  int64    `path:"server_id"`
-	SecretKey string   `form:"secret_key"`
-	Protocols []string `form:"protocols,omitempty"`
+	SecretKey string   `json:"secret_key" form:"secret_key"`
+	Protocols []string `json:"protocols,omitempty" form:"protocols,omitempty"`
 }
 
 type QueryServerConfigResponse struct {
@@ -1683,7 +1683,7 @@ type QuerySubscribeGroupListResponse struct {
 }
 
 type QuerySubscribeListRequest struct {
-	Language string `form:"language"`
+	Language string `query:"language" json:"language"`
 }
 
 type QuerySubscribeListResponse struct {
@@ -1697,8 +1697,8 @@ type QueryUserAffiliateCountResponse struct {
 }
 
 type QueryUserAffiliateListRequest struct {
-	Page int `form:"page"`
-	Size int `form:"size"`
+	Page int `query:"page" json:"page"`
+	Size int `query:"size" json:"size"`
 }
 
 type QueryUserAffiliateListResponse struct {
@@ -1712,8 +1712,8 @@ type QueryUserBalanceLogListResponse struct {
 }
 
 type QueryUserCommissionLogListRequest struct {
-	Page int `form:"page"`
-	Size int `form:"size"`
+	Page int `query:"page" json:"page"`
+	Size int `query:"size" json:"size"`
 }
 
 type QueryUserCommissionLogListResponse struct {
@@ -1731,8 +1731,8 @@ type QueryUserSubscribeNodeListResponse struct {
 }
 
 type QueryWithdrawalLogListRequest struct {
-	Page int `form:"page"`
-	Size int `form:"size"`
+	Page int `query:"page" json:"page"`
+	Size int `query:"size" json:"size"`
 }
 
 type QueryWithdrawalLogListResponse struct {
@@ -1904,9 +1904,9 @@ type ServerBasic struct {
 }
 
 type ServerCommon struct {
-	Protocol  string `form:"protocol"`
-	ServerId  int64  `form:"server_id"`
-	SecretKey string `form:"secret_key"`
+	Protocol  string `json:"protocol" form:"protocol"`
+	ServerId  int64  `json:"server_id" form:"server_id"`
+	SecretKey string `json:"secret_key" form:"secret_key"`
 }
 
 type ServerGroup struct {
@@ -2155,8 +2155,8 @@ type TelegramConfig struct {
 }
 
 type TelephoneCheckUserRequest struct {
-	Telephone         string `form:"telephone" validate:"required"`
-	TelephoneAreaCode string `json:"telephone_area_code" validate:"required"`
+	Telephone         string `query:"telephone" json:"telephone"`
+	TelephoneAreaCode string `json:"telephone_area_code"`
 }
 
 type TelephoneCheckUserResponse struct {

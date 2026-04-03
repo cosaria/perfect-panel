@@ -30,7 +30,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getRegisterConfig, updateRegisterConfig } from "@/services/admin/system";
+import { getRegisterConfig, updateRegisterConfig } from "@/services/admin-api/sdk.gen";
+import type { RegisterConfig } from "@/services/admin-api/types.gen";
 import { useSubscribe } from "@/store/subscribe";
 
 const registerSchema = z.object({
@@ -56,7 +57,7 @@ export default function RegisterConfig() {
     queryKey: ["getRegisterConfig"],
     queryFn: async () => {
       const { data } = await getRegisterConfig();
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -86,7 +87,7 @@ export default function RegisterConfig() {
   async function onSubmit(values: RegisterFormData) {
     setLoading(true);
     try {
-      await updateRegisterConfig(values as API.RegisterConfig);
+      await updateRegisterConfig({ body: values as RegisterConfig });
       toast.success(t("saveSuccess"));
       refetch();
       setOpen(false);

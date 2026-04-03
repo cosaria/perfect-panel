@@ -1,26 +1,23 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update subscribe config
-func UpdateSubscribeConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.SubscribeConfig
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateSubscribeConfigInput struct {
+	Body types.SubscribeConfig
+}
 
-		l := system.NewUpdateSubscribeConfigLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateSubscribeConfig(&req)
-		result.HttpResult(c, nil, err)
+func UpdateSubscribeConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateSubscribeConfigInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateSubscribeConfigInput) (*struct{}, error) {
+		l := system.NewUpdateSubscribeConfigLogic(ctx, svcCtx)
+		if err := l.UpdateSubscribeConfig(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

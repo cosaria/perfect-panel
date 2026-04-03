@@ -31,7 +31,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getSiteConfig, updateSiteConfig } from "@/services/admin/system";
+import { getSiteConfig, updateSiteConfig } from "@/services/admin-api/sdk.gen";
+import type { SiteConfig } from "@/services/admin-api/types.gen";
 
 const siteSchema = z.object({
   site_logo: z.string().optional(),
@@ -54,7 +55,7 @@ export default function SiteConfig() {
     queryKey: ["getSiteConfig"],
     queryFn: async () => {
       const { data } = await getSiteConfig();
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -81,7 +82,7 @@ export default function SiteConfig() {
   async function onSubmit(values: SiteFormData) {
     setLoading(true);
     try {
-      await updateSiteConfig(values as API.SiteConfig);
+      await updateSiteConfig({ body: values as SiteConfig });
       toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);

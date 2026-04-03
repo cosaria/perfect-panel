@@ -25,7 +25,8 @@ import {
   getTicket,
   getTicketList,
   updateTicketStatus,
-} from "@/services/admin/ticket";
+} from "@/services/admin-api/sdk.gen";
+import type { Ticket } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 import { UserDetail } from "../user/user-detail";
 
@@ -40,9 +41,11 @@ export default function Page() {
     queryKey: ["getTicket", ticketId],
     queryFn: async () => {
       const { data } = await getTicket({
-        id: ticketId,
+        query: {
+          id: ticketId!,
+        },
       });
-      return data.data as API.Ticket;
+      return data as Ticket;
     },
     enabled: !!ticketId,
     refetchInterval: 5000,
@@ -63,7 +66,7 @@ export default function Page() {
   const ref = useRef<ProTableActions>(null);
   return (
     <>
-      <ProTable<API.Ticket, { status: number }>
+      <ProTable<Ticket, { status: number }>
         action={ref}
         header={{
           title: t("ticketList"),
@@ -117,12 +120,14 @@ export default function Page() {
         ]}
         request={async (pagination, filters) => {
           const { data } = await getTicketList({
-            ...pagination,
-            ...filters,
+            body: {
+              ...pagination,
+              ...filters,
+            },
           });
           return {
-            list: data.data?.list || [],
-            total: data.data?.total || 0,
+            list: data?.list || [],
+            total: data?.total || 0,
           };
         }}
         actions={{
@@ -139,8 +144,10 @@ export default function Page() {
                   description={t("closeWarning")}
                   onConfirm={async () => {
                     await updateTicketStatus({
-                      id: row.id,
-                      status: 4,
+                      body: {
+                        id: row.id,
+                        status: 4,
+                      },
                     });
                     toast.success(t("closeSuccess"));
                     ref.current?.refresh();
@@ -226,10 +233,12 @@ export default function Page() {
                   event.preventDefault();
                   if (message) {
                     await createTicketFollow({
-                      ticket_id: ticketId,
-                      from: "System",
-                      type: 1,
-                      content: message,
+                      body: {
+                        ticket_id: ticketId!,
+                        from: "System",
+                        type: 1,
+                        content: message,
+                      },
                     });
                     refetchTicket();
                     setMessage("");
@@ -288,10 +297,12 @@ export default function Page() {
                                 reader.readAsDataURL(blob);
                                 reader.onloadend = async () => {
                                   await createTicketFollow({
-                                    ticket_id: ticketId,
-                                    from: "System",
-                                    type: 2,
-                                    content: reader.result as string,
+                                    body: {
+                                      ticket_id: ticketId!,
+                                      from: "System",
+                                      type: 2,
+                                      content: reader.result as string,
+                                    },
                                   });
                                   refetchTicket();
                                 };

@@ -29,7 +29,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getAuthMethodConfig, updateAuthMethodConfig } from "@/services/admin/authMethod";
+import { getAuthMethodConfig, updateAuthMethodConfig } from "@/services/admin-api/sdk.gen";
+import type { UpdateAuthMethodConfigRequest } from "@/services/admin-api/types.gen";
 
 const githubSchema = z.object({
   enabled: z.boolean(),
@@ -48,10 +49,12 @@ export default function GithubForm() {
     queryKey: ["getAuthMethodConfig", "github"],
     queryFn: async () => {
       const { data } = await getAuthMethodConfig({
-        method: "github",
+        query: {
+          method: "github",
+        },
       });
 
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -65,28 +68,32 @@ export default function GithubForm() {
     },
   });
 
+  const cfg = data?.config as Record<string, unknown> | undefined;
+
   useEffect(() => {
     if (data) {
       form.reset({
         enabled: data.enabled || false,
-        client_id: data.config?.client_id || "",
-        client_secret: data.config?.client_secret || "",
+        client_id: (cfg?.client_id as string) || "",
+        client_secret: (cfg?.client_secret as string) || "",
       });
     }
-  }, [data, form]);
+  }, [data, form, cfg]);
 
   async function onSubmit(values: GithubFormData) {
     setLoading(true);
     try {
       await updateAuthMethodConfig({
-        ...data,
-        enabled: values.enabled,
-        config: {
-          ...data?.config,
-          client_id: values.client_id,
-          client_secret: values.client_secret,
-        },
-      } as API.UpdateAuthMethodConfigRequest);
+        body: {
+          ...data,
+          enabled: values.enabled,
+          config: {
+            ...cfg,
+            client_id: values.client_id,
+            client_secret: values.client_secret,
+          },
+        } as UpdateAuthMethodConfigRequest,
+      });
       toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);

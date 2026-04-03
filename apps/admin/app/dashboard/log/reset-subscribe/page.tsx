@@ -6,7 +6,8 @@ import { useTranslations } from "next-intl";
 import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
 import { OrderLink } from "@/components/order-link";
 import { ProTable } from "@/components/pro-table";
-import { filterResetSubscribeLog } from "@/services/admin/log";
+import { filterResetSubscribeLog } from "@/services/admin-api/sdk.gen";
+import type { ResetSubscribeLog } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
 export default function ResetSubscribeLogPage() {
@@ -30,7 +31,7 @@ export default function ResetSubscribeLogPage() {
       : undefined,
   };
   return (
-    <ProTable<API.ResetSubscribeLog, { date?: string; user_subscribe_id?: number }>
+    <ProTable<ResetSubscribeLog, { date?: string; user_subscribe_id?: number }>
       header={{ title: t("title.resetSubscribe") }}
       initialFilters={initialFilters}
       columns={[
@@ -68,13 +69,16 @@ export default function ResetSubscribeLogPage() {
       ]}
       request={async (pagination, filter) => {
         const { data } = await filterResetSubscribeLog({
-          page: pagination.page,
-          size: pagination.size,
-          date: filter?.date,
-          user_subscribe_id: filter?.user_subscribe_id,
+          query: {
+            page: pagination.page,
+            size: pagination.size,
+            date: filter?.date || "",
+            search: "",
+            user_subscribe_id: filter?.user_subscribe_id ? Number(filter.user_subscribe_id) : 0,
+          },
         });
-        const list = (data?.data?.list || []) as API.ResetSubscribeLog[];
-        const total = Number(data?.data?.total || list.length);
+        const list = (data?.list || []) as ResetSubscribeLog[];
+        const total = Number(data?.total || list.length);
         return { list, total };
       }}
     />

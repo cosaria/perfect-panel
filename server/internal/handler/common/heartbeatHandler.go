@@ -1,18 +1,24 @@
+// huma:migrated
 package common
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/common"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Heartbeat
-func HeartbeatHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type HeartbeatOutput struct {
+	Body *types.HeartbeatResponse
+}
 
-		l := common.NewHeartbeatLogic(c.Request.Context(), svcCtx)
+func HeartbeatHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*HeartbeatOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*HeartbeatOutput, error) {
+		l := common.NewHeartbeatLogic(ctx, svcCtx)
 		resp, err := l.Heartbeat()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &HeartbeatOutput{Body: resp}, nil
 	}
 }

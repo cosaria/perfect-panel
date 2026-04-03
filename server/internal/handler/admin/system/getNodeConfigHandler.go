@@ -1,18 +1,24 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get node config
-func GetNodeConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type GetNodeConfigOutput struct {
+	Body *types.NodeConfig
+}
 
-		l := system.NewGetNodeConfigLogic(c.Request.Context(), svcCtx)
+func GetNodeConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetNodeConfigOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetNodeConfigOutput, error) {
+		l := system.NewGetNodeConfigLogic(ctx, svcCtx)
 		resp, err := l.GetNodeConfig()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetNodeConfigOutput{Body: resp}, nil
 	}
 }

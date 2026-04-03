@@ -4,7 +4,8 @@ import { Badge } from "@workspace/ui/components/badge";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ProTable } from "@/components/pro-table";
-import { filterEmailLog } from "@/services/admin/log";
+import { filterEmailLog } from "@/services/admin-api/sdk.gen";
+import type { MessageLog } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
 export default function EmailLogPage() {
@@ -18,7 +19,7 @@ export default function EmailLogPage() {
     date: sp.get("date") || today,
   };
   return (
-    <ProTable<API.MessageLog, { search?: string; date?: string }>
+    <ProTable<MessageLog, { search?: string; date?: string }>
       header={{ title: t("title.email") }}
       initialFilters={initialFilters}
       columns={[
@@ -70,13 +71,15 @@ export default function EmailLogPage() {
       params={[{ key: "search" }, { key: "date", type: "date" }]}
       request={async (pagination, filter) => {
         const { data } = await filterEmailLog({
-          page: pagination.page,
-          size: pagination.size,
-          search: filter?.search,
-          date: filter?.date,
+          query: {
+            page: pagination.page,
+            size: pagination.size,
+            search: filter?.search || "",
+            date: filter?.date || "",
+          },
         });
-        const list = (data?.data?.list || []) as API.MessageLog[];
-        const total = Number(data?.data?.total || list.length);
+        const list = (data?.list || []) as MessageLog[];
+        const total = Number(data?.total || list.length);
         return { list, total };
       }}
     />

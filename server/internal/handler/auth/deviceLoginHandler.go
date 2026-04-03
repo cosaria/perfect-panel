@@ -1,26 +1,28 @@
+// huma:migrated
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/auth"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Device Login
-func DeviceLoginHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.DeviceLoginRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type DeviceLoginInput struct {
+	Body types.DeviceLoginRequest
+}
 
-		l := auth.NewDeviceLoginLogic(c.Request.Context(), svcCtx)
-		resp, err := l.DeviceLogin(&req)
-		result.HttpResult(c, resp, err)
+type DeviceLoginOutput struct {
+	Body *types.LoginResponse
+}
+
+func DeviceLoginHandler(svcCtx *svc.ServiceContext) func(context.Context, *DeviceLoginInput) (*DeviceLoginOutput, error) {
+	return func(ctx context.Context, input *DeviceLoginInput) (*DeviceLoginOutput, error) {
+		l := auth.NewDeviceLoginLogic(ctx, svcCtx)
+		resp, err := l.DeviceLogin(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &DeviceLoginOutput{Body: resp}, nil
 	}
 }

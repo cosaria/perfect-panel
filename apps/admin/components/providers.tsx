@@ -1,5 +1,6 @@
 "use client";
 
+import "@/utils/setup-clients";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
 import { ThemeProvider as NextThemesProvider } from "next-themes";

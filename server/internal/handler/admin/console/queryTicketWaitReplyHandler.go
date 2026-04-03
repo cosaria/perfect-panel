@@ -1,18 +1,24 @@
+// huma:migrated
 package console
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/console"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Query ticket wait reply
-func QueryTicketWaitReplyHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type QueryTicketWaitReplyOutput struct {
+	Body *types.TicketWaitRelpyResponse
+}
 
-		l := console.NewQueryTicketWaitReplyLogic(c.Request.Context(), svcCtx)
+func QueryTicketWaitReplyHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryTicketWaitReplyOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*QueryTicketWaitReplyOutput, error) {
+		l := console.NewQueryTicketWaitReplyLogic(ctx, svcCtx)
 		resp, err := l.QueryTicketWaitReply()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &QueryTicketWaitReplyOutput{Body: resp}, nil
 	}
 }

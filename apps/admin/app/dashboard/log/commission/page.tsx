@@ -7,7 +7,8 @@ import { UserDetail } from "@/app/dashboard/user/user-detail";
 import { Display } from "@/components/display";
 import { OrderLink } from "@/components/order-link";
 import { ProTable } from "@/components/pro-table";
-import { filterCommissionLog } from "@/services/admin/log";
+import { filterCommissionLog } from "@/services/admin-api/sdk.gen";
+import type { CommissionLog } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
 export default function CommissionLogPage() {
@@ -29,7 +30,7 @@ export default function CommissionLogPage() {
     user_id: sp.get("user_id") ? Number(sp.get("user_id")) : undefined,
   };
   return (
-    <ProTable<API.CommissionLog, { date?: string; user_id?: number }>
+    <ProTable<CommissionLog, { date?: string; user_id?: number }>
       header={{ title: t("title.commission") }}
       initialFilters={initialFilters}
       columns={[
@@ -65,13 +66,16 @@ export default function CommissionLogPage() {
       ]}
       request={async (pagination, filter) => {
         const { data } = await filterCommissionLog({
-          page: pagination.page,
-          size: pagination.size,
-          date: filter?.date,
-          user_id: filter?.user_id,
+          query: {
+            page: pagination.page,
+            size: pagination.size,
+            date: filter?.date || "",
+            search: "",
+            user_id: filter?.user_id ? Number(filter.user_id) : 0,
+          },
         });
-        const list = (data?.data?.list || []) as API.CommissionLog[];
-        const total = Number(data?.data?.total || list.length);
+        const list = (data?.list || []) as CommissionLog[];
+        const total = Number(data?.total || list.length);
         return { list, total };
       }}
     />

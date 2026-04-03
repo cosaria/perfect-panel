@@ -1,9 +1,10 @@
 import { create } from "zustand";
-import { filterNodeList, queryNodeTag } from "@/services/admin/server";
+import { filterNodeList, queryNodeTag } from "@/services/admin-api/sdk.gen";
+import type { Node } from "@/services/admin-api/types.gen";
 
 interface NodeState {
   // Data
-  nodes: API.Node[];
+  nodes: Node[];
   tags: string[];
 
   // Loading states
@@ -17,11 +18,11 @@ interface NodeState {
   fetchTags: () => Promise<void>;
 
   // Getters
-  getNodeById: (nodeId: number) => API.Node | undefined;
+  getNodeById: (nodeId: number) => Node | undefined;
   isProtocolUsedInNodes: (serverId: number, protocolType: string) => boolean;
   isServerReferencedByNodes: (serverId: number) => boolean;
-  getNodesByTag: (tag: string) => API.Node[];
-  getNodesWithoutTags: () => API.Node[];
+  getNodesByTag: (tag: string) => Node[];
+  getNodesWithoutTags: () => Node[];
   getNodeTags: () => string[];
   getAllAvailableTags: () => string[];
 }
@@ -41,9 +42,9 @@ export const useNodeStore = create<NodeState>((set, get) => ({
 
     set({ loading: true });
     try {
-      const { data } = await filterNodeList({ page: 1, size: 999999999 });
+      const { data } = await filterNodeList({ query: { page: 1, size: 999999999 } });
       set({
-        nodes: data?.data?.list || [],
+        nodes: data?.list || [],
         loaded: true,
       });
     } catch (_error) {
@@ -61,7 +62,7 @@ export const useNodeStore = create<NodeState>((set, get) => ({
     try {
       const { data } = await queryNodeTag();
       set({
-        tags: data?.data?.tags || [],
+        tags: data?.tags || [],
         loadedTags: true,
       });
     } catch (_error) {

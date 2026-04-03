@@ -29,7 +29,7 @@ import {
   PieChart,
   XAxis,
 } from "recharts";
-import { queryUserStatistics } from "@/services/admin/console";
+import { queryUserStatistics } from "@/services/admin-api/sdk.gen";
 import { Empty } from "../empty";
 
 export function UserStatisticsCard() {
@@ -55,7 +55,7 @@ export function UserStatisticsCard() {
     queryKey: ["queryUserStatistics"],
     queryFn: async () => {
       const { data } = await queryUserStatistics();
-      return data.data;
+      return data;
     },
   });
 

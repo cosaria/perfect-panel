@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update Bind Mobile
-func UpdateBindMobileHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UpdateBindMobileRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateBindMobileInput struct {
+	Body types.UpdateBindMobileRequest
+}
 
-		l := user.NewUpdateBindMobileLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateBindMobile(&req)
-		result.HttpResult(c, nil, err)
+func UpdateBindMobileHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateBindMobileInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateBindMobileInput) (*struct{}, error) {
+		l := user.NewUpdateBindMobileLogic(ctx, svcCtx)
+		if err := l.UpdateBindMobile(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

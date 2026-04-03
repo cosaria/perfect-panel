@@ -1,18 +1,24 @@
+// huma:migrated
 package document
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/document"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get document list
-func QueryDocumentListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type QueryDocumentListOutput struct {
+	Body *types.QueryDocumentListResponse
+}
 
-		l := document.NewQueryDocumentListLogic(c.Request.Context(), svcCtx)
+func QueryDocumentListHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryDocumentListOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*QueryDocumentListOutput, error) {
+		l := document.NewQueryDocumentListLogic(ctx, svcCtx)
 		resp, err := l.QueryDocumentList()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &QueryDocumentListOutput{Body: resp}, nil
 	}
 }

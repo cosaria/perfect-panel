@@ -13,22 +13,23 @@ import CouponInput from "@/components/subscribe/coupon-input";
 import DurationSelector from "@/components/subscribe/duration-selector";
 import PaymentMethods from "@/components/subscribe/payment-methods";
 import useGlobalStore from "@/config/use-global";
-import { preCreateOrder, purchase } from "@/services/user/order";
+import { preCreateOrder, purchase } from "@/services/user-api/sdk.gen";
+import type { Subscribe, PurchaseOrderRequest } from "@/services/user-api/types.gen";
 import { SubscribeBilling } from "./billing";
 import { SubscribeDetail } from "./detail";
 
 interface PurchaseProps {
-  subscribe?: API.Subscribe;
-  setSubscribe: (subscribe?: API.Subscribe) => void;
+  subscribe?: Subscribe;
+  setSubscribe: (subscribe?: Subscribe) => void;
 }
 
-type PreCreateOrderData = Awaited<ReturnType<typeof preCreateOrder>>["data"]["data"];
+type PreCreateOrderData = Awaited<ReturnType<typeof preCreateOrder>>["data"];
 
 export default function Purchase({ subscribe, setSubscribe }: Readonly<PurchaseProps>) {
   const t = useTranslations("subscribe");
   const { getUserInfo } = useGlobalStore();
   const router = useRouter();
-  const [params, setParams] = useState<Partial<API.PurchaseOrderRequest>>({
+  const [params, setParams] = useState<Partial<PurchaseOrderRequest>>({
     quantity: 1,
     subscribe_id: 0,
     payment: -1,
@@ -43,10 +44,12 @@ export default function Purchase({ subscribe, setSubscribe }: Readonly<PurchaseP
     queryFn: async () => {
       try {
         const { data } = await preCreateOrder({
-          ...params,
-          subscribe_id: subscribe?.id as number,
-        } as API.PurchaseOrderRequest);
-        const result = data.data;
+          body: {
+            ...params,
+            subscribe_id: subscribe?.id as number,
+          } as PurchaseOrderRequest,
+        });
+        const result = data;
         if (result) {
           lastSuccessOrderRef.current = result;
         }
@@ -80,8 +83,8 @@ export default function Purchase({ subscribe, setSubscribe }: Readonly<PurchaseP
   const handleSubmit = useCallback(async () => {
     startTransition(async () => {
       try {
-        const response = await purchase(params as API.PurchaseOrderRequest);
-        const orderNo = response.data.data?.order_no;
+        const { data: response } = await purchase({ body: params as PurchaseOrderRequest });
+        const orderNo = response?.order_no;
         if (orderNo) {
           getUserInfo();
           router.push(`/payment?order_no=${orderNo}`);
@@ -127,7 +130,7 @@ export default function Purchase({ subscribe, setSubscribe }: Readonly<PurchaseP
               <DurationSelector
                 quantity={params.quantity ?? 1}
                 unitTime={subscribe?.unit_time}
-                discounts={subscribe?.discount}
+                discounts={subscribe?.discount ?? undefined}
                 onChange={(value) => {
                   handleChange("quantity", value);
                 }}

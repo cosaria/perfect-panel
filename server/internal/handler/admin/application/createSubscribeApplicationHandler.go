@@ -1,26 +1,28 @@
+// huma:migrated
 package application
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/application"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Create subscribe application
-func CreateSubscribeApplicationHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.CreateSubscribeApplicationRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type CreateSubscribeApplicationInput struct {
+	Body types.CreateSubscribeApplicationRequest
+}
 
-		l := application.NewCreateSubscribeApplicationLogic(c.Request.Context(), svcCtx)
-		resp, err := l.CreateSubscribeApplication(&req)
-		result.HttpResult(c, resp, err)
+type CreateSubscribeApplicationOutput struct {
+	Body *types.SubscribeApplication
+}
+
+func CreateSubscribeApplicationHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateSubscribeApplicationInput) (*CreateSubscribeApplicationOutput, error) {
+	return func(ctx context.Context, input *CreateSubscribeApplicationInput) (*CreateSubscribeApplicationOutput, error) {
+		l := application.NewCreateSubscribeApplicationLogic(ctx, svcCtx)
+		resp, err := l.CreateSubscribeApplication(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &CreateSubscribeApplicationOutput{Body: resp}, nil
 	}
 }

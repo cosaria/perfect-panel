@@ -1,26 +1,28 @@
+// huma:migrated
 package announcement
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/announcement"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get announcement list
-func GetAnnouncementListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetAnnouncementListRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetAnnouncementListInput struct {
+	Body types.GetAnnouncementListRequest
+}
 
-		l := announcement.NewGetAnnouncementListLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetAnnouncementList(&req)
-		result.HttpResult(c, resp, err)
+type GetAnnouncementListOutput struct {
+	Body *types.GetAnnouncementListResponse
+}
+
+func GetAnnouncementListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetAnnouncementListInput) (*GetAnnouncementListOutput, error) {
+	return func(ctx context.Context, input *GetAnnouncementListInput) (*GetAnnouncementListOutput, error) {
+		l := announcement.NewGetAnnouncementListLogic(ctx, svcCtx)
+		resp, err := l.GetAnnouncementList(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &GetAnnouncementListOutput{Body: resp}, nil
 	}
 }

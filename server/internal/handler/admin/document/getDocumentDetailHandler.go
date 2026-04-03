@@ -1,26 +1,28 @@
+// huma:migrated
 package document
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/document"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get document detail
-func GetDocumentDetailHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetDocumentDetailRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetDocumentDetailInput struct {
+	types.GetDocumentDetailRequest
+}
 
-		l := document.NewGetDocumentDetailLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetDocumentDetail(&req)
-		result.HttpResult(c, resp, err)
+type GetDocumentDetailOutput struct {
+	Body *types.Document
+}
+
+func GetDocumentDetailHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetDocumentDetailInput) (*GetDocumentDetailOutput, error) {
+	return func(ctx context.Context, input *GetDocumentDetailInput) (*GetDocumentDetailOutput, error) {
+		l := document.NewGetDocumentDetailLogic(ctx, svcCtx)
+		resp, err := l.GetDocumentDetail(&input.GetDocumentDetailRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetDocumentDetailOutput{Body: resp}, nil
 	}
 }

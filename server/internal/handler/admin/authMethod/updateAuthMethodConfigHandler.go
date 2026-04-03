@@ -1,26 +1,28 @@
+// huma:migrated
 package authMethod
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/authMethod"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update auth method config
-func UpdateAuthMethodConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UpdateAuthMethodConfigRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateAuthMethodConfigInput struct {
+	Body types.UpdateAuthMethodConfigRequest
+}
 
-		l := authMethod.NewUpdateAuthMethodConfigLogic(c.Request.Context(), svcCtx)
-		resp, err := l.UpdateAuthMethodConfig(&req)
-		result.HttpResult(c, resp, err)
+type UpdateAuthMethodConfigOutput struct {
+	Body *types.AuthMethodConfig
+}
+
+func UpdateAuthMethodConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateAuthMethodConfigInput) (*UpdateAuthMethodConfigOutput, error) {
+	return func(ctx context.Context, input *UpdateAuthMethodConfigInput) (*UpdateAuthMethodConfigOutput, error) {
+		l := authMethod.NewUpdateAuthMethodConfigLogic(ctx, svcCtx)
+		resp, err := l.UpdateAuthMethodConfig(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &UpdateAuthMethodConfigOutput{Body: resp}, nil
 	}
 }

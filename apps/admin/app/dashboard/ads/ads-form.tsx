@@ -153,7 +153,7 @@ export default function AdsForm<T extends AdsFormValues>({
                       <RadioGroup
                         defaultValue={field.value}
                         onValueChange={(value) => {
-                          form.setValue(field.name, value);
+                          form.setValue(field.name, value as "image" | "video");
                         }}
                         className="flex gap-4"
                       >
@@ -236,7 +236,7 @@ export default function AdsForm<T extends AdsFormValues>({
                           form.setValue(field.name, timestamp);
                           const endTime = form.getValues("end_time");
                           if (endTime && timestamp > endTime) {
-                            form.setValue("end_time", "");
+                            form.setValue("end_time", 0);
                           }
                         }}
                       />

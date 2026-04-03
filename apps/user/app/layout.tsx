@@ -1,8 +1,11 @@
 import { Toaster } from "@workspace/ui/components/sonner";
 import { RawHtml } from "@workspace/ui/custom-components/raw-html";
 import Providers from "@/components/providers";
-import { getGlobalConfig } from "@/services/common/common";
-import { queryUserInfo } from "@/services/user/user";
+import { getGlobalConfig } from "@/services/common-api/sdk.gen";
+import { queryUserInfo } from "@/services/user-api/sdk.gen";
+import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
+import type { GetGlobalConfigResponse } from "@/services/common-api/types.gen";
+import type { User } from "@/services/user-api/types.gen";
 import "@workspace/ui/globals.css";
 import { getLangDir } from "@workspace/ui/hooks/use-lang-dir";
 import { unstable_noStore as noStore } from "next/cache";
@@ -27,16 +30,17 @@ import type React from "react";
 
 export async function generateMetadata(): Promise<Metadata> {
   noStore();
-  let site: API.SiteConfig | undefined;
+  let site: GetGlobalConfigResponse["site"] | undefined;
 
-  await getGlobalConfig({ skipErrorHandler: true })
-    .then((res) => {
-      const config = res.data.data;
-      site = config?.site || undefined;
-    })
-    .catch((error) => {
-      console.error("Error fetching global config:", error);
+  const ssrBaseUrl = (NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "") + "/v1/common";
+  try {
+    const { data: config } = await getGlobalConfig({
+      baseUrl: ssrBaseUrl,
     });
+    site = config?.site || undefined;
+  } catch (error) {
+    console.error("Error fetching global config:", error);
+  }
 
   const defaultMetadata = {
     title: {
@@ -81,21 +85,28 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
 
-  let config: API.GetGlobalConfigResponse | undefined;
-  let user: API.User | undefined;
+  let config: GetGlobalConfigResponse | undefined;
+  let user: User | undefined;
 
+  const ssrBaseUrl = (NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "") + "/v1/common";
   try {
-    config = await getGlobalConfig({ skipErrorHandler: true }).then((res) => res.data.data);
+    const { data } = await getGlobalConfig({
+      baseUrl: ssrBaseUrl,
+    });
+    config = data;
   } catch (error) {
     console.log("Error fetching global config:", error);
   }
 
   if (Authorization) {
     try {
-      user = await queryUserInfo({
-        skipErrorHandler: true,
-        Authorization,
-      }).then((res) => res.data.data);
+      const { data } = await queryUserInfo({
+        baseUrl: NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "",
+        headers: {
+          Authorization,
+        },
+      });
+      user = data;
     } catch (error) {
       console.log("Error fetching user info:", error);
     }

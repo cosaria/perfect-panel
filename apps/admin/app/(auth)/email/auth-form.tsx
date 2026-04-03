@@ -8,7 +8,12 @@ import {
   NEXT_PUBLIC_DEFAULT_USER_EMAIL,
   NEXT_PUBLIC_DEFAULT_USER_PASSWORD,
 } from "@/config/constants";
-import { resetPassword, userLogin, userRegister } from "@/services/common/auth";
+import { resetPassword, userLogin, userRegister } from "@/services/user-api/sdk.gen";
+import type {
+  UserLoginRequest,
+  UserRegisterRequest,
+  ResetPasswordRequest,
+} from "@/services/user-api/types.gen";
 import { getRedirectUrl, setAuthorization } from "@/utils/common";
 import LoginForm from "./login-form";
 import RegisterForm from "./register-form";
@@ -36,19 +41,19 @@ export default function EmailAuthForm() {
       try {
         switch (type) {
           case "login": {
-            const login = await userLogin(params);
+            const { data: login } = await userLogin({ body: params as UserLoginRequest });
             toast.success(t("login.success"));
-            onLogin(login.data.data?.token);
+            onLogin(login?.token);
             break;
           }
           case "register": {
-            const create = await userRegister(params);
+            const { data: created } = await userRegister({ body: params as UserRegisterRequest });
             toast.success(t("register.success"));
-            onLogin(create.data.data?.token);
+            onLogin(created?.token);
             break;
           }
           case "reset":
-            await resetPassword(params);
+            await resetPassword({ body: params as ResetPasswordRequest });
             toast.success(t("reset.success"));
             setType("login");
             break;

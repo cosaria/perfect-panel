@@ -1,26 +1,23 @@
+// huma:migrated
 package ticket
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/ticket"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update ticket status
-func UpdateUserTicketStatusHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UpdateUserTicketStatusRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateUserTicketStatusInput struct {
+	Body types.UpdateUserTicketStatusRequest
+}
 
-		l := ticket.NewUpdateUserTicketStatusLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateUserTicketStatus(&req)
-		result.HttpResult(c, nil, err)
+func UpdateUserTicketStatusHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateUserTicketStatusInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateUserTicketStatusInput) (*struct{}, error) {
+		l := ticket.NewUpdateUserTicketStatusLogic(ctx, svcCtx)
+		if err := l.UpdateUserTicketStatus(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

@@ -1,0 +1,24 @@
+extends:
+  - recommended
+
+apis:
+  admin:
+    root: docs/openapi/admin.json
+  user:
+    root: docs/openapi/user.json
+  common:
+    root: docs/openapi/common.json
+
+rules:
+  operation-operationId-unique: error
+  operation-operationId-url-safe: error
+  operation-summary: warn
+  no-unresolved-refs: error
+  no-enum-type-mismatch: error
+  # 内部 API，放宽以下规则
+  no-empty-servers: off
+  info-license: off
+  security-defined: off
+  no-unused-components: warn
+  operation-4xx-response: off
+  tag-description: off

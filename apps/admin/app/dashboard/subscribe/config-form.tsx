@@ -30,7 +30,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getSubscribeConfig, updateSubscribeConfig } from "@/services/admin/system";
+import { getSubscribeConfig, updateSubscribeConfig } from "@/services/admin-api/sdk.gen";
+import type { SubscribeConfig } from "@/services/admin-api/types.gen";
 
 const subscribeConfigSchema = z.object({
   single_model: z.boolean().optional(),
@@ -52,7 +53,7 @@ export default function ConfigForm() {
     queryKey: ["getSubscribeConfig"],
     queryFn: async () => {
       const { data } = await getSubscribeConfig();
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -78,7 +79,7 @@ export default function ConfigForm() {
   async function onSubmit(values: SubscribeConfigFormData) {
     setLoading(true);
     try {
-      await updateSubscribeConfig(values as API.SubscribeConfig);
+      await updateSubscribeConfig({ body: values as SubscribeConfig });
       toast.success(t("config.updateSuccess"));
       refetch();
       setOpen(false);

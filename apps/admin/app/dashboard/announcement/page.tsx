@@ -13,7 +13,8 @@ import {
   deleteAnnouncement,
   getAnnouncementList,
   updateAnnouncement,
-} from "@/services/admin/announcement";
+} from "@/services/admin-api/sdk.gen";
+import type { Announcement, CreateAnnouncementRequest } from "@/services/admin-api/types.gen";
 import NoticeForm from "./notice-form";
 
 export default function Page() {
@@ -22,19 +23,19 @@ export default function Page() {
   const ref = useRef<ProTableActions>(null);
 
   return (
-    <ProTable<API.Announcement, { enable: boolean; search: string }>
+    <ProTable<Announcement, { enable: boolean; search: string }>
       action={ref}
       header={{
         title: t("announcementList"),
         toolbar: (
-          <NoticeForm<API.CreateAnnouncementRequest>
+          <NoticeForm<CreateAnnouncementRequest>
             trigger={t("create")}
             title={t("createAnnouncement")}
             loading={loading}
             onSubmit={async (values) => {
               setLoading(true);
               try {
-                await createAnnouncement(values);
+                await createAnnouncement({ body: values });
                 toast.success(t("createSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
@@ -57,8 +58,10 @@ export default function Page() {
                 defaultChecked={row.getValue("show")}
                 onCheckedChange={async (checked) => {
                   await updateAnnouncement({
-                    ...row.original,
-                    show: checked,
+                    body: {
+                      ...row.original,
+                      show: checked,
+                    },
                   });
                   ref.current?.refresh();
                 }}
@@ -75,8 +78,10 @@ export default function Page() {
                 defaultChecked={row.getValue("pinned")}
                 onCheckedChange={async (checked) => {
                   await updateAnnouncement({
-                    ...row.original,
-                    pinned: checked,
+                    body: {
+                      ...row.original,
+                      pinned: checked,
+                    },
                   });
                   ref.current?.refresh();
                 }}
@@ -93,8 +98,10 @@ export default function Page() {
                 defaultChecked={row.getValue("popup")}
                 onCheckedChange={async (checked) => {
                   await updateAnnouncement({
-                    ...row.original,
-                    popup: checked,
+                    body: {
+                      ...row.original,
+                      popup: checked,
+                    },
                   });
                   ref.current?.refresh();
                 }}
@@ -129,18 +136,20 @@ export default function Page() {
       ]}
       request={async (pagination, filter) => {
         const { data } = await getAnnouncementList({
-          ...pagination,
-          ...filter,
+          body: {
+            ...pagination,
+            ...filter,
+          },
         });
         return {
-          list: data.data?.list || [],
-          total: data.data?.total || 0,
+          list: data?.list || [],
+          total: data?.total || 0,
         };
       }}
       actions={{
         render(row) {
           return [
-            <NoticeForm<API.Announcement>
+            <NoticeForm<Announcement>
               key="edit"
               trigger={t("edit")}
               title={t("editAnnouncement")}
@@ -150,8 +159,10 @@ export default function Page() {
                 setLoading(true);
                 try {
                   await updateAnnouncement({
-                    ...row,
-                    ...values,
+                    body: {
+                      ...row,
+                      ...values,
+                    },
                   });
                   toast.success(t("updateSuccess"));
                   ref.current?.refresh();
@@ -170,7 +181,9 @@ export default function Page() {
               description={t("deleteDescription")}
               onConfirm={async () => {
                 await deleteAnnouncement({
-                  id: row.id,
+                  body: {
+                    id: row.id,
+                  },
                 });
                 toast.success(t("deleteSuccess"));
                 ref.current?.refresh();
@@ -190,7 +203,9 @@ export default function Page() {
               onConfirm={async () => {
                 for (const element of rows.filter((item) => typeof item.id === "number")) {
                   await deleteAnnouncement({
-                    id: element.id,
+                    body: {
+                      id: element.id,
+                    },
                   });
                 }
                 toast.success(t("deleteSuccess"));

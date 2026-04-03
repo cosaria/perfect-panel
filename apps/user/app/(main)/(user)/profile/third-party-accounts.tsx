@@ -21,7 +21,12 @@ import { toast } from "sonner";
 import { z } from "zod";
 import SendCode from "@/app/auth/send-code";
 import useGlobalStore from "@/config/use-global";
-import { bindOAuth, unbindOAuth, updateBindEmail, updateBindMobile } from "@/services/user/user";
+import {
+  bindOAuth,
+  unbindOAuth,
+  updateBindEmail,
+  updateBindMobile,
+} from "@/services/user-api/sdk.gen";
 
 function MobileBindDialog({
   onSuccess,
@@ -54,7 +59,7 @@ function MobileBindDialog({
 
   const onSubmit = async (values: MobileBindFormValues) => {
     try {
-      await updateBindMobile(values);
+      await updateBindMobile({ body: values });
       toast.success(t("bindSuccess"));
       onSuccess();
       setOpen(false);
@@ -90,7 +95,7 @@ function MobileBindDialog({
                                 className="w-32 rounded-r-none border-r-0"
                                 placeholder="Area code..."
                                 value={field.value}
-                                whitelist={enable_whitelist ? whitelist : []}
+                                whitelist={enable_whitelist ? whitelist || [] : []}
                                 onChange={(value) => {
                                   if (value.phone) {
                                     form.setValue(field.name, value.phone);
@@ -208,7 +213,7 @@ export default function ThirdPartyAccounts() {
 
   const handleBasicAccountUpdate = async (account: (typeof accounts)[0], value: string) => {
     if (account.id === "email") {
-      await updateBindEmail({ email: value });
+      await updateBindEmail({ body: { email: value } });
       await getUserInfo();
       toast.success(t("updateSuccess"));
     }
@@ -219,15 +224,17 @@ export default function ThirdPartyAccounts() {
       (auth) => auth.auth_type === account.id,
     )?.auth_identifier;
     if (isBound) {
-      await unbindOAuth({ method: account.id });
+      await unbindOAuth({ body: { method: account.id } });
       await getUserInfo();
     } else {
-      const res = await bindOAuth({
-        method: account.id,
-        redirect: `${window.location.origin}/bind/${account.id}`,
+      const { data } = await bindOAuth({
+        body: {
+          method: account.id,
+          redirect: `${window.location.origin}/bind/${account.id}`,
+        },
       });
-      if (res.data?.data?.redirect) {
-        window.location.href = res.data.data.redirect;
+      if (data?.redirect) {
+        window.location.href = data.redirect;
       }
     }
   };

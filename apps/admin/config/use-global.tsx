@@ -1,12 +1,14 @@
 import { extractDomain } from "@workspace/ui/utils";
 import { create } from "zustand";
 import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
+import type { User } from "@/services/admin-api/types.gen";
+import type { GetGlobalConfigResponse } from "@/services/common-api/types.gen";
 
 export interface GlobalStore {
-  common: API.GetGlobalConfigResponse;
-  user?: API.User;
-  setCommon: (common: Partial<API.GetGlobalConfigResponse>) => void;
-  setUser: (user?: API.User) => void;
+  common: GetGlobalConfigResponse;
+  user?: User;
+  setCommon: (common: Partial<GetGlobalConfigResponse>) => void;
+  setUser: (user?: User) => void;
   getUserSubscribeUrls: (uuid: string, type?: string) => string[];
 }
 

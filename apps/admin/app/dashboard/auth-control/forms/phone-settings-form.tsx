@@ -45,7 +45,11 @@ import {
   getSmsPlatform,
   testSmsSend,
   updateAuthMethodConfig,
-} from "@/services/admin/authMethod";
+} from "@/services/admin-api/sdk.gen";
+import type {
+  TestSmsSendRequest,
+  UpdateAuthMethodConfigRequest,
+} from "@/services/admin-api/types.gen";
 
 const phoneSettingsSchema = z.object({
   id: z.number(),
@@ -77,7 +81,7 @@ export default function PhoneSettingsForm() {
   const t = useTranslations("auth-control");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [testParams, setTestParams] = useState<API.TestSmsSendRequest>({
+  const [testParams, setTestParams] = useState<TestSmsSendRequest>({
     telephone: "",
     area_code: "1",
   });
@@ -86,9 +90,11 @@ export default function PhoneSettingsForm() {
     queryKey: ["getAuthMethodConfig", "mobile"],
     queryFn: async () => {
       const { data } = await getAuthMethodConfig({
-        method: "mobile",
+        query: {
+          method: "mobile",
+        },
       });
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -97,7 +103,7 @@ export default function PhoneSettingsForm() {
     queryKey: ["getSmsPlatform"],
     queryFn: async () => {
       const { data } = await getSmsPlatform();
-      return data.data?.list;
+      return data?.list;
     },
     enabled: open,
   });
@@ -132,14 +138,14 @@ export default function PhoneSettingsForm() {
 
   useEffect(() => {
     if (data) {
-      form.reset(data);
+      form.reset(data as PhoneSettingsFormData);
     }
   }, [data, form]);
 
   async function onSubmit(values: PhoneSettingsFormData) {
     setLoading(true);
     try {
-      await updateAuthMethodConfig(values as API.UpdateAuthMethodConfigRequest);
+      await updateAuthMethodConfig({ body: values as UpdateAuthMethodConfigRequest });
       toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);
@@ -286,13 +292,13 @@ export default function PhoneSettingsForm() {
                         onValueChange={field.onChange}
                         disabled={isFetching}
                         placeholder={t("phone.platformConfigTip", {
-                          key: platformConfig?.access,
+                          key: platformConfig?.access ?? "",
                         })}
                       />
                     </FormControl>
                     <FormDescription>
                       {t("phone.platformConfigTip", {
-                        key: platformConfig?.access,
+                        key: platformConfig?.access ?? "",
                       })}
                     </FormDescription>
                     <FormMessage />
@@ -313,13 +319,13 @@ export default function PhoneSettingsForm() {
                           onValueChange={field.onChange}
                           disabled={isFetching}
                           placeholder={t("phone.platformConfigTip", {
-                            key: platformConfig?.endpoint,
+                            key: platformConfig?.endpoint ?? "",
                           })}
                         />
                       </FormControl>
                       <FormDescription>
                         {t("phone.platformConfigTip", {
-                          key: platformConfig?.endpoint,
+                          key: platformConfig?.endpoint ?? "",
                         })}
                       </FormDescription>
                       <FormMessage />
@@ -341,13 +347,13 @@ export default function PhoneSettingsForm() {
                         onValueChange={field.onChange}
                         disabled={isFetching}
                         placeholder={t("phone.platformConfigTip", {
-                          key: platformConfig?.secret,
+                          key: platformConfig?.secret ?? "",
                         })}
                       />
                     </FormControl>
                     <FormDescription>
                       {t("phone.platformConfigTip", {
-                        key: platformConfig?.secret,
+                        key: platformConfig?.secret ?? "",
                       })}
                     </FormDescription>
                     <FormMessage />
@@ -368,13 +374,13 @@ export default function PhoneSettingsForm() {
                           onValueChange={field.onChange}
                           disabled={isFetching}
                           placeholder={t("phone.platformConfigTip", {
-                            key: platformConfig?.template_code,
+                            key: platformConfig?.template_code ?? "",
                           })}
                         />
                       </FormControl>
                       <FormDescription>
                         {t("phone.platformConfigTip", {
-                          key: platformConfig?.template_code,
+                          key: platformConfig?.template_code ?? "",
                         })}
                       </FormDescription>
                       <FormMessage />
@@ -396,13 +402,13 @@ export default function PhoneSettingsForm() {
                           onValueChange={field.onChange}
                           disabled={isFetching}
                           placeholder={t("phone.platformConfigTip", {
-                            key: platformConfig?.sign_name,
+                            key: platformConfig?.sign_name ?? "",
                           })}
                         />
                       </FormControl>
                       <FormDescription>
                         {t("phone.platformConfigTip", {
-                          key: platformConfig?.sign_name,
+                          key: platformConfig?.sign_name ?? "",
                         })}
                       </FormDescription>
                       <FormMessage />
@@ -424,13 +430,13 @@ export default function PhoneSettingsForm() {
                           onValueChange={field.onChange}
                           disabled={isFetching}
                           placeholder={t("phone.platformConfigTip", {
-                            key: platformConfig?.phone_number,
+                            key: platformConfig?.phone_number ?? "",
                           })}
                         />
                       </FormControl>
                       <FormDescription>
                         {t("phone.platformConfigTip", {
-                          key: platformConfig?.phone_number,
+                          key: platformConfig?.phone_number ?? "",
                         })}
                       </FormDescription>
                       <FormMessage />
@@ -452,13 +458,13 @@ export default function PhoneSettingsForm() {
                           onChange={field.onChange}
                           disabled={isFetching}
                           placeholder={t("phone.placeholders.template", {
-                            code: platformConfig?.code_variable,
+                            code: platformConfig?.code_variable ?? "",
                           })}
                         />
                       </FormControl>
                       <FormDescription>
                         {t("phone.templateTip", {
-                          code: platformConfig?.code_variable,
+                          code: platformConfig?.code_variable ?? "",
                         })}
                       </FormDescription>
                       <FormMessage />
@@ -478,7 +484,7 @@ export default function PhoneSettingsForm() {
                         if (value.phone) {
                           setTestParams((prev) => ({
                             ...prev,
-                            area_code: value.phone,
+                            area_code: value.phone ?? "",
                           }));
                         }
                       }}
@@ -499,7 +505,7 @@ export default function PhoneSettingsForm() {
                       onClick={async () => {
                         if (isFetching || !testParams.telephone || !testParams.area_code) return;
                         try {
-                          await testSmsSend(testParams);
+                          await testSmsSend({ body: testParams });
                           toast.success(t("phone.sendSuccess"));
                         } catch {
                           toast.error(t("phone.sendFailed"));

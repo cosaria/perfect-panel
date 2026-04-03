@@ -10,23 +10,24 @@ import { formatDate } from "@workspace/ui/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { type RefObject, useEffect, useId, useRef, useState } from "react";
-import { queryDocumentDetail } from "@/services/user/document";
+import { queryDocumentDetail } from "@/services/user-api/sdk.gen";
+import type { Document as DocType } from "@/services/user-api/types.gen";
 import { CloseIcon } from "./close-icon";
 
-export function DocumentButton({ items }: { items: API.Document[] }) {
+export function DocumentButton({ items }: { items: DocType[] }) {
   const t = useTranslations("document");
-  const [active, setActive] = useState<API.Document | boolean | null>(null);
+  const [active, setActive] = useState<DocType | boolean | null>(null);
   const id = useId();
   const ref = useRef<HTMLDivElement>(null);
 
   const { data } = useQuery({
-    enabled: !!(active as API.Document)?.id,
-    queryKey: ["queryDocumentDetail", (active as API.Document)?.id],
+    enabled: !!(active as DocType)?.id,
+    queryKey: ["queryDocumentDetail", (active as DocType)?.id],
     queryFn: async () => {
       const { data } = await queryDocumentDetail({
-        id: (active as API.Document)?.id,
+        query: { id: (active as DocType)?.id },
       });
-      return data.data?.content;
+      return data?.content;
     },
   });
 

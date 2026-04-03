@@ -1,26 +1,23 @@
+// huma:migrated
 package server
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/server"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// CreateServerHandler Create Server
-func CreateServerHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.CreateServerRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type CreateServerInput struct {
+	Body types.CreateServerRequest
+}
 
-		l := server.NewCreateServerLogic(c.Request.Context(), svcCtx)
-		err := l.CreateServer(&req)
-		result.HttpResult(c, nil, err)
+func CreateServerHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateServerInput) (*struct{}, error) {
+	return func(ctx context.Context, input *CreateServerInput) (*struct{}, error) {
+		l := server.NewCreateServerLogic(ctx, svcCtx)
+		if err := l.CreateServer(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

@@ -1,18 +1,24 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get Team of Service Config
-func GetTosConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type GetTosConfigOutput struct {
+	Body *types.TosConfig
+}
 
-		l := system.NewGetTosConfigLogic(c.Request.Context(), svcCtx)
+func GetTosConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetTosConfigOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetTosConfigOutput, error) {
+		l := system.NewGetTosConfigLogic(ctx, svcCtx)
 		resp, err := l.GetTosConfig()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetTosConfigOutput{Body: resp}, nil
 	}
 }

@@ -7,7 +7,8 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
 import { ProTable } from "@/components/pro-table";
-import { filterUserSubscribeTrafficLog } from "@/services/admin/log";
+import { filterUserSubscribeTrafficLog } from "@/services/admin-api/sdk.gen";
+import type { UserSubscribeTrafficLog } from "@/services/admin-api/types.gen";
 
 export default function SubscribeTrafficLogPage() {
   const t = useTranslations("log");
@@ -24,7 +25,7 @@ export default function SubscribeTrafficLogPage() {
   };
   return (
     <ProTable<
-      API.UserSubscribeTrafficLog,
+      UserSubscribeTrafficLog,
       { date?: string; user_id?: number; user_subscribe_id?: number }
     >
       header={{ title: t("title.subscribeTraffic") }}
@@ -80,14 +81,17 @@ export default function SubscribeTrafficLogPage() {
       ]}
       request={async (pagination, filter) => {
         const { data } = await filterUserSubscribeTrafficLog({
-          page: pagination.page,
-          size: pagination.size,
-          date: filter?.date,
-          user_id: filter?.user_id,
-          user_subscribe_id: filter?.user_subscribe_id,
+          query: {
+            page: pagination.page,
+            size: pagination.size,
+            date: filter?.date || "",
+            search: "",
+            user_id: filter?.user_id ? Number(filter.user_id) : 0,
+            user_subscribe_id: filter?.user_subscribe_id ? Number(filter.user_subscribe_id) : 0,
+          },
         });
-        const list = (data?.data?.list || []) as API.UserSubscribeTrafficLog[];
-        const total = Number(data?.data?.total || list.length);
+        const list = (data?.list || []) as UserSubscribeTrafficLog[];
+        const total = Number(data?.total || list.length);
         return { list, total };
       }}
     />

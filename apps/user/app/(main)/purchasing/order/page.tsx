@@ -24,7 +24,7 @@ import StripePayment from "@/components/payment/stripe";
 import { SubscribeBilling } from "@/components/subscribe/billing";
 import { SubscribeDetail } from "@/components/subscribe/detail";
 import useGlobalStore from "@/config/use-global";
-import { purchaseCheckout, queryPurchaseOrder } from "@/services/user/portal";
+import { purchaseCheckout, queryPurchaseOrder } from "@/services/user-api/sdk.gen";
 import { setAuthorization } from "@/utils/common";
 
 export default function Page() {
@@ -41,18 +41,20 @@ export default function Page() {
       const params = localStorage.getItem(orderNo);
       const authParams = params ? JSON.parse(params) : {};
       const { data } = await queryPurchaseOrder({
-        order_no: orderNo,
-        ...authParams,
+        query: {
+          order_no: orderNo,
+          ...authParams,
+        } as { order_no: string; auth_type: string; identifier: string },
       });
-      if (data?.data?.status !== 1) {
+      if (data?.status !== 1) {
         setEnabled(false);
-        if (data?.data?.token) {
-          setAuthorization(data?.data?.token);
+        if (data?.token) {
+          setAuthorization(data?.token);
           await new Promise((resolve) => setTimeout(resolve, 100));
           await getUserInfo();
         }
       }
-      return data?.data;
+      return data;
     },
     refetchInterval: 3000,
   });
@@ -66,13 +68,15 @@ export default function Page() {
       }
 
       const { data } = await purchaseCheckout({
-        orderNo,
-        returnUrl: window.location.href,
+        body: {
+          orderNo,
+          returnUrl: window.location.href,
+        },
       });
-      if (data.data?.type === "url" && data.data?.checkout_url) {
-        window.open(data.data.checkout_url, "_blank");
+      if (data?.type === "url" && data?.checkout_url) {
+        window.open(data.checkout_url, "_blank");
       }
-      return data?.data;
+      return data;
     },
   });
 

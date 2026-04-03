@@ -1,18 +1,24 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get Currency Config
-func GetCurrencyConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type GetCurrencyConfigOutput struct {
+	Body *types.CurrencyConfig
+}
 
-		l := system.NewGetCurrencyConfigLogic(c.Request.Context(), svcCtx)
+func GetCurrencyConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetCurrencyConfigOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetCurrencyConfigOutput, error) {
+		l := system.NewGetCurrencyConfigLogic(ctx, svcCtx)
 		resp, err := l.GetCurrencyConfig()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetCurrencyConfigOutput{Body: resp}, nil
 	}
 }

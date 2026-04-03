@@ -30,7 +30,7 @@ import {
   PieChart,
   XAxis,
 } from "recharts";
-import { queryRevenueStatistics } from "@/services/admin/console";
+import { queryRevenueStatistics } from "@/services/admin-api/sdk.gen";
 import { Display } from "../display";
 import { Empty } from "../empty";
 
@@ -57,7 +57,7 @@ export function RevenueStatisticsCard() {
     queryKey: ["queryRevenueStatistics"],
     queryFn: async () => {
       const { data } = await queryRevenueStatistics();
-      return data.data;
+      return data;
     },
   });
 

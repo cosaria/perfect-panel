@@ -1,26 +1,28 @@
+// huma:migrated
 package log
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/log"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Filter balance log
-func FilterBalanceLogHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.FilterBalanceLogRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type FilterBalanceLogInput struct {
+	types.FilterBalanceLogRequest
+}
 
-		l := log.NewFilterBalanceLogLogic(c.Request.Context(), svcCtx)
-		resp, err := l.FilterBalanceLog(&req)
-		result.HttpResult(c, resp, err)
+type FilterBalanceLogOutput struct {
+	Body *types.FilterBalanceLogResponse
+}
+
+func FilterBalanceLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterBalanceLogInput) (*FilterBalanceLogOutput, error) {
+	return func(ctx context.Context, input *FilterBalanceLogInput) (*FilterBalanceLogOutput, error) {
+		l := log.NewFilterBalanceLogLogic(ctx, svcCtx)
+		resp, err := l.FilterBalanceLog(&input.FilterBalanceLogRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &FilterBalanceLogOutput{Body: resp}, nil
 	}
 }

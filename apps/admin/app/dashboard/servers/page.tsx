@@ -14,7 +14,15 @@ import {
   filterServerList,
   resetSortWithServer,
   updateServer,
-} from "@/services/admin/server";
+} from "@/services/admin-api/sdk.gen";
+import type {
+  CreateServerRequest,
+  Protocol,
+  Server,
+  ServerStatus,
+  SortItem,
+  UpdateServerRequest,
+} from "@/services/admin-api/types.gen";
 import { useNode } from "@/store/node";
 import { useServer } from "@/store/server";
 import DynamicMultiplier from "./dynamic-multiplier";
@@ -69,7 +77,7 @@ export default function ServersPage() {
         <DynamicMultiplier />
         <ServerConfig />
       </div>
-      <ProTable<API.Server, { search: string }>
+      <ProTable<Server, { search: string }>
         action={ref}
         header={{
           title: t("pageTitle"),
@@ -82,7 +90,7 @@ export default function ServersPage() {
                 onSubmit={async (values) => {
                   setLoading(true);
                   try {
-                    await createServer(values as unknown as API.CreateServerRequest);
+                    await createServer({ body: values as unknown as CreateServerRequest });
                     toast.success(t("created"));
                     ref.current?.refresh();
                     fetchServers();
@@ -120,7 +128,7 @@ export default function ServersPage() {
             accessorKey: "protocols",
             header: t("protocols"),
             cell: ({ row }) => {
-              const list = row.original.protocols.filter((p) => p.enable) as API.Protocol[];
+              const list = (row.original.protocols ?? []).filter((p) => p.enable) as Protocol[];
               if (!list.length) return "—";
               return (
                 <div className="flex flex-col gap-1">
@@ -182,19 +190,21 @@ export default function ServersPage() {
           {
             id: "online_users",
             header: t("onlineUsers"),
-            cell: ({ row }) => <OnlineUsersCell status={row.original.status as API.ServerStatus} />,
+            cell: ({ row }) => <OnlineUsersCell status={row.original.status as ServerStatus} />,
           },
           // traffic ratio moved to per-protocol configs; column removed
         ]}
         params={[{ key: "search" }]}
         request={async (pagination, filter) => {
           const { data } = await filterServerList({
-            page: pagination.page,
-            size: pagination.size,
-            search: filter?.search || undefined,
+            query: {
+              page: pagination.page,
+              size: pagination.size,
+              search: filter?.search || undefined,
+            },
           });
-          const list = (data?.data?.list || []) as API.Server[];
-          const total = (data?.data?.total ?? list.length) as number;
+          const list = (data?.list || []) as Server[];
+          const total = (data?.total ?? list.length) as number;
           return { list, total };
         }}
         actions={{
@@ -210,8 +220,10 @@ export default function ServersPage() {
                 try {
                   // ServerForm already returns API-shaped body; add id for update
                   await updateServer({
-                    id: row.id,
-                    ...(values as unknown as Omit<API.UpdateServerRequest, "id">),
+                    body: {
+                      id: row.id,
+                      ...(values as unknown as Omit<UpdateServerRequest, "id">),
+                    },
                   });
                   toast.success(t("updated"));
                   ref.current?.refresh();
@@ -235,7 +247,7 @@ export default function ServersPage() {
               title={t("confirmDeleteTitle")}
               description={t("confirmDeleteDesc")}
               onConfirm={async () => {
-                await deleteServer({ id: row.id });
+                await deleteServer({ body: { id: row.id } });
                 toast.success(t("deleted"));
                 ref.current?.refresh();
                 fetchServers();
@@ -248,14 +260,14 @@ export default function ServersPage() {
               variant="outline"
               onClick={async () => {
                 setLoading(true);
-                const body: API.CreateServerRequest = {
+                const body: CreateServerRequest = {
                   name: row.name,
                   country: row.country,
                   city: row.city,
                   address: row.address,
                   protocols: row.protocols || [],
                 };
-                await createServer(body);
+                await createServer({ body: body });
                 toast.success(t("copied"));
                 ref.current?.refresh();
                 fetchServers();
@@ -278,7 +290,7 @@ export default function ServersPage() {
                 title={t("confirmDeleteTitle")}
                 description={t("confirmDeleteDesc")}
                 onConfirm={async () => {
-                  await Promise.all(rows.map((r) => deleteServer({ id: r.id })));
+                  await Promise.all(rows.map((r) => deleteServer({ body: { id: r.id } })));
                   toast.success(t("deleted"));
                   ref.current?.refresh();
                   fetchServers();
@@ -315,10 +327,12 @@ export default function ServersPage() {
 
           if (changedItems.length > 0) {
             resetSortWithServer({
-              sort: changedItems.map((item) => ({
-                id: item.id,
-                sort: item.sort,
-              })) as API.SortItem[],
+              body: {
+                sort: changedItems.map((item) => ({
+                  id: item.id,
+                  sort: item.sort,
+                })) as SortItem[],
+              },
             });
             toast.success(t("sorted_success"));
           }

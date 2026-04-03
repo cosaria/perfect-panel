@@ -1,18 +1,24 @@
+// huma:migrated
 package portal
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/portal"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get available payment methods
-func GetAvailablePaymentMethodsHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type GetAvailablePaymentMethodsOutput struct {
+	Body *types.GetAvailablePaymentMethodsResponse
+}
 
-		l := portal.NewGetAvailablePaymentMethodsLogic(c.Request.Context(), svcCtx)
+func GetAvailablePaymentMethodsHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetAvailablePaymentMethodsOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetAvailablePaymentMethodsOutput, error) {
+		l := portal.NewGetAvailablePaymentMethodsLogic(ctx, svcCtx)
 		resp, err := l.GetAvailablePaymentMethods()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetAvailablePaymentMethodsOutput{Body: resp}, nil
 	}
 }

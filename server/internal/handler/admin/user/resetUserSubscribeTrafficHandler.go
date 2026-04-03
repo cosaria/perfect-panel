@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Reset user subscribe traffic
-func ResetUserSubscribeTrafficHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.ResetUserSubscribeTrafficRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type ResetUserSubscribeTrafficInput struct {
+	Body types.ResetUserSubscribeTrafficRequest
+}
 
-		l := user.NewResetUserSubscribeTrafficLogic(c.Request.Context(), svcCtx)
-		err := l.ResetUserSubscribeTraffic(&req)
-		result.HttpResult(c, nil, err)
+func ResetUserSubscribeTrafficHandler(svcCtx *svc.ServiceContext) func(context.Context, *ResetUserSubscribeTrafficInput) (*struct{}, error) {
+	return func(ctx context.Context, input *ResetUserSubscribeTrafficInput) (*struct{}, error) {
+		l := user.NewResetUserSubscribeTrafficLogic(ctx, svcCtx)
+		if err := l.ResetUserSubscribeTraffic(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

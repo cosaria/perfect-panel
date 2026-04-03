@@ -14,7 +14,8 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Display } from "@/components/display";
 import { ProTable } from "@/components/pro-table";
-import { queryQuotaTaskList } from "@/services/admin/marketing";
+import { queryQuotaTaskList } from "@/services/admin-api/sdk.gen";
+import type { QuotaTask } from "@/services/admin-api/types.gen";
 import { useSubscribe } from "@/store/subscribe";
 import { formatDate } from "@/utils/common";
 
@@ -72,7 +73,7 @@ export default function QuotaTaskManager() {
         <ScrollArea className="-mx-6 h-[calc(100dvh-48px-36px-env(safe-area-inset-top))] px-6">
           <div className="mt-4 space-y-4">
             {open && (
-              <ProTable<API.QuotaTask, API.QueryQuotaTaskListParams>
+              <ProTable<QuotaTask, Record<string, unknown>>
                 columns={[
                   {
                     accessorKey: "subscribers",
@@ -126,7 +127,7 @@ export default function QuotaTaskManager() {
                     size: 120,
                     cell: ({ row }) => {
                       const giftValue = row.getValue("gift_value") as number;
-                      const task = row.original as API.QuotaTask;
+                      const task = row.original as QuotaTask;
                       const giftType = task.gift_type;
 
                       return (
@@ -158,7 +159,7 @@ export default function QuotaTaskManager() {
                     header: t("timeRange"),
                     size: 180,
                     cell: ({ row }) => {
-                      const task = row.original as API.QuotaTask;
+                      const task = row.original as QuotaTask;
                       const startTime = task.start_time;
                       const endTime = task.end_time;
 
@@ -202,13 +203,15 @@ export default function QuotaTaskManager() {
                 ]}
                 request={async (pagination, filters) => {
                   const response = await queryQuotaTaskList({
-                    ...filters,
-                    page: pagination.page,
-                    size: pagination.size,
+                    body: {
+                      ...filters,
+                      page: pagination.page,
+                      size: pagination.size,
+                    },
                   });
                   return {
-                    list: response.data?.data?.list || [],
-                    total: response.data?.data?.total || 0,
+                    list: response.data?.list || [],
+                    total: response.data?.total || 0,
                   };
                 }}
                 params={[

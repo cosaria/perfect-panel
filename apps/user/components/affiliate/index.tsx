@@ -18,7 +18,8 @@ import { Display } from "@/components/display";
 import { Empty } from "@/components/empty";
 import { ProList } from "@/components/pro-list";
 import useGlobalStore from "@/config/use-global";
-import { queryUserAffiliate, queryUserAffiliateList } from "@/services/user/user";
+import { queryUserAffiliate, queryUserAffiliateList } from "@/services/user-api/sdk.gen";
+import type { UserAffiliate } from "@/services/user-api/types.gen";
 
 export default function Affiliate() {
   const t = useTranslations("affiliate");
@@ -26,8 +27,8 @@ export default function Affiliate() {
   const { data } = useQuery({
     queryKey: ["queryUserAffiliate"],
     queryFn: async () => {
-      const response = await queryUserAffiliate();
-      return response.data.data;
+      const { data } = await queryUserAffiliate();
+      return data;
     },
   });
 
@@ -78,15 +79,17 @@ export default function Affiliate() {
           </div>
         </CardContent>
       </Card>
-      <ProList<API.UserAffiliate, Record<string, unknown>>
+      <ProList<UserAffiliate, Record<string, unknown>>
         request={async (pagination, filter) => {
-          const response = await queryUserAffiliateList({
-            ...pagination,
-            ...filter,
+          const { data: response } = await queryUserAffiliateList({
+            query: {
+              ...pagination,
+              ...filter,
+            } as { page: number; size: number },
           });
           return {
-            list: response.data.data?.list || [],
-            total: response.data.data?.total || 0,
+            list: response?.list || [],
+            total: response?.total || 0,
           };
         }}
         header={{

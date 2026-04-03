@@ -1,18 +1,24 @@
+// huma:migrated
 package subscribe
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/subscribe"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get subscribe group list
-func QuerySubscribeGroupListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type QuerySubscribeGroupListOutput struct {
+	Body *types.QuerySubscribeGroupListResponse
+}
 
-		l := subscribe.NewQuerySubscribeGroupListLogic(c.Request.Context(), svcCtx)
+func QuerySubscribeGroupListHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QuerySubscribeGroupListOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*QuerySubscribeGroupListOutput, error) {
+		l := subscribe.NewQuerySubscribeGroupListLogic(ctx, svcCtx)
 		resp, err := l.QuerySubscribeGroupList()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &QuerySubscribeGroupListOutput{Body: resp}, nil
 	}
 }

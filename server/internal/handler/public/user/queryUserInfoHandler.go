@@ -1,18 +1,24 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Query User Info
-func QueryUserInfoHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type QueryUserInfoOutput struct {
+	Body *types.User
+}
 
-		l := user.NewQueryUserInfoLogic(c.Request.Context(), svcCtx)
+func QueryUserInfoHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryUserInfoOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*QueryUserInfoOutput, error) {
+		l := user.NewQueryUserInfoLogic(ctx, svcCtx)
 		resp, err := l.QueryUserInfo()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &QueryUserInfoOutput{Body: resp}, nil
 	}
 }

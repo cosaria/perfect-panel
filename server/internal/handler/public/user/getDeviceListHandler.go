@@ -1,18 +1,24 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get Device List
-func GetDeviceListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type GetDeviceListOutput struct {
+	Body *types.GetDeviceListResponse
+}
 
-		l := user.NewGetDeviceListLogic(c.Request.Context(), svcCtx)
+func GetDeviceListHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetDeviceListOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetDeviceListOutput, error) {
+		l := user.NewGetDeviceListLogic(ctx, svcCtx)
 		resp, err := l.GetDeviceList()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetDeviceListOutput{Body: resp}, nil
 	}
 }

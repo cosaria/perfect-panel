@@ -1,18 +1,24 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get OAuth Methods
-func GetOAuthMethodsHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type GetOAuthMethodsOutput struct {
+	Body *types.GetOAuthMethodsResponse
+}
 
-		l := user.NewGetOAuthMethodsLogic(c.Request.Context(), svcCtx)
+func GetOAuthMethodsHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetOAuthMethodsOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetOAuthMethodsOutput, error) {
+		l := user.NewGetOAuthMethodsLogic(ctx, svcCtx)
 		resp, err := l.GetOAuthMethods()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetOAuthMethodsOutput{Body: resp}, nil
 	}
 }

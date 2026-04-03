@@ -13,7 +13,7 @@ import { MonacoEditor } from "@workspace/ui/custom-components/editor/monaco-edit
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { previewSubscribeTemplate } from "@/services/admin/application";
+import { previewSubscribeTemplate } from "@/services/admin-api/sdk.gen";
 
 interface TemplatePreviewProps {
   applicationId: number;
@@ -33,12 +33,15 @@ export function TemplatePreview({ applicationId, output_format }: TemplatePrevie
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["previewSubscribeTemplate", applicationId],
-    queryFn: () => previewSubscribeTemplate({ id: applicationId }, { skipErrorHandler: true }),
+    queryFn: async () => {
+      const response = await previewSubscribeTemplate({ query: { id: applicationId } });
+      return response.data;
+    },
     enabled: isOpen && !!applicationId,
     retry: false,
   });
 
-  const originalContent = data?.data?.data?.template || "";
+  const originalContent = data?.template || "";
   const errorMessage =
     (error as TemplatePreviewError | null)?.data?.msg ||
     (error as TemplatePreviewError | null)?.message ||

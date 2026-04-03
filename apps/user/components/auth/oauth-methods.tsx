@@ -3,7 +3,7 @@
 import { Button } from "@workspace/ui/components/button";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import useGlobalStore from "@/config/use-global";
-import { oAuthLogin } from "@/services/common/oauth";
+import { oAuthLogin } from "@/services/user-api/sdk.gen";
 
 const icons = {
   apple: "uil:apple",
@@ -21,7 +21,8 @@ export function OAuthMethods() {
       method in icons && !["mobile", "email", "device"].includes(method),
   );
   return (
-    OAUTH_METHODS?.length > 0 && (
+    OAUTH_METHODS &&
+    OAUTH_METHODS.length > 0 && (
       <>
         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
           <span className="bg-background text-muted-foreground relative z-10 px-2">
@@ -38,11 +39,13 @@ export function OAuthMethods() {
                 asChild
                 onClick={async () => {
                   const { data } = await oAuthLogin({
-                    method,
-                    redirect: `${window.location.origin}/oauth/${method}`,
+                    body: {
+                      method,
+                      redirect: `${window.location.origin}/oauth/${method}`,
+                    },
                   });
-                  if (data.data?.redirect) {
-                    window.location.href = data.data?.redirect;
+                  if (data?.redirect) {
+                    window.location.href = data.redirect;
                   }
                 }}
               >

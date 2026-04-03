@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { updateUserPassword } from "@/services/user/user";
+import { updateUserPassword } from "@/services/user-api/sdk.gen";
 
 const FormSchema = z
   .object({
@@ -28,7 +28,7 @@ export default function ChangePassword() {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    await updateUserPassword({ password: data.password });
+    await updateUserPassword({ body: { password: data.password } });
     toast.success(t("updateSuccess"));
     form.reset();
   }

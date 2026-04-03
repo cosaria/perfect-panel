@@ -21,7 +21,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import useGlobalStore from "@/config/use-global";
-import { updateUserBasicInfo } from "@/services/admin/user";
+import { updateUserBasicInfo } from "@/services/admin-api/sdk.gen";
+import type { UpdateUserBasiceInfoRequest, User } from "@/services/admin-api/types.gen";
 
 const basicInfoSchema = z.object({
   avatar: z.string().optional(),
@@ -39,7 +40,7 @@ const basicInfoSchema = z.object({
 
 type BasicInfoValues = z.infer<typeof basicInfoSchema>;
 
-export function BasicInfoForm({ user, refetch }: { user: API.User; refetch: () => void }) {
+export function BasicInfoForm({ user, refetch }: { user: User; refetch: () => void }) {
   const t = useTranslations("user");
 
   const { common } = useGlobalStore();
@@ -63,10 +64,12 @@ export function BasicInfoForm({ user, refetch }: { user: API.User; refetch: () =
 
   async function onSubmit(data: BasicInfoValues) {
     await updateUserBasicInfo({
-      user_id: user.id,
-      telegram: user.telegram,
-      ...data,
-    } as API.UpdateUserBasiceInfoRequest);
+      body: {
+        user_id: user.id,
+        telegram: user.telegram,
+        ...data,
+      } as UpdateUserBasiceInfoRequest,
+    });
     toast.success(t("updateSuccess"));
     refetch();
   }

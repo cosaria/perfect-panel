@@ -1,26 +1,28 @@
+// huma:migrated
 package log
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/log"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Filter server traffic log
-func FilterServerTrafficLogHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.FilterServerTrafficLogRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type FilterServerTrafficLogInput struct {
+	types.FilterServerTrafficLogRequest
+}
 
-		l := log.NewFilterServerTrafficLogLogic(c.Request.Context(), svcCtx)
-		resp, err := l.FilterServerTrafficLog(&req)
-		result.HttpResult(c, resp, err)
+type FilterServerTrafficLogOutput struct {
+	Body *types.FilterServerTrafficLogResponse
+}
+
+func FilterServerTrafficLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterServerTrafficLogInput) (*FilterServerTrafficLogOutput, error) {
+	return func(ctx context.Context, input *FilterServerTrafficLogInput) (*FilterServerTrafficLogOutput, error) {
+		l := log.NewFilterServerTrafficLogLogic(ctx, svcCtx)
+		resp, err := l.FilterServerTrafficLog(&input.FilterServerTrafficLogRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &FilterServerTrafficLogOutput{Body: resp}, nil
 	}
 }

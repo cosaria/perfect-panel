@@ -1,26 +1,28 @@
+// huma:migrated
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/auth"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Check user is exist
-func CheckUserHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.CheckUserRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type CheckUserInput struct {
+	types.CheckUserRequest
+}
 
-		l := auth.NewCheckUserLogic(c.Request.Context(), svcCtx)
-		resp, err := l.CheckUser(&req)
-		result.HttpResult(c, resp, err)
+type CheckUserOutput struct {
+	Body *types.CheckUserResponse
+}
+
+func CheckUserHandler(svcCtx *svc.ServiceContext) func(context.Context, *CheckUserInput) (*CheckUserOutput, error) {
+	return func(ctx context.Context, input *CheckUserInput) (*CheckUserOutput, error) {
+		l := auth.NewCheckUserLogic(ctx, svcCtx)
+		resp, err := l.CheckUser(&input.CheckUserRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &CheckUserOutput{Body: resp}, nil
 	}
 }

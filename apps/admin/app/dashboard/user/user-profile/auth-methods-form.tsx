@@ -11,26 +11,31 @@ import {
   createUserAuthMethod,
   deleteUserAuthMethod,
   updateUserAuthMethod,
-} from "@/services/admin/user";
+} from "@/services/admin-api/sdk.gen";
+import type { User } from "@/services/admin-api/types.gen";
 
-export function AuthMethodsForm({ user, refetch }: { user: API.User; refetch: () => void }) {
+export function AuthMethodsForm({ user, refetch }: { user: User; refetch: () => void }) {
   const t = useTranslations("user");
 
   const [emailChanges, setEmailChanges] = useState<Record<string, string>>({});
 
   const handleRemoveAuth = async (authType: string) => {
     await deleteUserAuthMethod({
-      user_id: user.id,
-      auth_type: authType,
+      body: {
+        user_id: user.id,
+        auth_type: authType,
+      },
     });
     toast.success(t("deleteSuccess"));
   };
 
   const handleUpdateEmail = async (email: string) => {
     await updateUserAuthMethod({
-      user_id: user.id,
-      auth_type: "email",
-      auth_identifier: email,
+      body: {
+        user_id: user.id,
+        auth_type: "email",
+        auth_identifier: email,
+      },
     });
     toast.success(t("updateSuccess"));
     refetch();
@@ -38,9 +43,11 @@ export function AuthMethodsForm({ user, refetch }: { user: API.User; refetch: ()
 
   const handleCreateEmail = async (email: string) => {
     await createUserAuthMethod({
-      user_id: user.id,
-      auth_type: "email",
-      auth_identifier: email,
+      body: {
+        user_id: user.id,
+        auth_type: "email",
+        auth_identifier: email,
+      },
     });
     toast.success(t("createSuccess"));
     refetch();
@@ -53,8 +60,8 @@ export function AuthMethodsForm({ user, refetch }: { user: API.User; refetch: ()
     }));
   };
 
-  const emailMethod = user.auth_methods.find((method) => method.auth_type === "email");
-  const otherMethods = user.auth_methods.filter((method) => method.auth_type !== "email");
+  const emailMethod = (user.auth_methods ?? []).find((method) => method.auth_type === "email");
+  const otherMethods = (user.auth_methods ?? []).filter((method) => method.auth_type !== "email");
 
   const defaultEmailMethod = {
     auth_type: "email",

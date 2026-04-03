@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// User device
-func UpdateUserDeviceHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UserDevice
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateUserDeviceInput struct {
+	Body types.UserDevice
+}
 
-		l := user.NewUpdateUserDeviceLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateUserDevice(&req)
-		result.HttpResult(c, nil, err)
+func UpdateUserDeviceHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateUserDeviceInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateUserDeviceInput) (*struct{}, error) {
+		l := user.NewUpdateUserDeviceLogic(ctx, svcCtx)
+		if err := l.UpdateUserDevice(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

@@ -1,26 +1,28 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Query User Affiliate List
-func QueryUserAffiliateListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.QueryUserAffiliateListRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type QueryUserAffiliateListInput struct {
+	types.QueryUserAffiliateListRequest
+}
 
-		l := user.NewQueryUserAffiliateListLogic(c.Request.Context(), svcCtx)
-		resp, err := l.QueryUserAffiliateList(&req)
-		result.HttpResult(c, resp, err)
+type QueryUserAffiliateListOutput struct {
+	Body *types.QueryUserAffiliateListResponse
+}
+
+func QueryUserAffiliateListHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryUserAffiliateListInput) (*QueryUserAffiliateListOutput, error) {
+	return func(ctx context.Context, input *QueryUserAffiliateListInput) (*QueryUserAffiliateListOutput, error) {
+		l := user.NewQueryUserAffiliateListLogic(ctx, svcCtx)
+		resp, err := l.QueryUserAffiliateList(&input.QueryUserAffiliateListRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &QueryUserAffiliateListOutput{Body: resp}, nil
 	}
 }

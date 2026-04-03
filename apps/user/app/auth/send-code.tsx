@@ -5,7 +5,7 @@ import { useCountDown } from "ahooks";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import useGlobalStore from "@/config/use-global";
-import { sendEmailCode, sendSmsCode } from "@/services/common/common";
+import { sendEmailCode, sendSmsCode } from "@/services/common-api/sdk.gen";
 
 interface SendCodeProps {
   type: "email" | "phone";
@@ -51,8 +51,10 @@ export default function SendCode({ type, params }: SendCodeProps) {
   const getEmailCode = async () => {
     if (params.email && params.type) {
       await sendEmailCode({
-        email: params.email,
-        type: params.type,
+        body: {
+          email: params.email,
+          type: params.type,
+        },
       });
       setCodeTimer();
     }
@@ -61,9 +63,11 @@ export default function SendCode({ type, params }: SendCodeProps) {
   const getPhoneCode = async () => {
     if (params.telephone && params.telephone_area_code && params.type) {
       await sendSmsCode({
-        telephone: params.telephone,
-        telephone_area_code: params.telephone_area_code,
-        type: params.type,
+        body: {
+          telephone: params.telephone,
+          telephone_area_code: params.telephone_area_code,
+          type: params.type,
+        },
       });
       setCodeTimer();
     }

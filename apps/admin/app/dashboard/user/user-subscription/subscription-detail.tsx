@@ -16,7 +16,8 @@ import { type ReactNode, useState } from "react";
 import { toast } from "sonner";
 import { IpLink } from "@/components/ip-link";
 import { ProTable } from "@/components/pro-table";
-import { getUserSubscribeDevices, kickOfflineByUserDevice } from "@/services/admin/user";
+import { getUserSubscribeDevices, kickOfflineByUserDevice } from "@/services/admin-api/sdk.gen";
+import type { UserDevice } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
 export function SubscriptionDetail({
@@ -39,7 +40,7 @@ export function SubscriptionDetail({
           <SheetTitle>{t("onlineDevices")}</SheetTitle>
         </SheetHeader>
         <div className="mt-4 max-h-[calc(100dvh-120px)] overflow-y-auto">
-          <ProTable<API.UserDevice, Record<string, unknown>>
+          <ProTable<UserDevice, Record<string, unknown>>
             columns={[
               {
                 accessorKey: "enabled",
@@ -78,13 +79,15 @@ export function SubscriptionDetail({
             ]}
             request={async (pagination) => {
               const { data } = await getUserSubscribeDevices({
-                user_id: userId,
-                subscribe_id: subscriptionId,
-                ...pagination,
+                query: {
+                  user_id: userId,
+                  subscribe_id: subscriptionId,
+                  ...pagination,
+                },
               });
               return {
-                list: data.data?.list || [],
-                total: data.data?.total || 0,
+                list: data?.list || [],
+                total: data?.total || 0,
               };
             }}
             actions={{
@@ -97,7 +100,7 @@ export function SubscriptionDetail({
                     title={t("confirmOffline")}
                     description={t("kickOfflineConfirm", { ip: row.ip })}
                     onConfirm={async () => {
-                      await kickOfflineByUserDevice({ id: row.id });
+                      await kickOfflineByUserDevice({ body: { id: row.id } });
                       toast.success(t("kickOfflineSuccess"));
                     }}
                     cancelText={t("cancel")}

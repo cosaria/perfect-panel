@@ -1,26 +1,28 @@
+// huma:migrated
 package order
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/order"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get order list
-func GetOrderListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetOrderListRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetOrderListInput struct {
+	types.GetOrderListRequest
+}
 
-		l := order.NewGetOrderListLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetOrderList(&req)
-		result.HttpResult(c, resp, err)
+type GetOrderListOutput struct {
+	Body *types.GetOrderListResponse
+}
+
+func GetOrderListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetOrderListInput) (*GetOrderListOutput, error) {
+	return func(ctx context.Context, input *GetOrderListInput) (*GetOrderListOutput, error) {
+		l := order.NewGetOrderListLogic(ctx, svcCtx)
+		resp, err := l.GetOrderList(&input.GetOrderListRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetOrderListOutput{Body: resp}, nil
 	}
 }

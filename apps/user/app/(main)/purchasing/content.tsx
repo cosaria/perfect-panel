@@ -17,7 +17,12 @@ import { SubscribeDetail } from "@/components/subscribe/detail";
 import DurationSelector from "@/components/subscribe/duration-selector";
 import PaymentMethods from "@/components/subscribe/payment-methods";
 import useGlobalStore from "@/config/use-global";
-import { prePurchaseOrder, purchase } from "@/services/user/portal";
+import { prePurchaseOrder, portalPurchase } from "@/services/user-api/sdk.gen";
+import type {
+  Subscribe,
+  PortalPurchaseRequest,
+  PrePurchaseOrderRequest,
+} from "@/services/user-api/types.gen";
 
 type SubscriptionDescription = {
   description: string;
@@ -28,11 +33,11 @@ type SubscriptionDescription = {
   }>;
 };
 
-export default function Content({ subscription }: { subscription?: API.Subscribe }) {
+export default function Content({ subscription }: { subscription?: Subscribe }) {
   const t = useTranslations("subscribe");
   const { common } = useGlobalStore();
   const router = useRouter();
-  const [params, setParams] = useState<API.PortalPurchaseRequest>({
+  const [params, setParams] = useState<PortalPurchaseRequest>({
     quantity: 1,
     subscribe_id: 0,
     payment: -1,
@@ -52,10 +57,12 @@ export default function Content({ subscription }: { subscription?: API.Subscribe
     queryKey: ["preCreateOrder", params.coupon, params.quantity, params.payment],
     queryFn: async () => {
       const { data } = await prePurchaseOrder({
-        ...params,
-        subscribe_id: subscription?.id as number,
-      } as API.PrePurchaseOrderRequest);
-      return data.data;
+        body: {
+          ...params,
+          subscribe_id: subscription?.id as number,
+        } as PrePurchaseOrderRequest,
+      });
+      return data;
     },
   });
 
@@ -79,8 +86,8 @@ export default function Content({ subscription }: { subscription?: API.Subscribe
   const handleSubmit = useCallback(async () => {
     startTransition(async () => {
       try {
-        const { data } = await purchase(params);
-        const orderNo = data.data?.order_no;
+        const { data } = await portalPurchase({ body: params });
+        const orderNo = data?.order_no;
         if (orderNo) {
           localStorage.setItem(
             orderNo,
@@ -249,7 +256,7 @@ export default function Content({ subscription }: { subscription?: API.Subscribe
               <DurationSelector
                 quantity={params.quantity ?? 1}
                 unitTime={subscription?.unit_time}
-                discounts={subscription?.discount}
+                discounts={subscription?.discount ?? undefined}
                 onChange={(value) => handleChange("quantity", value)}
               />
               <CouponInput

@@ -1,18 +1,24 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Query User Subscribe
-func QueryUserSubscribeHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type QueryUserSubscribeOutput struct {
+	Body *types.QueryUserSubscribeListResponse
+}
 
-		l := user.NewQueryUserSubscribeLogic(c.Request.Context(), svcCtx)
+func QueryUserSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryUserSubscribeOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*QueryUserSubscribeOutput, error) {
+		l := user.NewQueryUserSubscribeLogic(ctx, svcCtx)
 		resp, err := l.QueryUserSubscribe()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &QueryUserSubscribeOutput{Body: resp}, nil
 	}
 }

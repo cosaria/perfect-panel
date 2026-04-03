@@ -1,26 +1,28 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get user detail
-func GetUserDetailHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetDetailRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetUserDetailInput struct {
+	types.GetDetailRequest
+}
 
-		l := user.NewGetUserDetailLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetUserDetail(&req)
-		result.HttpResult(c, resp, err)
+type GetUserDetailOutput struct {
+	Body *types.User
+}
+
+func GetUserDetailHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserDetailInput) (*GetUserDetailOutput, error) {
+	return func(ctx context.Context, input *GetUserDetailInput) (*GetUserDetailOutput, error) {
+		l := user.NewGetUserDetailLogic(ctx, svcCtx)
+		resp, err := l.GetUserDetail(&input.GetDetailRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetUserDetailOutput{Body: resp}, nil
 	}
 }

@@ -18,7 +18,7 @@ import { Icon } from "@workspace/ui/custom-components/icon";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { getVersion, restartSystem } from "@/services/admin/tool";
+import { getVersion, restartSystem } from "@/services/admin-api/sdk.gen";
 import { formatDate } from "@/utils/common";
 import packageJson from "../../../../package.json";
 import SystemLogsDialog from "./system-logs-dialog";
@@ -44,7 +44,7 @@ export default function SystemVersionCard() {
 
         const webData = webResponse.ok ? await webResponse.json() : null;
         const serverData = serverResponse.ok ? await serverResponse.json() : null;
-        const systemData = systemResponse.data.data;
+        const systemData = systemResponse.data;
 
         const rawVersion = (systemData?.version || "").replace(" Develop", "").trim();
         const timeMatch = rawVersion.match(/\(([^)]+)\)/);

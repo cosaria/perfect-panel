@@ -8,7 +8,7 @@ import {
   NEXT_PUBLIC_DEFAULT_USER_EMAIL,
   NEXT_PUBLIC_DEFAULT_USER_PASSWORD,
 } from "@/config/constants";
-import { resetPassword, userLogin, userRegister } from "@/services/common/auth";
+import { resetPassword, userLogin, userRegister } from "@/services/user-api/sdk.gen";
 import { getRedirectUrl, setAuthorization } from "@/utils/common";
 import LoginForm from "./login-form";
 import RegisterForm from "./register-form";
@@ -40,14 +40,19 @@ export default function EmailAuthForm() {
               return;
             }
 
-            const login = await userLogin({
-              identifier: params.identifier ?? params.email,
-              email: params.email,
-              password: params.password,
-              cf_token: params.cf_token,
+            const { data: login } = await userLogin({
+              body: {
+                identifier: params.identifier ?? params.email ?? "",
+                email: params.email ?? "",
+                password: params.password ?? "",
+                cf_token: params.cf_token ?? "",
+                IP: "",
+                LoginType: "email",
+                UserAgent: "",
+              },
             });
             toast.success(t("login.success"));
-            onLogin(login.data.data?.token);
+            onLogin(login?.token);
             break;
           }
           case "register": {
@@ -55,16 +60,21 @@ export default function EmailAuthForm() {
               return;
             }
 
-            const create = await userRegister({
-              identifier: params.identifier ?? params.email,
-              email: params.email,
-              password: params.password,
-              invite: params.invite,
-              code: params.code,
-              cf_token: params.cf_token,
+            const { data: create } = await userRegister({
+              body: {
+                identifier: params.identifier ?? params.email ?? "",
+                email: params.email ?? "",
+                password: params.password ?? "",
+                invite: params.invite ?? "",
+                code: params.code ?? "",
+                cf_token: params.cf_token ?? "",
+                IP: "",
+                LoginType: "email",
+                UserAgent: "",
+              },
             });
             toast.success(t("register.success"));
-            onLogin(create.data.data?.token);
+            onLogin(create?.token);
             break;
           }
           case "reset":
@@ -73,11 +83,16 @@ export default function EmailAuthForm() {
             }
 
             await resetPassword({
-              identifier: params.identifier ?? params.email,
-              email: params.email,
-              password: params.password,
-              code: params.code,
-              cf_token: params.cf_token,
+              body: {
+                identifier: params.identifier ?? params.email ?? "",
+                email: params.email ?? "",
+                password: params.password ?? "",
+                code: params.code ?? "",
+                cf_token: params.cf_token ?? "",
+                IP: "",
+                LoginType: "email",
+                UserAgent: "",
+              },
             });
             toast.success(t("reset.success"));
             setType("login");

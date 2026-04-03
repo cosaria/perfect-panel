@@ -32,7 +32,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Display } from "@/components/display";
-import { createQuotaTask, queryQuotaTaskPreCount } from "@/services/admin/marketing";
+import { createQuotaTask, queryQuotaTaskPreCount } from "@/services/admin-api/sdk.gen";
 import { useSubscribe } from "@/store/subscribe";
 
 export default function QuotaBroadcastForm() {
@@ -91,14 +91,16 @@ export default function QuotaBroadcastForm() {
       }
 
       const response = await queryQuotaTaskPreCount({
-        subscribers: formData.subscribers,
-        is_active: formData.is_active,
-        start_time,
-        end_time,
+        body: {
+          subscribers: formData.subscribers,
+          is_active: formData.is_active,
+          start_time,
+          end_time,
+        },
       });
 
-      if (response.data?.data?.count !== undefined) {
-        setRecipients(response.data.data.count);
+      if (response.data?.count !== undefined) {
+        setRecipients(response.data.count);
       }
     } catch (error) {
       console.error("Failed to calculate recipients:", error);
@@ -137,14 +139,16 @@ export default function QuotaBroadcastForm() {
       }
 
       await createQuotaTask({
-        subscribers: data.subscribers,
-        is_active: data.is_active,
-        start_time,
-        end_time,
-        reset_traffic: data.reset_traffic,
-        days: data.days || 0,
-        gift_type: data.gift_type,
-        gift_value: data.gift_value || 0,
+        body: {
+          subscribers: data.subscribers,
+          is_active: data.is_active,
+          start_time,
+          end_time,
+          reset_traffic: data.reset_traffic,
+          days: data.days || 0,
+          gift_type: data.gift_type,
+          gift_value: data.gift_value || 0,
+        },
       });
 
       toast.success(t("quotaTaskCreatedSuccessfully"));

@@ -1,26 +1,28 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get user auth method
-func GetUserAuthMethodHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetUserAuthMethodRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetUserAuthMethodInput struct {
+	types.GetUserAuthMethodRequest
+}
 
-		l := user.NewGetUserAuthMethodLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetUserAuthMethod(&req)
-		result.HttpResult(c, resp, err)
+type GetUserAuthMethodOutput struct {
+	Body *types.GetUserAuthMethodResponse
+}
+
+func GetUserAuthMethodHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserAuthMethodInput) (*GetUserAuthMethodOutput, error) {
+	return func(ctx context.Context, input *GetUserAuthMethodInput) (*GetUserAuthMethodOutput, error) {
+		l := user.NewGetUserAuthMethodLogic(ctx, svcCtx)
+		resp, err := l.GetUserAuthMethod(&input.GetUserAuthMethodRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetUserAuthMethodOutput{Body: resp}, nil
 	}
 }

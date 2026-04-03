@@ -15,7 +15,12 @@ import {
   deletePaymentMethod,
   getPaymentMethodList,
   updatePaymentMethod,
-} from "@/services/admin/payment";
+} from "@/services/admin-api/sdk.gen";
+import type {
+  CreatePaymentMethodRequest,
+  PaymentConfig,
+  UpdatePaymentMethodRequest,
+} from "@/services/admin-api/types.gen";
 import PaymentForm from "./payment-form";
 
 export default function PaymentTable() {
@@ -24,12 +29,12 @@ export default function PaymentTable() {
   const ref = useRef<ProTableActions>(null);
 
   return (
-    <ProTable<API.PaymentConfig, { search: string }>
+    <ProTable<PaymentConfig, { search: string }>
       action={ref}
       header={{
         title: t("paymentManagement"),
         toolbar: (
-          <PaymentForm<API.CreatePaymentMethodRequest>
+          <PaymentForm<CreatePaymentMethodRequest>
             trigger={<Button>{t("create")}</Button>}
             title={t("createPayment")}
             loading={loading}
@@ -37,8 +42,10 @@ export default function PaymentTable() {
               setLoading(true);
               try {
                 await createPaymentMethod({
-                  ...values,
-                  enable: false,
+                  body: {
+                    ...values,
+                    enable: false,
+                  },
                 });
                 toast.success(t("createSuccess"));
                 ref.current?.refresh();
@@ -62,8 +69,10 @@ export default function PaymentTable() {
                 checked={Boolean(row.getValue("enable"))}
                 onCheckedChange={async (checked) => {
                   await updatePaymentMethod({
-                    ...row.original,
-                    enable: checked,
+                    body: {
+                      ...row.original,
+                      enable: checked,
+                    },
                   });
                   ref.current?.refresh();
                 }}
@@ -125,17 +134,19 @@ export default function PaymentTable() {
       ]}
       request={async (pagination, filter) => {
         const { data } = await getPaymentMethodList({
-          ...pagination,
-          ...filter,
+          body: {
+            ...pagination,
+            ...filter,
+          },
         });
         return {
-          list: data?.data?.list || [],
-          total: data?.data?.total || 0,
+          list: data?.list || [],
+          total: data?.total || 0,
         };
       }}
       actions={{
         render: (row) => [
-          <PaymentForm<API.UpdatePaymentMethodRequest>
+          <PaymentForm<UpdatePaymentMethodRequest>
             isEdit
             key="edit"
             trigger={<Button>{t("edit")}</Button>}
@@ -146,8 +157,10 @@ export default function PaymentTable() {
               setLoading(true);
               try {
                 await updatePaymentMethod({
-                  ...row,
-                  ...values,
+                  body: {
+                    ...row,
+                    ...values,
+                  },
                 });
                 toast.success(t("updateSuccess"));
                 ref.current?.refresh();
@@ -166,7 +179,9 @@ export default function PaymentTable() {
             description={t("deleteWarning")}
             onConfirm={async () => {
               await deletePaymentMethod({
-                id: row.id,
+                body: {
+                  id: row.id,
+                },
               });
               toast.success(t("deleteSuccess"));
               ref.current?.refresh();
@@ -182,8 +197,10 @@ export default function PaymentTable() {
               try {
                 const { id, ...params } = row;
                 await createPaymentMethod({
-                  ...params,
-                  enable: false,
+                  body: {
+                    ...params,
+                    enable: false,
+                  },
                 });
                 toast.success(t("copySuccess"));
                 ref.current?.refresh();
@@ -207,7 +224,7 @@ export default function PaymentTable() {
               description={t("deleteWarning")}
               onConfirm={async () => {
                 for (const row of rows) {
-                  await deletePaymentMethod({ id: row.id });
+                  await deletePaymentMethod({ body: { id: row.id } });
                 }
                 toast.success(t("deleteSuccess"));
                 ref.current?.refresh();

@@ -28,7 +28,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getPrivacyPolicyConfig, updatePrivacyPolicyConfig } from "@/services/admin/system";
+import { getPrivacyPolicyConfig, updatePrivacyPolicyConfig } from "@/services/admin-api/sdk.gen";
+import type { PrivacyPolicyConfig } from "@/services/admin-api/types.gen";
 
 const privacyPolicySchema = z.object({
   privacy_policy: z.string().optional(),
@@ -45,7 +46,7 @@ export default function PrivacyPolicyConfig() {
     queryKey: ["getPrivacyPolicyConfig"],
     queryFn: async () => {
       const { data } = await getPrivacyPolicyConfig();
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -68,7 +69,7 @@ export default function PrivacyPolicyConfig() {
   async function onSubmit(values: PrivacyPolicyFormData) {
     setLoading(true);
     try {
-      await updatePrivacyPolicyConfig(values as API.PrivacyPolicyConfig);
+      await updatePrivacyPolicyConfig({ body: values as PrivacyPolicyConfig });
       toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);

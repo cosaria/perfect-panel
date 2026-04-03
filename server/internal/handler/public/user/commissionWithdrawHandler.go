@@ -1,26 +1,28 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Commission Withdraw
-func CommissionWithdrawHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.CommissionWithdrawRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type CommissionWithdrawInput struct {
+	Body types.CommissionWithdrawRequest
+}
 
-		l := user.NewCommissionWithdrawLogic(c.Request.Context(), svcCtx)
-		resp, err := l.CommissionWithdraw(&req)
-		result.HttpResult(c, resp, err)
+type CommissionWithdrawOutput struct {
+	Body *types.WithdrawalLog
+}
+
+func CommissionWithdrawHandler(svcCtx *svc.ServiceContext) func(context.Context, *CommissionWithdrawInput) (*CommissionWithdrawOutput, error) {
+	return func(ctx context.Context, input *CommissionWithdrawInput) (*CommissionWithdrawOutput, error) {
+		l := user.NewCommissionWithdrawLogic(ctx, svcCtx)
+		resp, err := l.CommissionWithdraw(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &CommissionWithdrawOutput{Body: resp}, nil
 	}
 }

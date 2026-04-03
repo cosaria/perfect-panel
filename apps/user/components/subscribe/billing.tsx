@@ -3,10 +3,11 @@
 import { Separator } from "@workspace/ui/components/separator";
 import { useTranslations } from "next-intl";
 import { Display } from "@/components/display";
+import type { OrderDetail } from "@/services/user-api/types.gen";
 
 interface SubscribeBillingProps {
   order?: Partial<
-    API.OrderDetail & {
+    OrderDetail & {
       unit_price: number;
       unit_time: string;
       subscribe_discount: number;

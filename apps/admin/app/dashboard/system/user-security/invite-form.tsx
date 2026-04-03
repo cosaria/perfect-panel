@@ -29,7 +29,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getInviteConfig, updateInviteConfig } from "@/services/admin/system";
+import { getInviteConfig, updateInviteConfig } from "@/services/admin-api/sdk.gen";
+import type { InviteConfig } from "@/services/admin-api/types.gen";
 
 const inviteSchema = z.object({
   forced_invite: z.boolean().optional(),
@@ -49,7 +50,7 @@ export default function InviteConfig() {
     queryKey: ["getInviteConfig"],
     queryFn: async () => {
       const { data } = await getInviteConfig();
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -72,7 +73,7 @@ export default function InviteConfig() {
   async function onSubmit(values: InviteFormData) {
     setLoading(true);
     try {
-      await updateInviteConfig(values as API.InviteConfig);
+      await updateInviteConfig({ body: values as InviteConfig });
       toast.success(t("saveSuccess"));
       refetch();
       setOpen(false);

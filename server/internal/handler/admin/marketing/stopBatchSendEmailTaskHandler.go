@@ -1,26 +1,23 @@
+// huma:migrated
 package marketing
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/marketing"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// StopBatchSendEmailTaskHandler Stop a batch send email task
-func StopBatchSendEmailTaskHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.StopBatchSendEmailTaskRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type StopBatchSendEmailTaskInput struct {
+	Body types.StopBatchSendEmailTaskRequest
+}
 
-		l := marketing.NewStopBatchSendEmailTaskLogic(c.Request.Context(), svcCtx)
-		err := l.StopBatchSendEmailTask(&req)
-		result.HttpResult(c, nil, err)
+func StopBatchSendEmailTaskHandler(svcCtx *svc.ServiceContext) func(context.Context, *StopBatchSendEmailTaskInput) (*struct{}, error) {
+	return func(ctx context.Context, input *StopBatchSendEmailTaskInput) (*struct{}, error) {
+		l := marketing.NewStopBatchSendEmailTaskLogic(ctx, svcCtx)
+		if err := l.StopBatchSendEmailTask(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

@@ -1,13 +1,15 @@
 import { extractDomain } from "@workspace/ui/utils";
 import { create } from "zustand";
 import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
-import { queryUserInfo } from "@/services/user/user";
+import { queryUserInfo } from "@/services/user-api/sdk.gen";
+import type { GetGlobalConfigResponse } from "@/services/common-api/types.gen";
+import type { User } from "@/services/user-api/types.gen";
 
 export interface GlobalStore {
-  common: API.GetGlobalConfigResponse;
-  user?: API.User;
-  setCommon: (common: Partial<API.GetGlobalConfigResponse>) => void;
-  setUser: (user?: API.User) => void;
+  common: GetGlobalConfigResponse;
+  user?: User;
+  setCommon: (common: Partial<GetGlobalConfigResponse>) => void;
+  setUser: (user?: User) => void;
   getUserInfo: () => Promise<void>;
   getUserSubscribe: (uuid: string, type?: string) => string[];
   getAppSubLink: (url: string, schema?: string) => string;
@@ -90,8 +92,6 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
       user_agent_list: "",
     },
     verify_code: {
-      verify_code_expire_time: 5,
-      verify_code_limit: 15,
       verify_code_interval: 60,
     },
     oauth_methods: [],
@@ -109,7 +109,7 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
   getUserInfo: async () => {
     try {
       const { data } = await queryUserInfo();
-      set({ user: data.data });
+      set({ user: data });
     } catch (error) {
       console.error("Failed to refresh user:", error);
     }

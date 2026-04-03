@@ -7,7 +7,8 @@ import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detai
 import { Display } from "@/components/display";
 import { OrderLink } from "@/components/order-link";
 import { ProTable } from "@/components/pro-table";
-import { filterGiftLog } from "@/services/admin/log";
+import { filterGiftLog } from "@/services/admin-api/sdk.gen";
+import type { GiftLog } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
 export default function GiftLogPage() {
@@ -29,7 +30,7 @@ export default function GiftLogPage() {
     user_id: sp.get("user_id") ? Number(sp.get("user_id")) : undefined,
   };
   return (
-    <ProTable<API.GiftLog, { date?: string; user_id?: number }>
+    <ProTable<GiftLog, { date?: string; user_id?: number }>
       header={{ title: t("title.gift") }}
       initialFilters={initialFilters}
       columns={[
@@ -78,13 +79,16 @@ export default function GiftLogPage() {
       ]}
       request={async (pagination, filter) => {
         const { data } = await filterGiftLog({
-          page: pagination.page,
-          size: pagination.size,
-          date: filter?.date,
-          user_id: filter?.user_id,
+          query: {
+            page: pagination.page,
+            size: pagination.size,
+            date: filter?.date || "",
+            search: "",
+            user_id: filter?.user_id ? Number(filter.user_id) : 0,
+          },
         });
-        const list = (data?.data?.list || []) as API.GiftLog[];
-        const total = Number(data?.data?.total || list.length);
+        const list = (data?.list || []) as GiftLog[];
+        const total = Number(data?.total || list.length);
         return { list, total };
       }}
     />

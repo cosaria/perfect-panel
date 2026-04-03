@@ -1,26 +1,23 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update verify config
-func UpdateVerifyConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.VerifyConfig
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateVerifyConfigInput struct {
+	Body types.VerifyConfig
+}
 
-		l := system.NewUpdateVerifyConfigLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateVerifyConfig(&req)
-		result.HttpResult(c, nil, err)
+func UpdateVerifyConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateVerifyConfigInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateVerifyConfigInput) (*struct{}, error) {
+		l := system.NewUpdateVerifyConfigLogic(ctx, svcCtx)
+		if err := l.UpdateVerifyConfig(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

@@ -15,7 +15,12 @@ import {
   deleteCoupon,
   getCouponList,
   updateCoupon,
-} from "@/services/admin/coupon";
+} from "@/services/admin-api/sdk.gen";
+import type {
+  Coupon,
+  CreateCouponRequest,
+  UpdateCouponRequest,
+} from "@/services/admin-api/types.gen";
 import { useSubscribe } from "@/store/subscribe";
 import { formatDate } from "@/utils/common";
 import CouponForm from "./coupon-form";
@@ -26,11 +31,11 @@ export default function Page() {
   const { subscribes } = useSubscribe();
   const ref = useRef<ProTableActions>(null);
   return (
-    <ProTable<API.Coupon, { group_id: number; query: string }>
+    <ProTable<Coupon, { group_id: number; query: string }>
       action={ref}
       header={{
         toolbar: (
-          <CouponForm<API.CreateCouponRequest>
+          <CouponForm<CreateCouponRequest>
             trigger={t("create")}
             title={t("createCoupon")}
             loading={loading}
@@ -38,8 +43,10 @@ export default function Page() {
               setLoading(true);
               try {
                 await createCoupon({
-                  ...values,
-                  enable: false,
+                  body: {
+                    ...values,
+                    enable: false,
+                  },
                 });
                 toast.success(t("createSuccess"));
                 ref.current?.refresh();
@@ -73,12 +80,14 @@ export default function Page() {
       ]}
       request={async (pagination, filters) => {
         const { data } = await getCouponList({
-          ...pagination,
-          ...filters,
+          query: {
+            ...pagination,
+            ...filters,
+          },
         });
         return {
-          list: data.data?.list || [],
-          total: data.data?.total || 0,
+          list: data?.list || [],
+          total: data?.total || 0,
         };
       }}
       columns={[
@@ -91,9 +100,11 @@ export default function Page() {
                 defaultChecked={row.getValue("enable")}
                 onCheckedChange={async (checked) => {
                   await updateCoupon({
-                    ...row.original,
-                    enable: checked,
-                  } as API.UpdateCouponRequest);
+                    body: {
+                      ...row.original,
+                      enable: checked,
+                    } as UpdateCouponRequest,
+                  });
                   ref.current?.refresh();
                 }}
               />
@@ -172,7 +183,7 @@ export default function Page() {
       ]}
       actions={{
         render: (row) => [
-          <CouponForm<API.UpdateCouponRequest>
+          <CouponForm<UpdateCouponRequest>
             key="edit"
             trigger={t("edit")}
             title={t("editCoupon")}
@@ -181,7 +192,7 @@ export default function Page() {
             onSubmit={async (values) => {
               setLoading(true);
               try {
-                await updateCoupon({ ...row, ...values });
+                await updateCoupon({ body: { ...row, ...values } });
                 toast.success(t("updateSuccess"));
                 ref.current?.refresh();
                 setLoading(false);
@@ -198,7 +209,7 @@ export default function Page() {
             title={t("confirmDelete")}
             description={t("deleteWarning")}
             onConfirm={async () => {
-              await deleteCoupon({ id: row.id });
+              await deleteCoupon({ body: { id: row.id } });
               toast.success(t("deleteSuccess"));
               ref.current?.refresh();
             }}
@@ -213,7 +224,7 @@ export default function Page() {
             title={t("confirmDelete")}
             description={t("deleteWarning")}
             onConfirm={async () => {
-              await batchDeleteCoupon({ ids: rows.map((item) => item.id) });
+              await batchDeleteCoupon({ body: { ids: rows.map((item) => item.id) } });
               toast.success(t("deleteSuccess"));
               ref.current?.reset();
             }}

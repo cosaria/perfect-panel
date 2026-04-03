@@ -1,43 +1,49 @@
+// huma:migrated
 package auth
 
 import (
+	"context"
+	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/internal/logic/auth"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 	"github.com/perfect-panel/server/pkg/turnstile"
 	"github.com/perfect-panel/server/pkg/xerr"
 	"github.com/pkg/errors"
 )
 
-// User Telephone login
-func TelephoneLoginHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.TelephoneLoginRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
-		// get client ip
-		req.IP = c.ClientIP()
+type TelephoneLoginInput struct {
+	Body      types.TelephoneLoginRequest
+	IP        string `header:"X-Original-Forwarded-For" required:"false" doc:"Client IP from proxy"`
+	UserAgent string `header:"User-Agent" required:"false" doc:"User agent string"`
+}
+
+type TelephoneLoginOutput struct {
+	Body *types.LoginResponse
+}
+
+func TelephoneLoginHandler(svcCtx *svc.ServiceContext) func(context.Context, *TelephoneLoginInput) (*TelephoneLoginOutput, error) {
+	return func(ctx context.Context, input *TelephoneLoginInput) (*TelephoneLoginOutput, error) {
+		input.Body.IP = input.IP
 		if svcCtx.Config.Verify.LoginVerify {
 			verifyTurns := turnstile.New(turnstile.Config{
 				Secret:  svcCtx.Config.Verify.TurnstileSecret,
 				Timeout: 3 * time.Second,
 			})
-			if verify, err := verifyTurns.Verify(c, req.CfToken, req.IP); err != nil || !verify {
-				err = errors.Wrapf(xerr.NewErrCode(xerr.TooManyRequests), "error: %v, verify: %v", err, verify)
-				result.HttpResult(c, nil, err)
-				return
+			if verify, err := verifyTurns.Verify(ctx, input.Body.CfToken, input.Body.IP); err != nil || !verify {
+				return nil, errors.Wrapf(xerr.NewErrCode(xerr.TooManyRequests), "error: %v, verify: %v", err, verify)
 			}
 		}
-		l := auth.NewTelephoneLoginLogic(c, svcCtx)
-		resp, err := l.TelephoneLogin(&req, c.Request, c.ClientIP())
-		result.HttpResult(c, resp, err)
+		// Construct a minimal *http.Request with User-Agent header for the logic layer
+		r := &http.Request{Header: http.Header{}}
+		r.Header.Set("User-Agent", input.UserAgent)
+		l := auth.NewTelephoneLoginLogic(ctx, svcCtx)
+		resp, err := l.TelephoneLogin(&input.Body, r, input.IP)
+		if err != nil {
+			return nil, err
+		}
+		return &TelephoneLoginOutput{Body: resp}, nil
 	}
 }

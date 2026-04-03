@@ -1,18 +1,24 @@
+// huma:migrated
 package system
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/system"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get register config
-func GetRegisterConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type GetRegisterConfigOutput struct {
+	Body *types.RegisterConfig
+}
 
-		l := system.NewGetRegisterConfigLogic(c.Request.Context(), svcCtx)
+func GetRegisterConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetRegisterConfigOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetRegisterConfigOutput, error) {
+		l := system.NewGetRegisterConfigLogic(ctx, svcCtx)
 		resp, err := l.GetRegisterConfig()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetRegisterConfigOutput{Body: resp}, nil
 	}
 }

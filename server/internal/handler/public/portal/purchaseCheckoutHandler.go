@@ -1,26 +1,28 @@
+// huma:migrated
 package portal
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/portal"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// PurchaseCheckoutHandler Purchase Checkout
-func PurchaseCheckoutHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.CheckoutOrderRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type PurchaseCheckoutInput struct {
+	Body types.CheckoutOrderRequest
+}
 
-		l := portal.NewPurchaseCheckoutLogic(c.Request.Context(), svcCtx)
-		resp, err := l.PurchaseCheckout(&req)
-		result.HttpResult(c, resp, err)
+type PurchaseCheckoutOutput struct {
+	Body *types.CheckoutOrderResponse
+}
+
+func PurchaseCheckoutHandler(svcCtx *svc.ServiceContext) func(context.Context, *PurchaseCheckoutInput) (*PurchaseCheckoutOutput, error) {
+	return func(ctx context.Context, input *PurchaseCheckoutInput) (*PurchaseCheckoutOutput, error) {
+		l := portal.NewPurchaseCheckoutLogic(ctx, svcCtx)
+		resp, err := l.PurchaseCheckout(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &PurchaseCheckoutOutput{Body: resp}, nil
 	}
 }

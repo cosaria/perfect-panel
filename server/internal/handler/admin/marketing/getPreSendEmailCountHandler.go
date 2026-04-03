@@ -1,26 +1,28 @@
+// huma:migrated
 package marketing
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/marketing"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get pre-send email count
-func GetPreSendEmailCountHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetPreSendEmailCountRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetPreSendEmailCountInput struct {
+	Body types.GetPreSendEmailCountRequest
+}
 
-		l := marketing.NewGetPreSendEmailCountLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetPreSendEmailCount(&req)
-		result.HttpResult(c, resp, err)
+type GetPreSendEmailCountOutput struct {
+	Body *types.GetPreSendEmailCountResponse
+}
+
+func GetPreSendEmailCountHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetPreSendEmailCountInput) (*GetPreSendEmailCountOutput, error) {
+	return func(ctx context.Context, input *GetPreSendEmailCountInput) (*GetPreSendEmailCountOutput, error) {
+		l := marketing.NewGetPreSendEmailCountLogic(ctx, svcCtx)
+		resp, err := l.GetPreSendEmailCount(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &GetPreSendEmailCountOutput{Body: resp}, nil
 	}
 }

@@ -6,6 +6,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type React from "react";
 import { useEffect, useState } from "react";
 import useGlobalStore, { type GlobalStore } from "@/config/use-global";
+import "@/utils/setup-clients";
 import { Logout } from "@/utils/common";
 import Loading from "./loading";
 

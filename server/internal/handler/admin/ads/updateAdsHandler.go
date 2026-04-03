@@ -1,27 +1,23 @@
+// huma:migrated
 package ads
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/ads"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update Ads
-func UpdateAdsHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UpdateAdsRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateAdsInput struct {
+	Body types.UpdateAdsRequest
+}
 
-		ctx := c.Request.Context()
+func UpdateAdsHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateAdsInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateAdsInput) (*struct{}, error) {
 		l := ads.NewUpdateAdsLogic(ctx, svcCtx)
-		err := l.UpdateAds(&req)
-		result.HttpResult(c, nil, err)
+		if err := l.UpdateAds(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

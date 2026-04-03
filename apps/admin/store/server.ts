@@ -1,9 +1,10 @@
 import { create } from "zustand";
-import { filterServerList } from "@/services/admin/server";
+import { filterServerList } from "@/services/admin-api/sdk.gen";
+import type { Protocol, Server } from "@/services/admin-api/types.gen";
 
 interface ServerState {
   // Data
-  servers: API.Server[];
+  servers: Server[];
 
   // Loading states
   loading: boolean;
@@ -13,10 +14,10 @@ interface ServerState {
   fetchServers: () => Promise<void>;
 
   // Getters
-  getServerById: (serverId: number) => API.Server | undefined;
+  getServerById: (serverId: number) => Server | undefined;
   getServerName: (serverId?: number) => string;
   getServerAddress: (serverId?: number) => string;
-  getServerEnabledProtocols: (serverId: number) => API.Protocol[];
+  getServerEnabledProtocols: (serverId: number) => Protocol[];
   getProtocolPort: (serverId?: number, protocol?: string) => string;
   getAvailableProtocols: (serverId?: number) => Array<{ protocol: string; port: number }>;
 }
@@ -33,9 +34,9 @@ export const useServerStore = create<ServerState>((set, get) => ({
 
     set({ loading: true });
     try {
-      const { data } = await filterServerList({ page: 1, size: 999999999 });
+      const { data } = await filterServerList({ query: { page: 1, size: 999999999 } });
       set({
-        servers: data?.data?.list || [],
+        servers: data?.list || [],
         loaded: true,
       });
     } catch (_error) {

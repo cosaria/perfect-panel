@@ -16,7 +16,13 @@ import {
   getSubscribeList,
   subscribeSort,
   updateSubscribe,
-} from "@/services/admin/subscribe";
+} from "@/services/admin-api/sdk.gen";
+import type {
+  CreateSubscribeRequest,
+  SortItem,
+  SubscribeItem,
+  UpdateSubscribeRequest,
+} from "@/services/admin-api/types.gen";
 import { useSubscribe } from "@/store/subscribe";
 import SubscribeForm from "./subscribe-form";
 
@@ -26,11 +32,11 @@ export default function SubscribeTable() {
   const ref = useRef<ProTableActions>(null);
   const { fetchSubscribes } = useSubscribe();
   return (
-    <ProTable<API.SubscribeItem, { group_id: number; query: string }>
+    <ProTable<SubscribeItem, { group_id: number; query: string }>
       action={ref}
       header={{
         toolbar: (
-          <SubscribeForm<API.CreateSubscribeRequest>
+          <SubscribeForm
             trigger={t("create")}
             title={t("createSubscribe")}
             loading={loading}
@@ -38,9 +44,12 @@ export default function SubscribeTable() {
               setLoading(true);
               try {
                 await createSubscribe({
-                  ...values,
-                  show: false,
-                  sell: false,
+                  body: {
+                    ...values,
+                    show: false,
+                    sell: false,
+                    show_original_price: false,
+                  } as CreateSubscribeRequest,
                 });
                 toast.success(t("createSuccess"));
                 ref.current?.refresh();
@@ -64,12 +73,14 @@ export default function SubscribeTable() {
       ]}
       request={async (pagination, filters) => {
         const { data } = await getSubscribeList({
-          ...pagination,
-          ...filters,
+          query: {
+            ...pagination,
+            ...filters,
+          },
         });
         return {
-          list: data.data?.list || [],
-          total: data.data?.total || 0,
+          list: data?.list || [],
+          total: data?.total || 0,
         };
       }}
       columns={[
@@ -82,9 +93,11 @@ export default function SubscribeTable() {
                 defaultChecked={row.getValue("show")}
                 onCheckedChange={async (checked) => {
                   await updateSubscribe({
-                    ...row.original,
-                    show: checked,
-                  } as API.UpdateSubscribeRequest);
+                    body: {
+                      ...row.original,
+                      show: checked,
+                    } as UpdateSubscribeRequest,
+                  });
                   ref.current?.refresh();
                   fetchSubscribes();
                 }}
@@ -101,9 +114,11 @@ export default function SubscribeTable() {
                 defaultChecked={row.getValue("sell")}
                 onCheckedChange={async (checked) => {
                   await updateSubscribe({
-                    ...row.original,
-                    sell: checked,
-                  } as API.UpdateSubscribeRequest);
+                    body: {
+                      ...row.original,
+                      sell: checked,
+                    } as UpdateSubscribeRequest,
+                  });
                   ref.current?.refresh();
                   fetchSubscribes();
                 }}
@@ -176,19 +191,26 @@ export default function SubscribeTable() {
       ]}
       actions={{
         render: (row) => [
-          <SubscribeForm<API.SubscribeItem>
+          <SubscribeForm
             key="edit"
             trigger={t("edit")}
             title={t("editSubscribe")}
             loading={loading}
-            initialValues={row}
+            initialValues={{
+              ...row,
+              node_tags: row.node_tags ?? [],
+              nodes: row.nodes ?? [],
+              discount: row.discount ?? [],
+            }}
             onSubmit={async (values) => {
               setLoading(true);
               try {
                 await updateSubscribe({
-                  ...row,
-                  ...values,
-                } as API.UpdateSubscribeRequest);
+                  body: {
+                    ...row,
+                    ...values,
+                  } as UpdateSubscribeRequest,
+                });
                 toast.success(t("updateSuccess"));
                 ref.current?.refresh();
                 fetchSubscribes();
@@ -212,7 +234,9 @@ export default function SubscribeTable() {
               }
 
               await deleteSubscribe({
-                id: row.id,
+                body: {
+                  id: row.id,
+                },
               });
               toast.success(t("deleteSuccess"));
               ref.current?.refresh();
@@ -229,10 +253,12 @@ export default function SubscribeTable() {
               try {
                 const { id, sort, sell, updated_at, created_at, ...params } = row;
                 await createSubscribe({
-                  ...params,
-                  show: false,
-                  sell: false,
-                } as API.CreateSubscribeRequest);
+                  body: {
+                    ...params,
+                    show: false,
+                    sell: false,
+                  } as CreateSubscribeRequest,
+                });
                 toast.success(t("copySuccess"));
                 ref.current?.refresh();
                 fetchSubscribes();
@@ -259,7 +285,9 @@ export default function SubscribeTable() {
                 .filter((id): id is number => typeof id === "number");
 
               await batchDeleteSubscribe({
-                ids,
+                body: {
+                  ids,
+                },
               });
 
               toast.success(t("deleteSuccess"));
@@ -297,10 +325,12 @@ export default function SubscribeTable() {
 
         if (changedItems.length > 0) {
           subscribeSort({
-            sort: changedItems.map((item) => ({
-              id: item.id,
-              sort: item.sort,
-            })) as API.SortItem[],
+            body: {
+              sort: changedItems.map((item) => ({
+                id: item.id,
+                sort: item.sort,
+              })) as SortItem[],
+            },
           });
         }
 

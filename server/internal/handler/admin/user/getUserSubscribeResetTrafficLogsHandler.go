@@ -1,26 +1,28 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get user subcribe reset traffic logs
-func GetUserSubscribeResetTrafficLogsHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetUserSubscribeResetTrafficLogsRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetUserSubscribeResetTrafficLogsInput struct {
+	types.GetUserSubscribeResetTrafficLogsRequest
+}
 
-		l := user.NewGetUserSubscribeResetTrafficLogsLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetUserSubscribeResetTrafficLogs(&req)
-		result.HttpResult(c, resp, err)
+type GetUserSubscribeResetTrafficLogsOutput struct {
+	Body *types.GetUserSubscribeResetTrafficLogsResponse
+}
+
+func GetUserSubscribeResetTrafficLogsHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserSubscribeResetTrafficLogsInput) (*GetUserSubscribeResetTrafficLogsOutput, error) {
+	return func(ctx context.Context, input *GetUserSubscribeResetTrafficLogsInput) (*GetUserSubscribeResetTrafficLogsOutput, error) {
+		l := user.NewGetUserSubscribeResetTrafficLogsLogic(ctx, svcCtx)
+		resp, err := l.GetUserSubscribeResetTrafficLogs(&input.GetUserSubscribeResetTrafficLogsRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetUserSubscribeResetTrafficLogsOutput{Body: resp}, nil
 	}
 }

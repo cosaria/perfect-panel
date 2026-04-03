@@ -15,7 +15,13 @@ import {
   resetSortWithNode,
   toggleNodeStatus,
   updateNode,
-} from "@/services/admin/server";
+} from "@/services/admin-api/sdk.gen";
+import type {
+  CreateNodeRequest,
+  Node,
+  SortItem,
+  UpdateNodeRequest,
+} from "@/services/admin-api/types.gen";
 import { useNode } from "@/store/node";
 import { useServer } from "@/store/server";
 import NodeForm from "./node-form";
@@ -30,7 +36,7 @@ export default function NodesPage() {
   const { fetchNodes, fetchTags } = useNode();
 
   return (
-    <ProTable<API.Node, { search: string }>
+    <ProTable<Node, { search: string }>
       action={ref}
       header={{
         title: t("pageTitle"),
@@ -49,7 +55,7 @@ export default function NodesPage() {
 
               setLoading(true);
               try {
-                const body: API.CreateNodeRequest = {
+                const body: CreateNodeRequest = {
                   name: values.name,
                   server_id: Number(serverId),
                   protocol: values.protocol,
@@ -58,7 +64,7 @@ export default function NodesPage() {
                   tags: values.tags || [],
                   enabled: false,
                 };
-                await createNode(body);
+                await createNode({ body: body });
                 toast.success(t("created"));
                 ref.current?.refresh();
                 fetchNodes();
@@ -79,9 +85,9 @@ export default function NodesPage() {
           header: t("enabled"),
           cell: ({ row }) => (
             <Switch
-              checked={row.original.enabled}
+              checked={row.original.enabled ?? undefined}
               onCheckedChange={async (v) => {
-                await toggleNodeStatus({ id: row.original.id, enable: v });
+                await toggleNodeStatus({ body: { id: row.original.id, enable: v } });
                 toast.success(v ? t("enabled_on") : t("enabled_off"));
                 ref.current?.refresh();
                 fetchNodes();
@@ -117,7 +123,7 @@ export default function NodesPage() {
             <div className="flex flex-wrap gap-1">
               {(row.original.tags || []).length === 0
                 ? "—"
-                : row.original.tags.map((tg) => (
+                : row.original.tags?.map((tg) => (
                     <Badge key={tg} variant="outline">
                       {tg}
                     </Badge>
@@ -129,12 +135,14 @@ export default function NodesPage() {
       params={[{ key: "search" }]}
       request={async (pagination, filter) => {
         const { data } = await filterNodeList({
-          page: pagination.page,
-          size: pagination.size,
-          search: filter?.search || undefined,
+          query: {
+            page: pagination.page,
+            size: pagination.size,
+            search: filter?.search || undefined,
+          },
         });
-        const list = (data?.data?.list || []) as API.Node[];
-        const total = Number(data?.data?.total || list.length);
+        const list = (data?.list || []) as Node[];
+        const total = Number(data?.total || list.length);
         return { list, total };
       }}
       actions={{
@@ -144,15 +152,15 @@ export default function NodesPage() {
             trigger={t("edit")}
             title={t("drawerEditTitle")}
             loading={loading}
-            initialValues={row}
+            initialValues={{ ...row, tags: row.tags ?? [] }}
             onSubmit={async (values) => {
               setLoading(true);
               try {
-                const body: API.UpdateNodeRequest = {
+                const body: UpdateNodeRequest = {
                   ...row,
                   ...values,
                 };
-                await updateNode(body);
+                await updateNode({ body: body });
                 toast.success(t("updated"));
                 ref.current?.refresh();
                 fetchNodes();
@@ -171,7 +179,7 @@ export default function NodesPage() {
             title={t("confirmDeleteTitle")}
             description={t("confirmDeleteDesc")}
             onConfirm={async () => {
-              await deleteNode({ id: row.id });
+              await deleteNode({ body: { id: row.id } });
               toast.success(t("deleted"));
               ref.current?.refresh();
               fetchNodes();
@@ -185,13 +193,15 @@ export default function NodesPage() {
             variant="outline"
             onClick={async () => {
               await createNode({
-                name: row.name,
-                server_id: row.server_id,
-                protocol: row.protocol,
-                address: row.address,
-                port: row.port,
-                tags: row.tags || [],
-                enabled: false,
+                body: {
+                  name: row.name,
+                  server_id: row.server_id,
+                  protocol: row.protocol,
+                  address: row.address,
+                  port: row.port,
+                  tags: row.tags || [],
+                  enabled: false,
+                },
               });
               toast.success(t("copied"));
               ref.current?.refresh();
@@ -210,7 +220,7 @@ export default function NodesPage() {
               title={t("confirmDeleteTitle")}
               description={t("confirmDeleteDesc")}
               onConfirm={async () => {
-                await Promise.all(rows.map((r) => deleteNode({ id: r.id })));
+                await Promise.all(rows.map((r) => deleteNode({ body: { id: r.id } })));
                 toast.success(t("deleted"));
                 ref.current?.refresh();
                 fetchNodes();
@@ -248,10 +258,12 @@ export default function NodesPage() {
 
         if (changedItems.length > 0) {
           resetSortWithNode({
-            sort: changedItems.map((item) => ({
-              id: item.id,
-              sort: item.sort,
-            })) as API.SortItem[],
+            body: {
+              sort: changedItems.map((item) => ({
+                id: item.id,
+                sort: item.sort,
+              })) as SortItem[],
+            },
           });
           toast.success(t("sorted_success"));
         }

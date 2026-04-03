@@ -7,7 +7,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ProTable } from "@/components/pro-table";
-import { filterServerTrafficLog } from "@/services/admin/log";
+import { filterServerTrafficLog } from "@/services/admin-api/sdk.gen";
+import type { ServerTrafficLog } from "@/services/admin-api/types.gen";
 import { useServer } from "@/store/server";
 
 export default function ServerTrafficLogPage() {
@@ -22,7 +23,7 @@ export default function ServerTrafficLogPage() {
     server_id: sp.get("server_id") ? Number(sp.get("server_id")) : undefined,
   };
   return (
-    <ProTable<API.ServerTrafficLog, { date?: string; server_id?: number }>
+    <ProTable<ServerTrafficLog, { date?: string; server_id?: number }>
       header={{ title: t("title.serverTraffic") }}
       initialFilters={initialFilters}
       actions={{
@@ -72,13 +73,16 @@ export default function ServerTrafficLogPage() {
       ]}
       request={async (pagination, filter) => {
         const { data } = await filterServerTrafficLog({
-          page: pagination.page,
-          size: pagination.size,
-          date: filter?.date,
-          server_id: filter?.server_id,
+          query: {
+            page: pagination.page,
+            size: pagination.size,
+            date: filter?.date || "",
+            search: "",
+            server_id: filter?.server_id ? Number(filter.server_id) : 0,
+          },
         });
-        const list = (data?.data?.list || []) as API.ServerTrafficLog[];
-        const total = Number(data?.data?.total || list.length);
+        const list = (data?.list || []) as ServerTrafficLog[];
+        const total = Number(data?.total || list.length);
         return { list, total };
       }}
     />

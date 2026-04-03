@@ -43,6 +43,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import type { SubscribeDiscount } from "@/services/admin-api/types.gen";
 import useGlobalStore from "@/config/use-global";
 import { useNode } from "@/store/node";
 
@@ -642,7 +643,7 @@ export default function SubscribeForm<T extends SubscribeFormValues>({
                         <FormItem>
                           <FormLabel>{t("form.discount")}</FormLabel>
                           <FormControl>
-                            <ArrayInput<API.SubscribeDiscount & { price?: number }>
+                            <ArrayInput<SubscribeDiscount & { price?: number }>
                               fields={[
                                 {
                                   name: "quantity",

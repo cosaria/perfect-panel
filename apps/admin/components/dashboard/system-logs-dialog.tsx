@@ -20,7 +20,7 @@ import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { getSystemLog } from "@/services/admin/tool";
+import { getSystemLog } from "@/services/admin-api/sdk.gen";
 
 const _getLogLevelColor = (level: string) => {
   const colorMap: { [key: string]: string } = {
@@ -57,7 +57,7 @@ export default function SystemLogsDialog({
     queryKey: ["getSystemLog"],
     queryFn: async () => {
       const { data } = await getSystemLog();
-      return (data.data?.list || []) as SystemLogEntry[];
+      return (data?.list || []) as SystemLogEntry[];
     },
     enabled: open,
   });

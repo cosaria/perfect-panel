@@ -1,26 +1,28 @@
+// huma:migrated
 package order
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/order"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Recharge
-func RechargeHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.RechargeOrderRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type RechargeInput struct {
+	Body types.RechargeOrderRequest
+}
 
-		l := order.NewRechargeLogic(c.Request.Context(), svcCtx)
-		resp, err := l.Recharge(&req)
-		result.HttpResult(c, resp, err)
+type RechargeOutput struct {
+	Body *types.RechargeOrderResponse
+}
+
+func RechargeHandler(svcCtx *svc.ServiceContext) func(context.Context, *RechargeInput) (*RechargeOutput, error) {
+	return func(ctx context.Context, input *RechargeInput) (*RechargeOutput, error) {
+		l := order.NewRechargeLogic(ctx, svcCtx)
+		resp, err := l.Recharge(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &RechargeOutput{Body: resp}, nil
 	}
 }

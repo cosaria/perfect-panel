@@ -15,7 +15,8 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { Display } from "@/components/display";
 import useGlobalStore from "@/config/use-global";
-import { resetTraffic } from "@/services/user/order";
+import { resetTraffic } from "@/services/user-api/sdk.gen";
+import type { ResetTrafficOrderRequest } from "@/services/user-api/types.gen";
 import PaymentMethods from "./payment-methods";
 
 interface ResetTrafficProps {
@@ -27,7 +28,7 @@ export default function ResetTraffic({ id, replacement }: Readonly<ResetTrafficP
   const { getUserInfo } = useGlobalStore();
   const [open, setOpen] = useState<boolean>(false);
   const router = useRouter();
-  const [params, setParams] = useState<API.ResetTrafficOrderRequest>({
+  const [params, setParams] = useState<ResetTrafficOrderRequest>({
     payment: -1,
     user_subscribe_id: id,
   });
@@ -81,8 +82,8 @@ export default function ResetTraffic({ id, replacement }: Readonly<ResetTrafficP
             onClick={async () => {
               startTransition(async () => {
                 try {
-                  const response = await resetTraffic(params);
-                  const orderNo = response.data.data?.order_no;
+                  const { data: response } = await resetTraffic({ body: params });
+                  const orderNo = response?.order_no;
                   if (orderNo) {
                     getUserInfo();
                     router.push(`/payment?order_no=${orderNo}`);

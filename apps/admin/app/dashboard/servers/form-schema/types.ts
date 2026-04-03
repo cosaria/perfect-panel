@@ -6,7 +6,20 @@ export type ProtocolConfig = z.infer<typeof protocolApiScheme>;
 export type ServerFormValues = z.infer<typeof formSchema>;
 
 type TranslationFn = (key: string) => string;
-type ProtocolContext = Partial<ProtocolConfig>;
+/**
+ * Loose protocol context for condition callbacks and UI field rendering.
+ * Using Record<string, unknown> instead of Partial<ProtocolConfig> because
+ * the discriminated union makes it impossible to access protocol-specific
+ * fields (e.g. transport, security, obfs) without narrowing first,
+ * which is impractical in generic form field conditions.
+ */
+/**
+ * Loose protocol context for condition callbacks and UI field rendering.
+ * All values accessed in condition callbacks are strings (cipher, transport,
+ * security, obfs, cert_mode, encryption, encryption_rtt), so we use `string`
+ * as the value type. This avoids narrowing issues from the discriminated union.
+ */
+type ProtocolContext = Record<string, string>;
 type GeneratedFieldValue = string | Record<string, string>;
 type FieldDefaultValue = string | number | boolean | null;
 
@@ -29,7 +42,7 @@ export type FieldConfig = {
     }[];
     updateFields?: Record<string, string>;
   };
-  condition?: (protocol: ProtocolContext, values: Partial<ServerFormValues>) => boolean;
+  condition?: (protocol: ProtocolContext, values: Partial<ServerFormValues>) => unknown;
   group?: "basic" | "transport" | "security" | "reality" | "obfs" | "encryption";
   gridSpan?: 1 | 2;
 };

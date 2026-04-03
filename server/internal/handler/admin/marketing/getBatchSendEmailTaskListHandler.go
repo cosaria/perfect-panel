@@ -1,26 +1,28 @@
+// huma:migrated
 package marketing
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/marketing"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get batch send email task list
-func GetBatchSendEmailTaskListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetBatchSendEmailTaskListRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetBatchSendEmailTaskListInput struct {
+	Body types.GetBatchSendEmailTaskListRequest
+}
 
-		l := marketing.NewGetBatchSendEmailTaskListLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetBatchSendEmailTaskList(&req)
-		result.HttpResult(c, resp, err)
+type GetBatchSendEmailTaskListOutput struct {
+	Body *types.GetBatchSendEmailTaskListResponse
+}
+
+func GetBatchSendEmailTaskListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetBatchSendEmailTaskListInput) (*GetBatchSendEmailTaskListOutput, error) {
+	return func(ctx context.Context, input *GetBatchSendEmailTaskListInput) (*GetBatchSendEmailTaskListOutput, error) {
+		l := marketing.NewGetBatchSendEmailTaskListLogic(ctx, svcCtx)
+		resp, err := l.GetBatchSendEmailTaskList(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &GetBatchSendEmailTaskListOutput{Body: resp}, nil
 	}
 }

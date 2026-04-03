@@ -1,26 +1,28 @@
+// huma:migrated
 package payment
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/payment"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update Payment Method
-func UpdatePaymentMethodHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UpdatePaymentMethodRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdatePaymentMethodInput struct {
+	Body types.UpdatePaymentMethodRequest
+}
 
-		l := payment.NewUpdatePaymentMethodLogic(c.Request.Context(), svcCtx)
-		resp, err := l.UpdatePaymentMethod(&req)
-		result.HttpResult(c, resp, err)
+type UpdatePaymentMethodOutput struct {
+	Body *types.PaymentConfig
+}
+
+func UpdatePaymentMethodHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdatePaymentMethodInput) (*UpdatePaymentMethodOutput, error) {
+	return func(ctx context.Context, input *UpdatePaymentMethodInput) (*UpdatePaymentMethodOutput, error) {
+		l := payment.NewUpdatePaymentMethodLogic(ctx, svcCtx)
+		resp, err := l.UpdatePaymentMethod(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &UpdatePaymentMethodOutput{Body: resp}, nil
 	}
 }

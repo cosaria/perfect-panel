@@ -19,7 +19,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts";
 import { UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
-import { queryServerTotalData, queryTicketWaitReply } from "@/services/admin/console";
+import { queryServerTotalData, queryTicketWaitReply } from "@/services/admin-api/sdk.gen";
 import { Empty } from "../empty";
 import { RevenueStatisticsCard } from "./revenue-statistics-card";
 import SystemVersionCard from "./system-version-card";
@@ -32,14 +32,14 @@ export default function Statistics() {
     queryKey: ["queryTicketWaitReply"],
     queryFn: async () => {
       const { data } = await queryTicketWaitReply();
-      return data.data?.count;
+      return data?.count;
     },
   });
   const { data: ServerTotal, isLoading: serverLoading } = useQuery({
     queryKey: ["queryServerTotalData"],
     queryFn: async () => {
       const { data } = await queryServerTotalData();
-      return data.data;
+      return data;
     },
   });
 

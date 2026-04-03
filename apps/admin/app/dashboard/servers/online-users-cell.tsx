@@ -16,7 +16,8 @@ import { useState } from "react";
 import { UserDetail } from "@/app/dashboard/user/user-detail";
 import { IpLink } from "@/components/ip-link";
 import { ProTable } from "@/components/pro-table";
-import { getUserSubscribeById } from "@/services/admin/user";
+import { getUserSubscribeById } from "@/services/admin-api/sdk.gen";
+import type { ServerOnlineUser, ServerStatus } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
 function UserSubscribeInfo({
@@ -33,8 +34,8 @@ function UserSubscribeInfo({
     enabled: subscribeId !== 0 && open,
     queryKey: ["getUserSubscribeById", subscribeId],
     queryFn: async () => {
-      const { data } = await getUserSubscribeById({ id: subscribeId });
-      return data.data;
+      const { data } = await getUserSubscribeById({ query: { id: subscribeId } });
+      return data;
     },
   });
 
@@ -85,7 +86,7 @@ function UserSubscribeInfo({
   }
 }
 
-export default function OnlineUsersCell({ status }: { status?: API.ServerStatus }) {
+export default function OnlineUsersCell({ status }: { status?: ServerStatus }) {
   const t = useTranslations("servers");
   const [open, setOpen] = useState(false);
 
@@ -96,7 +97,7 @@ export default function OnlineUsersCell({ status }: { status?: API.ServerStatus 
           type="button"
           className="hover:text-foreground text-muted-foreground flex items-center gap-2 bg-transparent p-0 text-sm"
         >
-          <Users className="h-4 w-4" /> {status?.online.length}
+          <Users className="h-4 w-4" /> {status?.online?.length ?? 0}
         </button>
       </SheetTrigger>
       <SheetContent className="h-screen w-screen max-w-none sm:h-auto sm:w-[900px] sm:max-w-[90vw]">
@@ -104,14 +105,14 @@ export default function OnlineUsersCell({ status }: { status?: API.ServerStatus 
           <SheetTitle>{t("onlineUsers")}</SheetTitle>
         </SheetHeader>
         <div className="-mx-6 h-[calc(100vh-48px-16px)] overflow-y-auto px-6 py-4 sm:h-[calc(100dvh-48px-16px-env(safe-area-inset-top))]">
-          <ProTable<API.ServerOnlineUser, Record<string, unknown>>
+          <ProTable<ServerOnlineUser, Record<string, unknown>>
             header={{ hidden: true }}
             columns={[
               {
                 accessorKey: "ip",
                 header: t("ipAddresses"),
                 cell: ({ row }) => {
-                  const ips = row.original.ip;
+                  const ips = row.original.ip ?? [];
                   return (
                     <div className="flex min-w-0 flex-col gap-1">
                       {ips.map((item) => (

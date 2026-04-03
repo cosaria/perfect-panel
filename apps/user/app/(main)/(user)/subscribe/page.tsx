@@ -12,7 +12,8 @@ import { Display } from "@/components/display";
 import { Empty } from "@/components/empty";
 import { SubscribeDetail } from "@/components/subscribe/detail";
 import Purchase from "@/components/subscribe/purchase";
-import { querySubscribeList } from "@/services/user/subscribe";
+import { querySubscribeList } from "@/services/user-api/sdk.gen";
+import type { Subscribe } from "@/services/user-api/types.gen";
 
 type SubscriptionDescription = {
   description: string;
@@ -26,14 +27,14 @@ type SubscriptionDescription = {
 export default function Page() {
   const t = useTranslations("subscribe");
   const locale = useLocale();
-  const [subscribe, setSubscribe] = useState<API.Subscribe>();
+  const [subscribe, setSubscribe] = useState<Subscribe>();
 
   const { data } = useQuery({
     queryKey: ["querySubscribeList", locale],
     queryFn: async () => {
       console.log("Fetching subscription list...");
-      const { data } = await querySubscribeList({ language: locale });
-      return data.data?.list || [];
+      const { data } = await querySubscribeList({ query: { language: locale } });
+      return data?.list || [];
     },
   });
 

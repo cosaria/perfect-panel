@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Delete user
-func DeleteUserHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetDetailRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type DeleteUserInput struct {
+	Body types.GetDetailRequest
+}
 
-		l := user.NewDeleteUserLogic(c.Request.Context(), svcCtx)
-		err := l.DeleteUser(&req)
-		result.HttpResult(c, nil, err)
+func DeleteUserHandler(svcCtx *svc.ServiceContext) func(context.Context, *DeleteUserInput) (*struct{}, error) {
+	return func(ctx context.Context, input *DeleteUserInput) (*struct{}, error) {
+		l := user.NewDeleteUserLogic(ctx, svcCtx)
+		if err := l.DeleteUser(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

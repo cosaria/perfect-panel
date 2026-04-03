@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update User Rules
-func UpdateUserRulesHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UpdateUserRulesRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateUserRulesInput struct {
+	Body types.UpdateUserRulesRequest
+}
 
-		l := user.NewUpdateUserRulesLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateUserRules(&req)
-		result.HttpResult(c, nil, err)
+func UpdateUserRulesHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateUserRulesInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateUserRulesInput) (*struct{}, error) {
+		l := user.NewUpdateUserRulesLogic(ctx, svcCtx)
+		if err := l.UpdateUserRules(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

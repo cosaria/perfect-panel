@@ -1,18 +1,24 @@
+// huma:migrated
 package authMethod
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/authMethod"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Get auth method list
-func GetAuthMethodListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type GetAuthMethodListOutput struct {
+	Body *types.GetAuthMethodListResponse
+}
 
-		l := authMethod.NewGetAuthMethodListLogic(c.Request.Context(), svcCtx)
+func GetAuthMethodListHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetAuthMethodListOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*GetAuthMethodListOutput, error) {
+		l := authMethod.NewGetAuthMethodListLogic(ctx, svcCtx)
 		resp, err := l.GetAuthMethodList()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &GetAuthMethodListOutput{Body: resp}, nil
 	}
 }

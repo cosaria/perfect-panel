@@ -8,7 +8,7 @@
     "dev": "next dev --turbopack -p 3001",
     "lint": "biome check .",
     "locale": "lobe-i18n --with-md",
-    "openapi": "npm exec --yes --package=@umijs/openapi@1.14.1 --package=tslib@2.8.1 --package=typescript@5.9.2 openapi2ts",
+    "openapi": "openapi-ts -f openapi-ts.config.ts && openapi-ts -f openapi-ts-common.config.ts",
     "start": "next start"
   },
   "dependencies": {

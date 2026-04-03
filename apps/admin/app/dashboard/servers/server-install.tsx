@@ -16,10 +16,11 @@ import { useTranslations } from "next-intl";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { getNodeConfig } from "@/services/admin/system";
+import { getNodeConfig } from "@/services/admin-api/sdk.gen";
+import type { NodeConfig, Server } from "@/services/admin-api/types.gen";
 
 type Props = {
-  server: API.Server;
+  server: Server;
 };
 
 export default function ServerInstall({ server }: Props) {
@@ -31,7 +32,7 @@ export default function ServerInstall({ server }: Props) {
     queryKey: ["getNodeConfig"],
     queryFn: async () => {
       const { data } = await getNodeConfig();
-      return data.data as API.NodeConfig | undefined;
+      return data as NodeConfig | undefined;
     },
     enabled: open,
   });

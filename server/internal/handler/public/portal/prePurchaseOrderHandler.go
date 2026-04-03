@@ -1,26 +1,28 @@
+// huma:migrated
 package portal
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/public/portal"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Pre Purchase Order
-func PrePurchaseOrderHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.PrePurchaseOrderRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type PrePurchaseOrderInput struct {
+	Body types.PrePurchaseOrderRequest
+}
 
-		l := portal.NewPrePurchaseOrderLogic(c.Request.Context(), svcCtx)
-		resp, err := l.PrePurchaseOrder(&req)
-		result.HttpResult(c, resp, err)
+type PrePurchaseOrderOutput struct {
+	Body *types.PrePurchaseOrderResponse
+}
+
+func PrePurchaseOrderHandler(svcCtx *svc.ServiceContext) func(context.Context, *PrePurchaseOrderInput) (*PrePurchaseOrderOutput, error) {
+	return func(ctx context.Context, input *PrePurchaseOrderInput) (*PrePurchaseOrderOutput, error) {
+		l := portal.NewPrePurchaseOrderLogic(ctx, svcCtx)
+		resp, err := l.PrePurchaseOrder(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &PrePurchaseOrderOutput{Body: resp}, nil
 	}
 }

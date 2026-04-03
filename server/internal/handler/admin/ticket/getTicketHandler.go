@@ -1,26 +1,28 @@
+// huma:migrated
 package ticket
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/ticket"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Get ticket detail
-func GetTicketHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.GetTicketRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type GetTicketInput struct {
+	types.GetTicketRequest
+}
 
-		l := ticket.NewGetTicketLogic(c.Request.Context(), svcCtx)
-		resp, err := l.GetTicket(&req)
-		result.HttpResult(c, resp, err)
+type GetTicketOutput struct {
+	Body *types.Ticket
+}
+
+func GetTicketHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetTicketInput) (*GetTicketOutput, error) {
+	return func(ctx context.Context, input *GetTicketInput) (*GetTicketOutput, error) {
+		l := ticket.NewGetTicketLogic(ctx, svcCtx)
+		resp, err := l.GetTicket(&input.GetTicketRequest)
+		if err != nil {
+			return nil, err
+		}
+		return &GetTicketOutput{Body: resp}, nil
 	}
 }

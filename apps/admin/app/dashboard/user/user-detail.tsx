@@ -7,7 +7,7 @@ import { formatBytes } from "@workspace/ui/utils";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Display } from "@/components/display";
-import { getUserDetail, getUserSubscribeById } from "@/services/admin/user";
+import { getUserDetail, getUserSubscribeById } from "@/services/admin-api/sdk.gen";
 import { formatDate } from "@/utils/common";
 
 export function UserSubscribeDetail({
@@ -25,8 +25,8 @@ export function UserSubscribeDetail({
     enabled: id !== 0 && enabled,
     queryKey: ["getUserSubscribeById", id],
     queryFn: async () => {
-      const { data } = await getUserSubscribeById({ id });
-      return data.data;
+      const { data } = await getUserSubscribeById({ query: { id } });
+      return data;
     },
   });
 
@@ -139,16 +139,16 @@ export function UserDetail({ id }: { id: number }) {
     enabled: id !== 0,
     queryKey: ["getUserDetail", id],
     queryFn: async () => {
-      const { data } = await getUserDetail({ id });
-      return data.data;
+      const { data } = await getUserDetail({ query: { id } });
+      return data;
     },
   });
 
   if (!id) return "--";
 
   const identifier =
-    data?.auth_methods.find((m) => m.auth_type === "email")?.auth_identifier ||
-    data?.auth_methods[0]?.auth_identifier;
+    data?.auth_methods?.find((m) => m.auth_type === "email")?.auth_identifier ||
+    data?.auth_methods?.[0]?.auth_identifier;
 
   return (
     <HoverCard>

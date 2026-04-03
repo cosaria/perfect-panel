@@ -29,7 +29,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { getLogSetting, updateLogSetting } from "@/services/admin/log";
+import { getLogSetting, updateLogSetting } from "@/services/admin-api/sdk.gen";
+import type { LogSetting } from "@/services/admin-api/types.gen";
 
 const logCleanupSchema = z.object({
   auto_clear: z.boolean(),
@@ -47,7 +48,7 @@ export default function LogCleanupForm() {
     queryKey: ["getLogSetting"],
     queryFn: async () => {
       const { data } = await getLogSetting();
-      return data.data;
+      return data;
     },
     enabled: open,
   });
@@ -62,14 +63,14 @@ export default function LogCleanupForm() {
 
   useEffect(() => {
     if (data) {
-      form.reset(data);
+      form.reset({ ...data, auto_clear: data.auto_clear ?? false });
     }
   }, [data, form]);
 
   async function onSubmit(values: LogCleanupFormData) {
     setLoading(true);
     try {
-      await updateLogSetting(values as API.LogSetting);
+      await updateLogSetting({ body: values as LogSetting });
       toast.success(t("common.saveSuccess"));
       refetch();
       setOpen(false);

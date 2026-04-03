@@ -1,26 +1,23 @@
+// huma:migrated
 package user
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/user"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// kick offline user device
-func KickOfflineByUserDeviceHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.KickOfflineRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type KickOfflineByUserDeviceInput struct {
+	Body types.KickOfflineRequest
+}
 
-		l := user.NewKickOfflineByUserDeviceLogic(c.Request.Context(), svcCtx)
-		err := l.KickOfflineByUserDevice(&req)
-		result.HttpResult(c, nil, err)
+func KickOfflineByUserDeviceHandler(svcCtx *svc.ServiceContext) func(context.Context, *KickOfflineByUserDeviceInput) (*struct{}, error) {
+	return func(ctx context.Context, input *KickOfflineByUserDeviceInput) (*struct{}, error) {
+		l := user.NewKickOfflineByUserDeviceLogic(ctx, svcCtx)
+		if err := l.KickOfflineByUserDevice(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

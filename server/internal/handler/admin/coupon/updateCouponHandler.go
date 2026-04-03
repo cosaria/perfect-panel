@@ -1,26 +1,23 @@
+// huma:migrated
 package coupon
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/coupon"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Update coupon
-func UpdateCouponHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.UpdateCouponRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type UpdateCouponInput struct {
+	Body types.UpdateCouponRequest
+}
 
-		l := coupon.NewUpdateCouponLogic(c.Request.Context(), svcCtx)
-		err := l.UpdateCoupon(&req)
-		result.HttpResult(c, nil, err)
+func UpdateCouponHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateCouponInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateCouponInput) (*struct{}, error) {
+		l := coupon.NewUpdateCouponLogic(ctx, svcCtx)
+		if err := l.UpdateCoupon(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
 	}
 }

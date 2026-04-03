@@ -47,6 +47,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { type Control, type UseFormReturn, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
+import type { Server } from "@/services/admin-api/types.gen";
 import { useNode } from "@/store/node";
 import {
   type FieldConfig,
@@ -60,7 +61,8 @@ import {
 } from "./form-schema";
 
 type GeneratedFieldValueMap = Record<string, string>;
-type ProtocolFieldPath = `protocols.${number}.${string}`;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ProtocolFieldPath = any; // Dynamic protocol field paths are not statically resolvable with discriminated unions
 
 function isGeneratedFieldValueMap(
   value: string | GeneratedFieldValueMap,
@@ -101,10 +103,10 @@ function DynamicField({
   control: Control<ServerFormValues>;
   form: UseFormReturn<ServerFormValues>;
   protocolIndex: number;
-  protocolData: Partial<ProtocolConfig>;
+  protocolData: Record<string, string>;
   t: (key: string) => string;
 }) {
-  const fieldName = `protocols.${protocolIndex}.${field.name}` as const;
+  const fieldName = `protocols.${protocolIndex}.${field.name}` as ProtocolFieldPath;
 
   if (field.condition && !field.condition(protocolData, form.getValues())) {
     return null;
@@ -112,7 +114,7 @@ function DynamicField({
 
   const commonProps = {
     control,
-    name: fieldName,
+    name: fieldName as ProtocolFieldPath,
   };
 
   switch (field.type) {
@@ -198,7 +200,7 @@ function DynamicField({
                               )
                             ) {
                               return;
-                            } else {
+                            } else if (result) {
                               if (result.privateKey) {
                                 fieldProps.onChange(result.privateKey);
                               }
@@ -347,7 +349,7 @@ function renderFieldsByGroup(
   control: Control<ServerFormValues>,
   form: UseFormReturn<ServerFormValues>,
   protocolIndex: number,
-  protocolData: Partial<ProtocolConfig>,
+  protocolData: Record<string, string>,
   t: (key: string) => string,
 ) {
   const groupFields = fields.filter((field) => field.group === group);
@@ -377,7 +379,7 @@ function renderGroupCard(
   control: Control<ServerFormValues>,
   form: UseFormReturn<ServerFormValues>,
   protocolIndex: number,
-  protocolData: Partial<ProtocolConfig>,
+  protocolData: Record<string, string>,
   t: (key: string) => string,
 ) {
   const groupFields = fields.filter((field) => field.group === group);
@@ -407,8 +409,8 @@ export default function ServerForm(props: {
   trigger: string;
   title: string;
   loading?: boolean;
-  initialValues?: Partial<API.Server>;
-  onSubmit: (values: Partial<API.Server>) => Promise<boolean> | boolean;
+  initialValues?: Partial<Server>;
+  onSubmit: (values: Partial<Server>) => Promise<boolean> | boolean;
 }) {
   const { trigger, title, loading, initialValues, onSubmit } = props;
   const t = useTranslations("servers");
@@ -439,11 +441,15 @@ export default function ServerForm(props: {
         address: "",
         country: "",
         city: "",
-        ...initialValues,
+        ...(initialValues as Partial<ServerFormValues>),
         protocols: PROTOCOLS.map((type) => {
-          const existingProtocol = initialValues.protocols?.find((p) => p.type === type);
+          const existingProtocol = initialValues.protocols?.find(
+            (p: { type?: string }) => p.type === type,
+          );
           const defaultConfig = getProtocolDefaultConfig(type);
-          return existingProtocol ? { ...defaultConfig, ...existingProtocol } : defaultConfig;
+          return existingProtocol
+            ? ({ ...defaultConfig, ...existingProtocol } as ProtocolConfig)
+            : defaultConfig;
         }),
       });
     }
@@ -464,7 +470,7 @@ export default function ServerForm(props: {
       protocols: filteredProtocols,
     };
 
-    const ok = await onSubmit(result);
+    const ok = await onSubmit(result as unknown as Partial<Server>);
     if (ok) {
       form.reset();
       setOpen(false);
@@ -575,7 +581,8 @@ export default function ServerForm(props: {
               >
                 {PROTOCOLS.map((type) => {
                   const i = Math.max(0, PROTOCOLS.indexOf(type));
-                  const current = protocolsValues[i] ?? getProtocolDefaultConfig(type);
+                  const current = (protocolsValues[i] ??
+                    getProtocolDefaultConfig(type)) as unknown as Record<string, string>;
                   const isEnabled = current?.enable;
                   const fields = PROTOCOL_FIELDS[type] || [];
                   return (
@@ -587,15 +594,17 @@ export default function ServerForm(props: {
                               <span className="font-medium capitalize">{type}</span>
                               {current.transport && (
                                 <Badge variant="secondary" className="text-xs">
-                                  {current.transport.toUpperCase()}
+                                  {String(current.transport).toUpperCase()}
                                 </Badge>
                               )}
                               {current.security && current.security !== "none" && (
                                 <Badge variant="outline" className="text-xs">
-                                  {current.security.toUpperCase()}
+                                  {String(current.security).toUpperCase()}
                                 </Badge>
                               )}
-                              {current.port && <Badge className="text-xs">{current.port}</Badge>}
+                              {current.port && (
+                                <Badge className="text-xs">{String(current.port)}</Badge>
+                              )}
                             </div>
                             <div className="flex items-center gap-1">
                               <span

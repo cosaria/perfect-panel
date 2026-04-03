@@ -24,8 +24,8 @@ import StripePayment from "@/components/payment/stripe";
 import { SubscribeBilling } from "@/components/subscribe/billing";
 import { SubscribeDetail } from "@/components/subscribe/detail";
 import useGlobalStore from "@/config/use-global";
-import { queryOrderDetail } from "@/services/user/order";
-import { purchaseCheckout } from "@/services/user/portal";
+import { queryOrderDetail, purchaseCheckout } from "@/services/user-api/sdk.gen";
+import type { OrderDetail } from "@/services/user-api/types.gen";
 
 export default function Page() {
   const t = useTranslations("order");
@@ -41,12 +41,12 @@ export default function Page() {
         return undefined;
       }
 
-      const { data } = await queryOrderDetail({ order_no: orderNo });
-      if (data?.data?.status !== 1) {
+      const { data } = await queryOrderDetail({ query: { order_no: orderNo } });
+      if (data?.status !== 1) {
         getUserInfo();
         setEnabled(false);
       }
-      return data?.data as API.OrderDetail | undefined;
+      return data as OrderDetail | undefined;
     },
     refetchInterval: 3000,
   });
@@ -60,13 +60,15 @@ export default function Page() {
       }
 
       const { data } = await purchaseCheckout({
-        orderNo,
-        returnUrl: window.location.href,
+        body: {
+          orderNo,
+          returnUrl: window.location.href,
+        },
       });
-      if (data.data?.type === "url" && data.data.checkout_url) {
-        window.open(data.data.checkout_url, "_blank");
+      if (data?.type === "url" && data.checkout_url) {
+        window.open(data.checkout_url, "_blank");
       }
-      return data?.data;
+      return data;
     },
   });
 

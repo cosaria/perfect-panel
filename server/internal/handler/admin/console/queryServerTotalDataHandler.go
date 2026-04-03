@@ -1,18 +1,24 @@
+// huma:migrated
 package console
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/admin/console"
 	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/internal/types"
 )
 
-// Query server total data
-func QueryServerTotalDataHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
+type QueryServerTotalDataOutput struct {
+	Body *types.ServerTotalDataResponse
+}
 
-		l := console.NewQueryServerTotalDataLogic(c.Request.Context(), svcCtx)
+func QueryServerTotalDataHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryServerTotalDataOutput, error) {
+	return func(ctx context.Context, _ *struct{}) (*QueryServerTotalDataOutput, error) {
+		l := console.NewQueryServerTotalDataLogic(ctx, svcCtx)
 		resp, err := l.QueryServerTotalData()
-		result.HttpResult(c, resp, err)
+		if err != nil {
+			return nil, err
+		}
+		return &QueryServerTotalDataOutput{Body: resp}, nil
 	}
 }

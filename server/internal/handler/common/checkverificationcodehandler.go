@@ -1,26 +1,28 @@
+// huma:migrated
 package common
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 	"github.com/perfect-panel/server/internal/logic/common"
 	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/internal/types"
-	"github.com/perfect-panel/server/pkg/result"
 )
 
-// Check verification code
-func CheckVerificationCodeHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
-	return func(c *gin.Context) {
-		var req types.CheckVerificationCodeRequest
-		_ = c.ShouldBind(&req)
-		validateErr := svcCtx.Validate(&req)
-		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
-			return
-		}
+type CheckVerificationCodeInput struct {
+	Body types.CheckVerificationCodeRequest
+}
 
-		l := common.NewCheckVerificationCodeLogic(c.Request.Context(), svcCtx)
-		resp, err := l.CheckVerificationCode(&req)
-		result.HttpResult(c, resp, err)
+type CheckVerificationCodeOutput struct {
+	Body *types.CheckVerificationCodeRespone
+}
+
+func CheckVerificationCodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *CheckVerificationCodeInput) (*CheckVerificationCodeOutput, error) {
+	return func(ctx context.Context, input *CheckVerificationCodeInput) (*CheckVerificationCodeOutput, error) {
+		l := common.NewCheckVerificationCodeLogic(ctx, svcCtx)
+		resp, err := l.CheckVerificationCode(&input.Body)
+		if err != nil {
+			return nil, err
+		}
+		return &CheckVerificationCodeOutput{Body: resp}, nil
 	}
 }
