@@ -12,7 +12,7 @@ server-bootstrap:
 	cd server && go mod download
 
 web-bootstrap:
-	cd web && CI=true bun install
+	CI=true bun install
 
 lint: server-lint web-lint
 
@@ -20,7 +20,7 @@ server-lint:
 	cd server && golangci-lint run && go vet ./...
 
 web-lint:
-	cd web && bun run lint
+	bun run lint
 
 test: server-test
 
@@ -35,7 +35,7 @@ dev:
 	esac
 	@trap 'kill 0' INT TERM EXIT; \
 		(cd server && go run . run --config etc/ppanel.yaml) & \
-		(cd web && bun run dev --filter=ppanel-$(APP)-web) & \
+		(bun run dev:$(APP)) & \
 		wait
 
 build: server-build web-build
@@ -44,7 +44,7 @@ server-build:
 	cd server && go build -o bin/ppanel-server .
 
 web-build:
-	cd web && bun run build
+	bun run build
 
 format: server-format web-format
 
@@ -52,12 +52,12 @@ server-format:
 	cd server && go fmt ./... && goimports -w .
 
 web-format:
-	cd web && bun run format
+	bun run format
 
 typecheck: web-typecheck
 
 web-typecheck:
-	cd web && bun run typecheck
+	bun run typecheck
 
 clean: server-clean web-clean
 
@@ -65,4 +65,4 @@ server-clean:
 	rm -rf server/bin/
 
 web-clean:
-	cd web && rm -rf apps/*/.next apps/*/.turbo .turbo
+	rm -rf web/apps/*/.next web/apps/*/.turbo .turbo

@@ -1,8 +1,8 @@
 {
-  "name": "ppanel-web",
+  "name": "perfect-panel",
   "version": "1.6.3",
   "private": true,
-  "homepage": "https://github.com/cosaria/perfect-panel/tree/main/web",
+  "homepage": "https://github.com/cosaria/perfect-panel",
   "bugs": {
     "url": "https://github.com/cosaria/perfect-panel/issues/new"
   },
@@ -10,23 +10,23 @@
     "type": "git",
     "url": "https://github.com/cosaria/perfect-panel.git"
   },
-  "license": "GUN",
+  "license": "GPL-3.0",
   "workspaces": [
-    "packages/*",
-    "apps/*"
+    "web/packages/*",
+    "web/apps/*"
   ],
   "scripts": {
-    "build": "turbo build",
-    "clean": "./scripts/clean.sh",
-    "dev": "turbo dev",
-    "format": "biome format --write .",
-    "lint": "turbo lint",
-    "locale": "turbo locale && bun run format",
-    "openapi": "turbo openapi && bun run format",
-    "release": "semantic-release",
-    "typecheck": "turbo check-types",
-    "update:deps": "./scripts/update-deps.sh",
-    "update:shadcn": "./scripts/update-shadcn-ui.sh && bun run format"
+    "build": "turbo run build",
+    "clean": "cd web && ./scripts/clean.sh",
+    "dev:admin": "turbo run dev --filter=ppanel-admin-web",
+    "dev:user": "turbo run dev --filter=ppanel-user-web",
+    "format": "cd web && biome format --write .",
+    "lint": "turbo run lint",
+    "locale": "turbo run locale && cd web && biome format --write .",
+    "openapi": "turbo run openapi && cd web && biome format --write .",
+    "typecheck": "turbo run check-types",
+    "update:deps": "cd web && ./scripts/update-deps.sh",
+    "update:shadcn": "cd web && ./scripts/update-shadcn-ui.sh && cd .. && bun run format"
   },
   "commitlint": {
     "extends": [
@@ -117,8 +117,6 @@
     "postcss": "^8.5.6",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "semantic-release": "21.1.2",
-    "semantic-release-config-gitmoji": "^1.5.3",
     "tailwindcss": "^3.4.17",
     "turbo": "^2.5.6",
     "typescript": "^5.9.2"
