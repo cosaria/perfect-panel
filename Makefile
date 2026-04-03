@@ -65,4 +65,4 @@ server-clean:
 	rm -rf server/bin/
 
 web-clean:
-	rm -rf web/apps/*/.next web/apps/*/.turbo .turbo
+	rm -rf apps/*/.next apps/*/.turbo .turbo

@@ -1,24 +1,24 @@
 {
-	"files.associations": {
-		"*.css": "tailwindcss"
-	},
-	"editor.quickSuggestions": {
-		"strings": "on"
-	},
-	"tailwindCSS.experimental.configFile": {
-		"web/packages/ui/tailwind.config.ts": "web/packages/ui/src/**",
-		"web/apps/admin/tailwind.config.ts": "web/apps/admin/**",
-		"web/apps/user/tailwind.config.ts": "web/apps/user/**"
-	},
-	"editor.defaultFormatter": "biomejs.biome",
-	"editor.formatOnSave": true,
-	"editor.codeActionsOnSave": {
-		"source.fixAll.biome": "explicit",
-		"source.organizeImports.biome": "explicit"
-	},
-	"css.lint.unknownAtRules": "ignore",
-	"json.schemaDownload.trustedDomains": {
-		"https://turborepo.dev/schema.json": true,
-		"https://biomejs.dev/schemas/2.4.9/schema.json": true
-	}
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "tailwindCSS.experimental.configFile": {
+    "packages/ui/tailwind.config.ts": "packages/ui/src/**",
+    "apps/admin/tailwind.config.ts": "apps/admin/**",
+    "apps/user/tailwind.config.ts": "apps/user/**"
+  },
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+  "css.lint.unknownAtRules": "ignore",
+  "json.schemaDownload.trustedDomains": {
+    "https://turborepo.dev/schema.json": true,
+    "https://biomejs.dev/schemas/2.4.9/schema.json": true
+  }
 }

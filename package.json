@@ -12,21 +12,21 @@
   },
   "license": "GPL-3.0",
   "workspaces": [
-    "web/packages/*",
-    "web/apps/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "build": "turbo run build",
-    "clean": "cd web && ./scripts/clean.sh",
+    "clean": "./scripts/clean.sh",
     "dev:admin": "turbo run dev --filter=ppanel-admin-web",
     "dev:user": "turbo run dev --filter=ppanel-user-web",
-    "format": "cd web && biome format --write .",
+    "format": "biome format --write .",
     "lint": "turbo run lint",
-    "locale": "turbo run locale && cd web && biome format --write .",
-    "openapi": "turbo run openapi && cd web && biome format --write .",
+    "locale": "turbo run locale && bun run format",
+    "openapi": "turbo run openapi && bun run format",
     "typecheck": "turbo run check-types",
-    "update:deps": "cd web && ./scripts/update-deps.sh",
-    "update:shadcn": "cd web && ./scripts/update-shadcn-ui.sh && cd .. && bun run format"
+    "update:deps": "./scripts/update-deps.sh",
+    "update:shadcn": "./scripts/update-shadcn-ui.sh && bun run format"
   },
   "commitlint": {
     "extends": [

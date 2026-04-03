@@ -25,7 +25,6 @@ pre-commit:
       glob: "*.go"
       run: go test -v ./...
     web-biome:
-      root: "web/"
       glob: "*.{json,md,js,jsx,cjs,mjs,ts,tsx}"
       run: bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
       stage_fixed: true
