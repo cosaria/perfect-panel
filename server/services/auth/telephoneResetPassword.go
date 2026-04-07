@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"fmt"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/auth/jwt"
@@ -12,7 +13,6 @@ import (
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/modules/util/uuidx"
 	"github.com/perfect-panel/server/modules/verify/turnstile"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -30,21 +30,22 @@ type TelephoneResetPasswordOutput struct {
 	Body *types.LoginResponse
 }
 
-func TelephoneResetPasswordHandler(svcCtx *svc.ServiceContext) func(context.Context, *TelephoneResetPasswordInput) (*TelephoneResetPasswordOutput, error) {
+func TelephoneResetPasswordHandler(deps Deps) func(context.Context, *TelephoneResetPasswordInput) (*TelephoneResetPasswordOutput, error) {
 	return func(ctx context.Context, input *TelephoneResetPasswordInput) (*TelephoneResetPasswordOutput, error) {
 		input.Body.IP = input.IP
 		input.Body.UserAgent = input.UserAgent
 		input.Body.LoginType = input.LoginType
-		if svcCtx.Config.Verify.ResetPasswordVerify {
+		cfg := deps.currentConfig()
+		if cfg.Verify.ResetPasswordVerify {
 			verifyTurns := turnstile.New(turnstile.Config{
-				Secret:  svcCtx.Config.Verify.TurnstileSecret,
+				Secret:  cfg.Verify.TurnstileSecret,
 				Timeout: 3 * time.Second,
 			})
 			if verify, err := verifyTurns.Verify(ctx, input.Body.CfToken, input.Body.IP); err != nil || !verify {
 				return nil, errors.Wrapf(xerr.NewErrCode(xerr.TooManyRequests), "error: %v, verify: %v", err, verify)
 			}
 		}
-		l := NewTelephoneResetPasswordLogic(ctx, svcCtx)
+		l := NewTelephoneResetPasswordLogic(ctx, deps)
 		resp, err := l.TelephoneResetPassword(&input.Body)
 		if err != nil {
 			return nil, err
@@ -55,16 +56,16 @@ func TelephoneResetPasswordHandler(svcCtx *svc.ServiceContext) func(context.Cont
 
 type TelephoneResetPasswordLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Reset password
-func NewTelephoneResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TelephoneResetPasswordLogic {
+func NewTelephoneResetPasswordLogic(ctx context.Context, deps Deps) *TelephoneResetPasswordLogic {
 	return &TelephoneResetPasswordLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -76,13 +77,14 @@ func (l *TelephoneResetPasswordLogic) TelephoneResetPassword(req *types.Telephon
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TelephoneError), "Invalid phone number")
 	}
 
-	if l.svcCtx.Config.Mobile.Enable {
+	cfg := l.deps.currentConfig()
+	if !cfg.Mobile.Enable {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.SmsNotEnabled), "sms login is not enabled")
 	}
 
 	// if the email verification is enabled, the verification code is required
 	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeTelephoneCacheKey, config.Security, phoneNumber)
-	value, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
+	value, err := l.deps.Redis.Get(l.ctx, cacheKey).Result()
 	if err != nil {
 		l.Errorw("Redis Error", logger.Field("error", err.Error()), logger.Field("cacheKey", cacheKey))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.VerifyCodeError), "code error")
@@ -92,7 +94,7 @@ func (l *TelephoneResetPasswordLogic) TelephoneResetPassword(req *types.Telephon
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.VerifyCodeError), "code error")
 	}
 
-	authMethods, err := l.svcCtx.UserModel.FindUserAuthMethodByOpenID(l.ctx, "mobile", phoneNumber)
+	authMethods, err := l.deps.UserModel.FindUserAuthMethodByOpenID(l.ctx, "mobile", phoneNumber)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		l.Errorw("FindOneByTelephone Error", logger.Field("error", err))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "query user info failed: %v", err.Error())
@@ -102,7 +104,7 @@ func (l *TelephoneResetPasswordLogic) TelephoneResetPassword(req *types.Telephon
 	}
 
 	// Check if the user exists
-	userInfo, err := l.svcCtx.UserModel.FindOne(l.ctx, authMethods.UserId)
+	userInfo, err := l.deps.UserModel.FindOne(l.ctx, authMethods.UserId)
 	if err != nil {
 		l.Errorw("FindOneByTelephone Error", logger.Field("error", err))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "query user info failed: %v", err.Error())
@@ -112,14 +114,14 @@ func (l *TelephoneResetPasswordLogic) TelephoneResetPassword(req *types.Telephon
 	pwd := tool.EncodePassWord(req.Password)
 	userInfo.Password = pwd
 	userInfo.Algo = "default"
-	err = l.svcCtx.UserModel.Update(l.ctx, userInfo)
+	err = l.deps.UserModel.Update(l.ctx, userInfo)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "update user password failed: %v", err.Error())
 	}
 
 	// Bind device to user if identifier is provided
 	if req.Identifier != "" {
-		bindLogic := NewBindDeviceLogic(l.ctx, l.svcCtx)
+		bindLogic := NewBindDeviceLogic(l.ctx, l.deps)
 		if err := bindLogic.BindDeviceToUser(req.Identifier, req.IP, req.UserAgent, userInfo.Id); err != nil {
 			l.Errorw("failed to bind device to user",
 				logger.Field("user_id", userInfo.Id),
@@ -136,9 +138,9 @@ func (l *TelephoneResetPasswordLogic) TelephoneResetPassword(req *types.Telephon
 	sessionId := uuidx.NewUUID().String()
 	// Generate token
 	token, err := jwt.NewJwtToken(
-		l.svcCtx.Config.JwtAuth.AccessSecret,
+		cfg.JwtAuth.AccessSecret,
 		time.Now().Unix(),
-		l.svcCtx.Config.JwtAuth.AccessExpire,
+		cfg.JwtAuth.AccessExpire,
 		jwt.WithOption("UserId", userInfo.Id),
 		jwt.WithOption("SessionId", sessionId),
 		jwt.WithOption("LoginType", req.LoginType),
@@ -148,7 +150,7 @@ func (l *TelephoneResetPasswordLogic) TelephoneResetPassword(req *types.Telephon
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "token generate error: %v", err.Error())
 	}
 	sessionIdCacheKey := fmt.Sprintf("%v:%v", config.SessionIdKey, sessionId)
-	if err = l.svcCtx.Redis.Set(l.ctx, sessionIdCacheKey, userInfo.Id, time.Duration(l.svcCtx.Config.JwtAuth.AccessExpire)*time.Second).Err(); err != nil {
+	if err = l.deps.Redis.Set(l.ctx, sessionIdCacheKey, userInfo.Id, time.Duration(cfg.JwtAuth.AccessExpire)*time.Second).Err(); err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "set session id error: %v", err.Error())
 	}
 	defer func() {
@@ -161,7 +163,7 @@ func (l *TelephoneResetPasswordLogic) TelephoneResetPassword(req *types.Telephon
 				Timestamp: time.Now().UnixMilli(),
 			}
 			content, _ := loginLog.Marshal()
-			if err := l.svcCtx.LogModel.Insert(l.ctx, &log.SystemLog{
+			if err := l.deps.LogModel.Insert(l.ctx, &log.SystemLog{
 				Id:       0,
 				Type:     log.TypeLogin.Uint8(),
 				Date:     time.Now().Format("2006-01-02"),

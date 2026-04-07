@@ -3,10 +3,9 @@ package system
 import (
 	"context"
 	"encoding/json"
-	"github.com/perfect-panel/server/initialize"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -15,9 +14,9 @@ type SetNodeMultiplierInput struct {
 	Body types.SetNodeMultiplierRequest
 }
 
-func SetNodeMultiplierHandler(svcCtx *svc.ServiceContext) func(context.Context, *SetNodeMultiplierInput) (*struct{}, error) {
+func SetNodeMultiplierHandler(deps Deps) func(context.Context, *SetNodeMultiplierInput) (*struct{}, error) {
 	return func(ctx context.Context, input *SetNodeMultiplierInput) (*struct{}, error) {
-		l := NewSetNodeMultiplierLogic(ctx, svcCtx)
+		l := NewSetNodeMultiplierLogic(ctx, deps)
 		if err := l.SetNodeMultiplier(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,16 +26,16 @@ func SetNodeMultiplierHandler(svcCtx *svc.ServiceContext) func(context.Context, 
 
 type SetNodeMultiplierLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Set Node Multiplier
-func NewSetNodeMultiplierLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SetNodeMultiplierLogic {
+func NewSetNodeMultiplierLogic(ctx context.Context, deps Deps) *SetNodeMultiplierLogic {
 	return &SetNodeMultiplierLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -46,12 +45,13 @@ func (l *SetNodeMultiplierLogic) SetNodeMultiplier(req *types.SetNodeMultiplierR
 		l.Logger.Error("Marshal Node Multiplier Config Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Marshal Node Multiplier Config Error: %s", err.Error())
 	}
-	if err = l.svcCtx.SystemModel.UpdateNodeMultiplierConfig(l.ctx, string(data)); err != nil {
+	if err = l.deps.SystemModel.UpdateNodeMultiplierConfig(l.ctx, string(data)); err != nil {
 		l.Logger.Error("Update Node Multiplier Config Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Update Node Multiplier Config Error: %s", err.Error())
 	}
-	// update Node Multiplier
-	initialize.Node(l.svcCtx)
+	if l.deps.ReloadNode != nil {
+		l.deps.ReloadNode()
+	}
 
 	return nil
 }

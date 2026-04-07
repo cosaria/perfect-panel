@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -20,9 +19,9 @@ type GetSubscriptionOutput struct {
 	Body *types.GetSubscriptionResponse
 }
 
-func GetSubscriptionHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetSubscriptionInput) (*GetSubscriptionOutput, error) {
+func GetSubscriptionHandler(deps Deps) func(context.Context, *GetSubscriptionInput) (*GetSubscriptionOutput, error) {
 	return func(ctx context.Context, input *GetSubscriptionInput) (*GetSubscriptionOutput, error) {
-		l := NewGetSubscriptionLogic(ctx, svcCtx)
+		l := NewGetSubscriptionLogic(ctx, deps)
 		resp, err := l.GetSubscription(&input.GetSubscriptionRequest)
 		if err != nil {
 			return nil, err
@@ -33,16 +32,16 @@ func GetSubscriptionHandler(svcCtx *svc.ServiceContext) func(context.Context, *G
 
 type GetSubscriptionLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetSubscriptionLogic Get Subscription
-func NewGetSubscriptionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSubscriptionLogic {
+func NewGetSubscriptionLogic(ctx context.Context, deps Deps) *GetSubscriptionLogic {
 	return &GetSubscriptionLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -51,7 +50,7 @@ func (l *GetSubscriptionLogic) GetSubscription(req *types.GetSubscriptionRequest
 		List: make([]types.Subscribe, 0),
 	}
 	// Get the subscription list
-	_, data, err := l.svcCtx.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
+	_, data, err := l.deps.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
 		Page:            1,
 		Size:            9999,
 		Show:            true,

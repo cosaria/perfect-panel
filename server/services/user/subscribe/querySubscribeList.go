@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -20,9 +19,9 @@ type QuerySubscribeListOutput struct {
 	Body *types.QuerySubscribeListResponse
 }
 
-func QuerySubscribeListHandler(svcCtx *svc.ServiceContext) func(context.Context, *QuerySubscribeListInput) (*QuerySubscribeListOutput, error) {
+func QuerySubscribeListHandler(deps Deps) func(context.Context, *QuerySubscribeListInput) (*QuerySubscribeListOutput, error) {
 	return func(ctx context.Context, input *QuerySubscribeListInput) (*QuerySubscribeListOutput, error) {
-		l := NewQuerySubscribeListLogic(ctx, svcCtx)
+		l := NewQuerySubscribeListLogic(ctx, deps)
 		resp, err := l.QuerySubscribeList(&input.QuerySubscribeListRequest)
 		if err != nil {
 			return nil, err
@@ -33,22 +32,22 @@ func QuerySubscribeListHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type QuerySubscribeListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get subscribe list
-func NewQuerySubscribeListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QuerySubscribeListLogic {
+func NewQuerySubscribeListLogic(ctx context.Context, deps Deps) *QuerySubscribeListLogic {
 	return &QuerySubscribeListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *QuerySubscribeListLogic) QuerySubscribeList(req *types.QuerySubscribeListRequest) (resp *types.QuerySubscribeListResponse, err error) {
 
-	total, data, err := l.svcCtx.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
+	total, data, err := l.deps.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
 		Page:            1,
 		Size:            9999,
 		Language:        req.Language,

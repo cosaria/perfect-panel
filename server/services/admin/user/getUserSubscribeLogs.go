@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -19,9 +18,9 @@ type GetUserSubscribeLogsOutput struct {
 	Body *types.GetUserSubscribeLogsResponse
 }
 
-func GetUserSubscribeLogsHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserSubscribeLogsInput) (*GetUserSubscribeLogsOutput, error) {
+func GetUserSubscribeLogsHandler(deps Deps) func(context.Context, *GetUserSubscribeLogsInput) (*GetUserSubscribeLogsOutput, error) {
 	return func(ctx context.Context, input *GetUserSubscribeLogsInput) (*GetUserSubscribeLogsOutput, error) {
-		l := NewGetUserSubscribeLogsLogic(ctx, svcCtx)
+		l := NewGetUserSubscribeLogsLogic(ctx, deps)
 		resp, err := l.GetUserSubscribeLogs(&input.GetUserSubscribeLogsRequest)
 		if err != nil {
 			return nil, err
@@ -32,21 +31,21 @@ func GetUserSubscribeLogsHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type GetUserSubscribeLogsLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get user subcribe logs
-func NewGetUserSubscribeLogsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserSubscribeLogsLogic {
+func NewGetUserSubscribeLogsLogic(ctx context.Context, deps Deps) *GetUserSubscribeLogsLogic {
 	return &GetUserSubscribeLogsLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetUserSubscribeLogsLogic) GetUserSubscribeLogs(req *types.GetUserSubscribeLogsRequest) (resp *types.GetUserSubscribeLogsResponse, err error) {
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{})
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{})
 
 	if err != nil {
 		l.Errorw("[GetUserSubscribeLogs] Get User Subscribe Logs Error:", logger.Field("err", err.Error()))

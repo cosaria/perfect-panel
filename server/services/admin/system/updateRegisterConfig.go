@@ -2,26 +2,25 @@ package system
 
 import (
 	"context"
+	"reflect"
+
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/initialize"
-	"github.com/perfect-panel/server/models/system"
+	modelsystem "github.com/perfect-panel/server/models/system"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
-	"reflect"
 )
 
 type UpdateRegisterConfigInput struct {
 	Body types.RegisterConfig
 }
 
-func UpdateRegisterConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateRegisterConfigInput) (*struct{}, error) {
+func UpdateRegisterConfigHandler(deps Deps) func(context.Context, *UpdateRegisterConfigInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateRegisterConfigInput) (*struct{}, error) {
-		l := NewUpdateRegisterConfigLogic(ctx, svcCtx)
+		l := NewUpdateRegisterConfigLogic(ctx, deps)
 		if err := l.UpdateRegisterConfig(&input.Body); err != nil {
 			return nil, err
 		}
@@ -31,15 +30,15 @@ func UpdateRegisterConfigHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type UpdateRegisterConfigLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
-func NewUpdateRegisterConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateRegisterConfigLogic {
+func NewUpdateRegisterConfigLogic(ctx context.Context, deps Deps) *UpdateRegisterConfigLogic {
 	return &UpdateRegisterConfigLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -47,7 +46,7 @@ func (l *UpdateRegisterConfigLogic) UpdateRegisterConfig(req *types.RegisterConf
 	v := reflect.ValueOf(*req)
 	// Get the reflection type of the structure
 	t := v.Type()
-	err := l.svcCtx.SystemModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err := l.deps.SystemModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		var err error
 		for i := 0; i < v.NumField(); i++ {
 			// Get the field name
@@ -55,7 +54,7 @@ func (l *UpdateRegisterConfigLogic) UpdateRegisterConfig(req *types.RegisterConf
 			// Get the field value to string
 			fieldValue := tool.ConvertValueToString(v.Field(i))
 			// Update the site config
-			err = db.Model(&system.System{}).Where("`category` = 'register' and `key` = ?", fieldName).Update("value", fieldValue).Error
+			err = db.Model(&modelsystem.System{}).Where("`category` = 'register' and `key` = ?", fieldName).Update("value", fieldValue).Error
 			if err != nil {
 				break
 			}
@@ -63,13 +62,15 @@ func (l *UpdateRegisterConfigLogic) UpdateRegisterConfig(req *types.RegisterConf
 		if err != nil {
 			return err
 		}
-		return l.svcCtx.Redis.Del(l.ctx, config.RegisterConfigKey, config.GlobalConfigKey).Err()
+		return l.deps.Redis.Del(l.ctx, config.RegisterConfigKey, config.GlobalConfigKey).Err()
 	})
 	if err != nil {
 		l.Errorw("[UpdateRegisterConfig] update register config error", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update register config error: %v", err.Error())
 	}
 	// init system config
-	initialize.Register(l.svcCtx)
+	if l.deps.ReloadRegister != nil {
+		l.deps.ReloadRegister()
+	}
 	return nil
 }

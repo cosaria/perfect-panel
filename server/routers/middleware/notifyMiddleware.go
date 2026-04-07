@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/modules/payment"
-	"github.com/perfect-panel/server/svc"
+	appruntime "github.com/perfect-panel/server/runtime"
 )
 
 type PaymentParams struct {
@@ -16,7 +16,7 @@ type PaymentParams struct {
 	Token    string `uri:"token"`
 }
 
-func NotifyMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
+func NotifyMiddleware(runtimeDeps *appruntime.Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 		var params PaymentParams
@@ -26,7 +26,7 @@ func NotifyMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
 			c.Abort()
 			return
 		}
-		paymentConfig, err := svc.PaymentModel.FindOneByPaymentToken(ctx, params.Token)
+		paymentConfig, err := runtimeDeps.PaymentModel.FindOneByPaymentToken(ctx, params.Token)
 		if err != nil {
 			writeNotifyProtocolFailure(c, params.Platform)
 			c.Abort()

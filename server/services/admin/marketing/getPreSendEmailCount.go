@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"gorm.io/gorm"
 	"time"
@@ -20,9 +19,9 @@ type GetPreSendEmailCountOutput struct {
 	Body *types.GetPreSendEmailCountResponse
 }
 
-func GetPreSendEmailCountHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetPreSendEmailCountInput) (*GetPreSendEmailCountOutput, error) {
+func GetPreSendEmailCountHandler(deps Deps) func(context.Context, *GetPreSendEmailCountInput) (*GetPreSendEmailCountOutput, error) {
 	return func(ctx context.Context, input *GetPreSendEmailCountInput) (*GetPreSendEmailCountOutput, error) {
-		l := NewGetPreSendEmailCountLogic(ctx, svcCtx)
+		l := NewGetPreSendEmailCountLogic(ctx, deps)
 		resp, err := l.GetPreSendEmailCount(&input.Body)
 		if err != nil {
 			return nil, err
@@ -33,21 +32,21 @@ func GetPreSendEmailCountHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type GetPreSendEmailCountLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetPreSendEmailCountLogic Get pre-send email count
-func NewGetPreSendEmailCountLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetPreSendEmailCountLogic {
+func NewGetPreSendEmailCountLogic(ctx context.Context, deps Deps) *GetPreSendEmailCountLogic {
 	return &GetPreSendEmailCountLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetPreSendEmailCountLogic) GetPreSendEmailCount(req *types.GetPreSendEmailCountRequest) (resp *types.GetPreSendEmailCountResponse, err error) {
-	tx := l.svcCtx.DB
+	tx := l.deps.DB
 	var count int64
 	// 通用查询器（含 user JOIN + 注册时间范围过滤）
 	baseQuery := func() *gorm.DB {

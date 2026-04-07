@@ -2,19 +2,19 @@ package common
 
 import (
 	"context"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/svc"
-	"github.com/perfect-panel/server/types"
 	"time"
+
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/types"
 )
 
 type HeartbeatOutput struct {
 	Body *types.HeartbeatResponse
 }
 
-func HeartbeatHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*HeartbeatOutput, error) {
+func HeartbeatHandler(deps Deps) func(context.Context, *struct{}) (*HeartbeatOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*HeartbeatOutput, error) {
-		l := NewHeartbeatLogic(ctx, svcCtx)
+		l := NewHeartbeatLogic(ctx, deps)
 		resp, err := l.Heartbeat()
 		if err != nil {
 			return nil, err
@@ -25,16 +25,16 @@ func HeartbeatHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{
 
 type HeartbeatLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewHeartbeatLogic Heartbeat
-func NewHeartbeatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *HeartbeatLogic {
+func NewHeartbeatLogic(ctx context.Context, deps Deps) *HeartbeatLogic {
 	return &HeartbeatLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 

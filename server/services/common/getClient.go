@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +13,9 @@ type GetClientOutput struct {
 	Body *types.GetSubscribeClientResponse
 }
 
-func GetClientHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetClientOutput, error) {
+func GetClientHandler(deps Deps) func(context.Context, *struct{}) (*GetClientOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetClientOutput, error) {
-		l := NewGetClientLogic(ctx, svcCtx)
+		l := NewGetClientLogic(ctx, deps)
 		resp, err := l.GetClient()
 		if err != nil {
 			return nil, err
@@ -27,21 +26,21 @@ func GetClientHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{
 
 type GetClientLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get Client
-func NewGetClientLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetClientLogic {
+func NewGetClientLogic(ctx context.Context, deps Deps) *GetClientLogic {
 	return &GetClientLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetClientLogic) GetClient() (resp *types.GetSubscribeClientResponse, err error) {
-	data, err := l.svcCtx.ClientModel.List(l.ctx)
+	data, err := l.deps.ClientModel.List(l.ctx)
 	if err != nil {
 		l.Errorf("Failed to get subscribe application list: %v", err)
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Failed to get subscribe application list")

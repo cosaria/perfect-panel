@@ -2,12 +2,12 @@ package tool
 
 import (
 	"context"
+	"net"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
-	"net"
 )
 
 type QueryIPLocationInput struct {
@@ -18,9 +18,9 @@ type QueryIPLocationOutput struct {
 	Body *types.QueryIPLocationResponse
 }
 
-func QueryIPLocationHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryIPLocationInput) (*QueryIPLocationOutput, error) {
+func QueryIPLocationHandler(deps Deps) func(context.Context, *QueryIPLocationInput) (*QueryIPLocationOutput, error) {
 	return func(ctx context.Context, input *QueryIPLocationInput) (*QueryIPLocationOutput, error) {
-		l := NewQueryIPLocationLogic(ctx, svcCtx)
+		l := NewQueryIPLocationLogic(ctx, deps)
 		resp, err := l.QueryIPLocation(&input.QueryIPLocationRequest)
 		if err != nil {
 			return nil, err
@@ -31,26 +31,26 @@ func QueryIPLocationHandler(svcCtx *svc.ServiceContext) func(context.Context, *Q
 
 type QueryIPLocationLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewQueryIPLocationLogic Query IP Location
-func NewQueryIPLocationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryIPLocationLogic {
+func NewQueryIPLocationLogic(ctx context.Context, deps Deps) *QueryIPLocationLogic {
 	return &QueryIPLocationLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *QueryIPLocationLogic) QueryIPLocation(req *types.QueryIPLocationRequest) (resp *types.QueryIPLocationResponse, err error) {
-	if l.svcCtx.GeoIP == nil {
+	if l.deps.GeoIPDB == nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), " GeoIP database not configured")
 	}
 
 	ip := net.ParseIP(req.IP)
-	record, err := l.svcCtx.GeoIP.DB.City(ip)
+	record, err := l.deps.GeoIPDB.City(ip)
 	if err != nil {
 		l.Errorf("Failed to query IP location: %v", err)
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Failed to query IP location")

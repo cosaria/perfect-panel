@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -13,9 +12,9 @@ type UpdateTicketStatusInput struct {
 	Body types.UpdateTicketStatusRequest
 }
 
-func UpdateTicketStatusHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateTicketStatusInput) (*struct{}, error) {
+func UpdateTicketStatusHandler(deps Deps) func(context.Context, *UpdateTicketStatusInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateTicketStatusInput) (*struct{}, error) {
-		l := NewUpdateTicketStatusLogic(ctx, svcCtx)
+		l := NewUpdateTicketStatusLogic(ctx, deps)
 		if err := l.UpdateTicketStatus(&input.Body); err != nil {
 			return nil, err
 		}
@@ -25,22 +24,22 @@ func UpdateTicketStatusHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type UpdateTicketStatusLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Update ticket status
-func NewUpdateTicketStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateTicketStatusLogic {
+func NewUpdateTicketStatusLogic(ctx context.Context, deps Deps) *UpdateTicketStatusLogic {
 	return &UpdateTicketStatusLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *UpdateTicketStatusLogic) UpdateTicketStatus(req *types.UpdateTicketStatusRequest) error {
 
-	err := l.svcCtx.TicketModel.UpdateTicketStatus(l.ctx, req.Id, 0, *req.Status)
+	err := l.deps.TicketModel.UpdateTicketStatus(l.ctx, req.Id, 0, *req.Status)
 	if err != nil {
 		l.Errorw("[UpdateTicketStatus] Update Database Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update ticket error: %v", err.Error())

@@ -39,7 +39,7 @@ func NewService(svc *svc.ServiceContext) *Service {
 func initServer(svc *svc.ServiceContext) *gin.Engine {
 
 	// start init system config
-	initialize.StartInitSystemConfig(svc)
+	initialize.StartInitSystemConfig(newInitializeDeps(svc))
 	// init gin server
 	r := gin.Default()
 	r.RemoteIPHeaders = []string{"X-Original-Forwarded-For", "X-Forwarded-For", "X-Real-IP"}
@@ -51,16 +51,17 @@ func initServer(svc *svc.ServiceContext) *gin.Engine {
 	}
 	r.Use(sessions.Sessions("ppanel", sessionStore))
 	// use cors middleware
-	r.Use(middleware.TraceMiddleware(svc), middleware.LoggerMiddleware(svc), middleware.CorsMiddleware, gin.Recovery())
+	runtimeDeps := newRuntimeDeps(svc)
+	r.Use(middleware.TraceMiddleware(), middleware.LoggerMiddleware(runtimeDeps), middleware.CorsMiddleware, gin.Recovery())
 
 	// register handlers
-	handler.RegisterHandlers(r, svc)
+	handler.RegisterHandlers(r, runtimeDeps)
 	// register subscribe handler
-	handler.RegisterSubscribeHandlers(r, svc)
+	handler.RegisterSubscribeHandlers(r, runtimeDeps)
 	// register telegram handler
-	handler.RegisterTelegramHandlers(r, svc)
+	handler.RegisterTelegramHandlers(r, runtimeDeps)
 	// register notify handler
-	handler.RegisterNotifyHandlers(r, svc)
+	handler.RegisterNotifyHandlers(r, runtimeDeps)
 
 	// register embedded frontends (only in production with -tags embed)
 	adminEnvVars := map[string]string{

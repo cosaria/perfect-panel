@@ -11,7 +11,10 @@ import (
 
 func TestRegisterHandlersIncludesExchangeRateTask(t *testing.T) {
 	mux := asynq.NewServeMux()
-	registry.RegisterHandlers(mux, nil)
+	registry.RegisterHandlers(mux, registry.Deps{
+		ExchangeRate: task.NewRateLogic(task.Deps{}),
+		Quota:        task.NewQuotaTaskLogic(task.Deps{}),
+	})
 
 	rateHandler, ratePattern := mux.Handler(asynq.NewTask(SchedulerExchangeRate, nil))
 	if ratePattern != SchedulerExchangeRate {
@@ -23,11 +26,11 @@ func TestRegisterHandlersIncludesExchangeRateTask(t *testing.T) {
 		t.Fatalf("expected quota task to remain registered, got pattern %q", quotaPattern)
 	}
 
-	if reflect.TypeOf(rateHandler) != reflect.TypeOf(task.NewRateLogic(nil)) {
+	if reflect.TypeOf(rateHandler) != reflect.TypeOf(task.NewRateLogic(task.Deps{})) {
 		t.Fatalf("expected exchange rate task to use RateLogic, got %T", rateHandler)
 	}
 
-	if reflect.TypeOf(quotaHandler) != reflect.TypeOf(task.NewQuotaTaskLogic(nil)) {
+	if reflect.TypeOf(quotaHandler) != reflect.TypeOf(task.NewQuotaTaskLogic(task.Deps{})) {
 		t.Fatalf("expected quota task to use QuotaTaskLogic, got %T", quotaHandler)
 	}
 }

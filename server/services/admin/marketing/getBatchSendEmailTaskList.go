@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/task"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"strings"
 )
@@ -18,9 +17,9 @@ type GetBatchSendEmailTaskListOutput struct {
 	Body *types.GetBatchSendEmailTaskListResponse
 }
 
-func GetBatchSendEmailTaskListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetBatchSendEmailTaskListInput) (*GetBatchSendEmailTaskListOutput, error) {
+func GetBatchSendEmailTaskListHandler(deps Deps) func(context.Context, *GetBatchSendEmailTaskListInput) (*GetBatchSendEmailTaskListOutput, error) {
 	return func(ctx context.Context, input *GetBatchSendEmailTaskListInput) (*GetBatchSendEmailTaskListOutput, error) {
-		l := NewGetBatchSendEmailTaskListLogic(ctx, svcCtx)
+		l := NewGetBatchSendEmailTaskListLogic(ctx, deps)
 		resp, err := l.GetBatchSendEmailTaskList(&input.Body)
 		if err != nil {
 			return nil, err
@@ -31,23 +30,23 @@ func GetBatchSendEmailTaskListHandler(svcCtx *svc.ServiceContext) func(context.C
 
 type GetBatchSendEmailTaskListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetBatchSendEmailTaskListLogic Get batch send email task list
-func NewGetBatchSendEmailTaskListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetBatchSendEmailTaskListLogic {
+func NewGetBatchSendEmailTaskListLogic(ctx context.Context, deps Deps) *GetBatchSendEmailTaskListLogic {
 	return &GetBatchSendEmailTaskListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetBatchSendEmailTaskListLogic) GetBatchSendEmailTaskList(req *types.GetBatchSendEmailTaskListRequest) (resp *types.GetBatchSendEmailTaskListResponse, err error) {
 
 	var tasks []*task.Task
-	tx := l.svcCtx.DB.Model(&task.Task{}).Where("`type` = ?", task.TypeEmail)
+	tx := l.deps.DB.Model(&task.Task{}).Where("`type` = ?", task.TypeEmail)
 	if req.Status != nil {
 		tx = tx.Where("status = ?", *req.Status)
 	}

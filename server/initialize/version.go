@@ -10,12 +10,12 @@ import (
 	"github.com/perfect-panel/server/models/migrate"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/orm"
-	"github.com/perfect-panel/server/svc"
 )
 
-func Migrate(ctx *svc.ServiceContext) {
+func Migrate(deps Deps) {
+	cfg := deps.currentConfig()
 	mc := orm.Mysql{
-		Config: ctx.Config.MySQL,
+		Config: cfg.MySQL,
 	}
 	now := time.Now()
 	if err := migrate.Migrate(mc.Dsn()).Up(); err != nil {
@@ -29,13 +29,13 @@ func Migrate(ctx *svc.ServiceContext) {
 		logger.Info("[Migrate] Database change, took " + time.Since(now).String())
 	}
 	// if not found admin user
-	err := ctx.DB.Transaction(func(tx *gorm.DB) error {
+	err := deps.DB.Transaction(func(tx *gorm.DB) error {
 		var count int64
 		if err := tx.Model(&user.User{}).Count(&count).Error; err != nil {
 			return err
 		}
 		if count == 0 {
-			if err := migrate.CreateAdminUser(ctx.Config.Administrator.Email, ctx.Config.Administrator.Password, tx); err != nil {
+			if err := migrate.CreateAdminUser(cfg.Administrator.Email, cfg.Administrator.Password, tx); err != nil {
 				logger.Errorf("[Migrate] CreateAdminUser error: %v", err.Error())
 				return err
 			}

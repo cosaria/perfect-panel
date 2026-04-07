@@ -7,12 +7,11 @@ import (
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 )
 
-func Currency(ctx *svc.ServiceContext) {
+func Currency(deps Deps) {
 	// Retrieve system currency configuration
-	currency, err := ctx.SystemModel.GetCurrencyConfig(context.Background())
+	currency, err := deps.SystemModel.GetCurrencyConfig(context.Background())
 	if err != nil {
 		logger.Errorf("[INIT] Failed to get currency configuration: %v", err.Error())
 		panic(fmt.Sprintf("[INIT] Failed to get currency configuration: %v", err.Error()))
@@ -24,11 +23,17 @@ func Currency(ctx *svc.ServiceContext) {
 		AccessKey      string
 	}{}
 	tool.SystemConfigSliceReflectToStruct(currency, &configs)
-	ctx.ExchangeRate = 0 // Default exchange rate to 0
-	ctx.Config.Currency = config.Currency{
+	if deps.SetExchangeRate != nil {
+		deps.SetExchangeRate(0)
+	}
+	cfg := deps.currentConfig()
+	cfg.Currency = config.Currency{
 		Unit:      configs.CurrencyUnit,
 		Symbol:    configs.CurrencySymbol,
 		AccessKey: configs.AccessKey,
 	}
-	logger.Infof("[INIT] Currency configuration: %v", ctx.Config.Currency)
+	if deps.Config != nil {
+		deps.Config.Currency = cfg.Currency
+	}
+	logger.Infof("[INIT] Currency configuration: %v", cfg.Currency)
 }

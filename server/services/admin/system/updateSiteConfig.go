@@ -2,25 +2,24 @@ package system
 
 import (
 	"context"
+	"reflect"
+
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/initialize"
-	"github.com/perfect-panel/server/models/system"
+	modelsystem "github.com/perfect-panel/server/models/system"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
-	"reflect"
 )
 
 type UpdateSiteConfigInput struct {
 	Body types.SiteConfig
 }
 
-func UpdateSiteConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateSiteConfigInput) (*struct{}, error) {
+func UpdateSiteConfigHandler(deps Deps) func(context.Context, *UpdateSiteConfigInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateSiteConfigInput) (*struct{}, error) {
-		l := NewUpdateSiteConfigLogic(ctx, svcCtx)
+		l := NewUpdateSiteConfigLogic(ctx, deps)
 		if err := l.UpdateSiteConfig(&input.Body); err != nil {
 			return nil, err
 		}
@@ -30,15 +29,15 @@ func UpdateSiteConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *
 
 type UpdateSiteConfigLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
-func NewUpdateSiteConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateSiteConfigLogic {
+func NewUpdateSiteConfigLogic(ctx context.Context, deps Deps) *UpdateSiteConfigLogic {
 	return &UpdateSiteConfigLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -47,14 +46,14 @@ func (l *UpdateSiteConfigLogic) UpdateSiteConfig(req *types.SiteConfig) error {
 	v := reflect.ValueOf(*req)
 	// Get the reflection type of the structure
 	t := v.Type()
-	err := l.svcCtx.SystemModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err := l.deps.SystemModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		var err error
 		for i := 0; i < v.NumField(); i++ {
 			// Get the field name
 			fieldName := t.Field(i).Name
 			// Get the field value
 			fieldValue := v.Field(i)
-			err = db.Model(&system.System{}).Where("`category` = 'site' and `key` = ?", fieldName).Update("value", fieldValue.String()).Error
+			err = db.Model(&modelsystem.System{}).Where("`category` = 'site' and `key` = ?", fieldName).Update("value", fieldValue.String()).Error
 			if err != nil {
 				break
 			}
@@ -63,12 +62,14 @@ func (l *UpdateSiteConfigLogic) UpdateSiteConfig(req *types.SiteConfig) error {
 			return err
 		}
 
-		return l.svcCtx.Redis.Del(l.ctx, config.SiteConfigKey, config.GlobalConfigKey).Err()
+		return l.deps.Redis.Del(l.ctx, config.SiteConfigKey, config.GlobalConfigKey).Err()
 	})
 	if err != nil {
 		l.Logger.Error("[UpdateSiteConfig] update site config error", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update site config error: %v", err.Error())
 	}
-	initialize.Site(l.svcCtx)
+	if l.deps.ReloadSite != nil {
+		l.deps.ReloadSite()
+	}
 	return nil
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/ip"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"strings"
@@ -17,9 +16,9 @@ type CreateServerInput struct {
 	Body types.CreateServerRequest
 }
 
-func CreateServerHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateServerInput) (*struct{}, error) {
+func CreateServerHandler(deps Deps) func(context.Context, *CreateServerInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateServerInput) (*struct{}, error) {
-		l := NewCreateServerLogic(ctx, svcCtx)
+		l := NewCreateServerLogic(ctx, deps)
 		if err := l.CreateServer(&input.Body); err != nil {
 			return nil, err
 		}
@@ -29,16 +28,16 @@ func CreateServerHandler(svcCtx *svc.ServiceContext) func(context.Context, *Crea
 
 type CreateServerLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewCreateServerLogic Create Server
-func NewCreateServerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateServerLogic {
+func NewCreateServerLogic(ctx context.Context, deps Deps) *CreateServerLogic {
 	return &CreateServerLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -114,7 +113,7 @@ func (l *CreateServerLogic) CreateServer(req *types.CreateServerRequest) error {
 			data.Country = result.Country
 		}
 	}
-	err = l.svcCtx.NodeModel.InsertServer(l.ctx, &data)
+	err = l.deps.NodeModel.InsertServer(l.ctx, &data)
 	if err != nil {
 		l.Errorf("[CreateServer] Insert Server error: %v", err.Error())
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "insert server error: %v", err)

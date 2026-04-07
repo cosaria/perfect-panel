@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type GetUserSubscribeTrafficLogsOutput struct {
 	Body *types.GetUserSubscribeTrafficLogsResponse
 }
 
-func GetUserSubscribeTrafficLogsHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserSubscribeTrafficLogsInput) (*GetUserSubscribeTrafficLogsOutput, error) {
+func GetUserSubscribeTrafficLogsHandler(deps Deps) func(context.Context, *GetUserSubscribeTrafficLogsInput) (*GetUserSubscribeTrafficLogsOutput, error) {
 	return func(ctx context.Context, input *GetUserSubscribeTrafficLogsInput) (*GetUserSubscribeTrafficLogsOutput, error) {
-		l := NewGetUserSubscribeTrafficLogsLogic(ctx, svcCtx)
+		l := NewGetUserSubscribeTrafficLogsLogic(ctx, deps)
 		resp, err := l.GetUserSubscribeTrafficLogs(&input.GetUserSubscribeTrafficLogsRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func GetUserSubscribeTrafficLogsHandler(svcCtx *svc.ServiceContext) func(context
 
 type GetUserSubscribeTrafficLogsLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get user subcribe traffic logs
-func NewGetUserSubscribeTrafficLogsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserSubscribeTrafficLogsLogic {
+func NewGetUserSubscribeTrafficLogsLogic(ctx context.Context, deps Deps) *GetUserSubscribeTrafficLogsLogic {
 	return &GetUserSubscribeTrafficLogsLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetUserSubscribeTrafficLogsLogic) GetUserSubscribeTrafficLogs(req *types.GetUserSubscribeTrafficLogsRequest) (resp *types.GetUserSubscribeTrafficLogsResponse, err error) {
-	list, total, err := l.svcCtx.TrafficLogModel.QueryTrafficLogPageList(l.ctx, req.UserId, req.SubscribeId, req.Page, req.Size)
+	list, total, err := l.deps.TrafficLogModel.QueryTrafficLogPageList(l.ctx, req.UserId, req.SubscribeId, req.Page, req.Size)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "GetUserSubscribeTrafficLogs failed: %v", err.Error())
 	}

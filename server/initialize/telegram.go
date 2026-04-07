@@ -11,12 +11,11 @@ import (
 	"github.com/perfect-panel/server/models/auth"
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/services/telegram"
-	"github.com/perfect-panel/server/svc"
 )
 
-func Telegram(svc *svc.ServiceContext) {
+func Telegram(deps Deps) {
 
-	method, err := svc.AuthModel.FindOneByMethod(context.Background(), "telegram")
+	method, err := deps.AuthModel.FindOneByMethod(context.Background(), "telegram")
 	if err != nil {
 		logger.Errorf("[Init Telegram Config] Get Telegram Config Error: %s", err.Error())
 		return
@@ -40,16 +39,26 @@ func Telegram(svc *svc.ServiceContext) {
 		return
 	}
 
-	if tgConfig.WebHookDomain == "" || svc.Config.Debug {
+	cfg := deps.currentConfig()
+	if tgConfig.WebHookDomain == "" || cfg.Debug {
 		// set Long Polling mode
 		updateConfig := tgbotapi.NewUpdate(0)
 		updateConfig.Timeout = 60
 		updates := bot.GetUpdatesChan(updateConfig)
 		go func() {
+			deps := telegram.Deps{
+				AuthModel:   deps.AuthModel,
+				SystemModel: deps.SystemModel,
+				UserModel:   deps.UserModel,
+				Redis:       deps.Redis,
+				DB:          deps.DB,
+				TelegramBot: bot,
+				Config:      deps.Config,
+			}
 			for update := range updates {
 				if update.Message != nil {
 					ctx := context.Background()
-					l := telegram.NewTelegramLogic(ctx, svc)
+					l := telegram.NewTelegramLogic(ctx, deps)
 					l.TelegramLogic(&update)
 				}
 			}
@@ -72,11 +81,15 @@ func Telegram(svc *svc.ServiceContext) {
 		logger.Error("[Init Telegram Config] Get Bot Info Error: ", logger.Field("error", err.Error()))
 		return
 	}
-	svc.Config.Telegram.BotID = user.ID
-	svc.Config.Telegram.BotName = user.UserName
-	svc.Config.Telegram.EnableNotify = tg.EnableNotify
-	svc.Config.Telegram.WebHookDomain = tg.WebHookDomain
-	svc.TelegramBot = bot
+	if deps.Config != nil {
+		deps.Config.Telegram.BotID = user.ID
+		deps.Config.Telegram.BotName = user.UserName
+		deps.Config.Telegram.EnableNotify = tg.EnableNotify
+		deps.Config.Telegram.WebHookDomain = tg.WebHookDomain
+	}
+	if deps.SetTelegramBot != nil {
+		deps.SetTelegramBot(bot)
+	}
 
 	logger.Info("[Init Telegram Config] Webhook set success")
 }

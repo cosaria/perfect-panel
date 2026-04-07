@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -15,9 +14,9 @@ type CreateUserAuthMethodInput struct {
 	Body types.CreateUserAuthMethodRequest
 }
 
-func CreateUserAuthMethodHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateUserAuthMethodInput) (*struct{}, error) {
+func CreateUserAuthMethodHandler(deps Deps) func(context.Context, *CreateUserAuthMethodInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateUserAuthMethodInput) (*struct{}, error) {
-		l := NewCreateUserAuthMethodLogic(ctx, svcCtx)
+		l := NewCreateUserAuthMethodLogic(ctx, deps)
 		if err := l.CreateUserAuthMethod(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,21 +26,21 @@ func CreateUserAuthMethodHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type CreateUserAuthMethodLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Create user auth method
-func NewCreateUserAuthMethodLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateUserAuthMethodLogic {
+func NewCreateUserAuthMethodLogic(ctx context.Context, deps Deps) *CreateUserAuthMethodLogic {
 	return &CreateUserAuthMethodLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *CreateUserAuthMethodLogic) CreateUserAuthMethod(req *types.CreateUserAuthMethodRequest) error {
-	err := l.svcCtx.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err := l.deps.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		var data *user.AuthMethods
 		if err := db.Model(&user.AuthMethods{}).Where("`user_id` = ? AND `auth_type` = ?", req.UserId, req.AuthType).First(&data).Error; err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 			return err

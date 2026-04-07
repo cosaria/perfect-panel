@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"time"
 )
@@ -17,9 +16,9 @@ type QueryQuotaTaskPreCountOutput struct {
 	Body *types.QueryQuotaTaskPreCountResponse
 }
 
-func QueryQuotaTaskPreCountHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryQuotaTaskPreCountInput) (*QueryQuotaTaskPreCountOutput, error) {
+func QueryQuotaTaskPreCountHandler(deps Deps) func(context.Context, *QueryQuotaTaskPreCountInput) (*QueryQuotaTaskPreCountOutput, error) {
 	return func(ctx context.Context, input *QueryQuotaTaskPreCountInput) (*QueryQuotaTaskPreCountOutput, error) {
-		l := NewQueryQuotaTaskPreCountLogic(ctx, svcCtx)
+		l := NewQueryQuotaTaskPreCountLogic(ctx, deps)
 		resp, err := l.QueryQuotaTaskPreCount(&input.Body)
 		if err != nil {
 			return nil, err
@@ -30,21 +29,21 @@ func QueryQuotaTaskPreCountHandler(svcCtx *svc.ServiceContext) func(context.Cont
 
 type QueryQuotaTaskPreCountLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewQueryQuotaTaskPreCountLogic Query quota task pre-count
-func NewQueryQuotaTaskPreCountLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryQuotaTaskPreCountLogic {
+func NewQueryQuotaTaskPreCountLogic(ctx context.Context, deps Deps) *QueryQuotaTaskPreCountLogic {
 	return &QueryQuotaTaskPreCountLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *QueryQuotaTaskPreCountLogic) QueryQuotaTaskPreCount(req *types.QueryQuotaTaskPreCountRequest) (resp *types.QueryQuotaTaskPreCountResponse, err error) {
-	tx := l.svcCtx.DB.WithContext(l.ctx).Model(&user.Subscribe{})
+	tx := l.deps.DB.WithContext(l.ctx).Model(&user.Subscribe{})
 	var count int64
 
 	if len(req.Subscribers) > 0 {

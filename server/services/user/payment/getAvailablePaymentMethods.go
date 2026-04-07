@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +13,9 @@ type GetAvailablePaymentMethodsOutput struct {
 	Body *types.GetAvailablePaymentMethodsResponse
 }
 
-func GetAvailablePaymentMethodsHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetAvailablePaymentMethodsOutput, error) {
+func GetAvailablePaymentMethodsHandler(deps Deps) func(context.Context, *struct{}) (*GetAvailablePaymentMethodsOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetAvailablePaymentMethodsOutput, error) {
-		l := NewGetAvailablePaymentMethodsLogic(ctx, svcCtx)
+		l := NewGetAvailablePaymentMethodsLogic(ctx, deps)
 		resp, err := l.GetAvailablePaymentMethods()
 		if err != nil {
 			return nil, err
@@ -27,21 +26,21 @@ func GetAvailablePaymentMethodsHandler(svcCtx *svc.ServiceContext) func(context.
 
 type GetAvailablePaymentMethodsLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get available payment methods
-func NewGetAvailablePaymentMethodsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAvailablePaymentMethodsLogic {
+func NewGetAvailablePaymentMethodsLogic(ctx context.Context, deps Deps) *GetAvailablePaymentMethodsLogic {
 	return &GetAvailablePaymentMethodsLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetAvailablePaymentMethodsLogic) GetAvailablePaymentMethods() (resp *types.GetAvailablePaymentMethodsResponse, err error) {
-	data, err := l.svcCtx.PaymentModel.FindAvailableMethods(l.ctx)
+	data, err := l.deps.PaymentModel.FindAvailableMethods(l.ctx)
 	if err != nil {
 		l.Errorw("[GetAvailablePaymentMethods] database error", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "GetAvailablePaymentMethods: %v", err.Error())

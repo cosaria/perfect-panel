@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -15,9 +14,9 @@ type CreateNodeInput struct {
 	Body types.CreateNodeRequest
 }
 
-func CreateNodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateNodeInput) (*struct{}, error) {
+func CreateNodeHandler(deps Deps) func(context.Context, *CreateNodeInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateNodeInput) (*struct{}, error) {
-		l := NewCreateNodeLogic(ctx, svcCtx)
+		l := NewCreateNodeLogic(ctx, deps)
 		if err := l.CreateNode(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,16 +26,16 @@ func CreateNodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *Create
 
 type CreateNodeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewCreateNodeLogic Create Node
-func NewCreateNodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateNodeLogic {
+func NewCreateNodeLogic(ctx context.Context, deps Deps) *CreateNodeLogic {
 	return &CreateNodeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -50,7 +49,7 @@ func (l *CreateNodeLogic) CreateNode(req *types.CreateNodeRequest) error {
 		ServerId: req.ServerId,
 		Protocol: req.Protocol,
 	}
-	err := l.svcCtx.NodeModel.InsertNode(l.ctx, &data)
+	err := l.deps.NodeModel.InsertNode(l.ctx, &data)
 	if err != nil {
 		l.Errorw("[CreateNode] Insert Database Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "[CreateNode] Insert Database Error")

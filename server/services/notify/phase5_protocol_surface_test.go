@@ -11,8 +11,8 @@ import (
 	"github.com/perfect-panel/server/config"
 	paymentModel "github.com/perfect-panel/server/models/payment"
 	"github.com/perfect-panel/server/routers/middleware"
+	appruntime "github.com/perfect-panel/server/runtime"
 	telegramsvc "github.com/perfect-panel/server/services/telegram"
-	"github.com/perfect-panel/server/svc"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,7 +33,7 @@ func TestPhase5PaymentNotifyUnsupportedPlatformUsesPlainTextFailure(t *testing.T
 	gin.SetMode(gin.TestMode)
 
 	router := gin.New()
-	router.POST("/payment/notify", withRequestContext(config.CtxKeyPlatform, "unsupported", PaymentNotifyHandler(&svc.ServiceContext{})))
+	router.POST("/payment/notify", withRequestContext(config.CtxKeyPlatform, "unsupported", PaymentNotifyHandler(Deps{})))
 
 	req := httptest.NewRequest(http.MethodPost, "/payment/notify", nil)
 	resp := httptest.NewRecorder()
@@ -50,10 +50,10 @@ func TestPhase5NotifyMiddlewareLookupFailureKeepsEPayProtocolFailureShape(t *tes
 
 	router := gin.New()
 	group := router.Group("/api/v1/notify")
-	group.Use(middleware.NotifyMiddleware(&svc.ServiceContext{
+	group.Use(middleware.NotifyMiddleware(&appruntime.Deps{
 		PaymentModel: stubPaymentModel{err: errors.New("payment not found")},
 	}))
-	group.Any("/:platform/:token", PaymentNotifyHandler(&svc.ServiceContext{}))
+	group.Any("/:platform/:token", PaymentNotifyHandler(Deps{}))
 
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/notify/EPay/missing-token", nil)
 	resp := httptest.NewRecorder()
@@ -70,10 +70,10 @@ func TestPhase5NotifyMiddlewareLookupFailureKeepsStripeProtocolFailureShape(t *t
 
 	router := gin.New()
 	group := router.Group("/api/v1/notify")
-	group.Use(middleware.NotifyMiddleware(&svc.ServiceContext{
+	group.Use(middleware.NotifyMiddleware(&appruntime.Deps{
 		PaymentModel: stubPaymentModel{err: errors.New("payment not found")},
 	}))
-	group.Any("/:platform/:token", PaymentNotifyHandler(&svc.ServiceContext{}))
+	group.Any("/:platform/:token", PaymentNotifyHandler(Deps{}))
 
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/notify/Stripe/missing-token", nil)
 	resp := httptest.NewRecorder()
@@ -92,7 +92,7 @@ func TestPhase5StripeNotifyFailureKeepsProtocolAckShape(t *testing.T) {
 	router.POST(
 		"/payment/notify",
 		withRequestContext(config.CtxKeyPlatform, "Stripe",
-			withRequestContext(config.CtxKeyPayment, &paymentModel.Payment{Config: `{}`}, PaymentNotifyHandler(&svc.ServiceContext{}))),
+			withRequestContext(config.CtxKeyPayment, &paymentModel.Payment{Config: `{}`}, PaymentNotifyHandler(Deps{}))),
 	)
 
 	req := httptest.NewRequest(http.MethodPost, "/payment/notify", nil)
@@ -114,7 +114,7 @@ func TestPhase5EPayInvalidSignatureKeepsProtocolFailureShape(t *testing.T) {
 		withRequestContext(config.CtxKeyPlatform, "EPay",
 			withRequestContext(config.CtxKeyPayment, &paymentModel.Payment{
 				Config: `{"pid":"pid","url":"https://example.com","key":"secret","type":"alipay"}`,
-			}, PaymentNotifyHandler(&svc.ServiceContext{}))),
+			}, PaymentNotifyHandler(Deps{}))),
 	)
 
 	req := httptest.NewRequest(
@@ -135,10 +135,11 @@ func TestPhase5TelegramSecretMismatchKeepsEmptyAck(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	router := gin.New()
-	telegramsvc.RegisterTelegramHandlers(router, &svc.ServiceContext{
-		Config: config.Config{
-			Telegram: config.Telegram{BotToken: "bot-token"},
-		},
+	telegramCfg := config.Config{
+		Telegram: config.Telegram{BotToken: "bot-token"},
+	}
+	telegramsvc.RegisterTelegramHandlers(router, telegramsvc.Deps{
+		Config: &telegramCfg,
 	})
 
 	req := httptest.NewRequest(http.MethodPost, "/api/v1/telegram/webhook?secret=wrong", nil)

@@ -8,7 +8,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/uuidx"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"time"
@@ -18,9 +17,9 @@ type CreateUserSubscribeInput struct {
 	Body types.CreateUserSubscribeRequest
 }
 
-func CreateUserSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateUserSubscribeInput) (*struct{}, error) {
+func CreateUserSubscribeHandler(deps Deps) func(context.Context, *CreateUserSubscribeInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateUserSubscribeInput) (*struct{}, error) {
-		l := NewCreateUserSubscribeLogic(ctx, svcCtx)
+		l := NewCreateUserSubscribeLogic(ctx, deps)
 		if err := l.CreateUserSubscribe(&input.Body); err != nil {
 			return nil, err
 		}
@@ -30,35 +29,35 @@ func CreateUserSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type CreateUserSubscribeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Create user subcribe
-func NewCreateUserSubscribeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateUserSubscribeLogic {
+func NewCreateUserSubscribeLogic(ctx context.Context, deps Deps) *CreateUserSubscribeLogic {
 	return &CreateUserSubscribeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *CreateUserSubscribeLogic) CreateUserSubscribe(req *types.CreateUserSubscribeRequest) error {
 	// validate user
-	userInfo, err := l.svcCtx.UserModel.FindOne(l.ctx, req.UserId)
+	userInfo, err := l.deps.UserModel.FindOne(l.ctx, req.UserId)
 	if err != nil {
 		l.Errorw("FindOne error", logger.Field("error", err.Error()), logger.Field("userId", req.UserId))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindOne error: %v", err.Error())
 	}
-	subs, err := l.svcCtx.UserModel.QueryUserSubscribe(l.ctx, req.UserId)
+	subs, err := l.deps.UserModel.QueryUserSubscribe(l.ctx, req.UserId)
 	if err != nil {
 		l.Errorw("QueryUserSubscribe error", logger.Field("error", err.Error()), logger.Field("userId", req.UserId))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "QueryUserSubscribe error: %v", err.Error())
 	}
-	if len(subs) >= 1 && l.svcCtx.Config.Subscribe.SingleModel {
+	if len(subs) >= 1 && l.deps.Config.Subscribe.SingleModel {
 		return errors.Wrapf(xerr.NewErrCode(xerr.SingleSubscribeModeExceedsLimit), "Single subscribe mode exceeds limit")
 	}
-	sub, err := l.svcCtx.SubscribeModel.FindOne(l.ctx, req.SubscribeId)
+	sub, err := l.deps.SubscribeModel.FindOne(l.ctx, req.SubscribeId)
 	if err != nil {
 		l.Errorw("FindOne error", logger.Field("error", err.Error()), logger.Field("subscribeId", req.SubscribeId))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindOne error: %v", err.Error())
@@ -79,18 +78,18 @@ func (l *CreateUserSubscribeLogic) CreateUserSubscribe(req *types.CreateUserSubs
 		UUID:        uuid.New().String(),
 		Status:      1,
 	}
-	if err = l.svcCtx.UserModel.InsertSubscribe(l.ctx, &userSub); err != nil {
+	if err = l.deps.UserModel.InsertSubscribe(l.ctx, &userSub); err != nil {
 		l.Errorw("InsertSubscribe error", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "InsertSubscribe error: %v", err.Error())
 	}
 
-	err = l.svcCtx.UserModel.UpdateUserCache(l.ctx, userInfo)
+	err = l.deps.UserModel.UpdateUserCache(l.ctx, userInfo)
 	if err != nil {
 		l.Errorw("UpdateUserCache error", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "UpdateUserCache error: %v", err.Error())
 	}
 
-	err = l.svcCtx.SubscribeModel.ClearCache(l.ctx, userSub.SubscribeId)
+	err = l.deps.SubscribeModel.ClearCache(l.ctx, userSub.SubscribeId)
 	if err != nil {
 		logger.Errorw("ClearSubscribe error", logger.Field("error", err.Error()))
 	}

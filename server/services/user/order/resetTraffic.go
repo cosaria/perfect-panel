@@ -11,7 +11,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	queue "github.com/perfect-panel/server/worker/spec"
 	"github.com/pkg/errors"
@@ -27,9 +26,9 @@ type ResetTrafficOutput struct {
 	Body *types.ResetTrafficOrderResponse
 }
 
-func ResetTrafficHandler(svcCtx *svc.ServiceContext) func(context.Context, *ResetTrafficInput) (*ResetTrafficOutput, error) {
+func ResetTrafficHandler(deps Deps) func(context.Context, *ResetTrafficInput) (*ResetTrafficOutput, error) {
 	return func(ctx context.Context, input *ResetTrafficInput) (*ResetTrafficOutput, error) {
-		l := NewResetTrafficLogic(ctx, svcCtx)
+		l := NewResetTrafficLogic(ctx, deps)
 		resp, err := l.ResetTraffic(&input.Body)
 		if err != nil {
 			return nil, err
@@ -40,16 +39,16 @@ func ResetTrafficHandler(svcCtx *svc.ServiceContext) func(context.Context, *Rese
 
 type ResetTrafficLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Reset traffic
-func NewResetTrafficLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetTrafficLogic {
+func NewResetTrafficLogic(ctx context.Context, deps Deps) *ResetTrafficLogic {
 	return &ResetTrafficLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -60,7 +59,7 @@ func (l *ResetTrafficLogic) ResetTraffic(req *types.ResetTrafficOrderRequest) (r
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}
 	// find user subscription
-	userSubscribe, err := l.svcCtx.UserModel.FindOneUserSubscribe(l.ctx, req.UserSubscribeID)
+	userSubscribe, err := l.deps.UserModel.FindOneUserSubscribe(l.ctx, req.UserSubscribeID)
 	if err != nil {
 		l.Errorw("[ResetTraffic] Database query error", logger.Field("error", err.Error()), logger.Field("UserSubscribeID", req.UserSubscribeID))
 		return nil, errors.Wrapf(err, "find user subscribe error: %v", err.Error())
@@ -84,7 +83,7 @@ func (l *ResetTrafficLogic) ResetTraffic(req *types.ResetTrafficOrderRequest) (r
 		}
 	}
 	// find payment method
-	payment, err := l.svcCtx.PaymentModel.FindOne(l.ctx, req.Payment)
+	payment, err := l.deps.PaymentModel.FindOne(l.ctx, req.Payment)
 	if err != nil {
 		l.Errorw("[ResetTraffic] Database query error", logger.Field("error", err.Error()), logger.Field("payment", req.Payment))
 		return nil, errors.Wrapf(err, "find payment error: %v", err.Error())
@@ -112,11 +111,11 @@ func (l *ResetTrafficLogic) ResetTraffic(req *types.ResetTrafficOrderRequest) (r
 		SubscribeToken: userSubscribe.Token,
 	}
 	// Database transaction
-	err = l.svcCtx.DB.Transaction(func(db *gorm.DB) error {
+	err = l.deps.DB.Transaction(func(db *gorm.DB) error {
 		// update user deduction && Pre deduction ,Return after canceling the order
 		if orderInfo.GiftAmount > 0 {
 			// update user deduction && Pre deduction ,Return after canceling the order
-			if err := l.svcCtx.UserModel.Update(l.ctx, u, db); err != nil {
+			if err := l.deps.UserModel.Update(l.ctx, u, db); err != nil {
 				l.Errorw("[ResetTraffic] Database update error", logger.Field("error", err.Error()), logger.Field("user", u))
 				return err
 			}
@@ -158,7 +157,7 @@ func (l *ResetTrafficLogic) ResetTraffic(req *types.ResetTrafficOrderRequest) (r
 		l.Errorw("[ResetTraffic] Marshal payload error", logger.Field("error", err.Error()), logger.Field("payload", payload))
 	}
 	task := asynq.NewTask(queue.DeferCloseOrder, val, asynq.MaxRetry(3))
-	taskInfo, err := l.svcCtx.Queue.Enqueue(task, asynq.ProcessIn(CloseOrderTimeMinutes*time.Minute))
+	taskInfo, err := l.deps.Queue.Enqueue(task, asynq.ProcessIn(CloseOrderTimeMinutes*time.Minute))
 	if err != nil {
 		l.Errorw("[ResetTraffic] Enqueue task error", logger.Field("error", err.Error()), logger.Field("task", task))
 	} else {

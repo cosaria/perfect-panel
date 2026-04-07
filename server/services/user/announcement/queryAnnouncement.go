@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -19,9 +18,9 @@ type QueryAnnouncementOutput struct {
 	Body *types.QueryAnnouncementResponse
 }
 
-func QueryAnnouncementHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryAnnouncementInput) (*QueryAnnouncementOutput, error) {
+func QueryAnnouncementHandler(deps Deps) func(context.Context, *QueryAnnouncementInput) (*QueryAnnouncementOutput, error) {
 	return func(ctx context.Context, input *QueryAnnouncementInput) (*QueryAnnouncementOutput, error) {
-		l := NewQueryAnnouncementLogic(ctx, svcCtx)
+		l := NewQueryAnnouncementLogic(ctx, deps)
 		resp, err := l.QueryAnnouncement(&input.Body)
 		if err != nil {
 			return nil, err
@@ -32,22 +31,22 @@ func QueryAnnouncementHandler(svcCtx *svc.ServiceContext) func(context.Context, 
 
 type QueryAnnouncementLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Query announcement
-func NewQueryAnnouncementLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryAnnouncementLogic {
+func NewQueryAnnouncementLogic(ctx context.Context, deps Deps) *QueryAnnouncementLogic {
 	return &QueryAnnouncementLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *QueryAnnouncementLogic) QueryAnnouncement(req *types.QueryAnnouncementRequest) (resp *types.QueryAnnouncementResponse, err error) {
 	enable := true
-	total, list, err := l.svcCtx.AnnouncementModel.GetAnnouncementListByPage(l.ctx, req.Page, req.Size, announcement.Filter{
+	total, list, err := l.deps.AnnouncementModel.GetAnnouncementListByPage(l.ctx, req.Page, req.Size, announcement.Filter{
 		Show:   &enable,
 		Pinned: req.Pinned,
 		Popup:  req.Popup,

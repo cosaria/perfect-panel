@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/notify/phone"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -20,9 +19,9 @@ type GetUserListOutput struct {
 	Body *types.GetUserListResponse
 }
 
-func GetUserListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserListInput) (*GetUserListOutput, error) {
+func GetUserListHandler(deps Deps) func(context.Context, *GetUserListInput) (*GetUserListOutput, error) {
 	return func(ctx context.Context, input *GetUserListInput) (*GetUserListOutput, error) {
-		l := NewGetUserListLogic(ctx, svcCtx)
+		l := NewGetUserListLogic(ctx, deps)
 		resp, err := l.GetUserList(&input.Body)
 		if err != nil {
 			return nil, err
@@ -32,20 +31,20 @@ func GetUserListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUs
 }
 
 type GetUserListLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 	logger.Logger
 }
 
-func NewGetUserListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserListLogic {
+func NewGetUserListLogic(ctx context.Context, deps Deps) *GetUserListLogic {
 	return &GetUserListLogic{
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 		Logger: logger.WithContext(ctx),
 	}
 }
 func (l *GetUserListLogic) GetUserList(req *types.GetUserListRequest) (*types.GetUserListResponse, error) {
-	list, total, err := l.svcCtx.UserModel.QueryPageList(l.ctx, req.Page, req.Size, &user.UserFilterParams{
+	list, total, err := l.deps.UserModel.QueryPageList(l.ctx, req.Page, req.Size, &user.UserFilterParams{
 		UserId:          req.UserId,
 		Search:          req.Search,
 		Unscoped:        req.Unscoped,

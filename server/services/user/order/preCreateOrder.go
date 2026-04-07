@@ -9,7 +9,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -23,9 +22,9 @@ type PreCreateOrderOutput struct {
 	Body *types.PreOrderResponse
 }
 
-func PreCreateOrderHandler(svcCtx *svc.ServiceContext) func(context.Context, *PreCreateOrderInput) (*PreCreateOrderOutput, error) {
+func PreCreateOrderHandler(deps Deps) func(context.Context, *PreCreateOrderInput) (*PreCreateOrderOutput, error) {
 	return func(ctx context.Context, input *PreCreateOrderInput) (*PreCreateOrderOutput, error) {
-		l := NewPreCreateOrderLogic(ctx, svcCtx)
+		l := NewPreCreateOrderLogic(ctx, deps)
 		resp, err := l.PreCreateOrder(&input.Body)
 		if err != nil {
 			return nil, err
@@ -36,17 +35,17 @@ func PreCreateOrderHandler(svcCtx *svc.ServiceContext) func(context.Context, *Pr
 
 type PreCreateOrderLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewPreCreateOrderLogic creates a new pre-create order logic instance for order preview operations.
 // It initializes the logger with context and sets up the service context for database operations.
-func NewPreCreateOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PreCreateOrderLogic {
+func NewPreCreateOrderLogic(ctx context.Context, deps Deps) *PreCreateOrderLogic {
 	return &PreCreateOrderLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -66,7 +65,7 @@ func (l *PreCreateOrderLogic) PreCreateOrder(req *types.PurchaseOrderRequest) (r
 	}
 
 	// find subscribe plan
-	sub, err := l.svcCtx.SubscribeModel.FindOne(l.ctx, req.SubscribeId)
+	sub, err := l.deps.SubscribeModel.FindOne(l.ctx, req.SubscribeId)
 	if err != nil {
 		l.Errorw("[PreCreateOrder] Database query error", logger.Field("error", err.Error()), logger.Field("subscribe_id", req.SubscribeId))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find subscribe error: %v", err.Error())
@@ -83,7 +82,7 @@ func (l *PreCreateOrderLogic) PreCreateOrder(req *types.PurchaseOrderRequest) (r
 	discountAmount := price - amount
 	var couponAmount int64
 	if req.Coupon != "" {
-		couponInfo, err := l.svcCtx.CouponModel.FindOneByCode(l.ctx, req.Coupon)
+		couponInfo, err := l.deps.CouponModel.FindOneByCode(l.ctx, req.Coupon)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return nil, errors.Wrapf(xerr.NewErrCode(xerr.CouponNotExist), "coupon not found")
@@ -94,7 +93,7 @@ func (l *PreCreateOrderLogic) PreCreateOrder(req *types.PurchaseOrderRequest) (r
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.CouponAlreadyUsed), "coupon used")
 		}
 		var count int64
-		err = l.svcCtx.DB.Transaction(func(tx *gorm.DB) error {
+		err = l.deps.DB.Transaction(func(tx *gorm.DB) error {
 			return tx.Model(&order.Order{}).Where("user_id = ? and coupon = ?", u.Id, req.Coupon).Count(&count).Error
 		})
 
@@ -128,7 +127,7 @@ func (l *PreCreateOrderLogic) PreCreateOrder(req *types.PurchaseOrderRequest) (r
 	}
 	var feeAmount int64
 	if req.Payment != 0 {
-		payment, err := l.svcCtx.PaymentModel.FindOne(l.ctx, req.Payment)
+		payment, err := l.deps.PaymentModel.FindOne(l.ctx, req.Payment)
 		if err != nil {
 			l.Errorw("[PreCreateOrder] Database query error", logger.Field("error", err.Error()), logger.Field("payment", req.Payment))
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find payment method error: %v", err.Error())

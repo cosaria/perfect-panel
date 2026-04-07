@@ -15,22 +15,21 @@ import (
 	"github.com/perfect-panel/server/models/payment"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment/stripe"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/worker/spec"
 )
 
 type StripeNotifyLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewStripeNotifyLogic Stripe notify
-func NewStripeNotifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *StripeNotifyLogic {
+func NewStripeNotifyLogic(ctx context.Context, deps Deps) *StripeNotifyLogic {
 	return &StripeNotifyLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -62,7 +61,7 @@ func (l *StripeNotifyLogic) StripeNotify(r *http.Request, w http.ResponseWriter)
 		l.Errorw("[StripeNotify] error", logger.Field("errors", err.Error()))
 		return markInvalidNotification(err)
 	}
-	orderInfo, err := l.svcCtx.OrderModel.FindOneByOrderNo(l.ctx, notify.OrderNo)
+	orderInfo, err := l.deps.OrderModel.FindOneByOrderNo(l.ctx, notify.OrderNo)
 	if err != nil {
 		l.Logger.Error("[StripeNotify] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", notify.OrderNo))
 		return errors.Wrapf(xerr.NewErrCode(xerr.OrderNotExist), "order not exist: %v", notify.OrderNo)
@@ -72,7 +71,7 @@ func (l *StripeNotifyLogic) StripeNotify(r *http.Request, w http.ResponseWriter)
 			return nil
 		}
 		// update order status
-		err = l.svcCtx.OrderModel.UpdateOrderStatus(l.ctx, notify.OrderNo, 2)
+		err = l.deps.OrderModel.UpdateOrderStatus(l.ctx, notify.OrderNo, 2)
 		if err != nil {
 			return err
 		}
@@ -86,7 +85,7 @@ func (l *StripeNotifyLogic) StripeNotify(r *http.Request, w http.ResponseWriter)
 			return err
 		}
 		task := asynq.NewTask(spec.ForthwithActivateOrder, bytes)
-		_, err = l.svcCtx.Queue.Enqueue(task)
+		_, err = l.deps.Queue.Enqueue(task)
 		if err != nil {
 			l.Errorw("[StripeNotify] Enqueue error", logger.Field("errors", err.Error()))
 			return err

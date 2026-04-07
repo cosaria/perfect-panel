@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	paymentPlatform "github.com/perfect-panel/server/modules/payment"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -20,9 +19,9 @@ type GetPaymentMethodListOutput struct {
 	Body *types.GetPaymentMethodListResponse
 }
 
-func GetPaymentMethodListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetPaymentMethodListInput) (*GetPaymentMethodListOutput, error) {
+func GetPaymentMethodListHandler(deps Deps) func(context.Context, *GetPaymentMethodListInput) (*GetPaymentMethodListOutput, error) {
 	return func(ctx context.Context, input *GetPaymentMethodListInput) (*GetPaymentMethodListOutput, error) {
-		l := NewGetPaymentMethodListLogic(ctx, svcCtx)
+		l := NewGetPaymentMethodListLogic(ctx, deps)
 		resp, err := l.GetPaymentMethodList(&input.Body)
 		if err != nil {
 			return nil, err
@@ -33,21 +32,21 @@ func GetPaymentMethodListHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type GetPaymentMethodListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetPaymentMethodListLogic Get Payment Method List
-func NewGetPaymentMethodListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetPaymentMethodListLogic {
+func NewGetPaymentMethodListLogic(ctx context.Context, deps Deps) *GetPaymentMethodListLogic {
 	return &GetPaymentMethodListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetPaymentMethodListLogic) GetPaymentMethodList(req *types.GetPaymentMethodListRequest) (resp *types.GetPaymentMethodListResponse, err error) {
-	total, list, err := l.svcCtx.PaymentModel.FindListByPage(l.ctx, req.Page, req.Size, &payment.Filter{
+	total, list, err := l.deps.PaymentModel.FindListByPage(l.ctx, req.Page, req.Size, &payment.Filter{
 		Search: req.Search,
 		Mark:   req.Platform,
 		Enable: req.Enable,
@@ -70,7 +69,7 @@ func (l *GetPaymentMethodListLogic) GetPaymentMethodList(req *types.GetPaymentMe
 			if v.Domain != "" {
 				notifyUrl = v.Domain + "/api/v1/notify/" + v.Platform + "/" + v.Token
 			} else {
-				notifyUrl = "https://" + l.svcCtx.Config.Host + "/api/v1/notify/" + v.Platform + "/" + v.Token
+				notifyUrl = "https://" + l.deps.Config.Host + "/api/v1/notify/" + v.Platform + "/" + v.Token
 			}
 		}
 		resp.List[i] = types.PaymentMethodDetail{

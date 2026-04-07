@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"strings"
@@ -20,9 +19,9 @@ type GetSubscribeDetailsOutput struct {
 	Body *types.Subscribe
 }
 
-func GetSubscribeDetailsHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetSubscribeDetailsInput) (*GetSubscribeDetailsOutput, error) {
+func GetSubscribeDetailsHandler(deps Deps) func(context.Context, *GetSubscribeDetailsInput) (*GetSubscribeDetailsOutput, error) {
 	return func(ctx context.Context, input *GetSubscribeDetailsInput) (*GetSubscribeDetailsOutput, error) {
-		l := NewGetSubscribeDetailsLogic(ctx, svcCtx)
+		l := NewGetSubscribeDetailsLogic(ctx, deps)
 		resp, err := l.GetSubscribeDetails(&input.GetSubscribeDetailsRequest)
 		if err != nil {
 			return nil, err
@@ -33,21 +32,21 @@ func GetSubscribeDetailsHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type GetSubscribeDetailsLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get subscribe details
-func NewGetSubscribeDetailsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSubscribeDetailsLogic {
+func NewGetSubscribeDetailsLogic(ctx context.Context, deps Deps) *GetSubscribeDetailsLogic {
 	return &GetSubscribeDetailsLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetSubscribeDetailsLogic) GetSubscribeDetails(req *types.GetSubscribeDetailsRequest) (resp *types.Subscribe, err error) {
-	sub, err := l.svcCtx.SubscribeModel.FindOne(l.ctx, req.Id)
+	sub, err := l.deps.SubscribeModel.FindOne(l.ctx, req.Id)
 	if err != nil {
 		l.Logger.Error("[GetSubscribeDetailsLogic] get subscribe details failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get subscribe details failed: %v", err.Error())

@@ -31,6 +31,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// ServiceContext is a temporary composition-root shell for Phase 6 migration.
+// Downstream packages should translate it into package-local deps instead of
+// treating it as a universal service-layer container.
 type ServiceContext struct {
 	DB           *gorm.DB
 	Redis        *redis.Client

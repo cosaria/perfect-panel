@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type GetUserSubscribeByIdOutput struct {
 	Body *types.UserSubscribeDetail
 }
 
-func GetUserSubscribeByIdHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserSubscribeByIdInput) (*GetUserSubscribeByIdOutput, error) {
+func GetUserSubscribeByIdHandler(deps Deps) func(context.Context, *GetUserSubscribeByIdInput) (*GetUserSubscribeByIdOutput, error) {
 	return func(ctx context.Context, input *GetUserSubscribeByIdInput) (*GetUserSubscribeByIdOutput, error) {
-		l := NewGetUserSubscribeByIdLogic(ctx, svcCtx)
+		l := NewGetUserSubscribeByIdLogic(ctx, deps)
 		resp, err := l.GetUserSubscribeById(&input.GetUserSubscribeByIdRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func GetUserSubscribeByIdHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type GetUserSubscribeByIdLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get user subcribe by id
-func NewGetUserSubscribeByIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserSubscribeByIdLogic {
+func NewGetUserSubscribeByIdLogic(ctx context.Context, deps Deps) *GetUserSubscribeByIdLogic {
 	return &GetUserSubscribeByIdLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetUserSubscribeByIdLogic) GetUserSubscribeById(req *types.GetUserSubscribeByIdRequest) (resp *types.UserSubscribeDetail, err error) {
-	sub, err := l.svcCtx.UserModel.FindOneSubscribeDetailsById(l.ctx, req.Id)
+	sub, err := l.deps.UserModel.FindOneSubscribeDetailsById(l.ctx, req.Id)
 	if err != nil {
 		l.Errorw("[GetUserSubscribeByIdLogic] FindOneSubscribeDetailsById error", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindOneSubscribeDetailsById error: %v", err.Error())

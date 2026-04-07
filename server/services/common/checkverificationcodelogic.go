@@ -10,23 +10,22 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/notify/phone"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
 
 type CheckVerificationCodeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Check verification code
-func NewCheckVerificationCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckVerificationCodeLogic {
+func NewCheckVerificationCodeLogic(ctx context.Context, deps Deps) *CheckVerificationCodeLogic {
 	return &CheckVerificationCodeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -34,7 +33,7 @@ func (l *CheckVerificationCodeLogic) CheckVerificationCode(req *types.CheckVerif
 	resp = &types.CheckVerificationCodeRespone{}
 	if req.Method == authmethod.Email {
 		cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeCacheKey, config.ParseVerifyType(req.Type), req.Account)
-		value, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
+		value, err := l.deps.Redis.Get(l.ctx, cacheKey).Result()
 		if err != nil {
 			return resp, nil
 		}
@@ -52,7 +51,7 @@ func (l *CheckVerificationCodeLogic) CheckVerificationCode(req *types.CheckVerif
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.TelephoneError), "Invalid phone number")
 		}
 		cacheKey := fmt.Sprintf("%s:%s:+%s", config.AuthCodeTelephoneCacheKey, config.ParseVerifyType(req.Type), req.Account)
-		value, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
+		value, err := l.deps.Redis.Get(l.ctx, cacheKey).Result()
 		if err != nil {
 			return resp, nil
 		}

@@ -6,7 +6,9 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-gonic/gin"
+	"github.com/perfect-panel/server/initialize"
 	"github.com/perfect-panel/server/routers/middleware"
+	appruntime "github.com/perfect-panel/server/runtime"
 	adminAds "github.com/perfect-panel/server/services/admin/ads"
 	adminAnnouncement "github.com/perfect-panel/server/services/admin/announcement"
 	adminApplication "github.com/perfect-panel/server/services/admin/application"
@@ -24,14 +26,13 @@ import (
 	adminTicket "github.com/perfect-panel/server/services/admin/ticket"
 	adminTool "github.com/perfect-panel/server/services/admin/tool"
 	adminUser "github.com/perfect-panel/server/services/admin/user"
-	"github.com/perfect-panel/server/svc"
 )
 
-func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specOnly bool, apis *APIs) {
+func registerAdminRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specOnly bool, apis *APIs) {
 	// ===== Admin API =====
 	adminGroup := router.Group("/api/v1/admin")
 	if !specOnly {
-		adminGroup.Use(middleware.AuthMiddleware(serverCtx))
+		adminGroup.Use(middleware.AuthMiddleware(runtimeDeps))
 	}
 	adminConfig := governedAPIConfig(
 		"Perfect Panel Admin API",
@@ -55,7 +56,108 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		"user",
 	)
 	apis.Admin = humagin.NewWithGroup(router, adminGroup, adminConfig)
-	configureHumaAPI(apis.Admin, compatibilityEnabled(serverCtx, specOnly))
+	configureHumaAPI(apis.Admin, compatibilityEnabled(runtimeDeps, specOnly))
+	adminAdsDeps := adminAds.Deps{}
+	adminAnnouncementDeps := adminAnnouncement.Deps{}
+	adminApplicationDeps := adminApplication.Deps{}
+	adminAuthMethodDeps := adminAuthMethod.Deps{}
+	adminConsoleDeps := adminConsole.Deps{}
+	adminCouponDeps := adminCoupon.Deps{}
+	adminDocumentDeps := adminDocument.Deps{}
+	adminLogDeps := adminLog.Deps{}
+	adminMarketingDeps := adminMarketing.Deps{}
+	adminOrderDeps := adminOrder.Deps{}
+	adminPaymentDeps := adminPayment.Deps{}
+	adminServerDeps := adminServer.Deps{}
+	adminSystemDeps := adminSystem.Deps{}
+	adminSubscribeDeps := adminSubscribe.Deps{}
+	adminTicketDeps := adminTicket.Deps{}
+	adminToolDeps := adminTool.Deps{}
+	adminUserDeps := adminUser.Deps{}
+	initDeps := initializeDepsFromRuntimeDeps(runtimeDeps)
+	if runtimeDeps != nil {
+		adminAdsDeps.AdsModel = runtimeDeps.AdsModel
+		adminAnnouncementDeps.AnnouncementModel = runtimeDeps.AnnouncementModel
+		adminApplicationDeps.ClientModel = runtimeDeps.ClientModel
+		adminApplicationDeps.NodeModel = runtimeDeps.NodeModel
+		adminAuthMethodDeps.AuthModel = runtimeDeps.AuthModel
+		adminAuthMethodDeps.Config = runtimeDeps.Config
+		adminAuthMethodDeps.ReloadEmail = func() {
+			initialize.Email(initDeps)
+		}
+		adminAuthMethodDeps.ReloadMobile = func() {
+			initialize.Mobile(initDeps)
+		}
+		adminAuthMethodDeps.ReloadDevice = func() {
+			initialize.Device(initDeps)
+		}
+		adminConsoleDeps.OrderModel = runtimeDeps.OrderModel
+		adminConsoleDeps.UserModel = runtimeDeps.UserModel
+		adminConsoleDeps.NodeModel = runtimeDeps.NodeModel
+		adminConsoleDeps.TicketModel = runtimeDeps.TicketModel
+		adminConsoleDeps.DB = runtimeDeps.DB
+		adminCouponDeps.CouponModel = runtimeDeps.CouponModel
+		adminDocumentDeps.DocumentModel = runtimeDeps.DocumentModel
+		adminLogDeps.LogModel = runtimeDeps.LogModel
+		adminLogDeps.SystemModel = runtimeDeps.SystemModel
+		adminLogDeps.DB = runtimeDeps.DB
+		adminLogDeps.Config = runtimeDeps.Config
+		adminMarketingDeps.DB = runtimeDeps.DB
+		adminMarketingDeps.Queue = runtimeDeps.Queue
+		adminOrderDeps.OrderModel = runtimeDeps.OrderModel
+		adminOrderDeps.PaymentModel = runtimeDeps.PaymentModel
+		adminOrderDeps.Queue = runtimeDeps.Queue
+		adminPaymentDeps.PaymentModel = runtimeDeps.PaymentModel
+		adminPaymentDeps.Config = runtimeDeps.Config
+		adminServerDeps.NodeModel = runtimeDeps.NodeModel
+		adminServerDeps.UserModel = runtimeDeps.UserModel
+		adminServerDeps.DB = runtimeDeps.DB
+		adminSubscribeDeps.SubscribeModel = runtimeDeps.SubscribeModel
+		adminSubscribeDeps.UserModel = runtimeDeps.UserModel
+		adminSubscribeDeps.DB = runtimeDeps.DB
+		adminSubscribeDeps.DeviceManager = runtimeDeps.DeviceManager
+		adminTicketDeps.TicketModel = runtimeDeps.TicketModel
+		adminSystemDeps.SystemModel = runtimeDeps.SystemModel
+		adminSystemDeps.Redis = runtimeDeps.Redis
+		adminSystemDeps.Config = runtimeDeps.Config
+		adminSystemDeps.NodeMultiplierManager = runtimeDeps.NodeMultiplierManager
+		adminSystemDeps.Restart = runtimeDeps.Restart
+		adminSystemDeps.ReloadVerify = func() {
+			initialize.Verify(initDeps)
+		}
+		adminSystemDeps.ReloadNode = func() {
+			initialize.Node(initDeps)
+		}
+		adminSystemDeps.ReloadCurrency = func() {
+			initialize.Currency(initDeps)
+		}
+		adminSystemDeps.ReloadInvite = func() {
+			initialize.Invite(initDeps)
+		}
+		adminSystemDeps.ReloadRegister = func() {
+			initialize.Register(initDeps)
+		}
+		adminSystemDeps.ReloadSite = func() {
+			initialize.Site(initDeps)
+		}
+		adminSystemDeps.ReloadSubscribe = func() {
+			initialize.Subscribe(initDeps)
+		}
+		adminSystemDeps.ReloadTelegram = func() {
+			initialize.Telegram(initDeps)
+		}
+		adminToolDeps.Restart = runtimeDeps.Restart
+		adminToolDeps.Config = runtimeDeps.Config
+		if runtimeDeps.GeoIPDB != nil {
+			adminToolDeps.GeoIPDB = runtimeDeps.GeoIPDB
+		}
+		adminUserDeps.UserModel = runtimeDeps.UserModel
+		adminUserDeps.SubscribeModel = runtimeDeps.SubscribeModel
+		adminUserDeps.LogModel = runtimeDeps.LogModel
+		adminUserDeps.TrafficLogModel = runtimeDeps.TrafficLogModel
+		adminUserDeps.DeviceManager = runtimeDeps.DeviceManager
+		adminUserDeps.Config = runtimeDeps.Config
+	}
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createAds",
@@ -64,7 +166,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create Ads",
 		Tags:        []string{"ads"},
 		Security:    bearerSecurity,
-	}, adminAds.CreateAdsHandler(serverCtx))
+	}, adminAds.CreateAdsHandler(adminAdsDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateAds",
@@ -73,7 +175,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update Ads",
 		Tags:        []string{"ads"},
 		Security:    bearerSecurity,
-	}, adminAds.UpdateAdsHandler(serverCtx))
+	}, adminAds.UpdateAdsHandler(adminAdsDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteAds",
@@ -82,7 +184,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete Ads",
 		Tags:        []string{"ads"},
 		Security:    bearerSecurity,
-	}, adminAds.DeleteAdsHandler(serverCtx))
+	}, adminAds.DeleteAdsHandler(adminAdsDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAdsDetail",
@@ -91,7 +193,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get Ads Detail",
 		Tags:        []string{"ads"},
 		Security:    bearerSecurity,
-	}, adminAds.GetAdsDetailHandler(serverCtx))
+	}, adminAds.GetAdsDetailHandler(adminAdsDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAdsList",
@@ -100,7 +202,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get Ads List",
 		Tags:        []string{"ads"},
 		Security:    bearerSecurity,
-	}, adminAds.GetAdsListHandler(serverCtx))
+	}, adminAds.GetAdsListHandler(adminAdsDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createAnnouncement",
@@ -109,7 +211,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create announcement",
 		Tags:        []string{"announcement"},
 		Security:    bearerSecurity,
-	}, adminAnnouncement.CreateAnnouncementHandler(serverCtx))
+	}, adminAnnouncement.CreateAnnouncementHandler(adminAnnouncementDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateAnnouncement",
@@ -118,7 +220,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update announcement",
 		Tags:        []string{"announcement"},
 		Security:    bearerSecurity,
-	}, adminAnnouncement.UpdateAnnouncementHandler(serverCtx))
+	}, adminAnnouncement.UpdateAnnouncementHandler(adminAnnouncementDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteAnnouncement",
@@ -127,7 +229,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete announcement",
 		Tags:        []string{"announcement"},
 		Security:    bearerSecurity,
-	}, adminAnnouncement.DeleteAnnouncementHandler(serverCtx))
+	}, adminAnnouncement.DeleteAnnouncementHandler(adminAnnouncementDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAnnouncement",
@@ -136,7 +238,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get announcement",
 		Tags:        []string{"announcement"},
 		Security:    bearerSecurity,
-	}, adminAnnouncement.GetAnnouncementHandler(serverCtx))
+	}, adminAnnouncement.GetAnnouncementHandler(adminAnnouncementDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAnnouncementList",
@@ -145,7 +247,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get announcement list",
 		Tags:        []string{"announcement"},
 		Security:    bearerSecurity,
-	}, adminAnnouncement.GetAnnouncementListHandler(serverCtx))
+	}, adminAnnouncement.GetAnnouncementListHandler(adminAnnouncementDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createSubscribeApplication",
@@ -154,7 +256,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create subscribe application",
 		Tags:        []string{"application"},
 		Security:    bearerSecurity,
-	}, adminApplication.CreateSubscribeApplicationHandler(serverCtx))
+	}, adminApplication.CreateSubscribeApplicationHandler(adminApplicationDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "previewSubscribeTemplate",
@@ -163,7 +265,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Preview Template",
 		Tags:        []string{"application"},
 		Security:    bearerSecurity,
-	}, adminApplication.PreviewSubscribeTemplateHandler(serverCtx))
+	}, adminApplication.PreviewSubscribeTemplateHandler(adminApplicationDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateSubscribeApplication",
@@ -172,7 +274,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update subscribe application",
 		Tags:        []string{"application"},
 		Security:    bearerSecurity,
-	}, adminApplication.UpdateSubscribeApplicationHandler(serverCtx))
+	}, adminApplication.UpdateSubscribeApplicationHandler(adminApplicationDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteSubscribeApplication",
@@ -181,7 +283,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete subscribe application",
 		Tags:        []string{"application"},
 		Security:    bearerSecurity,
-	}, adminApplication.DeleteSubscribeApplicationHandler(serverCtx))
+	}, adminApplication.DeleteSubscribeApplicationHandler(adminApplicationDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSubscribeApplicationList",
@@ -190,7 +292,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get subscribe application list",
 		Tags:        []string{"application"},
 		Security:    bearerSecurity,
-	}, adminApplication.GetSubscribeApplicationListHandler(serverCtx))
+	}, adminApplication.GetSubscribeApplicationListHandler(adminApplicationDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAuthMethodConfig",
@@ -199,7 +301,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get auth method config",
 		Tags:        []string{"auth-method"},
 		Security:    bearerSecurity,
-	}, adminAuthMethod.GetAuthMethodConfigHandler(serverCtx))
+	}, adminAuthMethod.GetAuthMethodConfigHandler(adminAuthMethodDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateAuthMethodConfig",
@@ -208,7 +310,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update auth method config",
 		Tags:        []string{"auth-method"},
 		Security:    bearerSecurity,
-	}, adminAuthMethod.UpdateAuthMethodConfigHandler(serverCtx))
+	}, adminAuthMethod.UpdateAuthMethodConfigHandler(adminAuthMethodDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getEmailPlatform",
@@ -217,7 +319,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get email support platform",
 		Tags:        []string{"auth-method"},
 		Security:    bearerSecurity,
-	}, adminAuthMethod.GetEmailPlatformHandler(serverCtx))
+	}, adminAuthMethod.GetEmailPlatformHandler(adminAuthMethodDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAuthMethodList",
@@ -226,7 +328,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get auth method list",
 		Tags:        []string{"auth-method"},
 		Security:    bearerSecurity,
-	}, adminAuthMethod.GetAuthMethodListHandler(serverCtx))
+	}, adminAuthMethod.GetAuthMethodListHandler(adminAuthMethodDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSmsPlatform",
@@ -235,7 +337,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get sms support platform",
 		Tags:        []string{"auth-method"},
 		Security:    bearerSecurity,
-	}, adminAuthMethod.GetSmsPlatformHandler(serverCtx))
+	}, adminAuthMethod.GetSmsPlatformHandler(adminAuthMethodDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "testEmailSend",
@@ -244,7 +346,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Test email send",
 		Tags:        []string{"auth-method"},
 		Security:    bearerSecurity,
-	}, adminAuthMethod.TestEmailSendHandler(serverCtx))
+	}, adminAuthMethod.TestEmailSendHandler(adminAuthMethodDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "testSmsSend",
@@ -253,7 +355,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Test sms send",
 		Tags:        []string{"auth-method"},
 		Security:    bearerSecurity,
-	}, adminAuthMethod.TestSmsSendHandler(serverCtx))
+	}, adminAuthMethod.TestSmsSendHandler(adminAuthMethodDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryRevenueStatistics",
@@ -262,7 +364,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Query revenue statistics",
 		Tags:        []string{"console"},
 		Security:    bearerSecurity,
-	}, adminConsole.QueryRevenueStatisticsHandler(serverCtx))
+	}, adminConsole.QueryRevenueStatisticsHandler(adminConsoleDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryServerTotalData",
@@ -271,7 +373,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Query server total data",
 		Tags:        []string{"console"},
 		Security:    bearerSecurity,
-	}, adminConsole.QueryServerTotalDataHandler(serverCtx))
+	}, adminConsole.QueryServerTotalDataHandler(adminConsoleDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryTicketWaitReply",
@@ -280,7 +382,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Query ticket wait reply",
 		Tags:        []string{"console"},
 		Security:    bearerSecurity,
-	}, adminConsole.QueryTicketWaitReplyHandler(serverCtx))
+	}, adminConsole.QueryTicketWaitReplyHandler(adminConsoleDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryUserStatistics",
@@ -289,7 +391,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Query user statistics",
 		Tags:        []string{"console"},
 		Security:    bearerSecurity,
-	}, adminConsole.QueryUserStatisticsHandler(serverCtx))
+	}, adminConsole.QueryUserStatisticsHandler(adminConsoleDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createCoupon",
@@ -298,7 +400,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create coupon",
 		Tags:        []string{"coupon"},
 		Security:    bearerSecurity,
-	}, adminCoupon.CreateCouponHandler(serverCtx))
+	}, adminCoupon.CreateCouponHandler(adminCouponDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateCoupon",
@@ -307,7 +409,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update coupon",
 		Tags:        []string{"coupon"},
 		Security:    bearerSecurity,
-	}, adminCoupon.UpdateCouponHandler(serverCtx))
+	}, adminCoupon.UpdateCouponHandler(adminCouponDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteCoupon",
@@ -316,7 +418,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete coupon",
 		Tags:        []string{"coupon"},
 		Security:    bearerSecurity,
-	}, adminCoupon.DeleteCouponHandler(serverCtx))
+	}, adminCoupon.DeleteCouponHandler(adminCouponDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "batchDeleteCoupon",
@@ -325,7 +427,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Batch delete coupon",
 		Tags:        []string{"coupon"},
 		Security:    bearerSecurity,
-	}, adminCoupon.BatchDeleteCouponHandler(serverCtx))
+	}, adminCoupon.BatchDeleteCouponHandler(adminCouponDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getCouponList",
@@ -334,7 +436,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get coupon list",
 		Tags:        []string{"coupon"},
 		Security:    bearerSecurity,
-	}, adminCoupon.GetCouponListHandler(serverCtx))
+	}, adminCoupon.GetCouponListHandler(adminCouponDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createDocument",
@@ -343,7 +445,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create document",
 		Tags:        []string{"document"},
 		Security:    bearerSecurity,
-	}, adminDocument.CreateDocumentHandler(serverCtx))
+	}, adminDocument.CreateDocumentHandler(adminDocumentDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateDocument",
@@ -352,7 +454,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update document",
 		Tags:        []string{"document"},
 		Security:    bearerSecurity,
-	}, adminDocument.UpdateDocumentHandler(serverCtx))
+	}, adminDocument.UpdateDocumentHandler(adminDocumentDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteDocument",
@@ -361,7 +463,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete document",
 		Tags:        []string{"document"},
 		Security:    bearerSecurity,
-	}, adminDocument.DeleteDocumentHandler(serverCtx))
+	}, adminDocument.DeleteDocumentHandler(adminDocumentDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "batchDeleteDocument",
@@ -370,7 +472,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Batch delete document",
 		Tags:        []string{"document"},
 		Security:    bearerSecurity,
-	}, adminDocument.BatchDeleteDocumentHandler(serverCtx))
+	}, adminDocument.BatchDeleteDocumentHandler(adminDocumentDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getDocumentDetail",
@@ -379,7 +481,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get document detail",
 		Tags:        []string{"document"},
 		Security:    bearerSecurity,
-	}, adminDocument.GetDocumentDetailHandler(serverCtx))
+	}, adminDocument.GetDocumentDetailHandler(adminDocumentDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getDocumentList",
@@ -388,7 +490,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get document list",
 		Tags:        []string{"document"},
 		Security:    bearerSecurity,
-	}, adminDocument.GetDocumentListHandler(serverCtx))
+	}, adminDocument.GetDocumentListHandler(adminDocumentDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterBalanceLog",
@@ -397,7 +499,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter balance log",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterBalanceLogHandler(serverCtx))
+	}, adminLog.FilterBalanceLogHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterCommissionLog",
@@ -406,7 +508,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter commission log",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterCommissionLogHandler(serverCtx))
+	}, adminLog.FilterCommissionLogHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterEmailLog",
@@ -415,7 +517,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter email log",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterEmailLogHandler(serverCtx))
+	}, adminLog.FilterEmailLogHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterGiftLog",
@@ -424,7 +526,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter gift log",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterGiftLogHandler(serverCtx))
+	}, adminLog.FilterGiftLogHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterLoginLog",
@@ -433,7 +535,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter login log",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterLoginLogHandler(serverCtx))
+	}, adminLog.FilterLoginLogHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getMessageLogList",
@@ -442,7 +544,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get message log list",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.GetMessageLogListHandler(serverCtx))
+	}, adminLog.GetMessageLogListHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterMobileLog",
@@ -451,7 +553,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter mobile log",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterMobileLogHandler(serverCtx))
+	}, adminLog.FilterMobileLogHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterRegisterLog",
@@ -460,7 +562,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter register log",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterRegisterLogHandler(serverCtx))
+	}, adminLog.FilterRegisterLogHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterServerTrafficLog",
@@ -469,7 +571,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter server traffic log",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterServerTrafficLogHandler(serverCtx))
+	}, adminLog.FilterServerTrafficLogHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getLogSetting",
@@ -478,7 +580,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get log setting",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.GetLogSettingHandler(serverCtx))
+	}, adminLog.GetLogSettingHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateLogSetting",
@@ -487,7 +589,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update log setting",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.UpdateLogSettingHandler(serverCtx))
+	}, adminLog.UpdateLogSettingHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterSubscribeLog",
@@ -496,7 +598,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter subscribe log",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterSubscribeLogHandler(serverCtx))
+	}, adminLog.FilterSubscribeLogHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterResetSubscribeLog",
@@ -505,7 +607,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter reset subscribe log",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterResetSubscribeLogHandler(serverCtx))
+	}, adminLog.FilterResetSubscribeLogHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterUserSubscribeTrafficLog",
@@ -514,7 +616,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter user subscribe traffic log",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterUserSubscribeTrafficLogHandler(serverCtx))
+	}, adminLog.FilterUserSubscribeTrafficLogHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterTrafficLogDetails",
@@ -523,7 +625,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter traffic log details",
 		Tags:        []string{"log"},
 		Security:    bearerSecurity,
-	}, adminLog.FilterTrafficLogDetailsHandler(serverCtx))
+	}, adminLog.FilterTrafficLogDetailsHandler(adminLogDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getBatchSendEmailTaskList",
@@ -532,7 +634,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get batch send email task list",
 		Tags:        []string{"marketing"},
 		Security:    bearerSecurity,
-	}, adminMarketing.GetBatchSendEmailTaskListHandler(serverCtx))
+	}, adminMarketing.GetBatchSendEmailTaskListHandler(adminMarketingDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getPreSendEmailCount",
@@ -541,7 +643,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get pre-send email count",
 		Tags:        []string{"marketing"},
 		Security:    bearerSecurity,
-	}, adminMarketing.GetPreSendEmailCountHandler(serverCtx))
+	}, adminMarketing.GetPreSendEmailCountHandler(adminMarketingDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createBatchSendEmailTask",
@@ -550,7 +652,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create a batch send email task",
 		Tags:        []string{"marketing"},
 		Security:    bearerSecurity,
-	}, adminMarketing.CreateBatchSendEmailTaskHandler(serverCtx))
+	}, adminMarketing.CreateBatchSendEmailTaskHandler(adminMarketingDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getBatchSendEmailTaskStatus",
@@ -559,7 +661,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get batch send email task status",
 		Tags:        []string{"marketing"},
 		Security:    bearerSecurity,
-	}, adminMarketing.GetBatchSendEmailTaskStatusHandler(serverCtx))
+	}, adminMarketing.GetBatchSendEmailTaskStatusHandler(adminMarketingDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "stopBatchSendEmailTask",
@@ -568,7 +670,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Stop a batch send email task",
 		Tags:        []string{"marketing"},
 		Security:    bearerSecurity,
-	}, adminMarketing.StopBatchSendEmailTaskHandler(serverCtx))
+	}, adminMarketing.StopBatchSendEmailTaskHandler(adminMarketingDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createQuotaTask",
@@ -577,7 +679,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create a quota task",
 		Tags:        []string{"marketing"},
 		Security:    bearerSecurity,
-	}, adminMarketing.CreateQuotaTaskHandler(serverCtx))
+	}, adminMarketing.CreateQuotaTaskHandler(adminMarketingDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryQuotaTaskList",
@@ -586,7 +688,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Query quota task list",
 		Tags:        []string{"marketing"},
 		Security:    bearerSecurity,
-	}, adminMarketing.QueryQuotaTaskListHandler(serverCtx))
+	}, adminMarketing.QueryQuotaTaskListHandler(adminMarketingDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryQuotaTaskPreCount",
@@ -595,7 +697,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Query quota task pre-count",
 		Tags:        []string{"marketing"},
 		Security:    bearerSecurity,
-	}, adminMarketing.QueryQuotaTaskPreCountHandler(serverCtx))
+	}, adminMarketing.QueryQuotaTaskPreCountHandler(adminMarketingDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createOrder",
@@ -604,7 +706,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create order",
 		Tags:        []string{"order"},
 		Security:    bearerSecurity,
-	}, adminOrder.CreateOrderHandler(serverCtx))
+	}, adminOrder.CreateOrderHandler(adminOrderDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getOrderList",
@@ -613,7 +715,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get order list",
 		Tags:        []string{"order"},
 		Security:    bearerSecurity,
-	}, adminOrder.GetOrderListHandler(serverCtx))
+	}, adminOrder.GetOrderListHandler(adminOrderDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateOrderStatus",
@@ -622,7 +724,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update order status",
 		Tags:        []string{"order"},
 		Security:    bearerSecurity,
-	}, adminOrder.UpdateOrderStatusHandler(serverCtx))
+	}, adminOrder.UpdateOrderStatusHandler(adminOrderDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createPaymentMethod",
@@ -631,7 +733,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create Payment Method",
 		Tags:        []string{"payment"},
 		Security:    bearerSecurity,
-	}, adminPayment.CreatePaymentMethodHandler(serverCtx))
+	}, adminPayment.CreatePaymentMethodHandler(adminPaymentDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updatePaymentMethod",
@@ -640,7 +742,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update Payment Method",
 		Tags:        []string{"payment"},
 		Security:    bearerSecurity,
-	}, adminPayment.UpdatePaymentMethodHandler(serverCtx))
+	}, adminPayment.UpdatePaymentMethodHandler(adminPaymentDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deletePaymentMethod",
@@ -649,7 +751,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete Payment Method",
 		Tags:        []string{"payment"},
 		Security:    bearerSecurity,
-	}, adminPayment.DeletePaymentMethodHandler(serverCtx))
+	}, adminPayment.DeletePaymentMethodHandler(adminPaymentDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getPaymentMethodList",
@@ -658,7 +760,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get Payment Method List",
 		Tags:        []string{"payment"},
 		Security:    bearerSecurity,
-	}, adminPayment.GetPaymentMethodListHandler(serverCtx))
+	}, adminPayment.GetPaymentMethodListHandler(adminPaymentDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getPaymentPlatform",
@@ -667,7 +769,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get supported payment platform",
 		Tags:        []string{"payment"},
 		Security:    bearerSecurity,
-	}, adminPayment.GetPaymentPlatformHandler(serverCtx))
+	}, adminPayment.GetPaymentPlatformHandler(adminPaymentDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createServer",
@@ -676,7 +778,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create Server",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.CreateServerHandler(serverCtx))
+	}, adminServer.CreateServerHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteServer",
@@ -685,7 +787,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete Server",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.DeleteServerHandler(serverCtx))
+	}, adminServer.DeleteServerHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterServerList",
@@ -694,7 +796,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter Server List",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.FilterServerListHandler(serverCtx))
+	}, adminServer.FilterServerListHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createNode",
@@ -703,7 +805,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create Node",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.CreateNodeHandler(serverCtx))
+	}, adminServer.CreateNodeHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteNode",
@@ -712,7 +814,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete Node",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.DeleteNodeHandler(serverCtx))
+	}, adminServer.DeleteNodeHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterNodeList",
@@ -721,7 +823,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Filter Node List",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.FilterNodeListHandler(serverCtx))
+	}, adminServer.FilterNodeListHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "resetSortWithNode",
@@ -730,7 +832,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Reset node sort",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.ResetSortWithNodeHandler(serverCtx))
+	}, adminServer.ResetSortWithNodeHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "toggleNodeStatus",
@@ -739,7 +841,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Toggle Node Status",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.ToggleNodeStatusHandler(serverCtx))
+	}, adminServer.ToggleNodeStatusHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryNodeTag",
@@ -748,7 +850,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Query all node tags",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.QueryNodeTagHandler(serverCtx))
+	}, adminServer.QueryNodeTagHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateNode",
@@ -757,7 +859,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update Node",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.UpdateNodeHandler(serverCtx))
+	}, adminServer.UpdateNodeHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getServerProtocols",
@@ -766,7 +868,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get Server Protocols",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.GetServerProtocolsHandler(serverCtx))
+	}, adminServer.GetServerProtocolsHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "resetSortWithServer",
@@ -775,7 +877,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Reset server sort",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.ResetSortWithServerHandler(serverCtx))
+	}, adminServer.ResetSortWithServerHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateServer",
@@ -784,7 +886,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update Server",
 		Tags:        []string{"server"},
 		Security:    bearerSecurity,
-	}, adminServer.UpdateServerHandler(serverCtx))
+	}, adminServer.UpdateServerHandler(adminServerDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createSubscribe",
@@ -793,7 +895,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create subscribe",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.CreateSubscribeHandler(serverCtx))
+	}, adminSubscribe.CreateSubscribeHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateSubscribe",
@@ -802,7 +904,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update subscribe",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.UpdateSubscribeHandler(serverCtx))
+	}, adminSubscribe.UpdateSubscribeHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteSubscribe",
@@ -811,7 +913,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete subscribe",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.DeleteSubscribeHandler(serverCtx))
+	}, adminSubscribe.DeleteSubscribeHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "batchDeleteSubscribe",
@@ -820,7 +922,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Batch delete subscribe",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.BatchDeleteSubscribeHandler(serverCtx))
+	}, adminSubscribe.BatchDeleteSubscribeHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSubscribeDetails",
@@ -829,7 +931,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get subscribe details",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.GetSubscribeDetailsHandler(serverCtx))
+	}, adminSubscribe.GetSubscribeDetailsHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createSubscribeGroup",
@@ -838,7 +940,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create subscribe group",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.CreateSubscribeGroupHandler(serverCtx))
+	}, adminSubscribe.CreateSubscribeGroupHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateSubscribeGroup",
@@ -847,7 +949,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update subscribe group",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.UpdateSubscribeGroupHandler(serverCtx))
+	}, adminSubscribe.UpdateSubscribeGroupHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteSubscribeGroup",
@@ -856,7 +958,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete subscribe group",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.DeleteSubscribeGroupHandler(serverCtx))
+	}, adminSubscribe.DeleteSubscribeGroupHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "batchDeleteSubscribeGroup",
@@ -865,7 +967,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Batch delete subscribe group",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.BatchDeleteSubscribeGroupHandler(serverCtx))
+	}, adminSubscribe.BatchDeleteSubscribeGroupHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSubscribeGroupList",
@@ -874,7 +976,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get subscribe group list",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.GetSubscribeGroupListHandler(serverCtx))
+	}, adminSubscribe.GetSubscribeGroupListHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSubscribeList",
@@ -883,7 +985,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get subscribe list",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.GetSubscribeListHandler(serverCtx))
+	}, adminSubscribe.GetSubscribeListHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "resetAllSubscribeToken",
@@ -892,7 +994,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Reset all subscribe tokens",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.ResetAllSubscribeTokenHandler(serverCtx))
+	}, adminSubscribe.ResetAllSubscribeTokenHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "subscribeSort",
@@ -901,7 +1003,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Subscribe sort",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, adminSubscribe.SubscribeSortHandler(serverCtx))
+	}, adminSubscribe.SubscribeSortHandler(adminSubscribeDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getCurrencyConfig",
@@ -910,7 +1012,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get Currency Config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetCurrencyConfigHandler(serverCtx))
+	}, adminSystem.GetCurrencyConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateCurrencyConfig",
@@ -919,7 +1021,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update Currency Config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.UpdateCurrencyConfigHandler(serverCtx))
+	}, adminSystem.UpdateCurrencyConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getNodeMultiplier",
@@ -928,7 +1030,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get Node Multiplier",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetNodeMultiplierHandler(serverCtx))
+	}, adminSystem.GetNodeMultiplierHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getInviteConfig",
@@ -937,7 +1039,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get invite config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetInviteConfigHandler(serverCtx))
+	}, adminSystem.GetInviteConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateInviteConfig",
@@ -946,7 +1048,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update invite config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.UpdateInviteConfigHandler(serverCtx))
+	}, adminSystem.UpdateInviteConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getModuleConfig",
@@ -955,7 +1057,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get Module Config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetModuleConfigHandler(serverCtx))
+	}, adminSystem.GetModuleConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getNodeConfig",
@@ -964,7 +1066,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get node config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetNodeConfigHandler(serverCtx))
+	}, adminSystem.GetNodeConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateNodeConfig",
@@ -973,7 +1075,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update node config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.UpdateNodeConfigHandler(serverCtx))
+	}, adminSystem.UpdateNodeConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "preViewNodeMultiplier",
@@ -982,7 +1084,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "PreView Node Multiplier",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.PreViewNodeMultiplierHandler(serverCtx))
+	}, adminSystem.PreViewNodeMultiplierHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getPrivacyPolicyConfig",
@@ -991,7 +1093,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "get Privacy Policy Config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetPrivacyPolicyConfigHandler(serverCtx))
+	}, adminSystem.GetPrivacyPolicyConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updatePrivacyPolicyConfig",
@@ -1000,7 +1102,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update Privacy Policy Config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.UpdatePrivacyPolicyConfigHandler(serverCtx))
+	}, adminSystem.UpdatePrivacyPolicyConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getRegisterConfig",
@@ -1009,7 +1111,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get register config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetRegisterConfigHandler(serverCtx))
+	}, adminSystem.GetRegisterConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateRegisterConfig",
@@ -1018,7 +1120,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update register config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.UpdateRegisterConfigHandler(serverCtx))
+	}, adminSystem.UpdateRegisterConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "setNodeMultiplier",
@@ -1027,7 +1129,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Set Node Multiplier",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.SetNodeMultiplierHandler(serverCtx))
+	}, adminSystem.SetNodeMultiplierHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "settingTelegramBot",
@@ -1036,7 +1138,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "setting telegram bot",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.SettingTelegramBotHandler(serverCtx))
+	}, adminSystem.SettingTelegramBotHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSiteConfig",
@@ -1045,7 +1147,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get site config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetSiteConfigHandler(serverCtx))
+	}, adminSystem.GetSiteConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateSiteConfig",
@@ -1054,7 +1156,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update site config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.UpdateSiteConfigHandler(serverCtx))
+	}, adminSystem.UpdateSiteConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSubscribeConfig",
@@ -1063,7 +1165,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get subscribe config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetSubscribeConfigHandler(serverCtx))
+	}, adminSystem.GetSubscribeConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateSubscribeConfig",
@@ -1072,7 +1174,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update subscribe config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.UpdateSubscribeConfigHandler(serverCtx))
+	}, adminSystem.UpdateSubscribeConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getTosConfig",
@@ -1081,7 +1183,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get Team of Service Config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetTosConfigHandler(serverCtx))
+	}, adminSystem.GetTosConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateTosConfig",
@@ -1090,7 +1192,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update Team of Service Config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.UpdateTosConfigHandler(serverCtx))
+	}, adminSystem.UpdateTosConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getVerifyCodeConfig",
@@ -1099,7 +1201,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get Verify Code Config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetVerifyCodeConfigHandler(serverCtx))
+	}, adminSystem.GetVerifyCodeConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateVerifyCodeConfig",
@@ -1108,7 +1210,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update Verify Code Config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.UpdateVerifyCodeConfigHandler(serverCtx))
+	}, adminSystem.UpdateVerifyCodeConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getVerifyConfig",
@@ -1117,7 +1219,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get verify config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.GetVerifyConfigHandler(serverCtx))
+	}, adminSystem.GetVerifyConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateVerifyConfig",
@@ -1126,7 +1228,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update verify config",
 		Tags:        []string{"system"},
 		Security:    bearerSecurity,
-	}, adminSystem.UpdateVerifyConfigHandler(serverCtx))
+	}, adminSystem.UpdateVerifyConfigHandler(adminSystemDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateTicketStatus",
@@ -1135,7 +1237,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update ticket status",
 		Tags:        []string{"ticket"},
 		Security:    bearerSecurity,
-	}, adminTicket.UpdateTicketStatusHandler(serverCtx))
+	}, adminTicket.UpdateTicketStatusHandler(adminTicketDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getTicket",
@@ -1144,7 +1246,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get ticket detail",
 		Tags:        []string{"ticket"},
 		Security:    bearerSecurity,
-	}, adminTicket.GetTicketHandler(serverCtx))
+	}, adminTicket.GetTicketHandler(adminTicketDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createTicketFollow",
@@ -1153,7 +1255,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create ticket follow",
 		Tags:        []string{"ticket"},
 		Security:    bearerSecurity,
-	}, adminTicket.CreateTicketFollowHandler(serverCtx))
+	}, adminTicket.CreateTicketFollowHandler(adminTicketDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getTicketList",
@@ -1162,7 +1264,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get ticket list",
 		Tags:        []string{"ticket"},
 		Security:    bearerSecurity,
-	}, adminTicket.GetTicketListHandler(serverCtx))
+	}, adminTicket.GetTicketListHandler(adminTicketDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryIPLocation",
@@ -1171,7 +1273,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Query IP Location",
 		Tags:        []string{"tool"},
 		Security:    bearerSecurity,
-	}, adminTool.QueryIPLocationHandler(serverCtx))
+	}, adminTool.QueryIPLocationHandler(adminToolDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSystemLog",
@@ -1180,7 +1282,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get System Log",
 		Tags:        []string{"tool"},
 		Security:    bearerSecurity,
-	}, adminTool.GetSystemLogHandler(serverCtx))
+	}, adminTool.GetSystemLogHandler(adminToolDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "restartSystem",
@@ -1189,7 +1291,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Restart System",
 		Tags:        []string{"tool"},
 		Security:    bearerSecurity,
-	}, adminTool.RestartSystemHandler(serverCtx))
+	}, adminTool.RestartSystemHandler(adminToolDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getVersion",
@@ -1198,7 +1300,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get Version",
 		Tags:        []string{"tool"},
 		Security:    bearerSecurity,
-	}, adminTool.GetVersionHandler(serverCtx))
+	}, adminTool.GetVersionHandler(adminToolDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteUser",
@@ -1207,7 +1309,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete user",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.DeleteUserHandler(serverCtx))
+	}, adminUser.DeleteUserHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createUser",
@@ -1216,7 +1318,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create user",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.CreateUserHandler(serverCtx))
+	}, adminUser.CreateUserHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createUserAuthMethod",
@@ -1225,7 +1327,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create user auth method",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.CreateUserAuthMethodHandler(serverCtx))
+	}, adminUser.CreateUserAuthMethodHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteUserAuthMethod",
@@ -1234,7 +1336,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete user auth method",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.DeleteUserAuthMethodHandler(serverCtx))
+	}, adminUser.DeleteUserAuthMethodHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateUserAuthMethod",
@@ -1243,7 +1345,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update user auth method",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.UpdateUserAuthMethodHandler(serverCtx))
+	}, adminUser.UpdateUserAuthMethodHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserAuthMethod",
@@ -1252,7 +1354,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get user auth method",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.GetUserAuthMethodHandler(serverCtx))
+	}, adminUser.GetUserAuthMethodHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateUserBasicInfo",
@@ -1261,7 +1363,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update user basic info",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.UpdateUserBasicInfoHandler(serverCtx))
+	}, adminUser.UpdateUserBasicInfoHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "batchDeleteUser",
@@ -1270,7 +1372,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Batch delete user",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.BatchDeleteUserHandler(serverCtx))
+	}, adminUser.BatchDeleteUserHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "currentUser",
@@ -1279,7 +1381,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Current user",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.CurrentUserHandler(serverCtx))
+	}, adminUser.CurrentUserHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserDetail",
@@ -1288,7 +1390,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get user detail",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.GetUserDetailHandler(serverCtx))
+	}, adminUser.GetUserDetailHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateUserDevice",
@@ -1297,7 +1399,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "User device",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.UpdateUserDeviceHandler(serverCtx))
+	}, adminUser.UpdateUserDeviceHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteUserDevice",
@@ -1306,7 +1408,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete user device",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.DeleteUserDeviceHandler(serverCtx))
+	}, adminUser.DeleteUserDeviceHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "kickOfflineByUserDevice",
@@ -1315,7 +1417,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "kick offline user device",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.KickOfflineByUserDeviceHandler(serverCtx))
+	}, adminUser.KickOfflineByUserDeviceHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserList",
@@ -1324,7 +1426,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get user list",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.GetUserListHandler(serverCtx))
+	}, adminUser.GetUserListHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserLoginLogs",
@@ -1333,7 +1435,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get user login logs",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.GetUserLoginLogsHandler(serverCtx))
+	}, adminUser.GetUserLoginLogsHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateUserNotifySetting",
@@ -1342,7 +1444,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update user notify setting",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.UpdateUserNotifySettingHandler(serverCtx))
+	}, adminUser.UpdateUserNotifySettingHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribe",
@@ -1351,7 +1453,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get user subcribe",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.GetUserSubscribeHandler(serverCtx))
+	}, adminUser.GetUserSubscribeHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createUserSubscribe",
@@ -1360,7 +1462,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Create user subcribe",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.CreateUserSubscribeHandler(serverCtx))
+	}, adminUser.CreateUserSubscribeHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateUserSubscribe",
@@ -1369,7 +1471,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Update user subcribe",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.UpdateUserSubscribeHandler(serverCtx))
+	}, adminUser.UpdateUserSubscribeHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteUserSubscribe",
@@ -1378,7 +1480,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Delete user subcribe",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.DeleteUserSubscribeHandler(serverCtx))
+	}, adminUser.DeleteUserSubscribeHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribeById",
@@ -1387,7 +1489,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get user subcribe by id",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.GetUserSubscribeByIdHandler(serverCtx))
+	}, adminUser.GetUserSubscribeByIdHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribeDevices",
@@ -1396,7 +1498,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get user subcribe devices",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.GetUserSubscribeDevicesHandler(serverCtx))
+	}, adminUser.GetUserSubscribeDevicesHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribeLogs",
@@ -1405,7 +1507,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get user subcribe logs",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.GetUserSubscribeLogsHandler(serverCtx))
+	}, adminUser.GetUserSubscribeLogsHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribeResetTrafficLogs",
@@ -1414,7 +1516,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get user subcribe reset traffic logs",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.GetUserSubscribeResetTrafficLogsHandler(serverCtx))
+	}, adminUser.GetUserSubscribeResetTrafficLogsHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "resetUserSubscribeToken",
@@ -1423,7 +1525,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Reset user subscribe token",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.ResetUserSubscribeTokenHandler(serverCtx))
+	}, adminUser.ResetUserSubscribeTokenHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "resetUserSubscribeTraffic",
@@ -1432,7 +1534,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Reset user subscribe traffic",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.ResetUserSubscribeTrafficHandler(serverCtx))
+	}, adminUser.ResetUserSubscribeTrafficHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "toggleUserSubscribeStatus",
@@ -1441,7 +1543,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Stop user subscribe",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.ToggleUserSubscribeStatusHandler(serverCtx))
+	}, adminUser.ToggleUserSubscribeStatusHandler(adminUserDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribeTrafficLogs",
@@ -1450,6 +1552,6 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Summary:     "Get user subcribe traffic logs",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, adminUser.GetUserSubscribeTrafficLogsHandler(serverCtx))
+	}, adminUser.GetUserSubscribeTrafficLogsHandler(adminUserDeps))
 
 }

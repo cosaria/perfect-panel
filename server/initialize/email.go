@@ -9,13 +9,12 @@ import (
 	"github.com/perfect-panel/server/models/auth"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 )
 
 // Email get email smtp config
-func Email(ctx *svc.ServiceContext) {
+func Email(deps Deps) {
 	logger.Debug("Email config initialization")
-	method, err := ctx.AuthModel.FindOneByMethod(context.Background(), "email")
+	method, err := deps.AuthModel.FindOneByMethod(context.Background(), "email")
 	if err != nil {
 		panic(fmt.Sprintf("[Error] Initialization Failed to find email auth method: %v", err.Error()))
 	}
@@ -26,5 +25,7 @@ func Email(ctx *svc.ServiceContext) {
 	cfg.Enable = *method.Enabled
 	value, _ := json.Marshal(emailConfig.PlatformConfig)
 	cfg.PlatformConfig = string(value)
-	ctx.Config.Email = cfg
+	if deps.Config != nil {
+		deps.Config.Email = cfg
+	}
 }

@@ -3,10 +3,10 @@ package authMethod
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -15,9 +15,9 @@ type GetAuthMethodListOutput struct {
 	Body *types.GetAuthMethodListResponse
 }
 
-func GetAuthMethodListHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetAuthMethodListOutput, error) {
+func GetAuthMethodListHandler(deps Deps) func(context.Context, *struct{}) (*GetAuthMethodListOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetAuthMethodListOutput, error) {
-		l := NewGetAuthMethodListLogic(ctx, svcCtx)
+		l := NewGetAuthMethodListLogic(ctx, deps)
 		resp, err := l.GetAuthMethodList()
 		if err != nil {
 			return nil, err
@@ -28,21 +28,21 @@ func GetAuthMethodListHandler(svcCtx *svc.ServiceContext) func(context.Context, 
 
 type GetAuthMethodListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetAuthMethodListLogic Get auth method list
-func NewGetAuthMethodListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAuthMethodListLogic {
+func NewGetAuthMethodListLogic(ctx context.Context, deps Deps) *GetAuthMethodListLogic {
 	return &GetAuthMethodListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetAuthMethodListLogic) GetAuthMethodList() (resp *types.GetAuthMethodListResponse, err error) {
-	methods, err := l.svcCtx.AuthModel.FindAll(l.ctx)
+	methods, err := l.deps.AuthModel.FindAll(l.ctx)
 	if err != nil {
 		l.Errorw("find all failed", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find all failed: %v", err.Error())

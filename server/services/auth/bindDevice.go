@@ -6,22 +6,21 @@ import (
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )
 
 type BindDeviceLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
-func NewBindDeviceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BindDeviceLogic {
+func NewBindDeviceLogic(ctx context.Context, deps Deps) *BindDeviceLogic {
 	return &BindDeviceLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -40,7 +39,7 @@ func (l *BindDeviceLogic) BindDeviceToUser(identifier, ip, userAgent string, cur
 	)
 
 	// Check if device exists
-	deviceInfo, err := l.svcCtx.UserModel.FindOneDeviceByIdentifier(l.ctx, identifier)
+	deviceInfo, err := l.deps.UserModel.FindOneDeviceByIdentifier(l.ctx, identifier)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// Device not found, create new device record
@@ -62,7 +61,7 @@ func (l *BindDeviceLogic) BindDeviceToUser(identifier, ip, userAgent string, cur
 		)
 		deviceInfo.Ip = ip
 		deviceInfo.UserAgent = userAgent
-		if err := l.svcCtx.UserModel.UpdateDevice(l.ctx, deviceInfo); err != nil {
+		if err := l.deps.UserModel.UpdateDevice(l.ctx, deviceInfo); err != nil {
 			l.Errorw("failed to update device",
 				logger.Field("identifier", identifier),
 				logger.Field("error", err.Error()),
@@ -88,7 +87,7 @@ func (l *BindDeviceLogic) createDeviceForUser(identifier, ip, userAgent string, 
 		logger.Field("user_id", userId),
 	)
 
-	err := l.svcCtx.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err := l.deps.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		// Create device auth method
 		authMethod := &user.AuthMethods{
 			UserId:         userId,
@@ -146,7 +145,7 @@ func (l *BindDeviceLogic) createDeviceForUser(identifier, ip, userAgent string, 
 func (l *BindDeviceLogic) rebindDeviceToNewUser(deviceInfo *user.Device, ip, userAgent string, newUserId int64) error {
 	oldUserId := deviceInfo.UserId
 
-	err := l.svcCtx.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err := l.deps.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		// Check if old user has other auth methods besides device
 		var authMethods []user.AuthMethods
 		if err := db.Where("user_id = ?", oldUserId).Find(&authMethods).Error; err != nil {

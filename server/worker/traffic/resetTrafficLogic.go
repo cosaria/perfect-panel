@@ -12,7 +12,6 @@ import (
 	"github.com/perfect-panel/server/models/subscribe"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/worker/spec"
 
 	"github.com/hibiken/asynq"
@@ -26,7 +25,7 @@ import (
 // - reset_cycle = 2: Reset monthly based on subscription start date
 // - reset_cycle = 3: Reset yearly based on subscription start date
 type ResetTrafficLogic struct {
-	svc *svc.ServiceContext
+	deps Deps
 }
 
 // Cache and retry configuration constants
@@ -48,9 +47,9 @@ type resetTrafficCache struct {
 	LastResetTime time.Time
 }
 
-func NewResetTrafficLogic(svc *svc.ServiceContext) *ResetTrafficLogic {
+func NewResetTrafficLogic(deps Deps) *ResetTrafficLogic {
 	return &ResetTrafficLogic{
-		svc: svc,
+		deps: deps,
 	}
 }
 
@@ -82,7 +81,7 @@ func (l *ResetTrafficLogic) ProcessTask(ctx context.Context, _ *asynq.Task) erro
 
 				// Schedule retry with delay
 				task := asynq.NewTask(spec.SchedulerResetTraffic, nil)
-				_, retryErr := l.svc.Queue.Enqueue(task, asynq.ProcessIn(retryDelay))
+				_, retryErr := l.deps.Queue.Enqueue(task, asynq.ProcessIn(retryDelay))
 				if retryErr != nil {
 					logger.Errorw("[ResetTraffic] Failed to enqueue retry task",
 						logger.Field("error", retryErr.Error()),
@@ -119,7 +118,7 @@ func (l *ResetTrafficLogic) ProcessTask(ctx context.Context, _ *asynq.Task) erro
 
 	// Load last reset time from cache
 	var cache resetTrafficCache
-	cacheData, err := l.svc.Redis.Get(ctx, cacheKey).Result()
+	cacheData, err := l.deps.Redis.Get(ctx, cacheKey).Result()
 	if err != nil {
 		if !errors.Is(err, redis.Nil) {
 			logger.Errorw("[ResetTraffic] Failed to get cache", logger.Field("error", err.Error()))
@@ -168,7 +167,7 @@ func (l *ResetTrafficLogic) ProcessTask(ctx context.Context, _ *asynq.Task) erro
 	if marshalErr != nil {
 		logger.Errorw("[ResetTraffic] Failed to marshal cache", logger.Field("error", marshalErr.Error()))
 	} else {
-		cacheErr := l.svc.Redis.Set(ctx, cacheKey, cacheDataBytes, 0).Err()
+		cacheErr := l.deps.Redis.Set(ctx, cacheKey, cacheDataBytes, 0).Err()
 		if cacheErr != nil {
 			logger.Errorw("[ResetTraffic] Failed to update cache", logger.Field("error", cacheErr.Error()))
 			// Don't return error here as the main task completed successfully
@@ -185,7 +184,7 @@ func (l *ResetTrafficLogic) ProcessTask(ctx context.Context, _ *asynq.Task) erro
 func (l *ResetTrafficLogic) resetMonth(ctx context.Context) error {
 	now := time.Now()
 
-	err := l.svc.UserModel.Transaction(ctx, func(db *gorm.DB) error {
+	err := l.deps.UserModel.Transaction(ctx, func(db *gorm.DB) error {
 		// Get all subscriptions that reset monthly based on start date
 		var resetMonthSubIds []int64
 		err := db.Model(&subscribe.Subscribe{}).Select("`id`").Where("`reset_cycle` = ?", 2).Find(&resetMonthSubIds).Error
@@ -253,7 +252,7 @@ func (l *ResetTrafficLogic) resetMonth(ctx context.Context) error {
 		} else {
 			logger.Infow("[ResetTraffic] No users found for monthly reset")
 		}
-		return l.svc.SubscribeModel.ClearCache(ctx, resetMonthSubIds...)
+		return l.deps.SubscribeModel.ClearCache(ctx, resetMonthSubIds...)
 	})
 	if err != nil {
 		logger.Errorw("[ResetTraffic] Monthly reset transaction failed", logger.Field("error", err.Error()))
@@ -283,7 +282,7 @@ func (l *ResetTrafficLogic) reset1st(ctx context.Context, cache resetTrafficCach
 		return nil
 	}
 
-	err := l.svc.UserModel.Transaction(ctx, func(db *gorm.DB) error {
+	err := l.deps.UserModel.Transaction(ctx, func(db *gorm.DB) error {
 		// Get all subscriptions that reset on 1st of month
 		var reset1stSubIds []int64
 		err := db.Model(&subscribe.Subscribe{}).Select("`id`").Where("`reset_cycle` = ?", 1).Find(&reset1stSubIds).Error
@@ -339,7 +338,7 @@ func (l *ResetTrafficLogic) reset1st(ctx context.Context, cache resetTrafficCach
 			logger.Infow("[ResetTraffic] No users found for 1st reset")
 		}
 
-		return l.svc.SubscribeModel.ClearCache(ctx, reset1stSubIds...)
+		return l.deps.SubscribeModel.ClearCache(ctx, reset1stSubIds...)
 	})
 
 	if err != nil {
@@ -355,7 +354,7 @@ func (l *ResetTrafficLogic) reset1st(ctx context.Context, cache resetTrafficCach
 func (l *ResetTrafficLogic) resetYear(ctx context.Context) error {
 	now := time.Now()
 
-	err := l.svc.UserModel.Transaction(ctx, func(db *gorm.DB) error {
+	err := l.deps.UserModel.Transaction(ctx, func(db *gorm.DB) error {
 		// Get all subscriptions that reset yearly
 		var resetYearSubIds []int64
 		err := db.Model(&subscribe.Subscribe{}).Select("`id`").Where("`reset_cycle` = ?", 3).Find(&resetYearSubIds).Error
@@ -424,7 +423,7 @@ func (l *ResetTrafficLogic) resetYear(ctx context.Context) error {
 		} else {
 			logger.Infow("[ResetTraffic] No users found for yearly reset")
 		}
-		err = l.svc.SubscribeModel.ClearCache(ctx, resetYearSubIds...)
+		err = l.deps.SubscribeModel.ClearCache(ctx, resetYearSubIds...)
 		if err != nil {
 			logger.Errorw("[ResetTraffic] Failed to clear yearly reset subscription cache", logger.Field("error", err.Error()))
 		}
@@ -442,7 +441,7 @@ func (l *ResetTrafficLogic) resetYear(ctx context.Context) error {
 
 // getRetryCount retrieves the current retry count from Redis
 func (l *ResetTrafficLogic) getRetryCount(ctx context.Context) int {
-	countStr, err := l.svc.Redis.Get(ctx, retryCountKey).Result()
+	countStr, err := l.deps.Redis.Get(ctx, retryCountKey).Result()
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			return 0 // No retry count found, start with 0
@@ -462,7 +461,7 @@ func (l *ResetTrafficLogic) getRetryCount(ctx context.Context) int {
 
 // setRetryCount sets the retry count in Redis
 func (l *ResetTrafficLogic) setRetryCount(ctx context.Context, count int) {
-	err := l.svc.Redis.Set(ctx, retryCountKey, count, 24*time.Hour).Err()
+	err := l.deps.Redis.Set(ctx, retryCountKey, count, 24*time.Hour).Err()
 	if err != nil {
 		logger.Errorw("[ResetTraffic] Failed to set retry count",
 			logger.Field("count", count),
@@ -472,7 +471,7 @@ func (l *ResetTrafficLogic) setRetryCount(ctx context.Context, count int) {
 
 // clearRetryCount removes the retry count from Redis
 func (l *ResetTrafficLogic) clearRetryCount(ctx context.Context) {
-	err := l.svc.Redis.Del(ctx, retryCountKey).Err()
+	err := l.deps.Redis.Del(ctx, retryCountKey).Err()
 	if err != nil {
 		logger.Errorw("[ResetTraffic] Failed to clear retry count", logger.Field("error", err.Error()))
 	}
@@ -480,7 +479,7 @@ func (l *ResetTrafficLogic) clearRetryCount(ctx context.Context) {
 
 // acquireLock attempts to acquire a distributed lock
 func (l *ResetTrafficLogic) acquireLock(ctx context.Context) bool {
-	result := l.svc.Redis.SetNX(ctx, lockKey, "locked", lockTimeout)
+	result := l.deps.Redis.SetNX(ctx, lockKey, "locked", lockTimeout)
 	acquired, err := result.Result()
 	if err != nil {
 		logger.Errorw("[ResetTraffic] Failed to acquire lock", logger.Field("error", err.Error()))
@@ -498,7 +497,7 @@ func (l *ResetTrafficLogic) acquireLock(ctx context.Context) bool {
 
 // releaseLock releases the distributed lock
 func (l *ResetTrafficLogic) releaseLock(ctx context.Context) {
-	err := l.svc.Redis.Del(ctx, lockKey).Err()
+	err := l.deps.Redis.Del(ctx, lockKey).Err()
 	if err != nil {
 		logger.Errorw("[ResetTraffic] Failed to release lock", logger.Field("error", err.Error()))
 	} else {
@@ -581,7 +580,7 @@ func (l *ResetTrafficLogic) clearCache(ctx context.Context, list []*user.Subscri
 
 		for _, sub := range list {
 			if sub.SubscribeId > 0 {
-				err := l.svc.UserModel.ClearSubscribeCache(ctx, sub)
+				err := l.deps.UserModel.ClearSubscribeCache(ctx, sub)
 				if err != nil {
 					logger.Errorw("[ResetTraffic] Failed to clear cache for subscription",
 						logger.Field("subscribeId", sub.SubscribeId),
@@ -596,7 +595,7 @@ func (l *ResetTrafficLogic) clearCache(ctx context.Context, list []*user.Subscri
 		}
 
 		for sub := range subs {
-			if err := l.svc.SubscribeModel.ClearCache(ctx, sub); err != nil {
+			if err := l.deps.SubscribeModel.ClearCache(ctx, sub); err != nil {
 				logger.Errorw("[ResetTraffic] Failed to clear subscription cache",
 					logger.Field("subscribeId", sub),
 					logger.Field("error", err.Error()),
@@ -614,7 +613,7 @@ func (l *ResetTrafficLogic) insertLog(ctx context.Context, subId, userId int64) 
 		Timestamp: time.Now().UnixMilli(),
 	}
 	content, _ := trafficLog.Marshal()
-	if err := l.svc.DB.WithContext(ctx).Model(&log.SystemLog{}).Create(&log.SystemLog{
+	if err := l.deps.DB.WithContext(ctx).Model(&log.SystemLog{}).Create(&log.SystemLog{
 		Type:     log.TypeResetSubscribe.Uint8(),
 		ObjectID: subId,
 		Date:     time.Now().Format(time.DateOnly),

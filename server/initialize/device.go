@@ -8,12 +8,11 @@ import (
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/auth"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 )
 
-func Device(ctx *svc.ServiceContext) {
+func Device(deps Deps) {
 	logger.Debug("device config initialization")
-	method, err := ctx.AuthModel.FindOneByMethod(context.Background(), "device")
+	method, err := deps.AuthModel.FindOneByMethod(context.Background(), "device")
 	if err != nil {
 		panic(err)
 	}
@@ -24,5 +23,7 @@ func Device(ctx *svc.ServiceContext) {
 	}
 	tool.DeepCopy(&cfg, deviceConfig)
 	cfg.Enable = *method.Enabled
-	ctx.Config.Device = cfg
+	if deps.Config != nil {
+		deps.Config.Device = cfg
+	}
 }

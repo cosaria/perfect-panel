@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/perfect-panel/server/models/task"
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
@@ -16,9 +15,9 @@ type QueryQuotaTaskListOutput struct {
 	Body *types.QueryQuotaTaskListResponse
 }
 
-func QueryQuotaTaskListHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryQuotaTaskListInput) (*QueryQuotaTaskListOutput, error) {
+func QueryQuotaTaskListHandler(deps Deps) func(context.Context, *QueryQuotaTaskListInput) (*QueryQuotaTaskListOutput, error) {
 	return func(ctx context.Context, input *QueryQuotaTaskListInput) (*QueryQuotaTaskListOutput, error) {
-		l := NewQueryQuotaTaskListLogic(ctx, svcCtx)
+		l := NewQueryQuotaTaskListLogic(ctx, deps)
 		resp, err := l.QueryQuotaTaskList(&input.Body)
 		if err != nil {
 			return nil, err
@@ -29,23 +28,23 @@ func QueryQuotaTaskListHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type QueryQuotaTaskListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewQueryQuotaTaskListLogic Query quota task list
-func NewQueryQuotaTaskListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryQuotaTaskListLogic {
+func NewQueryQuotaTaskListLogic(ctx context.Context, deps Deps) *QueryQuotaTaskListLogic {
 	return &QueryQuotaTaskListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *QueryQuotaTaskListLogic) QueryQuotaTaskList(req *types.QueryQuotaTaskListRequest) (resp *types.QueryQuotaTaskListResponse, err error) {
 	var data []*task.Task
 	var count int64
-	query := l.svcCtx.DB.Model(&task.Task{}).Where("`type` = ?", task.TypeQuota)
+	query := l.deps.DB.Model(&task.Task{}).Where("`type` = ?", task.TypeQuota)
 	if req.Page == 0 {
 		req.Page = 1
 	}

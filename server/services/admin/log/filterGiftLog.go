@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type FilterGiftLogOutput struct {
 	Body *types.FilterGiftLogResponse
 }
 
-func FilterGiftLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterGiftLogInput) (*FilterGiftLogOutput, error) {
+func FilterGiftLogHandler(deps Deps) func(context.Context, *FilterGiftLogInput) (*FilterGiftLogOutput, error) {
 	return func(ctx context.Context, input *FilterGiftLogInput) (*FilterGiftLogOutput, error) {
-		l := NewFilterGiftLogLogic(ctx, svcCtx)
+		l := NewFilterGiftLogLogic(ctx, deps)
 		resp, err := l.FilterGiftLog(&input.FilterGiftLogRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func FilterGiftLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *Fil
 
 type FilterGiftLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Filter gift log
-func NewFilterGiftLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterGiftLogLogic {
+func NewFilterGiftLogLogic(ctx context.Context, deps Deps) *FilterGiftLogLogic {
 	return &FilterGiftLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *FilterGiftLogLogic) FilterGiftLog(req *types.FilterGiftLogRequest) (resp *types.FilterGiftLogResponse, err error) {
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:     req.Page,
 		Size:     req.Size,
 		Type:     log.TypeGift.Uint8(),

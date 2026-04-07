@@ -11,7 +11,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/payment"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	queue "github.com/perfect-panel/server/worker"
 	"github.com/pkg/errors"
@@ -27,9 +26,9 @@ type PurchaseOutput struct {
 	Body *types.PortalPurchaseResponse
 }
 
-func PurchaseHandler(svcCtx *svc.ServiceContext) func(context.Context, *PurchaseInput) (*PurchaseOutput, error) {
+func PurchaseHandler(deps Deps) func(context.Context, *PurchaseInput) (*PurchaseOutput, error) {
 	return func(ctx context.Context, input *PurchaseInput) (*PurchaseOutput, error) {
-		l := NewPurchaseLogic(ctx, svcCtx)
+		l := NewPurchaseLogic(ctx, deps)
 		resp, err := l.Purchase(&input.Body)
 		if err != nil {
 			return nil, err
@@ -40,16 +39,16 @@ func PurchaseHandler(svcCtx *svc.ServiceContext) func(context.Context, *Purchase
 
 type PurchaseLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewPurchaseLogic Purchase subscription
-func NewPurchaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PurchaseLogic {
+func NewPurchaseLogic(ctx context.Context, deps Deps) *PurchaseLogic {
 	return &PurchaseLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -59,7 +58,7 @@ const (
 
 func (l *PurchaseLogic) Purchase(req *types.PortalPurchaseRequest) (resp *types.PortalPurchaseResponse, err error) {
 	// find user auth
-	userAuth, err := l.svcCtx.UserModel.FindUserAuthMethodByOpenID(l.ctx, req.AuthType, req.Identifier)
+	userAuth, err := l.deps.UserModel.FindUserAuthMethodByOpenID(l.ctx, req.AuthType, req.Identifier)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find user auth error: %v", err.Error())
 	}
@@ -67,7 +66,7 @@ func (l *PurchaseLogic) Purchase(req *types.PortalPurchaseRequest) (resp *types.
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.UserExist), "user already exists")
 	}
 	// find subscribe plan
-	sub, err := l.svcCtx.SubscribeModel.FindOne(l.ctx, req.SubscribeId)
+	sub, err := l.deps.SubscribeModel.FindOne(l.ctx, req.SubscribeId)
 	if err != nil {
 		l.Errorw("[Purchase] Database query error", logger.Field("error", err.Error()), logger.Field("subscribe_id", req.SubscribeId))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find subscribe error: %v", err.Error())
@@ -96,7 +95,7 @@ func (l *PurchaseLogic) Purchase(req *types.PortalPurchaseRequest) (resp *types.
 	var couponAmount int64 = 0
 	// Calculate the coupon deduction
 	if req.Coupon != "" {
-		couponInfo, err := l.svcCtx.CouponModel.FindOneByCode(l.ctx, req.Coupon)
+		couponInfo, err := l.deps.CouponModel.FindOneByCode(l.ctx, req.Coupon)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return nil, errors.Wrapf(xerr.NewErrCode(xerr.CouponNotExist), "coupon not found")
@@ -122,7 +121,7 @@ func (l *PurchaseLogic) Purchase(req *types.PortalPurchaseRequest) (resp *types.
 	// Calculate the handling fee
 	amount -= couponAmount
 	// find payment method
-	paymentConfig, err := l.svcCtx.PaymentModel.FindOne(l.ctx, req.Payment)
+	paymentConfig, err := l.deps.PaymentModel.FindOne(l.ctx, req.Payment)
 	if err != nil {
 		l.Logger.Error("[Purchase] Database query error", logger.Field("error", err.Error()), logger.Field("payment", req.Payment))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.PaymentMethodNotFound), "find payment method error: %v", err.Error())
@@ -156,7 +155,7 @@ func (l *PurchaseLogic) Purchase(req *types.PortalPurchaseRequest) (resp *types.
 		SubscribeId:    req.SubscribeId,
 	}
 	// save order
-	err = l.svcCtx.DB.Transaction(func(tx *gorm.DB) error {
+	err = l.deps.DB.Transaction(func(tx *gorm.DB) error {
 		// save guest order and user information
 		tempOrder := config.TemporaryOrderInfo{
 			OrderNo:    orderInfo.OrderNo,
@@ -167,7 +166,7 @@ func (l *PurchaseLogic) Purchase(req *types.PortalPurchaseRequest) (resp *types.
 		}
 		content, _ := tempOrder.Marshal()
 
-		if _, err = l.svcCtx.Redis.Set(l.ctx, fmt.Sprintf(config.TempOrderCacheKey, orderInfo.OrderNo), string(content), CloseOrderTimeMinutes*time.Minute).Result(); err != nil {
+		if _, err = l.deps.Redis.Set(l.ctx, fmt.Sprintf(config.TempOrderCacheKey, orderInfo.OrderNo), string(content), CloseOrderTimeMinutes*time.Minute).Result(); err != nil {
 			l.Errorw("[Purchase] Redis set error", logger.Field("error", err.Error()), logger.Field("order_no", orderInfo.OrderNo))
 			return err
 		}
@@ -176,14 +175,14 @@ func (l *PurchaseLogic) Purchase(req *types.PortalPurchaseRequest) (resp *types.
 		// Decrease subscribe plan stock
 		if sub.Inventory != -1 {
 			sub.Inventory--
-			if e := l.svcCtx.SubscribeModel.Update(l.ctx, sub, tx); e != nil {
+			if e := l.deps.SubscribeModel.Update(l.ctx, sub, tx); e != nil {
 				l.Errorw("[Purchase] Database update error", logger.Field("error", e.Error()), logger.Field("subscribe_id", sub.Id))
 				return e
 			}
 		}
 
 		// save guest order
-		if err = l.svcCtx.OrderModel.Insert(l.ctx, orderInfo, tx); err != nil {
+		if err = l.deps.OrderModel.Insert(l.ctx, orderInfo, tx); err != nil {
 			return err
 		}
 		return nil
@@ -201,7 +200,7 @@ func (l *PurchaseLogic) Purchase(req *types.PortalPurchaseRequest) (resp *types.
 		l.Errorw("[CloseOrder Task] Marshal payload error", logger.Field("error", err.Error()), logger.Field("payload", payload))
 	}
 	task := asynq.NewTask(queue.DeferCloseOrder, val, asynq.MaxRetry(3))
-	taskInfo, err := l.svcCtx.Queue.Enqueue(task, asynq.ProcessIn(CloseOrderTimeMinutes*time.Minute))
+	taskInfo, err := l.deps.Queue.Enqueue(task, asynq.ProcessIn(CloseOrderTimeMinutes*time.Minute))
 	if err != nil {
 		l.Errorw("[CloseOrder Task] Enqueue task error", logger.Field("error", err.Error()), logger.Field("task", taskInfo))
 	} else {

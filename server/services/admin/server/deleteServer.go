@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/node"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +13,9 @@ type DeleteServerInput struct {
 	Body types.DeleteServerRequest
 }
 
-func DeleteServerHandler(svcCtx *svc.ServiceContext) func(context.Context, *DeleteServerInput) (*struct{}, error) {
+func DeleteServerHandler(deps Deps) func(context.Context, *DeleteServerInput) (*struct{}, error) {
 	return func(ctx context.Context, input *DeleteServerInput) (*struct{}, error) {
-		l := NewDeleteServerLogic(ctx, svcCtx)
+		l := NewDeleteServerLogic(ctx, deps)
 		if err := l.DeleteServer(&input.Body); err != nil {
 			return nil, err
 		}
@@ -26,26 +25,26 @@ func DeleteServerHandler(svcCtx *svc.ServiceContext) func(context.Context, *Dele
 
 type DeleteServerLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewDeleteServerLogic Delete Server
-func NewDeleteServerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteServerLogic {
+func NewDeleteServerLogic(ctx context.Context, deps Deps) *DeleteServerLogic {
 	return &DeleteServerLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *DeleteServerLogic) DeleteServer(req *types.DeleteServerRequest) error {
-	err := l.svcCtx.NodeModel.DeleteServer(l.ctx, req.Id)
+	err := l.deps.NodeModel.DeleteServer(l.ctx, req.Id)
 	if err != nil {
 		l.Errorw("[DeleteServer] Delete Server Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "[DeleteServer] Delete Server Error")
 	}
-	return l.svcCtx.NodeModel.ClearNodeCache(l.ctx, &node.FilterNodeParams{
+	return l.deps.NodeModel.ClearNodeCache(l.ctx, &node.FilterNodeParams{
 		Page:     1,
 		Size:     1000,
 		ServerId: []int64{req.Id},

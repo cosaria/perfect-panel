@@ -2,10 +2,10 @@ package system
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +14,9 @@ type GetCurrencyConfigOutput struct {
 	Body *types.CurrencyConfig
 }
 
-func GetCurrencyConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetCurrencyConfigOutput, error) {
+func GetCurrencyConfigHandler(deps Deps) func(context.Context, *struct{}) (*GetCurrencyConfigOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetCurrencyConfigOutput, error) {
-		l := NewGetCurrencyConfigLogic(ctx, svcCtx)
+		l := NewGetCurrencyConfigLogic(ctx, deps)
 		resp, err := l.GetCurrencyConfig()
 		if err != nil {
 			return nil, err
@@ -27,21 +27,21 @@ func GetCurrencyConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, 
 
 type GetCurrencyConfigLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get Currency Config
-func NewGetCurrencyConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCurrencyConfigLogic {
+func NewGetCurrencyConfigLogic(ctx context.Context, deps Deps) *GetCurrencyConfigLogic {
 	return &GetCurrencyConfigLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetCurrencyConfigLogic) GetCurrencyConfig() (resp *types.CurrencyConfig, err error) {
-	configs, err := l.svcCtx.SystemModel.GetCurrencyConfig(l.ctx)
+	configs, err := l.deps.SystemModel.GetCurrencyConfig(l.ctx)
 	if err != nil {
 		l.Errorw("[GetCurrencyConfigLogic] GetCurrencyConfig error: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "GetCurrencyConfig error: %v", err.Error())

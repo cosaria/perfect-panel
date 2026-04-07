@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/notify/email"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
@@ -14,9 +13,9 @@ type StopBatchSendEmailTaskInput struct {
 	Body types.StopBatchSendEmailTaskRequest
 }
 
-func StopBatchSendEmailTaskHandler(svcCtx *svc.ServiceContext) func(context.Context, *StopBatchSendEmailTaskInput) (*struct{}, error) {
+func StopBatchSendEmailTaskHandler(deps Deps) func(context.Context, *StopBatchSendEmailTaskInput) (*struct{}, error) {
 	return func(ctx context.Context, input *StopBatchSendEmailTaskInput) (*struct{}, error) {
-		l := NewStopBatchSendEmailTaskLogic(ctx, svcCtx)
+		l := NewStopBatchSendEmailTaskLogic(ctx, deps)
 		if err := l.StopBatchSendEmailTask(&input.Body); err != nil {
 			return nil, err
 		}
@@ -26,16 +25,16 @@ func StopBatchSendEmailTaskHandler(svcCtx *svc.ServiceContext) func(context.Cont
 
 type StopBatchSendEmailTaskLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewStopBatchSendEmailTaskLogic Stop a batch send email task
-func NewStopBatchSendEmailTaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *StopBatchSendEmailTaskLogic {
+func NewStopBatchSendEmailTaskLogic(ctx context.Context, deps Deps) *StopBatchSendEmailTaskLogic {
 	return &StopBatchSendEmailTaskLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -45,7 +44,7 @@ func (l *StopBatchSendEmailTaskLogic) StopBatchSendEmailTask(req *types.StopBatc
 	} else {
 		logger.Error("[StopBatchSendEmailTaskLogic] email.Manager is nil, cannot stop task")
 	}
-	err = l.svcCtx.DB.Model(&task.Task{}).Where("id = ?", req.Id).Update("status", 2).Error
+	err = l.deps.DB.Model(&task.Task{}).Where("id = ?", req.Id).Update("status", 2).Error
 
 	if err != nil {
 		l.Errorf("failed to stop email task, error: %v", err)

@@ -7,22 +7,21 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment/exchangeRate"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 )
 
 type RateLogic struct {
-	svcCtx *svc.ServiceContext
+	deps Deps
 }
 
-func NewRateLogic(svcCtx *svc.ServiceContext) *RateLogic {
+func NewRateLogic(deps Deps) *RateLogic {
 	return &RateLogic{
-		svcCtx: svcCtx,
+		deps: deps,
 	}
 }
 
 func (l *RateLogic) ProcessTask(ctx context.Context, _ *asynq.Task) error {
 	// Retrieve system currency configuration
-	currency, err := l.svcCtx.SystemModel.GetCurrencyConfig(ctx)
+	currency, err := l.deps.SystemModel.GetCurrencyConfig(ctx)
 	if err != nil {
 		logger.Errorw("[PurchaseCheckout] GetCurrencyConfig error", logger.Field("error", err.Error()))
 		return err
@@ -46,7 +45,9 @@ func (l *RateLogic) ProcessTask(ctx context.Context, _ *asynq.Task) error {
 		logger.Errorw("[RateLogic] GetExchangeRete error", logger.Field("error", err.Error()))
 		return err
 	}
-	l.svcCtx.ExchangeRate = result
+	if l.deps.SetExchangeRate != nil {
+		l.deps.SetExchangeRate(result)
+	}
 	logger.WithContext(ctx).Infof("[RateLogic] GetExchangeRete success, result: %+v", result)
 	return nil
 }

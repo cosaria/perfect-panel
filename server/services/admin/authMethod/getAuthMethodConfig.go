@@ -3,10 +3,10 @@ package authMethod
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -19,9 +19,9 @@ type GetAuthMethodConfigOutput struct {
 	Body *types.AuthMethodConfig
 }
 
-func GetAuthMethodConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetAuthMethodConfigInput) (*GetAuthMethodConfigOutput, error) {
+func GetAuthMethodConfigHandler(deps Deps) func(context.Context, *GetAuthMethodConfigInput) (*GetAuthMethodConfigOutput, error) {
 	return func(ctx context.Context, input *GetAuthMethodConfigInput) (*GetAuthMethodConfigOutput, error) {
-		l := NewGetAuthMethodConfigLogic(ctx, svcCtx)
+		l := NewGetAuthMethodConfigLogic(ctx, deps)
 		resp, err := l.GetAuthMethodConfig(&input.GetAuthMethodConfigRequest)
 		if err != nil {
 			return nil, err
@@ -32,21 +32,21 @@ func GetAuthMethodConfigHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type GetAuthMethodConfigLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetAuthMethodConfigLogic Get auth method config
-func NewGetAuthMethodConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAuthMethodConfigLogic {
+func NewGetAuthMethodConfigLogic(ctx context.Context, deps Deps) *GetAuthMethodConfigLogic {
 	return &GetAuthMethodConfigLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetAuthMethodConfigLogic) GetAuthMethodConfig(req *types.GetAuthMethodConfigRequest) (resp *types.AuthMethodConfig, err error) {
-	method, err := l.svcCtx.AuthModel.FindOneByMethod(l.ctx, req.Method)
+	method, err := l.deps.AuthModel.FindOneByMethod(l.ctx, req.Method)
 	if err != nil {
 		l.Errorw("find one by method failed", logger.Field("method", req.Method), logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find one by method failed: %v", err.Error())

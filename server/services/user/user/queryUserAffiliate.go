@@ -2,12 +2,12 @@ package user
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -17,9 +17,9 @@ type QueryUserAffiliateOutput struct {
 	Body *types.QueryUserAffiliateCountResponse
 }
 
-func QueryUserAffiliateHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryUserAffiliateOutput, error) {
+func QueryUserAffiliateHandler(deps Deps) func(context.Context, *struct{}) (*QueryUserAffiliateOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*QueryUserAffiliateOutput, error) {
-		l := NewQueryUserAffiliateLogic(ctx, svcCtx)
+		l := NewQueryUserAffiliateLogic(ctx, deps)
 		resp, err := l.QueryUserAffiliate()
 		if err != nil {
 			return nil, err
@@ -30,16 +30,16 @@ func QueryUserAffiliateHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type QueryUserAffiliateLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Query User Balance Log
-func NewQueryUserAffiliateLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryUserAffiliateLogic {
+func NewQueryUserAffiliateLogic(ctx context.Context, deps Deps) *QueryUserAffiliateLogic {
 	return &QueryUserAffiliateLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -51,13 +51,13 @@ func (l *QueryUserAffiliateLogic) QueryUserAffiliate() (resp *types.QueryUserAff
 	}
 	var sum int64
 	var total int64
-	err = l.svcCtx.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err = l.deps.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		return db.Model(&user.User{}).Where("referer_id = ?", u.Id).Count(&total).Find(&user.User{}).Error
 	})
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Query User Affiliate failed: %v", err)
 	}
-	data, _, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, _, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:     1,
 		Size:     99999,
 		Type:     log.TypeCommission.Uint8(),

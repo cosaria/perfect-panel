@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/task"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
@@ -17,9 +16,9 @@ type GetBatchSendEmailTaskStatusOutput struct {
 	Body *types.GetBatchSendEmailTaskStatusResponse
 }
 
-func GetBatchSendEmailTaskStatusHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetBatchSendEmailTaskStatusInput) (*GetBatchSendEmailTaskStatusOutput, error) {
+func GetBatchSendEmailTaskStatusHandler(deps Deps) func(context.Context, *GetBatchSendEmailTaskStatusInput) (*GetBatchSendEmailTaskStatusOutput, error) {
 	return func(ctx context.Context, input *GetBatchSendEmailTaskStatusInput) (*GetBatchSendEmailTaskStatusOutput, error) {
-		l := NewGetBatchSendEmailTaskStatusLogic(ctx, svcCtx)
+		l := NewGetBatchSendEmailTaskStatusLogic(ctx, deps)
 		resp, err := l.GetBatchSendEmailTaskStatus(&input.Body)
 		if err != nil {
 			return nil, err
@@ -30,21 +29,21 @@ func GetBatchSendEmailTaskStatusHandler(svcCtx *svc.ServiceContext) func(context
 
 type GetBatchSendEmailTaskStatusLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetBatchSendEmailTaskStatusLogic Get batch send email task status
-func NewGetBatchSendEmailTaskStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetBatchSendEmailTaskStatusLogic {
+func NewGetBatchSendEmailTaskStatusLogic(ctx context.Context, deps Deps) *GetBatchSendEmailTaskStatusLogic {
 	return &GetBatchSendEmailTaskStatusLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetBatchSendEmailTaskStatusLogic) GetBatchSendEmailTaskStatus(req *types.GetBatchSendEmailTaskStatusRequest) (resp *types.GetBatchSendEmailTaskStatusResponse, err error) {
-	tx := l.svcCtx.DB
+	tx := l.deps.DB
 
 	var taskInfo *task.Task
 	err = tx.Model(&task.Task{}).Where("id = ?", req.Id).First(&taskInfo).Error

@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/ip"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"strings"
@@ -17,9 +16,9 @@ type UpdateServerInput struct {
 	Body types.UpdateServerRequest
 }
 
-func UpdateServerHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateServerInput) (*struct{}, error) {
+func UpdateServerHandler(deps Deps) func(context.Context, *UpdateServerInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateServerInput) (*struct{}, error) {
-		l := NewUpdateServerLogic(ctx, svcCtx)
+		l := NewUpdateServerLogic(ctx, deps)
 		if err := l.UpdateServer(&input.Body); err != nil {
 			return nil, err
 		}
@@ -29,21 +28,21 @@ func UpdateServerHandler(svcCtx *svc.ServiceContext) func(context.Context, *Upda
 
 type UpdateServerLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewUpdateServerLogic Update Server
-func NewUpdateServerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateServerLogic {
+func NewUpdateServerLogic(ctx context.Context, deps Deps) *UpdateServerLogic {
 	return &UpdateServerLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *UpdateServerLogic) UpdateServer(req *types.UpdateServerRequest) error {
-	data, err := l.svcCtx.NodeModel.FindOneServer(l.ctx, req.Id)
+	data, err := l.deps.NodeModel.FindOneServer(l.ctx, req.Id)
 	if err != nil {
 		l.Errorf("[UpdateServer] FindOneServer Error: %v", err.Error())
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find server error: %v", err.Error())
@@ -117,13 +116,13 @@ func (l *UpdateServerLogic) UpdateServer(req *types.UpdateServerRequest) error {
 		return errors.Wrapf(xerr.NewErrCodeMsg(xerr.InvalidParams, "protocols marshal error"), "protocols marshal error: %v", err)
 	}
 
-	err = l.svcCtx.NodeModel.UpdateServer(l.ctx, data)
+	err = l.deps.NodeModel.UpdateServer(l.ctx, data)
 	if err != nil {
 		l.Errorf("[UpdateServer] UpdateServer Error: %v", err.Error())
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update server error: %v", err.Error())
 	}
 
-	return l.svcCtx.NodeModel.ClearNodeCache(l.ctx, &node.FilterNodeParams{
+	return l.deps.NodeModel.ClearNodeCache(l.ctx, &node.FilterNodeParams{
 		Page:     1,
 		Size:     1000,
 		ServerId: []int64{req.Id},

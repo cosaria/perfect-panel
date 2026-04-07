@@ -2,10 +2,10 @@ package system
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +14,9 @@ type GetRegisterConfigOutput struct {
 	Body *types.RegisterConfig
 }
 
-func GetRegisterConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetRegisterConfigOutput, error) {
+func GetRegisterConfigHandler(deps Deps) func(context.Context, *struct{}) (*GetRegisterConfigOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetRegisterConfigOutput, error) {
-		l := NewGetRegisterConfigLogic(ctx, svcCtx)
+		l := NewGetRegisterConfigLogic(ctx, deps)
 		resp, err := l.GetRegisterConfig()
 		if err != nil {
 			return nil, err
@@ -27,15 +27,15 @@ func GetRegisterConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, 
 
 type GetRegisterConfigLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
-func NewGetRegisterConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetRegisterConfigLogic {
+func NewGetRegisterConfigLogic(ctx context.Context, deps Deps) *GetRegisterConfigLogic {
 	return &GetRegisterConfigLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -43,7 +43,7 @@ func (l *GetRegisterConfigLogic) GetRegisterConfig() (*types.RegisterConfig, err
 	resp := &types.RegisterConfig{}
 
 	// get register config from database
-	configs, err := l.svcCtx.SystemModel.GetRegisterConfig(l.ctx)
+	configs, err := l.deps.SystemModel.GetRegisterConfig(l.ctx)
 	if err != nil {
 		l.Errorw("[GetRegisterConfig] Database query error", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get register config error: %v", err.Error())

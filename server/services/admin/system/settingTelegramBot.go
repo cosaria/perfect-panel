@@ -2,14 +2,13 @@ package system
 
 import (
 	"context"
-	"github.com/perfect-panel/server/initialize"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/svc"
 )
 
-func SettingTelegramBotHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*struct{}, error) {
+func SettingTelegramBotHandler(deps Deps) func(context.Context, *struct{}) (*struct{}, error) {
 	return func(ctx context.Context, _ *struct{}) (*struct{}, error) {
-		l := NewSettingTelegramBotLogic(ctx, svcCtx)
+		l := NewSettingTelegramBotLogic(ctx, deps)
 		if err := l.SettingTelegramBot(); err != nil {
 			return nil, err
 		}
@@ -19,20 +18,22 @@ func SettingTelegramBotHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type SettingTelegramBotLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewSettingTelegramBotLogic setting telegram bot
-func NewSettingTelegramBotLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SettingTelegramBotLogic {
+func NewSettingTelegramBotLogic(ctx context.Context, deps Deps) *SettingTelegramBotLogic {
 	return &SettingTelegramBotLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *SettingTelegramBotLogic) SettingTelegramBot() error {
-	initialize.Telegram(l.svcCtx)
+	if l.deps.ReloadTelegram != nil {
+		l.deps.ReloadTelegram()
+	}
 	return nil
 }

@@ -10,24 +10,23 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/routers/response"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"net/http"
 )
 
-func GetServerConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
+func GetServerConfigHandler(deps Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var req types.GetServerConfigRequest
 		_ = c.ShouldBind(&req)
 		_ = c.ShouldBindQuery(&req.ServerCommon)
-		validateErr := svcCtx.Validate(&req)
+		validateErr := validateRequest(&req)
 		if validateErr != nil {
 			response.ParamErrorResult(c, validateErr)
 			return
 		}
 
-		l := NewGetServerConfigLogic(c, svcCtx)
+		l := NewGetServerConfigLogic(c, deps)
 		resp, err := l.GetServerConfig(&req)
 		if err != nil {
 			if errors.Is(err, xerr.StatusNotModified) {
@@ -43,22 +42,22 @@ func GetServerConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 
 type GetServerConfigLogic struct {
 	logger.Logger
-	ctx    *gin.Context
-	svcCtx *svc.ServiceContext
+	ctx  *gin.Context
+	deps Deps
 }
 
 // NewGetServerConfigLogic Get server config
-func NewGetServerConfigLogic(ctx *gin.Context, svcCtx *svc.ServiceContext) *GetServerConfigLogic {
+func NewGetServerConfigLogic(ctx *gin.Context, deps Deps) *GetServerConfigLogic {
 	return &GetServerConfigLogic{
 		Logger: logger.WithContext(ctx.Request.Context()),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetServerConfigLogic) GetServerConfig(req *types.GetServerConfigRequest) (resp *types.GetServerConfigResponse, err error) {
 	cacheKey := fmt.Sprintf("%s%d:%s", node.ServerConfigCacheKey, req.ServerId, req.Protocol)
-	cache, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
+	cache, err := l.deps.Redis.Get(l.ctx, cacheKey).Result()
 	if err == nil {
 		if cache != "" {
 			etag := tool.GenerateETag([]byte(cache))
@@ -77,7 +76,7 @@ func (l *GetServerConfigLogic) GetServerConfig(req *types.GetServerConfigRequest
 			return resp, nil
 		}
 	}
-	data, err := l.svcCtx.NodeModel.FindOneServer(l.ctx, req.ServerId)
+	data, err := l.deps.NodeModel.FindOneServer(l.ctx, req.ServerId)
 	if err != nil {
 		l.Errorw("[GetServerConfig] FindOne error", logger.Field("error", err.Error()))
 		return nil, err
@@ -101,10 +100,11 @@ func (l *GetServerConfigLogic) GetServerConfig(req *types.GetServerConfigRequest
 		}
 	}
 
+	appCfg := l.deps.currentConfig()
 	resp = &types.GetServerConfigResponse{
 		Basic: types.ServerBasic{
-			PullInterval: l.svcCtx.Config.Node.NodePullInterval,
-			PushInterval: l.svcCtx.Config.Node.NodePushInterval,
+			PullInterval: appCfg.Node.NodePullInterval,
+			PushInterval: appCfg.Node.NodePushInterval,
 		},
 		Protocol: req.Protocol,
 		Config:   cfg,
@@ -116,7 +116,7 @@ func (l *GetServerConfigLogic) GetServerConfig(req *types.GetServerConfigRequest
 	}
 	etag := tool.GenerateETag(c)
 	l.ctx.Header("ETag", etag)
-	if err = l.svcCtx.Redis.Set(l.ctx, cacheKey, c, -1).Err(); err != nil {
+	if err = l.deps.Redis.Set(l.ctx, cacheKey, c, -1).Err(); err != nil {
 		l.Errorw("[GetServerConfig] redis set error", logger.Field("error", err.Error()))
 	}
 	//  Check If-None-Match header

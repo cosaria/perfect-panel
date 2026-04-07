@@ -3,9 +3,9 @@ package system
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +14,9 @@ type GetNodeMultiplierOutput struct {
 	Body *types.GetNodeMultiplierResponse
 }
 
-func GetNodeMultiplierHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetNodeMultiplierOutput, error) {
+func GetNodeMultiplierHandler(deps Deps) func(context.Context, *struct{}) (*GetNodeMultiplierOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetNodeMultiplierOutput, error) {
-		l := NewGetNodeMultiplierLogic(ctx, svcCtx)
+		l := NewGetNodeMultiplierLogic(ctx, deps)
 		resp, err := l.GetNodeMultiplier()
 		if err != nil {
 			return nil, err
@@ -27,21 +27,21 @@ func GetNodeMultiplierHandler(svcCtx *svc.ServiceContext) func(context.Context, 
 
 type GetNodeMultiplierLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get Node Multiplier
-func NewGetNodeMultiplierLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetNodeMultiplierLogic {
+func NewGetNodeMultiplierLogic(ctx context.Context, deps Deps) *GetNodeMultiplierLogic {
 	return &GetNodeMultiplierLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetNodeMultiplierLogic) GetNodeMultiplier() (resp *types.GetNodeMultiplierResponse, err error) {
-	data, err := l.svcCtx.SystemModel.FindNodeMultiplierConfig(l.ctx)
+	data, err := l.deps.SystemModel.FindNodeMultiplierConfig(l.ctx)
 	if err != nil {
 		l.Logger.Error("Get Node Multiplier Config Error: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Get Node Multiplier Config Error: %s", err.Error())

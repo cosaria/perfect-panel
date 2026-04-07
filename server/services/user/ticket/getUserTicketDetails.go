@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -20,9 +19,9 @@ type GetUserTicketDetailsOutput struct {
 	Body *types.Ticket
 }
 
-func GetUserTicketDetailsHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserTicketDetailsInput) (*GetUserTicketDetailsOutput, error) {
+func GetUserTicketDetailsHandler(deps Deps) func(context.Context, *GetUserTicketDetailsInput) (*GetUserTicketDetailsOutput, error) {
 	return func(ctx context.Context, input *GetUserTicketDetailsInput) (*GetUserTicketDetailsOutput, error) {
-		l := NewGetUserTicketDetailsLogic(ctx, svcCtx)
+		l := NewGetUserTicketDetailsLogic(ctx, deps)
 		resp, err := l.GetUserTicketDetails(&input.GetUserTicketDetailRequest)
 		if err != nil {
 			return nil, err
@@ -33,22 +32,22 @@ func GetUserTicketDetailsHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type GetUserTicketDetailsLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get ticket detail
-func NewGetUserTicketDetailsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserTicketDetailsLogic {
+func NewGetUserTicketDetailsLogic(ctx context.Context, deps Deps) *GetUserTicketDetailsLogic {
 	return &GetUserTicketDetailsLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetUserTicketDetailsLogic) GetUserTicketDetails(req *types.GetUserTicketDetailRequest) (resp *types.Ticket, err error) {
 
-	data, err := l.svcCtx.TicketModel.QueryTicketDetail(l.ctx, req.Id)
+	data, err := l.deps.TicketModel.QueryTicketDetail(l.ctx, req.Id)
 	if err != nil {
 		l.Errorw("[GetUserTicketDetailsLogic] Database Error", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get ticket detail failed: %v", err.Error())

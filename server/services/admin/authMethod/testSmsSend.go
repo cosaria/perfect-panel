@@ -3,10 +3,10 @@ package authMethod
 import (
 	"context"
 	"fmt"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/notify/sms"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -15,9 +15,9 @@ type TestSmsSendInput struct {
 	Body types.TestSmsSendRequest
 }
 
-func TestSmsSendHandler(svcCtx *svc.ServiceContext) func(context.Context, *TestSmsSendInput) (*struct{}, error) {
+func TestSmsSendHandler(deps Deps) func(context.Context, *TestSmsSendInput) (*struct{}, error) {
 	return func(ctx context.Context, input *TestSmsSendInput) (*struct{}, error) {
-		l := NewTestSmsSendLogic(ctx, svcCtx)
+		l := NewTestSmsSendLogic(ctx, deps)
 		if err := l.TestSmsSend(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,21 +27,22 @@ func TestSmsSendHandler(svcCtx *svc.ServiceContext) func(context.Context, *TestS
 
 type TestSmsSendLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Test sms send
-func NewTestSmsSendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TestSmsSendLogic {
+func NewTestSmsSendLogic(ctx context.Context, deps Deps) *TestSmsSendLogic {
 	return &TestSmsSendLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *TestSmsSendLogic) TestSmsSend(req *types.TestSmsSendRequest) error {
-	client, err := sms.NewSender(l.svcCtx.Config.Mobile.Platform, l.svcCtx.Config.Mobile.PlatformConfig)
+	cfg := l.deps.currentConfig()
+	client, err := sms.NewSender(cfg.Mobile.Platform, cfg.Mobile.PlatformConfig)
 	if err != nil {
 		l.Errorw("new sms sender err", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "new sms sender err: %v", err.Error())

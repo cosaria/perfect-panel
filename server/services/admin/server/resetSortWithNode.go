@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/node"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -15,9 +14,9 @@ type ResetSortWithNodeInput struct {
 	Body types.ResetSortRequest
 }
 
-func ResetSortWithNodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *ResetSortWithNodeInput) (*struct{}, error) {
+func ResetSortWithNodeHandler(deps Deps) func(context.Context, *ResetSortWithNodeInput) (*struct{}, error) {
 	return func(ctx context.Context, input *ResetSortWithNodeInput) (*struct{}, error) {
-		l := NewResetSortWithNodeLogic(ctx, svcCtx)
+		l := NewResetSortWithNodeLogic(ctx, deps)
 		if err := l.ResetSortWithNode(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,21 +26,21 @@ func ResetSortWithNodeHandler(svcCtx *svc.ServiceContext) func(context.Context, 
 
 type ResetSortWithNodeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewResetSortWithNodeLogic Reset node sort
-func NewResetSortWithNodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetSortWithNodeLogic {
+func NewResetSortWithNodeLogic(ctx context.Context, deps Deps) *ResetSortWithNodeLogic {
 	return &ResetSortWithNodeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *ResetSortWithNodeLogic) ResetSortWithNode(req *types.ResetSortRequest) error {
-	err := l.svcCtx.NodeModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err := l.deps.NodeModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		// find all servers id
 		var existingIDs []int64
 		db.Model(&node.Node{}).Select("id").Find(&existingIDs)
@@ -79,12 +78,12 @@ func (l *ResetSortWithNodeLogic) ResetSortWithNode(req *types.ResetSortRequest) 
 			}
 		}
 		for _, item := range itemsToUpdate {
-			s, err := l.svcCtx.NodeModel.FindOneNode(l.ctx, item.Id)
+			s, err := l.deps.NodeModel.FindOneNode(l.ctx, item.Id)
 			if err != nil {
 				return err
 			}
 			s.Sort = int(item.Sort)
-			if err = l.svcCtx.NodeModel.UpdateNode(l.ctx, s, db); err != nil {
+			if err = l.deps.NodeModel.UpdateNode(l.ctx, s, db); err != nil {
 				l.Errorw("[NodeSort] Update Database Error: ", logger.Field("error", err.Error()), logger.Field("id", item.Id), logger.Field("sort", item.Sort))
 				return err
 			}

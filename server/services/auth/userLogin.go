@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"fmt"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/user"
@@ -12,7 +13,6 @@ import (
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/modules/util/uuidx"
 	"github.com/perfect-panel/server/modules/verify/turnstile"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -30,21 +30,22 @@ type UserLoginOutput struct {
 	Body *types.LoginResponse
 }
 
-func UserLoginHandler(svcCtx *svc.ServiceContext) func(context.Context, *UserLoginInput) (*UserLoginOutput, error) {
+func UserLoginHandler(deps Deps) func(context.Context, *UserLoginInput) (*UserLoginOutput, error) {
 	return func(ctx context.Context, input *UserLoginInput) (*UserLoginOutput, error) {
 		input.Body.IP = input.IP
 		input.Body.UserAgent = input.UserAgent
 		input.Body.LoginType = input.LoginType
-		if svcCtx.Config.Verify.LoginVerify && !svcCtx.Config.Debug {
+		cfg := deps.currentConfig()
+		if cfg.Verify.LoginVerify && !cfg.Debug {
 			verifyTurns := turnstile.New(turnstile.Config{
-				Secret:  svcCtx.Config.Verify.TurnstileSecret,
+				Secret:  cfg.Verify.TurnstileSecret,
 				Timeout: 3 * time.Second,
 			})
 			if verify, err := verifyTurns.Verify(ctx, input.Body.CfToken, input.Body.IP); err != nil || !verify {
 				return nil, errors.Wrapf(xerr.NewErrCode(xerr.TooManyRequests), "error: %v, verify: %v", err, verify)
 			}
 		}
-		l := NewUserLoginLogic(ctx, svcCtx)
+		l := NewUserLoginLogic(ctx, deps)
 		resp, err := l.UserLogin(&input.Body)
 		if err != nil {
 			return nil, err
@@ -55,16 +56,16 @@ func UserLoginHandler(svcCtx *svc.ServiceContext) func(context.Context, *UserLog
 
 type UserLoginLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewUserLoginLogic User login
-func NewUserLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserLoginLogic {
+func NewUserLoginLogic(ctx context.Context, deps Deps) *UserLoginLogic {
 	return &UserLoginLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -72,7 +73,7 @@ func (l *UserLoginLogic) UserLogin(req *types.UserLoginRequest) (resp *types.Log
 	loginStatus := false
 	var userInfo *user.User
 	// Record login status
-	defer func(svcCtx *svc.ServiceContext) {
+	defer func() {
 		if userInfo.Id != 0 {
 			loginLog := log.Login{
 				Method:    "email",
@@ -82,7 +83,7 @@ func (l *UserLoginLogic) UserLogin(req *types.UserLoginRequest) (resp *types.Log
 				Timestamp: time.Now().UnixMilli(),
 			}
 			content, _ := loginLog.Marshal()
-			if err := l.svcCtx.LogModel.Insert(l.ctx, &log.SystemLog{
+			if err := l.deps.LogModel.Insert(l.ctx, &log.SystemLog{
 				Type:     log.TypeLogin.Uint8(),
 				Date:     time.Now().Format("2006-01-02"),
 				ObjectID: userInfo.Id,
@@ -95,9 +96,9 @@ func (l *UserLoginLogic) UserLogin(req *types.UserLoginRequest) (resp *types.Log
 				)
 			}
 		}
-	}(l.svcCtx)
+	}()
 
-	userInfo, err = l.svcCtx.UserModel.FindOneByEmail(l.ctx, req.Email)
+	userInfo, err = l.deps.UserModel.FindOneByEmail(l.ctx, req.Email)
 
 	if userInfo.DeletedAt.Valid {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.UserNotExist), "user email deleted: %v", req.Email)
@@ -118,7 +119,7 @@ func (l *UserLoginLogic) UserLogin(req *types.UserLoginRequest) (resp *types.Log
 
 	// Bind device to user if identifier is provided
 	if req.Identifier != "" {
-		bindLogic := NewBindDeviceLogic(l.ctx, l.svcCtx)
+		bindLogic := NewBindDeviceLogic(l.ctx, l.deps)
 		if err := bindLogic.BindDeviceToUser(req.Identifier, req.IP, req.UserAgent, userInfo.Id); err != nil {
 			l.Errorw("failed to bind device to user",
 				logger.Field("user_id", userInfo.Id),
@@ -134,10 +135,11 @@ func (l *UserLoginLogic) UserLogin(req *types.UserLoginRequest) (resp *types.Log
 	// Generate session id
 	sessionId := uuidx.NewUUID().String()
 	// Generate token
+	cfg := l.deps.currentConfig()
 	token, err := jwt.NewJwtToken(
-		l.svcCtx.Config.JwtAuth.AccessSecret,
+		cfg.JwtAuth.AccessSecret,
 		time.Now().Unix(),
-		l.svcCtx.Config.JwtAuth.AccessExpire,
+		cfg.JwtAuth.AccessExpire,
 		jwt.WithOption("UserId", userInfo.Id),
 		jwt.WithOption("SessionId", sessionId),
 		jwt.WithOption("LoginType", req.LoginType),
@@ -147,7 +149,7 @@ func (l *UserLoginLogic) UserLogin(req *types.UserLoginRequest) (resp *types.Log
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "token generate error: %v", err.Error())
 	}
 	sessionIdCacheKey := fmt.Sprintf("%v:%v", config.SessionIdKey, sessionId)
-	if err = l.svcCtx.Redis.Set(l.ctx, sessionIdCacheKey, userInfo.Id, time.Duration(l.svcCtx.Config.JwtAuth.AccessExpire)*time.Second).Err(); err != nil {
+	if err = l.deps.Redis.Set(l.ctx, sessionIdCacheKey, userInfo.Id, time.Duration(cfg.JwtAuth.AccessExpire)*time.Second).Err(); err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "set session id error: %v", err.Error())
 	}
 	loginStatus = true

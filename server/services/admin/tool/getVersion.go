@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
@@ -13,9 +12,9 @@ type GetVersionOutput struct {
 	Body *types.VersionResponse
 }
 
-func GetVersionHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetVersionOutput, error) {
+func GetVersionHandler(deps Deps) func(context.Context, *struct{}) (*GetVersionOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetVersionOutput, error) {
-		l := NewGetVersionLogic(ctx, svcCtx)
+		l := NewGetVersionLogic(ctx, deps)
 		resp, err := l.GetVersion()
 		if err != nil {
 			return nil, err
@@ -26,16 +25,16 @@ func GetVersionHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct
 
 type GetVersionLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetVersionLogic Get Version
-func NewGetVersionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetVersionLogic {
+func NewGetVersionLogic(ctx context.Context, deps Deps) *GetVersionLogic {
 	return &GetVersionLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 

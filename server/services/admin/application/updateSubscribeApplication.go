@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -19,9 +18,9 @@ type UpdateSubscribeApplicationOutput struct {
 	Body *types.SubscribeApplication
 }
 
-func UpdateSubscribeApplicationHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateSubscribeApplicationInput) (*UpdateSubscribeApplicationOutput, error) {
+func UpdateSubscribeApplicationHandler(deps Deps) func(context.Context, *UpdateSubscribeApplicationInput) (*UpdateSubscribeApplicationOutput, error) {
 	return func(ctx context.Context, input *UpdateSubscribeApplicationInput) (*UpdateSubscribeApplicationOutput, error) {
-		l := NewUpdateSubscribeApplicationLogic(ctx, svcCtx)
+		l := NewUpdateSubscribeApplicationLogic(ctx, deps)
 		resp, err := l.UpdateSubscribeApplication(&input.Body)
 		if err != nil {
 			return nil, err
@@ -32,21 +31,21 @@ func UpdateSubscribeApplicationHandler(svcCtx *svc.ServiceContext) func(context.
 
 type UpdateSubscribeApplicationLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewUpdateSubscribeApplicationLogic Update subscribe application
-func NewUpdateSubscribeApplicationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateSubscribeApplicationLogic {
+func NewUpdateSubscribeApplicationLogic(ctx context.Context, deps Deps) *UpdateSubscribeApplicationLogic {
 	return &UpdateSubscribeApplicationLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *UpdateSubscribeApplicationLogic) UpdateSubscribeApplication(req *types.UpdateSubscribeApplicationRequest) (resp *types.SubscribeApplication, err error) {
-	data, err := l.svcCtx.ClientModel.FindOne(l.ctx, req.Id)
+	data, err := l.deps.ClientModel.FindOne(l.ctx, req.Id)
 	if err != nil {
 		l.Errorf("Failed to find subscribe application with ID %d: %v", req.Id, err)
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Failed to find subscribe application with ID %d", req.Id)
@@ -68,7 +67,7 @@ func (l *UpdateSubscribeApplicationLogic) UpdateSubscribeApplication(req *types.
 	data.SubscribeTemplate = req.SubscribeTemplate
 	data.OutputFormat = req.OutputFormat
 	data.DownloadLink = string(linkData)
-	err = l.svcCtx.ClientModel.Update(l.ctx, data)
+	err = l.deps.ClientModel.Update(l.ctx, data)
 	if err != nil {
 		l.Errorf("Failed to update subscribe application with ID %d: %v", req.Id, err)
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "Failed to update subscribe application with ID %d", req.Id)

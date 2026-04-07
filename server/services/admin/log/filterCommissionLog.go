@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type FilterCommissionLogOutput struct {
 	Body *types.FilterCommissionLogResponse
 }
 
-func FilterCommissionLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterCommissionLogInput) (*FilterCommissionLogOutput, error) {
+func FilterCommissionLogHandler(deps Deps) func(context.Context, *FilterCommissionLogInput) (*FilterCommissionLogOutput, error) {
 	return func(ctx context.Context, input *FilterCommissionLogInput) (*FilterCommissionLogOutput, error) {
-		l := NewFilterCommissionLogLogic(ctx, svcCtx)
+		l := NewFilterCommissionLogLogic(ctx, deps)
 		resp, err := l.FilterCommissionLog(&input.FilterCommissionLogRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func FilterCommissionLogHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type FilterCommissionLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewFilterCommissionLogLogic Filter commission log
-func NewFilterCommissionLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterCommissionLogLogic {
+func NewFilterCommissionLogLogic(ctx context.Context, deps Deps) *FilterCommissionLogLogic {
 	return &FilterCommissionLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *FilterCommissionLogLogic) FilterCommissionLog(req *types.FilterCommissionLogRequest) (resp *types.FilterCommissionLogResponse, err error) {
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:     req.Page,
 		Size:     req.Size,
 		Data:     req.Date,

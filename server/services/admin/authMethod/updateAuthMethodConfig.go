@@ -3,14 +3,13 @@ package authMethod
 import (
 	"context"
 	"encoding/json"
-	"github.com/perfect-panel/server/initialize"
+
 	"github.com/perfect-panel/server/models/auth"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/notify/email"
 	"github.com/perfect-panel/server/modules/notify/sms"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -23,9 +22,9 @@ type UpdateAuthMethodConfigOutput struct {
 	Body *types.AuthMethodConfig
 }
 
-func UpdateAuthMethodConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateAuthMethodConfigInput) (*UpdateAuthMethodConfigOutput, error) {
+func UpdateAuthMethodConfigHandler(deps Deps) func(context.Context, *UpdateAuthMethodConfigInput) (*UpdateAuthMethodConfigOutput, error) {
 	return func(ctx context.Context, input *UpdateAuthMethodConfigInput) (*UpdateAuthMethodConfigOutput, error) {
-		l := NewUpdateAuthMethodConfigLogic(ctx, svcCtx)
+		l := NewUpdateAuthMethodConfigLogic(ctx, deps)
 		resp, err := l.UpdateAuthMethodConfig(&input.Body)
 		if err != nil {
 			return nil, err
@@ -36,21 +35,21 @@ func UpdateAuthMethodConfigHandler(svcCtx *svc.ServiceContext) func(context.Cont
 
 type UpdateAuthMethodConfigLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Update auth method config
-func NewUpdateAuthMethodConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateAuthMethodConfigLogic {
+func NewUpdateAuthMethodConfigLogic(ctx context.Context, deps Deps) *UpdateAuthMethodConfigLogic {
 	return &UpdateAuthMethodConfigLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *UpdateAuthMethodConfigLogic) UpdateAuthMethodConfig(req *types.UpdateAuthMethodConfigRequest) (resp *types.AuthMethodConfig, err error) {
-	method, err := l.svcCtx.AuthModel.FindOneByMethod(l.ctx, req.Method)
+	method, err := l.deps.AuthModel.FindOneByMethod(l.ctx, req.Method)
 	if err != nil {
 		l.Errorw("find one by method failed", logger.Field("method", req.Method), logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find one by method failed: %v", err.Error())
@@ -85,7 +84,7 @@ func (l *UpdateAuthMethodConfigLogic) UpdateAuthMethodConfig(req *types.UpdateAu
 		// initialize platform config
 		method.Config = initializePlatformConfig(req.Method).(string)
 	}
-	err = l.svcCtx.AuthModel.Update(l.ctx, method)
+	err = l.deps.AuthModel.Update(l.ctx, method)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "update auth method failed: %v", err.Error())
 	}
@@ -104,14 +103,14 @@ func (l *UpdateAuthMethodConfigLogic) UpdateAuthMethodConfig(req *types.UpdateAu
 }
 
 func (l *UpdateAuthMethodConfigLogic) UpdateGlobal(method string) {
-	if method == "email" {
-		initialize.Email(l.svcCtx)
+	if method == "email" && l.deps.ReloadEmail != nil {
+		l.deps.ReloadEmail()
 	}
-	if method == "mobile" {
-		initialize.Mobile(l.svcCtx)
+	if method == "mobile" && l.deps.ReloadMobile != nil {
+		l.deps.ReloadMobile()
 	}
-	if method == "device" {
-		initialize.Device(l.svcCtx)
+	if method == "device" && l.deps.ReloadDevice != nil {
+		l.deps.ReloadDevice()
 	}
 }
 

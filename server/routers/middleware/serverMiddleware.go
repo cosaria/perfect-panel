@@ -4,12 +4,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/perfect-panel/server/svc"
+	appruntime "github.com/perfect-panel/server/runtime"
 )
 
-func ServerMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
+func ServerMiddleware(runtimeDeps *appruntime.Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		if c.GetHeader("X-Node-Secret") == svc.Config.Node.NodeSecret && svc.Config.Node.NodeSecret != "" {
+		if runtimeDeps != nil && runtimeDeps.Config != nil && c.GetHeader("X-Node-Secret") == runtimeDeps.Config.Node.NodeSecret && runtimeDeps.Config.Node.NodeSecret != "" {
 			c.Next()
 			return
 		}

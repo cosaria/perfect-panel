@@ -14,15 +14,15 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/routers/response"
-	"github.com/perfect-panel/server/svc"
+	appruntime "github.com/perfect-panel/server/runtime"
 	"github.com/pkg/errors"
 )
 
-func AuthMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
+func AuthMiddleware(runtimeDeps *appruntime.Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 
-		jwtConfig := svc.Config.JwtAuth
+		jwtConfig := runtimeDeps.Config.JwtAuth
 		// get token from header
 		token := c.GetHeader("Authorization")
 		if token == "" {
@@ -68,7 +68,7 @@ func AuthMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
 		}
 		// get session id from redis
 		sessionIdCacheKey := fmt.Sprintf("%v:%v", config.SessionIdKey, sessionId)
-		value, err := svc.Redis.Get(c, sessionIdCacheKey).Result()
+		value, err := runtimeDeps.Redis.Get(c, sessionIdCacheKey).Result()
 		if err != nil {
 			logger.WithContext(c.Request.Context()).Debug("[AuthMiddleware] Redis Get", logger.Field("error", err.Error()), logger.Field("sessionId", sessionId))
 			response.WriteProblem(c, response.NewPublicProblem(http.StatusUnauthorized, response.ProblemTypeUnauthorized, http.StatusText(http.StatusUnauthorized)))
@@ -84,7 +84,7 @@ func AuthMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
 			return
 		}
 
-		userInfo, err := svc.UserModel.FindOne(c, userId)
+		userInfo, err := runtimeDeps.UserModel.FindOne(c, userId)
 		if err != nil {
 			logger.WithContext(c.Request.Context()).Debug("[AuthMiddleware] UserModel FindOne", logger.Field("error", err.Error()), logger.Field("userId", userId))
 			response.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Database Query Error"))

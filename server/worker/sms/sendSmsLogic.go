@@ -12,7 +12,6 @@ import (
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/notify/sms"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/worker/spec"
 )
 
@@ -22,12 +21,12 @@ type SmsSendCount struct {
 }
 
 type SendSmsLogic struct {
-	svcCtx *svc.ServiceContext
+	deps Deps
 }
 
-func NewSendSmsLogic(svcCtx *svc.ServiceContext) *SendSmsLogic {
+func NewSendSmsLogic(deps Deps) *SendSmsLogic {
 	return &SendSmsLogic{
-		svcCtx: svcCtx,
+		deps: deps,
 	}
 }
 func (l *SendSmsLogic) ProcessTask(ctx context.Context, task *asynq.Task) error {
@@ -39,13 +38,14 @@ func (l *SendSmsLogic) ProcessTask(ctx context.Context, task *asynq.Task) error 
 		)
 		return nil
 	}
-	client, err := sms.NewSender(l.svcCtx.Config.Mobile.Platform, l.svcCtx.Config.Mobile.PlatformConfig)
+	cfg := l.deps.currentConfig()
+	client, err := sms.NewSender(cfg.Mobile.Platform, cfg.Mobile.PlatformConfig)
 	if err != nil {
 		logger.WithContext(ctx).Error("[SendSmsLogic] New send sms client failed", logger.Field("error", err.Error()), logger.Field("payload", payload))
 		return err
 	}
 	createSms := &log.Message{
-		Platform: l.svcCtx.Config.Mobile.Platform,
+		Platform: cfg.Mobile.Platform,
 		To:       fmt.Sprintf("+%s%s", payload.TelephoneArea, payload.Telephone),
 		Subject:  config.ParseVerifyType(payload.Type).String(),
 		Content: map[string]interface{}{
@@ -56,7 +56,7 @@ func (l *SendSmsLogic) ProcessTask(ctx context.Context, task *asynq.Task) error 
 
 	if err != nil {
 		logger.WithContext(ctx).Error("[SendSmsLogic] Send sms failed", logger.Field("error", err.Error()), logger.Field("payload", payload))
-		if l.svcCtx.Config.Model != config.DevMode {
+		if cfg.Model != config.DevMode {
 			createSms.Status = 2
 		} else {
 			return nil
@@ -66,7 +66,7 @@ func (l *SendSmsLogic) ProcessTask(ctx context.Context, task *asynq.Task) error 
 	logger.WithContext(ctx).Info("[SendSmsLogic] Send sms", logger.Field("telephone", payload.Telephone), logger.Field("content", createSms.Content))
 
 	content, _ := createSms.Marshal()
-	err = l.svcCtx.LogModel.Insert(ctx, &log.SystemLog{
+	err = l.deps.LogModel.Insert(ctx, &log.SystemLog{
 		Type:     log.TypeMobileMessage.Uint8(),
 		Date:     time.Now().Format("2006-01-02"),
 		ObjectID: 0,

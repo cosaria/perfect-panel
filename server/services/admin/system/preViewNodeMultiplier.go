@@ -2,19 +2,19 @@ package system
 
 import (
 	"context"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/svc"
-	"github.com/perfect-panel/server/types"
 	"time"
+
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/types"
 )
 
 type PreViewNodeMultiplierOutput struct {
 	Body *types.PreViewNodeMultiplierResponse
 }
 
-func PreViewNodeMultiplierHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*PreViewNodeMultiplierOutput, error) {
+func PreViewNodeMultiplierHandler(deps Deps) func(context.Context, *struct{}) (*PreViewNodeMultiplierOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*PreViewNodeMultiplierOutput, error) {
-		l := NewPreViewNodeMultiplierLogic(ctx, svcCtx)
+		l := NewPreViewNodeMultiplierLogic(ctx, deps)
 		resp, err := l.PreViewNodeMultiplier()
 		if err != nil {
 			return nil, err
@@ -25,22 +25,22 @@ func PreViewNodeMultiplierHandler(svcCtx *svc.ServiceContext) func(context.Conte
 
 type PreViewNodeMultiplierLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // PreView Node Multiplier
-func NewPreViewNodeMultiplierLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PreViewNodeMultiplierLogic {
+func NewPreViewNodeMultiplierLogic(ctx context.Context, deps Deps) *PreViewNodeMultiplierLogic {
 	return &PreViewNodeMultiplierLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *PreViewNodeMultiplierLogic) PreViewNodeMultiplier() (resp *types.PreViewNodeMultiplierResponse, err error) {
 	now := time.Now()
-	ratio := l.svcCtx.NodeMultiplierManager.GetMultiplier(now)
+	ratio := l.deps.NodeMultiplierManager.GetMultiplier(now)
 	return &types.PreViewNodeMultiplierResponse{
 		Ratio:       ratio,
 		CurrentTime: now.Format("2006-01-02 15:04:05"),

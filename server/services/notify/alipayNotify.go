@@ -15,22 +15,21 @@ import (
 	"github.com/perfect-panel/server/models/payment"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment/alipay"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/worker/spec"
 )
 
 type AlipayNotifyLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Alipay notify
-func NewAlipayNotifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *AlipayNotifyLogic {
+func NewAlipayNotifyLogic(ctx context.Context, deps Deps) *AlipayNotifyLogic {
 	return &AlipayNotifyLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -57,7 +56,7 @@ func (l *AlipayNotifyLogic) AlipayNotify(r *http.Request) error {
 		return markInvalidNotification(err)
 	}
 	if notify.Status == alipay.Success {
-		orderInfo, err := l.svcCtx.OrderModel.FindOneByOrderNo(l.ctx, notify.OrderNo)
+		orderInfo, err := l.deps.OrderModel.FindOneByOrderNo(l.ctx, notify.OrderNo)
 		if err != nil {
 			l.Logger.Error("[AlipayNotify] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", notify.OrderNo))
 			return errors.Wrapf(xerr.NewErrCode(xerr.OrderNotExist), "order not exist: %v", notify.OrderNo)
@@ -68,7 +67,7 @@ func (l *AlipayNotifyLogic) AlipayNotify(r *http.Request) error {
 		}
 
 		// Update order status
-		err = l.svcCtx.OrderModel.UpdateOrderStatus(l.ctx, notify.OrderNo, 2)
+		err = l.deps.OrderModel.UpdateOrderStatus(l.ctx, notify.OrderNo, 2)
 		if err != nil {
 			l.Logger.Error("[AlipayNotify] Update order status failed", logger.Field("error", err.Error()), logger.Field("orderNo", notify.OrderNo))
 			return err
@@ -83,7 +82,7 @@ func (l *AlipayNotifyLogic) AlipayNotify(r *http.Request) error {
 			return err
 		}
 		task := asynq.NewTask(spec.ForthwithActivateOrder, bytes)
-		taskInfo, err := l.svcCtx.Queue.EnqueueContext(l.ctx, task)
+		taskInfo, err := l.deps.Queue.EnqueueContext(l.ctx, task)
 		if err != nil {
 			l.Logger.Error("[AlipayNotify] Enqueue task failed", logger.Field("error", err.Error()))
 			return err

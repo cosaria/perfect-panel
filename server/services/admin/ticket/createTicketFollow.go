@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/ticket"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +13,9 @@ type CreateTicketFollowInput struct {
 	Body types.CreateTicketFollowRequest
 }
 
-func CreateTicketFollowHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateTicketFollowInput) (*struct{}, error) {
+func CreateTicketFollowHandler(deps Deps) func(context.Context, *CreateTicketFollowInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateTicketFollowInput) (*struct{}, error) {
-		l := NewCreateTicketFollowLogic(ctx, svcCtx)
+		l := NewCreateTicketFollowLogic(ctx, deps)
 		if err := l.CreateTicketFollow(&input.Body); err != nil {
 			return nil, err
 		}
@@ -26,27 +25,27 @@ func CreateTicketFollowHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type CreateTicketFollowLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Create ticket follow
-func NewCreateTicketFollowLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateTicketFollowLogic {
+func NewCreateTicketFollowLogic(ctx context.Context, deps Deps) *CreateTicketFollowLogic {
 	return &CreateTicketFollowLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *CreateTicketFollowLogic) CreateTicketFollow(req *types.CreateTicketFollowRequest) (err error) {
 	// find ticket
-	_, err = l.svcCtx.TicketModel.FindOne(l.ctx, req.TicketId)
+	_, err = l.deps.TicketModel.FindOne(l.ctx, req.TicketId)
 	if err != nil {
 		l.Errorw("[CreateTicketFollow] FindOne error", logger.Field("error", err.Error()), logger.Field("ticketId", req.TicketId))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find ticket failed: %v", err.Error())
 	}
-	err = l.svcCtx.TicketModel.InsertTicketFollow(l.ctx, &ticket.Follow{
+	err = l.deps.TicketModel.InsertTicketFollow(l.ctx, &ticket.Follow{
 		TicketId: req.TicketId,
 		From:     req.From,
 		Type:     req.Type,
@@ -56,7 +55,7 @@ func (l *CreateTicketFollowLogic) CreateTicketFollow(req *types.CreateTicketFoll
 		l.Errorw("[CreateTicketFollow] Database insert error", logger.Field("error", err.Error()), logger.Field("request", req))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "create ticket follow failed: %v", err.Error())
 	}
-	err = l.svcCtx.TicketModel.UpdateTicketStatus(l.ctx, req.TicketId, 0, ticket.Waiting)
+	err = l.deps.TicketModel.UpdateTicketStatus(l.ctx, req.TicketId, 0, ticket.Waiting)
 	if err != nil {
 		l.Errorw("[CreateTicketFollow] Database update error", logger.Field("error", err.Error()), logger.Field("status", ticket.Waiting))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update ticket status failed: %v", err.Error())

@@ -9,17 +9,16 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
 type ServerDataLogic struct {
-	svc *svc.ServiceContext
+	deps Deps
 }
 
-func NewServerDataLogic(svc *svc.ServiceContext) *ServerDataLogic {
+func NewServerDataLogic(deps Deps) *ServerDataLogic {
 	return &ServerDataLogic{
-		svc: svc,
+		deps: deps,
 	}
 }
 
@@ -54,7 +53,7 @@ func (l *ServerDataLogic) ProcessTask(ctx context.Context, _ *asynq.Task) error 
 		logger.Error("[ServerDataLogic] Marshal server data failed", logger.Field("error", err.Error()), logger.Field("data", serverData))
 		return err
 	}
-	if err := l.svc.Redis.Set(ctx, config.ServerCountCacheKey, data, -1).Err(); err != nil {
+	if err := l.deps.Redis.Set(ctx, config.ServerCountCacheKey, data, -1).Err(); err != nil {
 		logger.Error("[ServerDataLogic] Set server data failed", logger.Field("error", err.Error()))
 		return err
 	}
@@ -65,7 +64,7 @@ func (l *ServerDataLogic) ProcessTask(ctx context.Context, _ *asynq.Task) error 
 func (l *ServerDataLogic) getRanking(ctx context.Context) (top10ServerToday, top10ServerYesterday []types.ServerTrafficData, top10UserToday, top10UserYesterday []types.UserTrafficData) {
 	now := time.Now()
 	// 获取服务器流量排行榜
-	serverToday, err := l.svc.TrafficLogModel.TopServersTrafficByDay(ctx, now, 10)
+	serverToday, err := l.deps.TrafficLogModel.TopServersTrafficByDay(ctx, now, 10)
 	if err != nil {
 		logger.Error("[ServerDataLogic] Get top servers traffic by day failed", logger.Field("error", err.Error()))
 	} else {
@@ -73,7 +72,7 @@ func (l *ServerDataLogic) getRanking(ctx context.Context) (top10ServerToday, top
 			if s.ServerId == 0 {
 				continue
 			}
-			serverInfo, err := l.svc.NodeModel.FindOneServer(ctx, s.ServerId)
+			serverInfo, err := l.deps.NodeModel.FindOneServer(ctx, s.ServerId)
 			if err != nil {
 				logger.Error("[ServerDataLogic] Find server failed", logger.Field("error", err.Error()))
 				continue
@@ -87,12 +86,12 @@ func (l *ServerDataLogic) getRanking(ctx context.Context) (top10ServerToday, top
 		}
 	}
 
-	serverYesterday, err := l.svc.TrafficLogModel.TopServersTrafficByDay(ctx, now.AddDate(0, 0, -1), 10)
+	serverYesterday, err := l.deps.TrafficLogModel.TopServersTrafficByDay(ctx, now.AddDate(0, 0, -1), 10)
 	if err != nil {
 		logger.Error("[ServerDataLogic] Get top servers traffic by day failed", logger.Field("error", err.Error()))
 	} else {
 		for _, s := range serverYesterday {
-			serverInfo, err := l.svc.NodeModel.FindOneServer(ctx, s.ServerId)
+			serverInfo, err := l.deps.NodeModel.FindOneServer(ctx, s.ServerId)
 			if err != nil {
 				logger.Error("[ServerDataLogic] Find server failed", logger.Field("error", err.Error()))
 				continue
@@ -107,16 +106,11 @@ func (l *ServerDataLogic) getRanking(ctx context.Context) (top10ServerToday, top
 	}
 
 	// 获取用户流量排行榜
-	userToday, err := l.svc.TrafficLogModel.TopUsersTrafficByDay(ctx, now, 10)
+	userToday, err := l.deps.TrafficLogModel.TopUsersTrafficByDay(ctx, now, 10)
 	if err != nil {
 		logger.Error("[ServerDataLogic] Get top users traffic by day failed", logger.Field("error", err.Error()))
 	} else {
 		for _, u := range userToday {
-			//userInfo, err := l.svc.UserModel.FindOne(ctx, u.UserId)
-			//if err != nil {
-			//	logx.Error("[ServerDataLogic] Find user failed", logx.Field("error", err.Error()))
-			//	continue
-			//}
 			top10UserToday = append(top10UserToday, types.UserTrafficData{
 				SID:      u.UserId,
 				Upload:   u.Upload,
@@ -125,16 +119,11 @@ func (l *ServerDataLogic) getRanking(ctx context.Context) (top10ServerToday, top
 		}
 	}
 
-	userYesterday, err := l.svc.TrafficLogModel.TopUsersTrafficByDay(ctx, now.AddDate(0, 0, -1), 10)
+	userYesterday, err := l.deps.TrafficLogModel.TopUsersTrafficByDay(ctx, now.AddDate(0, 0, -1), 10)
 	if err != nil {
 		logger.Error("[ServerDataLogic] Get top users traffic by day failed", logger.Field("error", err.Error()))
 	} else {
 		for _, u := range userYesterday {
-			//userInfo, err := l.svc.UserModel.FindOne(ctx, u.UserId)
-			//if err != nil {
-			//	logx.Error("[ServerDataLogic] Find user failed", logx.Field("error", err.Error()))
-			//	continue
-			//}
 			top10UserYesterday = append(top10UserYesterday, types.UserTrafficData{
 				SID:      u.UserId,
 				Upload:   u.Upload,
@@ -147,7 +136,7 @@ func (l *ServerDataLogic) getRanking(ctx context.Context) (top10ServerToday, top
 
 func (l *ServerDataLogic) trafficCount(ctx context.Context) (totalUploadToday, totalDownloadToday, totalDownloadMonthly, totalUploadMonthly int64) {
 	now := time.Now()
-	today, err := l.svc.TrafficLogModel.QueryTrafficByDay(ctx, now)
+	today, err := l.deps.TrafficLogModel.QueryTrafficByDay(ctx, now)
 	if err != nil {
 		logger.Error("[ServerDataLogic] Query traffic by day failed", logger.Field("error", err.Error()))
 	} else {
@@ -155,7 +144,7 @@ func (l *ServerDataLogic) trafficCount(ctx context.Context) (totalUploadToday, t
 		totalDownloadToday = today.Download
 	}
 
-	monthly, err := l.svc.TrafficLogModel.QueryTrafficByMonthly(ctx, now)
+	monthly, err := l.deps.TrafficLogModel.QueryTrafficByMonthly(ctx, now)
 	if err != nil {
 		logger.Error("[ServerDataLogic] Query traffic by monthly failed", logger.Field("error", err.Error()))
 	} else {

@@ -2,12 +2,12 @@ package user
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -16,9 +16,9 @@ type QueryUserBalanceLogOutput struct {
 	Body *types.QueryUserBalanceLogListResponse
 }
 
-func QueryUserBalanceLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryUserBalanceLogOutput, error) {
+func QueryUserBalanceLogHandler(deps Deps) func(context.Context, *struct{}) (*QueryUserBalanceLogOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*QueryUserBalanceLogOutput, error) {
-		l := NewQueryUserBalanceLogLogic(ctx, svcCtx)
+		l := NewQueryUserBalanceLogLogic(ctx, deps)
 		resp, err := l.QueryUserBalanceLog()
 		if err != nil {
 			return nil, err
@@ -29,16 +29,16 @@ func QueryUserBalanceLogHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type QueryUserBalanceLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewQueryUserBalanceLogLogic Query User Balance Log
-func NewQueryUserBalanceLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryUserBalanceLogLogic {
+func NewQueryUserBalanceLogLogic(ctx context.Context, deps Deps) *QueryUserBalanceLogLogic {
 	return &QueryUserBalanceLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -49,7 +49,7 @@ func (l *QueryUserBalanceLogLogic) QueryUserBalanceLog() (resp *types.QueryUserB
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}
 
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:     1,
 		Size:     99999,
 		Type:     log.TypeBalance.Uint8(),

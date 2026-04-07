@@ -3,29 +3,29 @@ package common
 import (
 	"context"
 	"encoding/json"
-	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/models/node"
-	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
-	"github.com/perfect-panel/server/types"
-	"github.com/pkg/errors"
 	"io"
 	"net"
 	"net/http"
 	"slices"
 	"strings"
 	"time"
+
+	"github.com/perfect-panel/server/config"
+	"github.com/perfect-panel/server/models/node"
+	"github.com/perfect-panel/server/models/user"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/types"
+	"github.com/pkg/errors"
 )
 
 type GetStatOutput struct {
 	Body *types.GetStatResponse
 }
 
-func GetStatHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetStatOutput, error) {
+func GetStatHandler(deps Deps) func(context.Context, *struct{}) (*GetStatOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetStatOutput, error) {
-		l := NewGetStatLogic(ctx, svcCtx)
+		l := NewGetStatLogic(ctx, deps)
 		resp, err := l.GetStat()
 		if err != nil {
 			return nil, err
@@ -36,21 +36,21 @@ func GetStatHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{})
 
 type GetStatLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get Tos
-func NewGetStatLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetStatLogic {
+func NewGetStatLogic(ctx context.Context, deps Deps) *GetStatLogic {
 	return &GetStatLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetStatLogic) GetStat() (resp *types.GetStatResponse, err error) {
-	respJson, err := l.svcCtx.Redis.Get(l.ctx, config.CommonStatCacheKey).Result()
+	respJson, err := l.deps.Redis.Get(l.ctx, config.CommonStatCacheKey).Result()
 	if err == nil {
 		err = json.Unmarshal([]byte(respJson), resp)
 		if err == nil {
@@ -58,7 +58,7 @@ func (l *GetStatLogic) GetStat() (resp *types.GetStatResponse, err error) {
 		}
 	}
 	var u int64
-	err = l.svcCtx.DB.Model(&user.User{}).Where("enable = 1").Count(&u).Error
+	err = l.deps.DB.Model(&user.User{}).Where("enable = 1").Count(&u).Error
 	if err != nil {
 		l.Logger.Error("[GetStatLogic] get user count failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get user count failed: %v", err.Error())
@@ -71,13 +71,13 @@ func (l *GetStatLogic) GetStat() (resp *types.GetStatResponse, err error) {
 		u = 1
 	}
 	var n int64
-	err = l.svcCtx.DB.Model(&node.Node{}).Where("enabled = 1").Count(&n).Error
+	err = l.deps.DB.Model(&node.Node{}).Where("enabled = 1").Count(&n).Error
 	if err != nil {
 		l.Logger.Error("[GetStatLogic] get server count failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get server count failed: %v", err.Error())
 	}
 	var nodeaddr []string
-	err = l.svcCtx.DB.Model(&node.Server{}).Pluck("address", &nodeaddr).Error
+	err = l.deps.DB.Model(&node.Server{}).Pluck("address", &nodeaddr).Error
 	if err != nil {
 		l.Logger.Error("[GetStatLogic] get server_addr failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get server_addr failed: %v", err.Error())
@@ -125,7 +125,7 @@ func (l *GetStatLogic) GetStat() (resp *types.GetStatResponse, err error) {
 	}
 	protocolDict := make(map[string]void)
 	var protocol []string
-	err = l.svcCtx.DB.Model(&node.Node{}).Where("enabled = true").Pluck("protocol", &protocol).Error
+	err = l.deps.DB.Model(&node.Node{}).Where("enabled = true").Pluck("protocol", &protocol).Error
 	if err != nil {
 		l.Logger.Error("[GetStatLogic] get protocol failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get protocol failed: %v", err.Error())
@@ -154,6 +154,6 @@ func (l *GetStatLogic) GetStat() (resp *types.GetStatResponse, err error) {
 		Protocol: protocol,
 	}
 	val, _ := json.Marshal(*resp)
-	_ = l.svcCtx.Redis.Set(l.ctx, config.CommonStatCacheKey, string(val), time.Duration(3600)*time.Second).Err()
+	_ = l.deps.Redis.Set(l.ctx, config.CommonStatCacheKey, string(val), time.Duration(3600)*time.Second).Err()
 	return resp, nil
 }

@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type QueryOrderDetailOutput struct {
 	Body *types.OrderDetail
 }
 
-func QueryOrderDetailHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryOrderDetailInput) (*QueryOrderDetailOutput, error) {
+func QueryOrderDetailHandler(deps Deps) func(context.Context, *QueryOrderDetailInput) (*QueryOrderDetailOutput, error) {
 	return func(ctx context.Context, input *QueryOrderDetailInput) (*QueryOrderDetailOutput, error) {
-		l := NewQueryOrderDetailLogic(ctx, svcCtx)
+		l := NewQueryOrderDetailLogic(ctx, deps)
 		resp, err := l.QueryOrderDetail(&input.QueryOrderDetailRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func QueryOrderDetailHandler(svcCtx *svc.ServiceContext) func(context.Context, *
 
 type QueryOrderDetailLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get order
-func NewQueryOrderDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryOrderDetailLogic {
+func NewQueryOrderDetailLogic(ctx context.Context, deps Deps) *QueryOrderDetailLogic {
 	return &QueryOrderDetailLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *QueryOrderDetailLogic) QueryOrderDetail(req *types.QueryOrderDetailRequest) (resp *types.OrderDetail, err error) {
-	orderInfo, err := l.svcCtx.OrderModel.FindOneDetailsByOrderNo(l.ctx, req.OrderNo)
+	orderInfo, err := l.deps.OrderModel.FindOneDetailsByOrderNo(l.ctx, req.OrderNo)
 	if err != nil {
 		l.Errorw("[QueryOrderDetail] Database query error", logger.Field("error", err.Error()), logger.Field("order_no", req.OrderNo))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find order error: %v", err.Error())

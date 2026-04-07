@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	queueType "github.com/perfect-panel/server/worker"
 	"github.com/pkg/errors"
@@ -19,9 +18,9 @@ type CreateQuotaTaskInput struct {
 	Body types.CreateQuotaTaskRequest
 }
 
-func CreateQuotaTaskHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateQuotaTaskInput) (*struct{}, error) {
+func CreateQuotaTaskHandler(deps Deps) func(context.Context, *CreateQuotaTaskInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateQuotaTaskInput) (*struct{}, error) {
-		l := NewCreateQuotaTaskLogic(ctx, svcCtx)
+		l := NewCreateQuotaTaskLogic(ctx, deps)
 		if err := l.CreateQuotaTask(&input.Body); err != nil {
 			return nil, err
 		}
@@ -31,22 +30,22 @@ func CreateQuotaTaskHandler(svcCtx *svc.ServiceContext) func(context.Context, *C
 
 type CreateQuotaTaskLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewCreateQuotaTaskLogic Create a quota task
-func NewCreateQuotaTaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateQuotaTaskLogic {
+func NewCreateQuotaTaskLogic(ctx context.Context, deps Deps) *CreateQuotaTaskLogic {
 	return &CreateQuotaTaskLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *CreateQuotaTaskLogic) CreateQuotaTask(req *types.CreateQuotaTaskRequest) error {
 	var subs []*user.Subscribe
-	query := l.svcCtx.DB.WithContext(l.ctx).Model(&user.Subscribe{})
+	query := l.deps.DB.WithContext(l.ctx).Model(&user.Subscribe{})
 	if len(req.Subscribers) > 0 {
 		query = query.Where("`subscribe_id` IN ?", req.Subscribers)
 	}
@@ -101,14 +100,14 @@ func (l *CreateQuotaTaskLogic) CreateQuotaTask(req *types.CreateQuotaTaskRequest
 		Errors:  "",
 	}
 
-	if err := l.svcCtx.DB.WithContext(l.ctx).Model(&task.Task{}).Create(newTask).Error; err != nil {
+	if err := l.deps.DB.WithContext(l.ctx).Model(&task.Task{}).Create(newTask).Error; err != nil {
 		l.Errorf("[CreateQuotaTask] create task error: %v", err.Error())
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "create task error")
 	}
 
 	// enqueue task
 	queueTask := asynq.NewTask(queueType.ForthwithQuotaTask, []byte(strconv.FormatInt(newTask.Id, 10)))
-	if _, err := l.svcCtx.Queue.EnqueueContext(l.ctx, queueTask); err != nil {
+	if _, err := l.deps.Queue.EnqueueContext(l.ctx, queueTask); err != nil {
 		l.Errorf("[CreateQuotaTask] enqueue task error: %v", err.Error())
 		return errors.Wrapf(xerr.NewErrCode(xerr.QueueEnqueueError), "enqueue task error")
 	}

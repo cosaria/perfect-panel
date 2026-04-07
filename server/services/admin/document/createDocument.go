@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/document"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"strings"
@@ -15,9 +14,9 @@ type CreateDocumentInput struct {
 	Body types.CreateDocumentRequest
 }
 
-func CreateDocumentHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateDocumentInput) (*struct{}, error) {
+func CreateDocumentHandler(deps Deps) func(context.Context, *CreateDocumentInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateDocumentInput) (*struct{}, error) {
-		l := NewCreateDocumentLogic(ctx, svcCtx)
+		l := NewCreateDocumentLogic(ctx, deps)
 		if err := l.CreateDocument(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,21 +26,21 @@ func CreateDocumentHandler(svcCtx *svc.ServiceContext) func(context.Context, *Cr
 
 type CreateDocumentLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Create document
-func NewCreateDocumentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateDocumentLogic {
+func NewCreateDocumentLogic(ctx context.Context, deps Deps) *CreateDocumentLogic {
 	return &CreateDocumentLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *CreateDocumentLogic) CreateDocument(req *types.CreateDocumentRequest) error {
-	if err := l.svcCtx.DocumentModel.Insert(l.ctx, &document.Document{
+	if err := l.deps.DocumentModel.Insert(l.ctx, &document.Document{
 		Title:   req.Title,
 		Content: req.Content,
 		Tags:    strings.Join(req.Tags, ","),

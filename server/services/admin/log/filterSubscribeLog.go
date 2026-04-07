@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"strconv"
@@ -19,9 +18,9 @@ type FilterSubscribeLogOutput struct {
 	Body *types.FilterSubscribeLogResponse
 }
 
-func FilterSubscribeLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterSubscribeLogInput) (*FilterSubscribeLogOutput, error) {
+func FilterSubscribeLogHandler(deps Deps) func(context.Context, *FilterSubscribeLogInput) (*FilterSubscribeLogOutput, error) {
 	return func(ctx context.Context, input *FilterSubscribeLogInput) (*FilterSubscribeLogOutput, error) {
-		l := NewFilterSubscribeLogLogic(ctx, svcCtx)
+		l := NewFilterSubscribeLogLogic(ctx, deps)
 		resp, err := l.FilterSubscribeLog(&input.FilterSubscribeLogRequest)
 		if err != nil {
 			return nil, err
@@ -32,16 +31,16 @@ func FilterSubscribeLogHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type FilterSubscribeLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewFilterSubscribeLogLogic Filter subscribe log
-func NewFilterSubscribeLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterSubscribeLogLogic {
+func NewFilterSubscribeLogLogic(ctx context.Context, deps Deps) *FilterSubscribeLogLogic {
 	return &FilterSubscribeLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -58,7 +57,7 @@ func (l *FilterSubscribeLogLogic) FilterSubscribeLog(req *types.FilterSubscribeL
 		params.Search = `"user_subscribe_id":` + strconv.FormatInt(req.UserSubscribeId, 10)
 	}
 
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, params)
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, params)
 	if err != nil {
 		l.Errorf("[FilterSubscribeLog] failed to filter system log: %v", err.Error())
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "failed to filter system log")

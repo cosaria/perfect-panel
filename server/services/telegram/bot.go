@@ -15,14 +15,13 @@ import (
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
 
-func GetTelegramConfig(ctx context.Context, svcCtx *svc.ServiceContext) (*types.TelegramConfig, error) {
+func GetTelegramConfig(ctx context.Context, deps Deps) (*types.TelegramConfig, error) {
 
-	data, err := svcCtx.AuthModel.FindOneByMethod(ctx, "telegram")
+	data, err := deps.AuthModel.FindOneByMethod(ctx, "telegram")
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get Telegram config failed: %v", err.Error())
 	}
@@ -40,13 +39,13 @@ func GetTelegramConfig(ctx context.Context, svcCtx *svc.ServiceContext) (*types.
 	}, nil
 }
 
-func ApiLink(ctx *gin.Context, svcCtx *svc.ServiceContext, method string) string {
-	cfg, _ := GetTelegramConfig(ctx, svcCtx)
+func ApiLink(ctx *gin.Context, deps Deps, method string) string {
+	cfg, _ := GetTelegramConfig(ctx, deps)
 	return "https://api.telegram.org/bot" + cfg.TelegramBotToken + "/" + method
 }
 
-func SendUserMessage(ctx *gin.Context, svcCtx *svc.ServiceContext, u user.User, text string, parseMode string) {
-	req, _ := http.NewRequest("GET", ApiLink(ctx, svcCtx, "sendMessage"), nil)
+func SendUserMessage(ctx *gin.Context, deps Deps, u user.User, text string, parseMode string) {
+	req, _ := http.NewRequest("GET", ApiLink(ctx, deps, "sendMessage"), nil)
 	q := req.URL.Query()
 
 	userTelegramChatId, ok := findTelegram(&u)
@@ -64,10 +63,10 @@ func SendUserMessage(ctx *gin.Context, svcCtx *svc.ServiceContext, u user.User, 
 
 }
 
-func SendAdminMessage(ctx *gin.Context, svcCtx *svc.ServiceContext, text string, parseMode string) {
+func SendAdminMessage(ctx *gin.Context, deps Deps, text string, parseMode string) {
 	var adminTelegram []int64
 	f := false
-	adminTelegramJson, err := svcCtx.Redis.Get(ctx, "adminTelegram").Result()
+	adminTelegramJson, err := deps.Redis.Get(ctx, "adminTelegram").Result()
 	if err == nil {
 		err = json.Unmarshal([]byte(adminTelegramJson), &adminTelegram)
 		if err == nil {
@@ -75,11 +74,11 @@ func SendAdminMessage(ctx *gin.Context, svcCtx *svc.ServiceContext, text string,
 		}
 	}
 	if !f {
-		svcCtx.DB.Model(&user.User{}).Where("is_admin = true").Pluck("telegram", &adminTelegram)
+		deps.DB.Model(&user.User{}).Where("is_admin = true").Pluck("telegram", &adminTelegram)
 		val, _ := json.Marshal(adminTelegram)
-		_ = svcCtx.Redis.Set(ctx, "TelegramConfig", string(val), time.Duration(3600)*time.Second).Err()
+		_ = deps.Redis.Set(ctx, "TelegramConfig", string(val), time.Duration(3600)*time.Second).Err()
 	}
-	req, _ := http.NewRequest("GET", ApiLink(ctx, svcCtx, "sendMessage"), nil)
+	req, _ := http.NewRequest("GET", ApiLink(ctx, deps, "sendMessage"), nil)
 	q := req.URL.Query()
 	if parseMode == "markdown" {
 		text = strings.ReplaceAll(text, "_", "\\_")
@@ -93,11 +92,11 @@ func SendAdminMessage(ctx *gin.Context, svcCtx *svc.ServiceContext, text string,
 	}
 }
 
-func SetWebhook(ctx *gin.Context, svcCtx *svc.ServiceContext) error {
-	configs, _ := svcCtx.SystemModel.GetSiteConfig(ctx)
+func SetWebhook(ctx *gin.Context, deps Deps) error {
+	configs, _ := deps.SystemModel.GetSiteConfig(ctx)
 	cfg := &types.SiteConfig{}
 	tool.SystemConfigSliceReflectToStruct(configs, cfg)
-	req, _ := http.NewRequest("GET", ApiLink(ctx, svcCtx, "setWebhook"), nil)
+	req, _ := http.NewRequest("GET", ApiLink(ctx, deps, "setWebhook"), nil)
 	q := req.URL.Query()
 	q.Add("url", cfg.Host+"/telegram/webhook")
 	req.URL.RawQuery = q.Encode()

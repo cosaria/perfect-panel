@@ -13,7 +13,6 @@ import (
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"gorm.io/gorm"
 )
 
@@ -28,7 +27,7 @@ const (
 )
 
 type QuotaTaskLogic struct {
-	svcCtx *svc.ServiceContext
+	deps Deps
 }
 
 type ErrorInfo struct {
@@ -36,9 +35,9 @@ type ErrorInfo struct {
 	Error           string `json:"error"`
 }
 
-func NewQuotaTaskLogic(svcCtx *svc.ServiceContext) *QuotaTaskLogic {
+func NewQuotaTaskLogic(deps Deps) *QuotaTaskLogic {
 	return &QuotaTaskLogic{
-		svcCtx: svcCtx,
+		deps: deps,
 	}
 }
 
@@ -81,12 +80,12 @@ func (l *QuotaTaskLogic) ProcessTask(ctx context.Context, t *asynq.Task) error {
 		}
 		userIds = tool.RemoveDuplicateElements(userIds...)
 		var users []*user.User
-		if err = l.svcCtx.DB.WithContext(ctx).Model(&user.User{}).Where("id IN ?", userIds).Find(&users).Error; err != nil {
+		if err = l.deps.DB.WithContext(ctx).Model(&user.User{}).Where("id IN ?", userIds).Find(&users).Error; err != nil {
 			logger.WithContext(ctx).Error("[QuotaTaskLogic.ProcessTask] find users error",
 				logger.Field("error", err.Error()),
 				logger.Field("userIDs", userIds))
 		}
-		err = l.svcCtx.UserModel.ClearUserCache(ctx, users...)
+		err = l.deps.UserModel.ClearUserCache(ctx, users...)
 		if err != nil {
 			logger.WithContext(ctx).Error("[QuotaTaskLogic.ProcessTask] clear user cache error",
 				logger.Field("error", err.Error()),
@@ -95,7 +94,7 @@ func (l *QuotaTaskLogic) ProcessTask(ctx context.Context, t *asynq.Task) error {
 	}
 
 	// 清理用户订阅缓存
-	err = l.svcCtx.UserModel.ClearSubscribeCache(ctx, subscribes...)
+	err = l.deps.UserModel.ClearSubscribeCache(ctx, subscribes...)
 	if err != nil {
 		logger.WithContext(ctx).Error("[QuotaTaskLogic.ProcessTask] clear subscribe cache error",
 			logger.Field("error", err.Error()))
@@ -123,7 +122,7 @@ func (l *QuotaTaskLogic) parseTaskID(ctx context.Context, payload []byte) (int64
 
 func (l *QuotaTaskLogic) getTaskInfo(ctx context.Context, taskID int64) (*task.Task, error) {
 	var taskInfo *task.Task
-	if err := l.svcCtx.DB.WithContext(ctx).Model(&task.Task{}).Where("id = ?", taskID).First(&taskInfo).Error; err != nil {
+	if err := l.deps.DB.WithContext(ctx).Model(&task.Task{}).Where("id = ?", taskID).First(&taskInfo).Error; err != nil {
 		logger.WithContext(ctx).Error("[QuotaTaskLogic.getTaskInfo] find task error",
 			logger.Field("error", err.Error()),
 			logger.Field("taskID", taskID),
@@ -154,7 +153,7 @@ func (l *QuotaTaskLogic) parseTaskData(ctx context.Context, taskInfo *task.Task)
 
 func (l *QuotaTaskLogic) getSubscribes(ctx context.Context, subscriberIDs []int64) ([]*user.Subscribe, error) {
 	var subscribes []*user.Subscribe
-	if err := l.svcCtx.DB.WithContext(ctx).Model(&user.Subscribe{}).Where("id IN ?", subscriberIDs).Find(&subscribes).Error; err != nil {
+	if err := l.deps.DB.WithContext(ctx).Model(&user.Subscribe{}).Where("id IN ?", subscriberIDs).Find(&subscribes).Error; err != nil {
 		logger.WithContext(ctx).Error("[QuotaTaskLogic.getSubscribes] find subscribes error",
 			logger.Field("error", err.Error()),
 			logger.Field("subscribers", subscriberIDs),
@@ -165,7 +164,7 @@ func (l *QuotaTaskLogic) getSubscribes(ctx context.Context, subscriberIDs []int6
 }
 
 func (l *QuotaTaskLogic) processSubscribes(ctx context.Context, subscribes []*user.Subscribe, content task.QuotaContent, taskInfo *task.Task) error {
-	tx := l.svcCtx.DB.WithContext(ctx).Begin()
+	tx := l.deps.DB.WithContext(ctx).Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -317,7 +316,7 @@ func (l *QuotaTaskLogic) processGift(tx *gorm.DB, sub *user.Subscribe, content t
 		giftAmount = int64(content.GiftValue)
 	case 2:
 		// 获取订阅对应的套餐信息
-		subscribeInfo, err := l.svcCtx.SubscribeModel.FindOne(context.Background(), sub.SubscribeId)
+		subscribeInfo, err := l.deps.SubscribeModel.FindOne(context.Background(), sub.SubscribeId)
 		if err != nil {
 			*errors = append(*errors, ErrorInfo{
 				UserSubscribeId: sub.Id,

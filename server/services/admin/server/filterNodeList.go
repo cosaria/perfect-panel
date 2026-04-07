@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"strings"
@@ -20,9 +19,9 @@ type FilterNodeListOutput struct {
 	Body *types.FilterNodeListResponse
 }
 
-func FilterNodeListHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterNodeListInput) (*FilterNodeListOutput, error) {
+func FilterNodeListHandler(deps Deps) func(context.Context, *FilterNodeListInput) (*FilterNodeListOutput, error) {
 	return func(ctx context.Context, input *FilterNodeListInput) (*FilterNodeListOutput, error) {
-		l := NewFilterNodeListLogic(ctx, svcCtx)
+		l := NewFilterNodeListLogic(ctx, deps)
 		resp, err := l.FilterNodeList(&input.FilterNodeListRequest)
 		if err != nil {
 			return nil, err
@@ -33,21 +32,21 @@ func FilterNodeListHandler(svcCtx *svc.ServiceContext) func(context.Context, *Fi
 
 type FilterNodeListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewFilterNodeListLogic Filter Node List
-func NewFilterNodeListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterNodeListLogic {
+func NewFilterNodeListLogic(ctx context.Context, deps Deps) *FilterNodeListLogic {
 	return &FilterNodeListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *FilterNodeListLogic) FilterNodeList(req *types.FilterNodeListRequest) (resp *types.FilterNodeListResponse, err error) {
-	total, data, err := l.svcCtx.NodeModel.FilterNodeList(l.ctx, &node.FilterNodeParams{
+	total, data, err := l.deps.NodeModel.FilterNodeList(l.ctx, &node.FilterNodeParams{
 		Page:   req.Page,
 		Size:   req.Size,
 		Search: req.Search,

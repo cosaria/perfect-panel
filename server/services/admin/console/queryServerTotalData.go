@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/models/traffic"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -20,9 +19,9 @@ type QueryServerTotalDataOutput struct {
 	Body *types.ServerTotalDataResponse
 }
 
-func QueryServerTotalDataHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryServerTotalDataOutput, error) {
+func QueryServerTotalDataHandler(deps Deps) func(context.Context, *struct{}) (*QueryServerTotalDataOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*QueryServerTotalDataOutput, error) {
-		l := NewQueryServerTotalDataLogic(ctx, svcCtx)
+		l := NewQueryServerTotalDataLogic(ctx, deps)
 		resp, err := l.QueryServerTotalData()
 		if err != nil {
 			return nil, err
@@ -33,16 +32,16 @@ func QueryServerTotalDataHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type QueryServerTotalDataLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewQueryServerTotalDataLogic Query server total data
-func NewQueryServerTotalDataLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryServerTotalDataLogic {
+func NewQueryServerTotalDataLogic(ctx context.Context, deps Deps) *QueryServerTotalDataLogic {
 	return &QueryServerTotalDataLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -56,7 +55,7 @@ func (l *QueryServerTotalDataLogic) QueryServerTotalData() (resp *types.ServerTo
 
 	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
 	todayEnd := todayStart.Add(24 * time.Hour).Add(-time.Second)
-	query := l.svcCtx.DB.WithContext(l.ctx)
+	query := l.deps.DB.WithContext(l.ctx)
 	var todayTop10User []log.UserTraffic
 
 	err = query.Model(&traffic.TrafficLog{}).
@@ -120,7 +119,7 @@ func (l *QueryServerTotalDataLogic) QueryServerTotalData() (resp *types.ServerTo
 
 	var todayServerRanking []types.ServerTrafficData
 	for _, item := range todayTop10Server {
-		info, err := l.svcCtx.NodeModel.FindOneServer(l.ctx, item.ServerId)
+		info, err := l.deps.NodeModel.FindOneServer(l.ctx, item.ServerId)
 		if err != nil {
 			l.Errorw("[QueryServerTotalDataLogic] FindOneServer error", logger.Field("error", err.Error()), logger.Field("server_id", item.ServerId))
 			continue
@@ -149,7 +148,7 @@ func (l *QueryServerTotalDataLogic) QueryServerTotalData() (resp *types.ServerTo
 		}
 
 		for _, v := range rank.Rank {
-			info, err := l.svcCtx.NodeModel.FindOneServer(l.ctx, v.ServerId)
+			info, err := l.deps.NodeModel.FindOneServer(l.ctx, v.ServerId)
 			if err != nil {
 				l.Errorw("[QueryServerTotalDataLogic] FindOneServer error", logger.Field("error", err.Error()), logger.Field("server_id", v.ServerId))
 				continue
@@ -164,7 +163,7 @@ func (l *QueryServerTotalDataLogic) QueryServerTotalData() (resp *types.ServerTo
 	}
 
 	// query online user count
-	onlineUsers, err := l.svcCtx.NodeModel.OnlineUserSubscribeGlobal(l.ctx)
+	onlineUsers, err := l.deps.NodeModel.OnlineUserSubscribeGlobal(l.ctx)
 	if err != nil {
 		l.Errorw("[QueryServerTotalDataLogic] OnlineUserSubscribeGlobal error", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "OnlineUserSubscribeGlobal error: %v", err)

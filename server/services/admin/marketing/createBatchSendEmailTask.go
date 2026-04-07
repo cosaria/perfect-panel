@@ -8,7 +8,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	types2 "github.com/perfect-panel/server/worker"
 	"gorm.io/gorm"
@@ -21,9 +20,9 @@ type CreateBatchSendEmailTaskInput struct {
 	Body types.CreateBatchSendEmailTaskRequest
 }
 
-func CreateBatchSendEmailTaskHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateBatchSendEmailTaskInput) (*struct{}, error) {
+func CreateBatchSendEmailTaskHandler(deps Deps) func(context.Context, *CreateBatchSendEmailTaskInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateBatchSendEmailTaskInput) (*struct{}, error) {
-		l := NewCreateBatchSendEmailTaskLogic(ctx, svcCtx)
+		l := NewCreateBatchSendEmailTaskLogic(ctx, deps)
 		if err := l.CreateBatchSendEmailTask(&input.Body); err != nil {
 			return nil, err
 		}
@@ -33,20 +32,20 @@ func CreateBatchSendEmailTaskHandler(svcCtx *svc.ServiceContext) func(context.Co
 
 type CreateBatchSendEmailTaskLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewCreateBatchSendEmailTaskLogic Create a batch send email task
-func NewCreateBatchSendEmailTaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateBatchSendEmailTaskLogic {
+func NewCreateBatchSendEmailTaskLogic(ctx context.Context, deps Deps) *CreateBatchSendEmailTaskLogic {
 	return &CreateBatchSendEmailTaskLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 func (l *CreateBatchSendEmailTaskLogic) CreateBatchSendEmailTask(req *types.CreateBatchSendEmailTaskRequest) (err error) {
-	tx := l.svcCtx.DB
+	tx := l.deps.DB
 
 	var emails []string
 
@@ -164,7 +163,7 @@ func (l *CreateBatchSendEmailTaskLogic) CreateBatchSendEmailTask(req *types.Crea
 		Current: 0,
 	}
 
-	if err = l.svcCtx.DB.Model(&task.Task{}).Create(taskInfo).Error; err != nil {
+	if err = l.deps.DB.Model(&task.Task{}).Create(taskInfo).Error; err != nil {
 		l.Errorf("[CreateBatchSendEmailTask] Failed to create email task: %v", err.Error())
 		return xerr.NewErrCode(xerr.DatabaseInsertError)
 	}
@@ -172,7 +171,7 @@ func (l *CreateBatchSendEmailTaskLogic) CreateBatchSendEmailTask(req *types.Crea
 	l.Infof("[CreateBatchSendEmailTask] Successfully created email task with ID: %d", taskInfo.Id)
 
 	t := asynq.NewTask(types2.ScheduledBatchSendEmail, []byte(strconv.FormatInt(taskInfo.Id, 10)))
-	info, err := l.svcCtx.Queue.EnqueueContext(l.ctx, t, asynq.ProcessAt(scheduledAt))
+	info, err := l.deps.Queue.EnqueueContext(l.ctx, t, asynq.ProcessAt(scheduledAt))
 	if err != nil {
 		l.Errorf("[CreateBatchSendEmailTask] Failed to enqueue email task: %v", err.Error())
 		return xerr.NewErrCode(xerr.QueueEnqueueError)

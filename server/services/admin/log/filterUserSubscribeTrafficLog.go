@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/models/traffic"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"time"
@@ -20,9 +19,9 @@ type FilterUserSubscribeTrafficLogOutput struct {
 	Body *types.FilterSubscribeTrafficResponse
 }
 
-func FilterUserSubscribeTrafficLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterUserSubscribeTrafficLogInput) (*FilterUserSubscribeTrafficLogOutput, error) {
+func FilterUserSubscribeTrafficLogHandler(deps Deps) func(context.Context, *FilterUserSubscribeTrafficLogInput) (*FilterUserSubscribeTrafficLogOutput, error) {
 	return func(ctx context.Context, input *FilterUserSubscribeTrafficLogInput) (*FilterUserSubscribeTrafficLogOutput, error) {
-		l := NewFilterUserSubscribeTrafficLogLogic(ctx, svcCtx)
+		l := NewFilterUserSubscribeTrafficLogLogic(ctx, deps)
 		resp, err := l.FilterUserSubscribeTrafficLog(&input.FilterSubscribeTrafficRequest)
 		if err != nil {
 			return nil, err
@@ -33,16 +32,16 @@ func FilterUserSubscribeTrafficLogHandler(svcCtx *svc.ServiceContext) func(conte
 
 type FilterUserSubscribeTrafficLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewFilterUserSubscribeTrafficLogLogic Filter user subscribe traffic log
-func NewFilterUserSubscribeTrafficLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterUserSubscribeTrafficLogLogic {
+func NewFilterUserSubscribeTrafficLogLogic(ctx context.Context, deps Deps) *FilterUserSubscribeTrafficLogLogic {
 	return &FilterUserSubscribeTrafficLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -64,7 +63,7 @@ func (l *FilterUserSubscribeTrafficLogLogic) FilterUserSubscribeTrafficLog(req *
 		end := start.Add(24 * time.Hour).Add(-time.Nanosecond)
 
 		var userTraffic []types.UserSubscribeTrafficLog
-		err = l.svcCtx.DB.WithContext(l.ctx).
+		err = l.deps.DB.WithContext(l.ctx).
 			Model(&traffic.TrafficLog{}).
 			Select("user_id, subscribe_id, SUM(download + upload) AS total, SUM(download) AS download, SUM(upload) AS upload").
 			Where("timestamp BETWEEN ? AND ?", start, end).
@@ -104,7 +103,7 @@ func (l *FilterUserSubscribeTrafficLogLogic) FilterUserSubscribeTrafficLog(req *
 
 		need := endIdx - todayTotal
 		historyPage := (need + req.Size - 1) / req.Size // 算出需要的历史页数
-		historyData, historyTotal, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+		historyData, historyTotal, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 			Page: historyPage,
 			Size: need,
 			Type: log.TypeSubscribeTraffic.Uint8(),
@@ -144,7 +143,7 @@ func (l *FilterUserSubscribeTrafficLogLogic) FilterUserSubscribeTrafficLog(req *
 		}, nil
 	}
 	var data []*log.SystemLog
-	data, total, err = l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err = l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page: req.Page,
 		Size: req.Size,
 		Type: log.TypeSubscribeTraffic.Uint8(),

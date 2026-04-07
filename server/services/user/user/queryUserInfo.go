@@ -2,13 +2,13 @@ package user
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/notify/phone"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"sort"
@@ -18,9 +18,9 @@ type QueryUserInfoOutput struct {
 	Body *types.User
 }
 
-func QueryUserInfoHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryUserInfoOutput, error) {
+func QueryUserInfoHandler(deps Deps) func(context.Context, *struct{}) (*QueryUserInfoOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*QueryUserInfoOutput, error) {
-		l := NewQueryUserInfoLogic(ctx, svcCtx)
+		l := NewQueryUserInfoLogic(ctx, deps)
 		resp, err := l.QueryUserInfo()
 		if err != nil {
 			return nil, err
@@ -31,16 +31,16 @@ func QueryUserInfoHandler(svcCtx *svc.ServiceContext) func(context.Context, *str
 
 type QueryUserInfoLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Query User Info
-func NewQueryUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryUserInfoLogic {
+func NewQueryUserInfoLogic(ctx context.Context, deps Deps) *QueryUserInfoLogic {
 	return &QueryUserInfoLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 

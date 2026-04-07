@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type GetUserSubscribeOutput struct {
 	Body *types.GetUserSubscribeListResponse
 }
 
-func GetUserSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserSubscribeInput) (*GetUserSubscribeOutput, error) {
+func GetUserSubscribeHandler(deps Deps) func(context.Context, *GetUserSubscribeInput) (*GetUserSubscribeOutput, error) {
 	return func(ctx context.Context, input *GetUserSubscribeInput) (*GetUserSubscribeOutput, error) {
-		l := NewGetUserSubscribeLogic(ctx, svcCtx)
+		l := NewGetUserSubscribeLogic(ctx, deps)
 		resp, err := l.GetUserSubscribe(&input.GetUserSubscribeListRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func GetUserSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *
 
 type GetUserSubscribeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get user subcribe
-func NewGetUserSubscribeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserSubscribeLogic {
+func NewGetUserSubscribeLogic(ctx context.Context, deps Deps) *GetUserSubscribeLogic {
 	return &GetUserSubscribeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetUserSubscribeLogic) GetUserSubscribe(req *types.GetUserSubscribeListRequest) (resp *types.GetUserSubscribeListResponse, err error) {
-	data, err := l.svcCtx.UserModel.QueryUserSubscribe(l.ctx, req.UserId, 0, 1, 2, 3, 4)
+	data, err := l.deps.UserModel.QueryUserSubscribe(l.ctx, req.UserId, 0, 1, 2, 3, 4)
 	if err != nil {
 		l.Errorw("[GetUserSubscribeLogs] Get User Subscribe Error:", logger.Field("err", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Get User Subscribe Error")

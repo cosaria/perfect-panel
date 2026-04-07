@@ -7,29 +7,29 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/util/tool"
+	appruntime "github.com/perfect-panel/server/runtime"
 	"github.com/perfect-panel/server/services/subscribe"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
-func PanDomainMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
+func PanDomainMiddleware(runtimeDeps *appruntime.Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
 
-		if svc.Config.Subscribe.PanDomain && c.Request.URL.Path == "/" {
+		if runtimeDeps != nil && runtimeDeps.Config != nil && runtimeDeps.Config.Subscribe.PanDomain && c.Request.URL.Path == "/" {
 			// intercept browser
 			ua := c.GetHeader("User-Agent")
 
-			if svc.Config.Subscribe.UserAgentLimit {
+			if runtimeDeps.Config.Subscribe.UserAgentLimit {
 				if ua == "" {
 					c.String(http.StatusForbidden, "Access denied")
 					c.Abort()
 					return
 				}
-				browserKeywords := tool.RemoveDuplicateElements(strings.Split(svc.Config.Subscribe.UserAgentList, "\n")...)
+				browserKeywords := tool.RemoveDuplicateElements(strings.Split(runtimeDeps.Config.Subscribe.UserAgentList, "\n")...)
 				var allow = false
 
 				// query client list
-				clients, err := svc.ClientModel.List(c.Request.Context())
+				clients, err := runtimeDeps.ClientModel.List(c.Request.Context())
 				if err != nil {
 					logger.Errorw("[PanDomainMiddleware] Query client list failed", logger.Field("error", err.Error()))
 				}
@@ -63,7 +63,14 @@ func PanDomainMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
 				Flag:  domainArr[1],
 				UA:    c.Request.Header.Get("User-Agent"),
 			}
-			l := subscribe.NewSubscribeLogic(c, svc)
+			l := subscribe.NewSubscribeLogic(c, subscribe.Deps{
+				ClientModel:    runtimeDeps.ClientModel,
+				LogModel:       runtimeDeps.LogModel,
+				NodeModel:      runtimeDeps.NodeModel,
+				SubscribeModel: runtimeDeps.SubscribeModel,
+				UserModel:      runtimeDeps.UserModel,
+				Config:         runtimeDeps.Config,
+			})
 			resp, err := l.Handler(&request)
 			if err != nil {
 				return

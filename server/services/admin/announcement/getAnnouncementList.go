@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -19,9 +18,9 @@ type GetAnnouncementListOutput struct {
 	Body *types.GetAnnouncementListResponse
 }
 
-func GetAnnouncementListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetAnnouncementListInput) (*GetAnnouncementListOutput, error) {
+func GetAnnouncementListHandler(deps Deps) func(context.Context, *GetAnnouncementListInput) (*GetAnnouncementListOutput, error) {
 	return func(ctx context.Context, input *GetAnnouncementListInput) (*GetAnnouncementListOutput, error) {
-		l := NewGetAnnouncementListLogic(ctx, svcCtx)
+		l := NewGetAnnouncementListLogic(ctx, deps)
 		resp, err := l.GetAnnouncementList(&input.Body)
 		if err != nil {
 			return nil, err
@@ -32,21 +31,21 @@ func GetAnnouncementListHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type GetAnnouncementListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get announcement list
-func NewGetAnnouncementListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAnnouncementListLogic {
+func NewGetAnnouncementListLogic(ctx context.Context, deps Deps) *GetAnnouncementListLogic {
 	return &GetAnnouncementListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetAnnouncementListLogic) GetAnnouncementList(req *types.GetAnnouncementListRequest) (resp *types.GetAnnouncementListResponse, err error) {
-	total, list, err := l.svcCtx.AnnouncementModel.GetAnnouncementListByPage(l.ctx, int(req.Page), int(req.Size), announcement.Filter{
+	total, list, err := l.deps.AnnouncementModel.GetAnnouncementListByPage(l.ctx, int(req.Page), int(req.Size), announcement.Filter{
 		Show:   req.Show,
 		Pinned: req.Pinned,
 		Popup:  req.Popup,

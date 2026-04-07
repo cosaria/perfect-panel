@@ -2,10 +2,10 @@ package system
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +14,9 @@ type GetVerifyCodeConfigOutput struct {
 	Body *types.VerifyCodeConfig
 }
 
-func GetVerifyCodeConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetVerifyCodeConfigOutput, error) {
+func GetVerifyCodeConfigHandler(deps Deps) func(context.Context, *struct{}) (*GetVerifyCodeConfigOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetVerifyCodeConfigOutput, error) {
-		l := NewGetVerifyCodeConfigLogic(ctx, svcCtx)
+		l := NewGetVerifyCodeConfigLogic(ctx, deps)
 		resp, err := l.GetVerifyCodeConfig()
 		if err != nil {
 			return nil, err
@@ -27,21 +27,21 @@ func GetVerifyCodeConfigHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type GetVerifyCodeConfigLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get Verify Code Config
-func NewGetVerifyCodeConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetVerifyCodeConfigLogic {
+func NewGetVerifyCodeConfigLogic(ctx context.Context, deps Deps) *GetVerifyCodeConfigLogic {
 	return &GetVerifyCodeConfigLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetVerifyCodeConfigLogic) GetVerifyCodeConfig() (resp *types.VerifyCodeConfig, err error) {
-	data, err := l.svcCtx.SystemModel.GetVerifyCodeConfig(l.ctx)
+	data, err := l.deps.SystemModel.GetVerifyCodeConfig(l.ctx)
 	if err != nil {
 		l.Errorw("Get Verify Code Config Error: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Get Verify Code Config Error: %s", err.Error())

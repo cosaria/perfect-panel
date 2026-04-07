@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/node"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -15,9 +14,9 @@ type ResetSortWithServerInput struct {
 	Body types.ResetSortRequest
 }
 
-func ResetSortWithServerHandler(svcCtx *svc.ServiceContext) func(context.Context, *ResetSortWithServerInput) (*struct{}, error) {
+func ResetSortWithServerHandler(deps Deps) func(context.Context, *ResetSortWithServerInput) (*struct{}, error) {
 	return func(ctx context.Context, input *ResetSortWithServerInput) (*struct{}, error) {
-		l := NewResetSortWithServerLogic(ctx, svcCtx)
+		l := NewResetSortWithServerLogic(ctx, deps)
 		if err := l.ResetSortWithServer(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,21 +26,21 @@ func ResetSortWithServerHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type ResetSortWithServerLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewResetSortWithServerLogic Reset server sort
-func NewResetSortWithServerLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetSortWithServerLogic {
+func NewResetSortWithServerLogic(ctx context.Context, deps Deps) *ResetSortWithServerLogic {
 	return &ResetSortWithServerLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *ResetSortWithServerLogic) ResetSortWithServer(req *types.ResetSortRequest) error {
-	err := l.svcCtx.NodeModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err := l.deps.NodeModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		// find all servers id
 		var existingIDs []int64
 		db.Model(&node.Server{}).Select("id").Find(&existingIDs)
@@ -79,12 +78,12 @@ func (l *ResetSortWithServerLogic) ResetSortWithServer(req *types.ResetSortReque
 			}
 		}
 		for _, item := range itemsToUpdate {
-			s, err := l.svcCtx.NodeModel.FindOneServer(l.ctx, item.Id)
+			s, err := l.deps.NodeModel.FindOneServer(l.ctx, item.Id)
 			if err != nil {
 				return err
 			}
 			s.Sort = int(item.Sort)
-			if err = l.svcCtx.NodeModel.UpdateServer(l.ctx, s, db); err != nil {
+			if err = l.deps.NodeModel.UpdateServer(l.ctx, s, db); err != nil {
 				l.Errorw("[NodeSort] Update Database Error: ", logger.Field("error", err.Error()), logger.Field("id", item.Id), logger.Field("sort", item.Sort))
 				return err
 			}

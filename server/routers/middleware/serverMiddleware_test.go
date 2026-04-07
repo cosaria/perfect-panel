@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/svc"
+	appruntime "github.com/perfect-panel/server/runtime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,8 +15,8 @@ func TestServerMiddlewareAcceptsHeaderSecret(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	router := gin.New()
-	router.Use(ServerMiddleware(&svc.ServiceContext{
-		Config: config.Config{
+	router.Use(ServerMiddleware(&appruntime.Deps{
+		Config: &config.Config{
 			Node: config.NodeConfig{
 				NodeSecret: "top-secret",
 			},
@@ -40,8 +40,8 @@ func TestServerMiddlewareRejectsQuerySecret(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	router := gin.New()
-	router.Use(ServerMiddleware(&svc.ServiceContext{
-		Config: config.Config{
+	router.Use(ServerMiddleware(&appruntime.Deps{
+		Config: &config.Config{
 			Node: config.NodeConfig{
 				NodeSecret: "top-secret",
 			},

@@ -8,7 +8,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/modules/verify/device"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -17,9 +16,9 @@ type UpdateSubscribeInput struct {
 	Body types.UpdateSubscribeRequest
 }
 
-func UpdateSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateSubscribeInput) (*struct{}, error) {
+func UpdateSubscribeHandler(deps Deps) func(context.Context, *UpdateSubscribeInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateSubscribeInput) (*struct{}, error) {
-		l := NewUpdateSubscribeLogic(ctx, svcCtx)
+		l := NewUpdateSubscribeLogic(ctx, deps)
 		if err := l.UpdateSubscribe(&input.Body); err != nil {
 			return nil, err
 		}
@@ -29,22 +28,22 @@ func UpdateSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *U
 
 type UpdateSubscribeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Update subscribe
-func NewUpdateSubscribeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateSubscribeLogic {
+func NewUpdateSubscribeLogic(ctx context.Context, deps Deps) *UpdateSubscribeLogic {
 	return &UpdateSubscribeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *UpdateSubscribeLogic) UpdateSubscribe(req *types.UpdateSubscribeRequest) error {
 	// Query the database to get the subscribe information
-	_, err := l.svcCtx.SubscribeModel.FindOne(l.ctx, req.Id)
+	_, err := l.deps.SubscribeModel.FindOne(l.ctx, req.Id)
 	if err != nil {
 		l.Logger.Error("[UpdateSubscribe] Database query error", logger.Field("error", err.Error()), logger.Field("subscribe_id", req.Id))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get subscribe error: %v", err.Error())
@@ -79,11 +78,13 @@ func (l *UpdateSubscribeLogic) UpdateSubscribe(req *types.UpdateSubscribeRequest
 		RenewalReset:      req.RenewalReset,
 		ShowOriginalPrice: req.ShowOriginalPrice,
 	}
-	err = l.svcCtx.SubscribeModel.Update(l.ctx, sub)
+	err = l.deps.SubscribeModel.Update(l.ctx, sub)
 	if err != nil {
 		l.Logger.Error("[UpdateSubscribe] update subscribe failed", logger.Field("error", err.Error()), logger.Field("subscribe", sub))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update subscribe error: %v", err.Error())
 	}
-	l.svcCtx.DeviceManager.Broadcast(device.SubscribeUpdate)
+	if l.deps.DeviceManager != nil {
+		l.deps.DeviceManager.Broadcast(device.SubscribeUpdate)
+	}
 	return nil
 }

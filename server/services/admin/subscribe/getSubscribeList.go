@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"strings"
@@ -21,9 +20,9 @@ type GetSubscribeListOutput struct {
 	Body *types.GetSubscribeListResponse
 }
 
-func GetSubscribeListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetSubscribeListInput) (*GetSubscribeListOutput, error) {
+func GetSubscribeListHandler(deps Deps) func(context.Context, *GetSubscribeListInput) (*GetSubscribeListOutput, error) {
 	return func(ctx context.Context, input *GetSubscribeListInput) (*GetSubscribeListOutput, error) {
-		l := NewGetSubscribeListLogic(ctx, svcCtx)
+		l := NewGetSubscribeListLogic(ctx, deps)
 		resp, err := l.GetSubscribeList(&input.GetSubscribeListRequest)
 		if err != nil {
 			return nil, err
@@ -34,21 +33,21 @@ func GetSubscribeListHandler(svcCtx *svc.ServiceContext) func(context.Context, *
 
 type GetSubscribeListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get subscribe list
-func NewGetSubscribeListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSubscribeListLogic {
+func NewGetSubscribeListLogic(ctx context.Context, deps Deps) *GetSubscribeListLogic {
 	return &GetSubscribeListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetSubscribeListLogic) GetSubscribeList(req *types.GetSubscribeListRequest) (resp *types.GetSubscribeListResponse, err error) {
-	total, list, err := l.svcCtx.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
+	total, list, err := l.deps.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
 		Page:     int(req.Page),
 		Size:     int(req.Size),
 		Language: req.Language,
@@ -77,7 +76,7 @@ func (l *GetSubscribeListLogic) GetSubscribeList(req *types.GetSubscribeListRequ
 		resultList = append(resultList, sub)
 	}
 
-	subscribeMaps, err := l.svcCtx.UserModel.QueryActiveSubscriptions(l.ctx, subscribeIdList...)
+	subscribeMaps, err := l.deps.UserModel.QueryActiveSubscriptions(l.ctx, subscribeIdList...)
 	if err != nil {
 		l.Logger.Error("[GetSubscribeListLogic] get user subscribe failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get user subscribe failed: %v", err.Error())

@@ -6,11 +6,10 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/svc"
+	"github.com/perfect-panel/server/config"
 )
 
 type SchedulerService struct {
-	svc    *svc.ServiceContext
 	server *asynq.Scheduler
 }
 
@@ -20,10 +19,9 @@ type scheduledTaskRegistration struct {
 	options  []asynq.Option
 }
 
-func NewSchedulerService(svc *svc.ServiceContext) *SchedulerService {
+func NewSchedulerService(cfg config.Config) *SchedulerService {
 	return &SchedulerService{
-		svc:    svc,
-		server: initSchedulerService(svc),
+		server: initSchedulerService(cfg),
 	}
 }
 
@@ -46,10 +44,10 @@ func (m *SchedulerService) Stop() {
 	m.server.Shutdown()
 }
 
-func initSchedulerService(svc *svc.ServiceContext) *asynq.Scheduler {
+func initSchedulerService(cfg config.Config) *asynq.Scheduler {
 	location, _ := time.LoadLocation("Asia/Shanghai")
 	return asynq.NewScheduler(
-		asynq.RedisClientOpt{Addr: svc.Config.Redis.Host, Password: svc.Config.Redis.Pass, DB: 5},
+		asynq.RedisClientOpt{Addr: cfg.Redis.Host, Password: cfg.Redis.Pass, DB: 5},
 		&asynq.SchedulerOpts{
 			Location: location,
 		},

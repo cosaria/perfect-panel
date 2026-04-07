@@ -8,22 +8,21 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/traffic"
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/svc"
 )
 
 type StatLogic struct {
-	svc *svc.ServiceContext
+	deps Deps
 }
 
-func NewStatLogic(svc *svc.ServiceContext) *StatLogic {
+func NewStatLogic(deps Deps) *StatLogic {
 	return &StatLogic{
-		svc: svc,
+		deps: deps,
 	}
 }
 
 func (l *StatLogic) ProcessTask(ctx context.Context, _ *asynq.Task) error {
 	now := time.Now()
-	tx := l.svc.DB.Begin()
+	tx := l.deps.DB.Begin()
 	var err error
 	defer func(err error) {
 		if err != nil {
@@ -166,8 +165,9 @@ func (l *StatLogic) ProcessTask(ctx context.Context, _ *asynq.Task) error {
 	}
 
 	// Delete old traffic logs
-	if l.svc.Config.Log.AutoClear {
-		err = tx.WithContext(ctx).Model(&traffic.TrafficLog{}).Where("timestamp <= ?", end.AddDate(0, 0, int(-l.svc.Config.Log.ClearDays))).Delete(&traffic.TrafficLog{}).Error
+	cfg := l.deps.currentConfig()
+	if cfg.Log.AutoClear {
+		err = tx.WithContext(ctx).Model(&traffic.TrafficLog{}).Where("timestamp <= ?", end.AddDate(0, 0, int(-cfg.Log.ClearDays))).Delete(&traffic.TrafficLog{}).Error
 		if err != nil {
 			logger.Errorf("[Traffic Stat Queue] Delete server traffic log failed: %v", err.Error())
 		}

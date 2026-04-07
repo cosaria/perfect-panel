@@ -15,7 +15,6 @@ import (
 	oteltrace "go.opentelemetry.io/otel/trace"
 
 	"github.com/perfect-panel/server/modules/infra/trace"
-	"github.com/perfect-panel/server/svc"
 )
 
 // statusByWriter returns a span status code and message for an HTTP status code
@@ -54,7 +53,7 @@ func requestAttributes(req *http.Request) []attribute.KeyValue {
 	}
 }
 
-func TraceMiddleware(_ *svc.ServiceContext) func(ctx *gin.Context) {
+func TraceMiddleware() func(ctx *gin.Context) {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 		tracer := trace.TracerFromContext(ctx)

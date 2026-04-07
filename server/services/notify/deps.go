@@ -1,0 +1,19 @@
+package notify
+
+import (
+	"github.com/hibiken/asynq"
+	"github.com/perfect-panel/server/config"
+	modelorder "github.com/perfect-panel/server/models/order"
+)
+
+// Deps holds the narrow notify dependencies while Phase 6 removes direct
+// ServiceContext usage from service packages.
+type Deps struct {
+	OrderModel modelorder.Model
+	Queue      *asynq.Client
+	Config     *config.Config
+}
+
+func (d Deps) debugEnabled() bool {
+	return d.Config != nil && d.Config.Debug
+}

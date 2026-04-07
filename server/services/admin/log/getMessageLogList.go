@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type GetMessageLogListOutput struct {
 	Body *types.GetMessageLogListResponse
 }
 
-func GetMessageLogListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetMessageLogListInput) (*GetMessageLogListOutput, error) {
+func GetMessageLogListHandler(deps Deps) func(context.Context, *GetMessageLogListInput) (*GetMessageLogListOutput, error) {
 	return func(ctx context.Context, input *GetMessageLogListInput) (*GetMessageLogListOutput, error) {
-		l := NewGetMessageLogListLogic(ctx, svcCtx)
+		l := NewGetMessageLogListLogic(ctx, deps)
 		resp, err := l.GetMessageLogList(&input.GetMessageLogListRequest)
 		if err != nil {
 			return nil, err
@@ -31,22 +30,22 @@ func GetMessageLogListHandler(svcCtx *svc.ServiceContext) func(context.Context, 
 
 type GetMessageLogListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetMessageLogListLogic Get message log list
-func NewGetMessageLogListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetMessageLogListLogic {
+func NewGetMessageLogListLogic(ctx context.Context, deps Deps) *GetMessageLogListLogic {
 	return &GetMessageLogListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetMessageLogListLogic) GetMessageLogList(req *types.GetMessageLogListRequest) (resp *types.GetMessageLogListResponse, err error) {
 
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:   req.Page,
 		Size:   req.Size,
 		Type:   req.Type,

@@ -11,7 +11,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/modules/util/uuidx"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"time"
@@ -25,9 +24,9 @@ type QueryPurchaseOrderOutput struct {
 	Body *types.QueryPurchaseOrderResponse
 }
 
-func QueryPurchaseOrderHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryPurchaseOrderInput) (*QueryPurchaseOrderOutput, error) {
+func QueryPurchaseOrderHandler(deps Deps) func(context.Context, *QueryPurchaseOrderInput) (*QueryPurchaseOrderOutput, error) {
 	return func(ctx context.Context, input *QueryPurchaseOrderInput) (*QueryPurchaseOrderOutput, error) {
-		l := NewQueryPurchaseOrderLogic(ctx, svcCtx)
+		l := NewQueryPurchaseOrderLogic(ctx, deps)
 		resp, err := l.QueryPurchaseOrder(&input.QueryPurchaseOrderRequest)
 		if err != nil {
 			return nil, err
@@ -38,16 +37,16 @@ func QueryPurchaseOrderHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type QueryPurchaseOrderLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewQueryPurchaseOrderLogic Query Purchase Order
-func NewQueryPurchaseOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryPurchaseOrderLogic {
+func NewQueryPurchaseOrderLogic(ctx context.Context, deps Deps) *QueryPurchaseOrderLogic {
 	return &QueryPurchaseOrderLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -57,7 +56,7 @@ func wrapDatabaseError(err error) error {
 }
 
 func (l *QueryPurchaseOrderLogic) QueryPurchaseOrder(req *types.QueryPurchaseOrderRequest) (resp *types.QueryPurchaseOrderResponse, err error) {
-	orderInfo, err := l.svcCtx.OrderModel.FindOneByOrderNo(l.ctx, req.OrderNo)
+	orderInfo, err := l.deps.OrderModel.FindOneByOrderNo(l.ctx, req.OrderNo)
 	if err != nil {
 		return nil, wrapDatabaseError(err)
 	}
@@ -94,7 +93,7 @@ func (l *QueryPurchaseOrderLogic) QueryPurchaseOrder(req *types.QueryPurchaseOrd
 // handleTemporaryOrder processes temporary order-related operations
 func (l *QueryPurchaseOrderLogic) handleTemporaryOrder(orderInfo *order.Order, req *types.QueryPurchaseOrderRequest) (string, error) {
 	cacheKey := fmt.Sprintf(config.TempOrderCacheKey, orderInfo.OrderNo)
-	cacheValue, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
+	cacheValue, err := l.deps.Redis.Get(l.ctx, cacheKey).Result()
 	if err != nil {
 		l.Errorw("Get TempOrderCacheKey Error", logger.Field("cacheKey", cacheKey), logger.Field("error", err.Error()))
 		return "", errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Get TempOrderCacheKey Error: %v", err.Error())
@@ -120,12 +119,12 @@ func (l *QueryPurchaseOrderLogic) handleTemporaryOrder(orderInfo *order.Order, r
 
 // validateUserAndEmail ensures the user and email are correct
 func (l *QueryPurchaseOrderLogic) validateUserAndEmail(orderInfo *order.Order, platform, openid string) error {
-	userInfo, err := l.svcCtx.UserModel.FindOne(l.ctx, orderInfo.UserId)
+	userInfo, err := l.deps.UserModel.FindOne(l.ctx, orderInfo.UserId)
 	if err != nil {
 		return wrapDatabaseError(err)
 	}
 
-	authMethod, err := l.svcCtx.UserModel.FindUserAuthMethodByOpenID(l.ctx, platform, openid)
+	authMethod, err := l.deps.UserModel.FindUserAuthMethodByOpenID(l.ctx, platform, openid)
 	if err != nil {
 		return wrapDatabaseError(err)
 	}
@@ -140,9 +139,9 @@ func (l *QueryPurchaseOrderLogic) validateUserAndEmail(orderInfo *order.Order, p
 func (l *QueryPurchaseOrderLogic) generateSessionToken(userId int64) (string, error) {
 	sessionId := uuidx.NewUUID().String()
 	token, err := jwt.NewJwtToken(
-		l.svcCtx.Config.JwtAuth.AccessSecret,
+		l.deps.Config.JwtAuth.AccessSecret,
 		time.Now().Unix(),
-		l.svcCtx.Config.JwtAuth.AccessExpire,
+		l.deps.Config.JwtAuth.AccessExpire,
 		jwt.WithOption("UserId", userId),
 		jwt.WithOption("SessionId", sessionId),
 	)
@@ -152,7 +151,7 @@ func (l *QueryPurchaseOrderLogic) generateSessionToken(userId int64) (string, er
 	}
 
 	cacheKey := fmt.Sprintf("%v:%v", config.SessionIdKey, sessionId)
-	if err := l.svcCtx.Redis.Set(l.ctx, cacheKey, userId, time.Duration(l.svcCtx.Config.JwtAuth.AccessExpire)*time.Second).Err(); err != nil {
+	if err := l.deps.Redis.Set(l.ctx, cacheKey, userId, time.Duration(l.deps.Config.JwtAuth.AccessExpire)*time.Second).Err(); err != nil {
 		return "", errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Session storage error")
 	}
 
@@ -161,7 +160,7 @@ func (l *QueryPurchaseOrderLogic) generateSessionToken(userId int64) (string, er
 
 // fetchOrderDetails retrieves subscription and payment details
 func (l *QueryPurchaseOrderLogic) fetchOrderDetails(orderInfo *order.Order) (types.Subscribe, types.PaymentMethod, error) {
-	sub, err := l.svcCtx.SubscribeModel.FindOne(l.ctx, orderInfo.SubscribeId)
+	sub, err := l.deps.SubscribeModel.FindOne(l.ctx, orderInfo.SubscribeId)
 	if err != nil {
 		return types.Subscribe{}, types.PaymentMethod{}, wrapDatabaseError(err)
 	}
@@ -169,7 +168,7 @@ func (l *QueryPurchaseOrderLogic) fetchOrderDetails(orderInfo *order.Order) (typ
 	var subscribeInfo types.Subscribe
 	tool.DeepCopy(&subscribeInfo, sub)
 
-	payment, err := l.svcCtx.PaymentModel.FindOne(l.ctx, orderInfo.PaymentId)
+	payment, err := l.deps.PaymentModel.FindOne(l.ctx, orderInfo.PaymentId)
 	if err != nil {
 		return types.Subscribe{}, types.PaymentMethod{}, wrapDatabaseError(err)
 	}

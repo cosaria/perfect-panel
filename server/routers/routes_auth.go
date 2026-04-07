@@ -7,19 +7,27 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/routers/middleware"
+	appruntime "github.com/perfect-panel/server/runtime"
 	auth "github.com/perfect-panel/server/services/auth"
 	authOauth "github.com/perfect-panel/server/services/auth/oauth"
-	"github.com/perfect-panel/server/svc"
 )
 
-func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specOnly bool) []huma.API {
+func registerAuthRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specOnly bool) []huma.API {
 	authGroup := router.Group("/api/v1/auth")
 	if !specOnly {
-		authGroup.Use(middleware.DeviceMiddleware(serverCtx))
+		authGroup.Use(middleware.DeviceMiddleware(runtimeDeps))
 	}
 	authConfig := governedAPIConfig("Auth API", "1.0.0", "/api/v1/auth", "auth")
 	authAPI := humagin.NewWithGroup(router, authGroup, authConfig)
-	configureHumaAPI(authAPI, compatibilityEnabled(serverCtx, specOnly))
+	configureHumaAPI(authAPI, compatibilityEnabled(runtimeDeps, specOnly))
+	authDeps := auth.Deps{}
+	if runtimeDeps != nil {
+		authDeps.UserModel = runtimeDeps.UserModel
+		authDeps.LogModel = runtimeDeps.LogModel
+		authDeps.SubscribeModel = runtimeDeps.SubscribeModel
+		authDeps.Redis = runtimeDeps.Redis
+		authDeps.Config = runtimeDeps.Config
+	}
 
 	registerOperation(authAPI, huma.Operation{
 		OperationID: "checkUser",
@@ -27,7 +35,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Path:        "/check",
 		Summary:     "Check user is exist",
 		Tags:        []string{"auth"},
-	}, auth.CheckUserHandler(serverCtx))
+	}, auth.CheckUserHandler(authDeps))
 
 	registerOperation(authAPI, huma.Operation{
 		OperationID: "checkUserTelephone",
@@ -35,7 +43,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Path:        "/check/telephone",
 		Summary:     "Check user telephone is exist",
 		Tags:        []string{"auth"},
-	}, auth.CheckUserTelephoneHandler(serverCtx))
+	}, auth.CheckUserTelephoneHandler(authDeps))
 
 	registerOperation(authAPI, huma.Operation{
 		OperationID: "userLogin",
@@ -43,7 +51,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Path:        "/login",
 		Summary:     "User login",
 		Tags:        []string{"auth"},
-	}, auth.UserLoginHandler(serverCtx))
+	}, auth.UserLoginHandler(authDeps))
 
 	registerOperation(authAPI, huma.Operation{
 		OperationID: "deviceLogin",
@@ -51,7 +59,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Path:        "/login/device",
 		Summary:     "Device Login",
 		Tags:        []string{"auth"},
-	}, auth.DeviceLoginHandler(serverCtx))
+	}, auth.DeviceLoginHandler(authDeps))
 
 	registerOperation(authAPI, huma.Operation{
 		OperationID: "telephoneLogin",
@@ -59,7 +67,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Path:        "/login/telephone",
 		Summary:     "User Telephone login",
 		Tags:        []string{"auth"},
-	}, auth.TelephoneLoginHandler(serverCtx))
+	}, auth.TelephoneLoginHandler(authDeps))
 
 	registerOperation(authAPI, huma.Operation{
 		OperationID: "userRegister",
@@ -67,7 +75,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Path:        "/register",
 		Summary:     "User register",
 		Tags:        []string{"auth"},
-	}, auth.UserRegisterHandler(serverCtx))
+	}, auth.UserRegisterHandler(authDeps))
 
 	registerOperation(authAPI, huma.Operation{
 		OperationID: "telephoneUserRegister",
@@ -75,7 +83,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Path:        "/register/telephone",
 		Summary:     "User Telephone register",
 		Tags:        []string{"auth"},
-	}, auth.TelephoneUserRegisterHandler(serverCtx))
+	}, auth.TelephoneUserRegisterHandler(authDeps))
 
 	registerOperation(authAPI, huma.Operation{
 		OperationID: "resetPassword",
@@ -83,7 +91,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Path:        "/reset",
 		Summary:     "Reset password",
 		Tags:        []string{"auth"},
-	}, auth.ResetPasswordHandler(serverCtx))
+	}, auth.ResetPasswordHandler(authDeps))
 
 	registerOperation(authAPI, huma.Operation{
 		OperationID: "telephoneResetPassword",
@@ -91,15 +99,24 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Path:        "/reset/telephone",
 		Summary:     "Reset password",
 		Tags:        []string{"auth"},
-	}, auth.TelephoneResetPasswordHandler(serverCtx))
+	}, auth.TelephoneResetPasswordHandler(authDeps))
 
 	authOauthGroup := router.Group("/api/v1/auth/oauth")
 	authOauthConfig := governedAPIConfig("Auth OAuth API", "1.0.0", "/api/v1/auth/oauth", "oauth")
 	authOauthAPI := humagin.NewWithGroup(router, authOauthGroup, authOauthConfig)
-	configureHumaAPI(authOauthAPI, compatibilityEnabled(serverCtx, specOnly))
+	configureHumaAPI(authOauthAPI, compatibilityEnabled(runtimeDeps, specOnly))
+	authOauthDeps := authOauth.Deps{}
+	if runtimeDeps != nil {
+		authOauthDeps.AuthModel = runtimeDeps.AuthModel
+		authOauthDeps.UserModel = runtimeDeps.UserModel
+		authOauthDeps.LogModel = runtimeDeps.LogModel
+		authOauthDeps.SubscribeModel = runtimeDeps.SubscribeModel
+		authOauthDeps.Redis = runtimeDeps.Redis
+		authOauthDeps.Config = runtimeDeps.Config
+	}
 
 	// AppleLoginCallback stays raw Gin because it needs direct redirect primitives.
-	authOauthGroup.POST("/callback/apple", authOauth.AppleLoginCallbackHandler(serverCtx))
+	authOauthGroup.POST("/callback/apple", authOauth.AppleLoginCallbackHandler(authOauthDeps))
 
 	registerOperation(authOauthAPI, huma.Operation{
 		OperationID: "oAuthLogin",
@@ -107,7 +124,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Path:        "/login",
 		Summary:     "OAuth login",
 		Tags:        []string{"oauth"},
-	}, authOauth.OAuthLoginHandler(serverCtx))
+	}, authOauth.OAuthLoginHandler(authOauthDeps))
 
 	registerOperation(authOauthAPI, huma.Operation{
 		OperationID: "oAuthLoginGetToken",
@@ -115,7 +132,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Path:        "/login/token",
 		Summary:     "OAuth login get token",
 		Tags:        []string{"oauth"},
-	}, authOauth.OAuthLoginGetTokenHandler(serverCtx))
+	}, authOauth.OAuthLoginGetTokenHandler(authOauthDeps))
 
 	return []huma.API{authAPI, authOauthAPI}
 }

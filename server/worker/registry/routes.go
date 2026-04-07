@@ -2,48 +2,75 @@ package registry
 
 import (
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/svc"
-	orderLogic "github.com/perfect-panel/server/worker/order"
 	smslogic "github.com/perfect-panel/server/worker/sms"
 	"github.com/perfect-panel/server/worker/spec"
-	"github.com/perfect-panel/server/worker/subscription"
-	"github.com/perfect-panel/server/worker/task"
-	"github.com/perfect-panel/server/worker/traffic"
 
 	emailLogic "github.com/perfect-panel/server/worker/email"
 )
 
-func RegisterHandlers(mux *asynq.ServeMux, serverCtx *svc.ServiceContext) {
+type Deps struct {
+	Email             emailLogic.Deps
+	SMS               smslogic.Deps
+	DeferCloseOrder   asynq.Handler
+	ActivateOrder     asynq.Handler
+	TrafficStatistics asynq.Handler
+	CheckSubscription asynq.Handler
+	ServerData        asynq.Handler
+	ResetTraffic      asynq.Handler
+	TrafficStat       asynq.Handler
+	ExchangeRate      asynq.Handler
+	Quota             asynq.Handler
+}
+
+func RegisterHandlers(mux *asynq.ServeMux, deps Deps) {
 	// Send email task
-	mux.Handle(spec.ForthwithSendEmail, emailLogic.NewSendEmailLogic(serverCtx))
+	mux.Handle(spec.ForthwithSendEmail, emailLogic.NewSendEmailLogic(deps.Email))
 	// Send sms task
-	mux.Handle(spec.ForthwithSendSms, smslogic.NewSendSmsLogic(serverCtx))
+	mux.Handle(spec.ForthwithSendSms, smslogic.NewSendSmsLogic(deps.SMS))
 	// Defer close order task
-	mux.Handle(spec.DeferCloseOrder, orderLogic.NewDeferCloseOrderLogic(serverCtx))
+	if deps.DeferCloseOrder != nil {
+		mux.Handle(spec.DeferCloseOrder, deps.DeferCloseOrder)
+	}
 	// Forthwith activate order task
-	mux.Handle(spec.ForthwithActivateOrder, orderLogic.NewActivateOrderLogic(serverCtx))
+	if deps.ActivateOrder != nil {
+		mux.Handle(spec.ForthwithActivateOrder, deps.ActivateOrder)
+	}
 
 	// Forthwith traffic statistics
-	mux.Handle(spec.ForthwithTrafficStatistics, traffic.NewTrafficStatisticsLogic(serverCtx))
+	if deps.TrafficStatistics != nil {
+		mux.Handle(spec.ForthwithTrafficStatistics, deps.TrafficStatistics)
+	}
 
 	// Schedule check subscription
-	mux.Handle(spec.SchedulerCheckSubscription, subscription.NewCheckSubscriptionLogic(serverCtx))
+	if deps.CheckSubscription != nil {
+		mux.Handle(spec.SchedulerCheckSubscription, deps.CheckSubscription)
+	}
 
 	// Schedule total server data
-	mux.Handle(spec.SchedulerTotalServerData, traffic.NewServerDataLogic(serverCtx))
+	if deps.ServerData != nil {
+		mux.Handle(spec.SchedulerTotalServerData, deps.ServerData)
+	}
 
 	// Schedule reset traffic
-	mux.Handle(spec.SchedulerResetTraffic, traffic.NewResetTrafficLogic(serverCtx))
+	if deps.ResetTraffic != nil {
+		mux.Handle(spec.SchedulerResetTraffic, deps.ResetTraffic)
+	}
 
 	// ScheduledBatchSendEmail
-	mux.Handle(spec.ScheduledBatchSendEmail, emailLogic.NewBatchEmailLogic(serverCtx))
+	mux.Handle(spec.ScheduledBatchSendEmail, emailLogic.NewBatchEmailLogic(deps.Email))
 
 	// ScheduledTrafficStat
-	mux.Handle(spec.SchedulerTrafficStat, traffic.NewStatLogic(serverCtx))
+	if deps.TrafficStat != nil {
+		mux.Handle(spec.SchedulerTrafficStat, deps.TrafficStat)
+	}
 
 	// SchedulerExchangeRate
-	mux.Handle(spec.SchedulerExchangeRate, task.NewRateLogic(serverCtx))
+	if deps.ExchangeRate != nil {
+		mux.Handle(spec.SchedulerExchangeRate, deps.ExchangeRate)
+	}
 
 	// ForthwithQuotaTask
-	mux.Handle(spec.ForthwithQuotaTask, task.NewQuotaTaskLogic(serverCtx))
+	if deps.Quota != nil {
+		mux.Handle(spec.ForthwithQuotaTask, deps.Quota)
+	}
 }

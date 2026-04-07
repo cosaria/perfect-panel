@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type FilterMobileLogOutput struct {
 	Body *types.FilterMobileLogResponse
 }
 
-func FilterMobileLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterMobileLogInput) (*FilterMobileLogOutput, error) {
+func FilterMobileLogHandler(deps Deps) func(context.Context, *FilterMobileLogInput) (*FilterMobileLogOutput, error) {
 	return func(ctx context.Context, input *FilterMobileLogInput) (*FilterMobileLogOutput, error) {
-		l := NewFilterMobileLogLogic(ctx, svcCtx)
+		l := NewFilterMobileLogLogic(ctx, deps)
 		resp, err := l.FilterMobileLog(&input.FilterLogParams)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func FilterMobileLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *F
 
 type FilterMobileLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Filter mobile log
-func NewFilterMobileLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterMobileLogLogic {
+func NewFilterMobileLogLogic(ctx context.Context, deps Deps) *FilterMobileLogLogic {
 	return &FilterMobileLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *FilterMobileLogLogic) FilterMobileLog(req *types.FilterLogParams) (resp *types.FilterMobileLogResponse, err error) {
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:   req.Page,
 		Size:   req.Size,
 		Type:   log.TypeMobileMessage.Uint8(),

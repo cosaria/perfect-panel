@@ -2,12 +2,12 @@ package user
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -20,9 +20,9 @@ type GetSubscribeLogOutput struct {
 	Body *types.GetSubscribeLogResponse
 }
 
-func GetSubscribeLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetSubscribeLogInput) (*GetSubscribeLogOutput, error) {
+func GetSubscribeLogHandler(deps Deps) func(context.Context, *GetSubscribeLogInput) (*GetSubscribeLogOutput, error) {
 	return func(ctx context.Context, input *GetSubscribeLogInput) (*GetSubscribeLogOutput, error) {
-		l := NewGetSubscribeLogLogic(ctx, svcCtx)
+		l := NewGetSubscribeLogLogic(ctx, deps)
 		resp, err := l.GetSubscribeLog(&input.GetSubscribeLogRequest)
 		if err != nil {
 			return nil, err
@@ -33,16 +33,16 @@ func GetSubscribeLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *G
 
 type GetSubscribeLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetSubscribeLogLogic Get Subscribe Log
-func NewGetSubscribeLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSubscribeLogLogic {
+func NewGetSubscribeLogLogic(ctx context.Context, deps Deps) *GetSubscribeLogLogic {
 	return &GetSubscribeLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -52,7 +52,7 @@ func (l *GetSubscribeLogLogic) GetSubscribeLog(req *types.GetSubscribeLogRequest
 		logger.Error("current user is not found in context")
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:     req.Page,
 		Size:     req.Size,
 		Type:     log.TypeSubscribe.Uint8(),

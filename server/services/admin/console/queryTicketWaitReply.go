@@ -3,7 +3,6 @@ package console
 import (
 	"context"
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
@@ -11,9 +10,9 @@ type QueryTicketWaitReplyOutput struct {
 	Body *types.TicketWaitRelpyResponse
 }
 
-func QueryTicketWaitReplyHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryTicketWaitReplyOutput, error) {
+func QueryTicketWaitReplyHandler(deps Deps) func(context.Context, *struct{}) (*QueryTicketWaitReplyOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*QueryTicketWaitReplyOutput, error) {
-		l := NewQueryTicketWaitReplyLogic(ctx, svcCtx)
+		l := NewQueryTicketWaitReplyLogic(ctx, deps)
 		resp, err := l.QueryTicketWaitReply()
 		if err != nil {
 			return nil, err
@@ -24,21 +23,21 @@ func QueryTicketWaitReplyHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type QueryTicketWaitReplyLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewQueryTicketWaitReplyLogic Query ticket wait reply
-func NewQueryTicketWaitReplyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryTicketWaitReplyLogic {
+func NewQueryTicketWaitReplyLogic(ctx context.Context, deps Deps) *QueryTicketWaitReplyLogic {
 	return &QueryTicketWaitReplyLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *QueryTicketWaitReplyLogic) QueryTicketWaitReply() (resp *types.TicketWaitRelpyResponse, err error) {
-	count, err := l.svcCtx.TicketModel.QueryWaitReplyTotal(l.ctx)
+	count, err := l.deps.TicketModel.QueryWaitReplyTotal(l.ctx)
 	if err != nil {
 		l.Errorw("[QueryTicketWaitReply] Query Database Error: ", logger.Field("error", err.Error()))
 		return nil, err

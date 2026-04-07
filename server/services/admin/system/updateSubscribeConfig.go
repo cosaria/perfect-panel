@@ -2,26 +2,25 @@ package system
 
 import (
 	"context"
+	"reflect"
+
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/initialize"
-	"github.com/perfect-panel/server/models/system"
+	modelsystem "github.com/perfect-panel/server/models/system"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
-	"reflect"
 )
 
 type UpdateSubscribeConfigInput struct {
 	Body types.SubscribeConfig
 }
 
-func UpdateSubscribeConfigHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateSubscribeConfigInput) (*struct{}, error) {
+func UpdateSubscribeConfigHandler(deps Deps) func(context.Context, *UpdateSubscribeConfigInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateSubscribeConfigInput) (*struct{}, error) {
-		l := NewUpdateSubscribeConfigLogic(ctx, svcCtx)
+		l := NewUpdateSubscribeConfigLogic(ctx, deps)
 		if err := l.UpdateSubscribeConfig(&input.Body); err != nil {
 			return nil, err
 		}
@@ -31,15 +30,15 @@ func UpdateSubscribeConfigHandler(svcCtx *svc.ServiceContext) func(context.Conte
 
 type UpdateSubscribeConfigLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
-func NewUpdateSubscribeConfigLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateSubscribeConfigLogic {
+func NewUpdateSubscribeConfigLogic(ctx context.Context, deps Deps) *UpdateSubscribeConfigLogic {
 	return &UpdateSubscribeConfigLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -47,7 +46,7 @@ func (l *UpdateSubscribeConfigLogic) UpdateSubscribeConfig(req *types.SubscribeC
 	v := reflect.ValueOf(*req)
 	// Get the reflection type of the structure
 	t := v.Type()
-	err := l.svcCtx.SystemModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err := l.deps.SystemModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		var err error
 		for i := 0; i < v.NumField(); i++ {
 			// Get the field name
@@ -55,12 +54,12 @@ func (l *UpdateSubscribeConfigLogic) UpdateSubscribeConfig(req *types.SubscribeC
 			// Get the field value to string
 			fieldValue := tool.ConvertValueToString(v.Field(i))
 			// Update the site config
-			err = db.Model(&system.System{}).Where("`category` = 'subscribe' and `key` = ?", fieldName).Update("value", fieldValue).Error
+			err = db.Model(&modelsystem.System{}).Where("`category` = 'subscribe' and `key` = ?", fieldName).Update("value", fieldValue).Error
 			if err != nil {
 				break
 			}
 		}
-		return l.svcCtx.Redis.Del(l.ctx, config.SubscribeConfigKey, config.GlobalConfigKey).Err()
+		return l.deps.Redis.Del(l.ctx, config.SubscribeConfigKey, config.GlobalConfigKey).Err()
 	})
 
 	if err != nil {
@@ -68,16 +67,21 @@ func (l *UpdateSubscribeConfigLogic) UpdateSubscribeConfig(req *types.SubscribeC
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update subscribe config error: %v", err)
 	}
 
-	if l.svcCtx.Config.Subscribe.SubscribePath != req.SubscribePath {
-		go func(svc *svc.ServiceContext) {
-			err = svc.Restart()
+	if l.deps.currentConfig().Subscribe.SubscribePath != req.SubscribePath {
+		go func() {
+			if l.deps.Restart == nil {
+				return
+			}
+			err = l.deps.Restart()
 			if err != nil {
 				l.Errorw("[UpdateSubscribeConfigLogic] restart error: ", logger.Field("error", err.Error()))
 			}
-		}(l.svcCtx)
+		}()
 		return nil
 	}
 
-	initialize.Subscribe(l.svcCtx)
+	if l.deps.ReloadSubscribe != nil {
+		l.deps.ReloadSubscribe()
+	}
 	return nil
 }

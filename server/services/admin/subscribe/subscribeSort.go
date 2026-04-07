@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/subscribe"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -15,9 +14,9 @@ type SubscribeSortInput struct {
 	Body types.SubscribeSortRequest
 }
 
-func SubscribeSortHandler(svcCtx *svc.ServiceContext) func(context.Context, *SubscribeSortInput) (*struct{}, error) {
+func SubscribeSortHandler(deps Deps) func(context.Context, *SubscribeSortInput) (*struct{}, error) {
 	return func(ctx context.Context, input *SubscribeSortInput) (*struct{}, error) {
-		l := NewSubscribeSortLogic(ctx, svcCtx)
+		l := NewSubscribeSortLogic(ctx, deps)
 		if err := l.SubscribeSort(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,16 +26,16 @@ func SubscribeSortHandler(svcCtx *svc.ServiceContext) func(context.Context, *Sub
 
 type SubscribeSortLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewSubscribeSortLogic Subscribe sort
-func NewSubscribeSortLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SubscribeSortLogic {
+func NewSubscribeSortLogic(ctx context.Context, deps Deps) *SubscribeSortLogic {
 	return &SubscribeSortLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -48,12 +47,12 @@ func (l *SubscribeSortLogic) SubscribeSort(req *types.SubscribeSortRequest) erro
 		ids = append(ids, v.Id)
 	}
 	// query min sort by ids
-	minSort, err := l.svcCtx.SubscribeModel.QuerySubscribeMinSortByIds(l.ctx, ids)
+	minSort, err := l.deps.SubscribeModel.QuerySubscribeMinSortByIds(l.ctx, ids)
 	if err != nil {
 		l.Logger.Error("[SubscribeSortLogic] query subscribe list by ids error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "query subscribe list by ids error: %v", err.Error())
 	}
-	_, subs, err := l.svcCtx.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
+	_, subs, err := l.deps.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
 		Page: 1,
 		Size: 9999,
 		Ids:  ids,
@@ -69,7 +68,7 @@ func (l *SubscribeSortLogic) SubscribeSort(req *types.SubscribeSortRequest) erro
 		}
 	}
 	// update sort
-	err = l.svcCtx.SubscribeModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err = l.deps.SubscribeModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		return db.Save(subs).Error
 	})
 	if err != nil {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -13,9 +12,9 @@ type DeleteCouponInput struct {
 	Body types.DeleteCouponRequest
 }
 
-func DeleteCouponHandler(svcCtx *svc.ServiceContext) func(context.Context, *DeleteCouponInput) (*struct{}, error) {
+func DeleteCouponHandler(deps Deps) func(context.Context, *DeleteCouponInput) (*struct{}, error) {
 	return func(ctx context.Context, input *DeleteCouponInput) (*struct{}, error) {
-		l := NewDeleteCouponLogic(ctx, svcCtx)
+		l := NewDeleteCouponLogic(ctx, deps)
 		if err := l.DeleteCoupon(&input.Body); err != nil {
 			return nil, err
 		}
@@ -25,22 +24,22 @@ func DeleteCouponHandler(svcCtx *svc.ServiceContext) func(context.Context, *Dele
 
 type DeleteCouponLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Delete coupon
-func NewDeleteCouponLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteCouponLogic {
+func NewDeleteCouponLogic(ctx context.Context, deps Deps) *DeleteCouponLogic {
 	return &DeleteCouponLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *DeleteCouponLogic) DeleteCoupon(req *types.DeleteCouponRequest) error {
 	// delete coupon by id
-	err := l.svcCtx.CouponModel.Delete(l.ctx, req.Id)
+	err := l.deps.CouponModel.Delete(l.ctx, req.Id)
 	if err != nil {
 		l.Errorw("[DeleteCoupon] Database Error", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "delete coupon error: %v", err.Error())

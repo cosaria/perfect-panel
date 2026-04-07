@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type QueryDocumentDetailOutput struct {
 	Body *types.Document
 }
 
-func QueryDocumentDetailHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryDocumentDetailInput) (*QueryDocumentDetailOutput, error) {
+func QueryDocumentDetailHandler(deps Deps) func(context.Context, *QueryDocumentDetailInput) (*QueryDocumentDetailOutput, error) {
 	return func(ctx context.Context, input *QueryDocumentDetailInput) (*QueryDocumentDetailOutput, error) {
-		l := NewQueryDocumentDetailLogic(ctx, svcCtx)
+		l := NewQueryDocumentDetailLogic(ctx, deps)
 		resp, err := l.QueryDocumentDetail(&input.QueryDocumentDetailRequest)
 		if err != nil {
 			return nil, err
@@ -31,22 +30,22 @@ func QueryDocumentDetailHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type QueryDocumentDetailLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get document detail
-func NewQueryDocumentDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryDocumentDetailLogic {
+func NewQueryDocumentDetailLogic(ctx context.Context, deps Deps) *QueryDocumentDetailLogic {
 	return &QueryDocumentDetailLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *QueryDocumentDetailLogic) QueryDocumentDetail(req *types.QueryDocumentDetailRequest) (resp *types.Document, err error) {
 	// find document
-	data, err := l.svcCtx.DocumentModel.FindOne(l.ctx, req.Id)
+	data, err := l.deps.DocumentModel.FindOne(l.ctx, req.Id)
 	if err != nil {
 		l.Errorw("[QueryDocumentDetailLogic] FindOne error", logger.Field("id", req.Id), logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindOne error: %s", err.Error())

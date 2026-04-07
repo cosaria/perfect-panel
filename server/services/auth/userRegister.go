@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/user"
@@ -13,7 +14,6 @@ import (
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/modules/util/uuidx"
 	"github.com/perfect-panel/server/modules/verify/turnstile"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -31,21 +31,22 @@ type UserRegisterOutput struct {
 	Body *types.LoginResponse
 }
 
-func UserRegisterHandler(svcCtx *svc.ServiceContext) func(context.Context, *UserRegisterInput) (*UserRegisterOutput, error) {
+func UserRegisterHandler(deps Deps) func(context.Context, *UserRegisterInput) (*UserRegisterOutput, error) {
 	return func(ctx context.Context, input *UserRegisterInput) (*UserRegisterOutput, error) {
 		input.Body.IP = input.IP
 		input.Body.UserAgent = input.UserAgent
 		input.Body.LoginType = input.LoginType
-		if svcCtx.Config.Verify.RegisterVerify {
+		cfg := deps.currentConfig()
+		if cfg.Verify.RegisterVerify {
 			verifyTurns := turnstile.New(turnstile.Config{
-				Secret:  svcCtx.Config.Verify.TurnstileSecret,
+				Secret:  cfg.Verify.TurnstileSecret,
 				Timeout: 3 * time.Second,
 			})
 			if verify, err := verifyTurns.Verify(ctx, input.Body.CfToken, input.Body.IP); err != nil || !verify {
 				return nil, errors.Wrapf(xerr.NewErrCode(xerr.TooManyRequests), "verify error: %v", err)
 			}
 		}
-		l := NewUserRegisterLogic(ctx, svcCtx)
+		l := NewUserRegisterLogic(ctx, deps)
 		resp, err := l.UserRegister(&input.Body)
 		if err != nil {
 			return nil, err
@@ -56,23 +57,23 @@ func UserRegisterHandler(svcCtx *svc.ServiceContext) func(context.Context, *User
 
 type UserRegisterLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewUserRegisterLogic User register
-func NewUserRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserRegisterLogic {
+func NewUserRegisterLogic(ctx context.Context, deps Deps) *UserRegisterLogic {
 	return &UserRegisterLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *types.LoginResponse, err error) {
-
-	c := l.svcCtx.Config.Register
-	email := l.svcCtx.Config.Email
+	cfg := l.deps.currentConfig()
+	c := cfg.Register
+	email := cfg.Email
 	var referer *user.User
 	// Check if the registration is stopped
 	if c.StopRegister {
@@ -80,12 +81,12 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 	}
 
 	if req.Invite == "" {
-		if l.svcCtx.Config.Invite.ForcedInvite {
+		if cfg.Invite.ForcedInvite {
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.InviteCodeError), "invite code is required")
 		}
 	} else {
 		// Check if the invite code is valid
-		referer, err = l.svcCtx.UserModel.FindOneByReferCode(l.ctx, req.Invite)
+		referer, err = l.deps.UserModel.FindOneByReferCode(l.ctx, req.Invite)
 		if err != nil {
 			l.Errorw("FindOneByReferCode Error", logger.Field("error", err))
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.InviteCodeError), "invite code is invalid")
@@ -95,7 +96,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 	// if the email verification is enabled, the verification code is required
 	if email.EnableVerify {
 		cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeCacheKey, config.Register, req.Email)
-		value, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
+		value, err := l.deps.Redis.Get(l.ctx, cacheKey).Result()
 		if err != nil {
 			l.Errorw("Redis Error", logger.Field("error", err.Error()), logger.Field("cacheKey", cacheKey))
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.VerifyCodeError), "code error")
@@ -111,7 +112,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 		}
 	}
 	// Check if the user exists
-	u, err := l.svcCtx.UserModel.FindOneByEmail(l.ctx, req.Email)
+	u, err := l.deps.UserModel.FindOneByEmail(l.ctx, req.Email)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		l.Errorw("FindOneByEmail Error", logger.Field("error", err))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "query user info failed: %v", err.Error())
@@ -126,12 +127,12 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 	userInfo := &user.User{
 		Password:          pwd,
 		Algo:              "default",
-		OnlyFirstPurchase: &l.svcCtx.Config.Invite.OnlyFirstPurchase,
+		OnlyFirstPurchase: &cfg.Invite.OnlyFirstPurchase,
 	}
 	if referer != nil {
 		userInfo.RefererId = referer.Id
 	}
-	err = l.svcCtx.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err = l.deps.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		// Save user information
 		if err := db.Create(userInfo).Error; err != nil {
 			return err
@@ -153,7 +154,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 			return err
 		}
 
-		if l.svcCtx.Config.Register.EnableTrial {
+		if cfg.Register.EnableTrial {
 			// Active trial
 			if err = l.activeTrial(userInfo.Id); err != nil {
 				return err
@@ -163,7 +164,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 	})
 	// Bind device to user if identifier is provided
 	if req.Identifier != "" {
-		bindLogic := NewBindDeviceLogic(l.ctx, l.svcCtx)
+		bindLogic := NewBindDeviceLogic(l.ctx, l.deps)
 		if err := bindLogic.BindDeviceToUser(req.Identifier, req.IP, req.UserAgent, userInfo.Id); err != nil {
 			l.Errorw("failed to bind device to user",
 				logger.Field("user_id", userInfo.Id),
@@ -180,9 +181,9 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 	sessionId := uuidx.NewUUID().String()
 	// Generate token
 	token, err := jwt.NewJwtToken(
-		l.svcCtx.Config.JwtAuth.AccessSecret,
+		cfg.JwtAuth.AccessSecret,
 		time.Now().Unix(),
-		l.svcCtx.Config.JwtAuth.AccessExpire,
+		cfg.JwtAuth.AccessExpire,
 		jwt.WithOption("UserId", userInfo.Id),
 		jwt.WithOption("SessionId", sessionId),
 		jwt.WithOption("LoginType", req.LoginType),
@@ -193,7 +194,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 	}
 	// Set session id
 	sessionIdCacheKey := fmt.Sprintf("%v:%v", config.SessionIdKey, sessionId)
-	if err := l.svcCtx.Redis.Set(l.ctx, sessionIdCacheKey, userInfo.Id, time.Duration(l.svcCtx.Config.JwtAuth.AccessExpire)*time.Second).Err(); err != nil {
+	if err := l.deps.Redis.Set(l.ctx, sessionIdCacheKey, userInfo.Id, time.Duration(cfg.JwtAuth.AccessExpire)*time.Second).Err(); err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "set session id error: %v", err.Error())
 	}
 	loginStatus := true
@@ -207,7 +208,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 				Timestamp: time.Now().UnixMilli(),
 			}
 			content, _ := loginLog.Marshal()
-			if err := l.svcCtx.LogModel.Insert(l.ctx, &log.SystemLog{
+			if err := l.deps.LogModel.Insert(l.ctx, &log.SystemLog{
 				Id:       0,
 				Type:     log.TypeLogin.Uint8(),
 				Date:     time.Now().Format("2006-01-02"),
@@ -230,7 +231,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 				Timestamp:  time.Now().UnixMilli(),
 			}
 			content, _ = registerLog.Marshal()
-			if err = l.svcCtx.LogModel.Insert(l.ctx, &log.SystemLog{
+			if err = l.deps.LogModel.Insert(l.ctx, &log.SystemLog{
 				Type:     log.TypeRegister.Uint8(),
 				ObjectID: userInfo.Id,
 				Date:     time.Now().Format("2006-01-02"),
@@ -249,7 +250,8 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 }
 
 func (l *UserRegisterLogic) activeTrial(uid int64) error {
-	sub, err := l.svcCtx.SubscribeModel.FindOne(l.ctx, l.svcCtx.Config.Register.TrialSubscribe)
+	cfg := l.deps.currentConfig()
+	sub, err := l.deps.SubscribeModel.FindOne(l.ctx, cfg.Register.TrialSubscribe)
 	if err != nil {
 		return err
 	}
@@ -258,7 +260,7 @@ func (l *UserRegisterLogic) activeTrial(uid int64) error {
 		OrderId:     0,
 		SubscribeId: sub.Id,
 		StartTime:   time.Now(),
-		ExpireTime:  tool.AddTime(l.svcCtx.Config.Register.TrialTimeUnit, l.svcCtx.Config.Register.TrialTime, time.Now()),
+		ExpireTime:  tool.AddTime(cfg.Register.TrialTimeUnit, cfg.Register.TrialTime, time.Now()),
 		Traffic:     sub.Traffic,
 		Download:    0,
 		Upload:      0,
@@ -266,5 +268,5 @@ func (l *UserRegisterLogic) activeTrial(uid int64) error {
 		UUID:        uuidx.NewUUID().String(),
 		Status:      1,
 	}
-	return l.svcCtx.UserModel.InsertSubscribe(l.ctx, userSub)
+	return l.deps.UserModel.InsertSubscribe(l.ctx, userSub)
 }

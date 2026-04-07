@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type GetUserSubscribeResetTrafficLogsOutput struct {
 	Body *types.GetUserSubscribeResetTrafficLogsResponse
 }
 
-func GetUserSubscribeResetTrafficLogsHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserSubscribeResetTrafficLogsInput) (*GetUserSubscribeResetTrafficLogsOutput, error) {
+func GetUserSubscribeResetTrafficLogsHandler(deps Deps) func(context.Context, *GetUserSubscribeResetTrafficLogsInput) (*GetUserSubscribeResetTrafficLogsOutput, error) {
 	return func(ctx context.Context, input *GetUserSubscribeResetTrafficLogsInput) (*GetUserSubscribeResetTrafficLogsOutput, error) {
-		l := NewGetUserSubscribeResetTrafficLogsLogic(ctx, svcCtx)
+		l := NewGetUserSubscribeResetTrafficLogsLogic(ctx, deps)
 		resp, err := l.GetUserSubscribeResetTrafficLogs(&input.GetUserSubscribeResetTrafficLogsRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func GetUserSubscribeResetTrafficLogsHandler(svcCtx *svc.ServiceContext) func(co
 
 type GetUserSubscribeResetTrafficLogsLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get user subcribe reset traffic logs
-func NewGetUserSubscribeResetTrafficLogsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserSubscribeResetTrafficLogsLogic {
+func NewGetUserSubscribeResetTrafficLogsLogic(ctx context.Context, deps Deps) *GetUserSubscribeResetTrafficLogsLogic {
 	return &GetUserSubscribeResetTrafficLogsLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetUserSubscribeResetTrafficLogsLogic) GetUserSubscribeResetTrafficLogs(req *types.GetUserSubscribeResetTrafficLogsRequest) (resp *types.GetUserSubscribeResetTrafficLogsResponse, err error) {
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:     req.Page,
 		Size:     req.Size,
 		Type:     log.TypeResetSubscribe.Uint8(),

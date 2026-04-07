@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type GetUserLoginLogsOutput struct {
 	Body *types.GetUserLoginLogsResponse
 }
 
-func GetUserLoginLogsHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserLoginLogsInput) (*GetUserLoginLogsOutput, error) {
+func GetUserLoginLogsHandler(deps Deps) func(context.Context, *GetUserLoginLogsInput) (*GetUserLoginLogsOutput, error) {
 	return func(ctx context.Context, input *GetUserLoginLogsInput) (*GetUserLoginLogsOutput, error) {
-		l := NewGetUserLoginLogsLogic(ctx, svcCtx)
+		l := NewGetUserLoginLogsLogic(ctx, deps)
 		resp, err := l.GetUserLoginLogs(&input.GetUserLoginLogsRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func GetUserLoginLogsHandler(svcCtx *svc.ServiceContext) func(context.Context, *
 
 type GetUserLoginLogsLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get user login logs
-func NewGetUserLoginLogsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserLoginLogsLogic {
+func NewGetUserLoginLogsLogic(ctx context.Context, deps Deps) *GetUserLoginLogsLogic {
 	return &GetUserLoginLogsLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetUserLoginLogsLogic) GetUserLoginLogs(req *types.GetUserLoginLogsRequest) (resp *types.GetUserLoginLogsResponse, err error) {
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:     req.Page,
 		Size:     req.Size,
 		Type:     log.TypeLogin.Uint8(),

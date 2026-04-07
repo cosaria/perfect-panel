@@ -11,18 +11,17 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/models/traffic"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/worker/spec"
 )
 
 //goland:noinspection GoNameStartsWithPackageName
 type TrafficStatisticsLogic struct {
-	svc *svc.ServiceContext
+	deps Deps
 }
 
-func NewTrafficStatisticsLogic(svc *svc.ServiceContext) *TrafficStatisticsLogic {
+func NewTrafficStatisticsLogic(deps Deps) *TrafficStatisticsLogic {
 	return &TrafficStatisticsLogic{
-		svc: svc,
+		deps: deps,
 	}
 }
 
@@ -40,7 +39,7 @@ func (l *TrafficStatisticsLogic) ProcessTask(ctx context.Context, task *asynq.Ta
 		return nil
 	}
 	// query server info
-	serverInfo, err := l.svc.NodeModel.FindOneServer(ctx, payload.ServerId)
+	serverInfo, err := l.deps.NodeModel.FindOneServer(ctx, payload.ServerId)
 	if err != nil {
 		logger.WithContext(ctx).Error("[TrafficStatistics] Find server info failed",
 			logger.Field("serverId", payload.ServerId),
@@ -78,11 +77,15 @@ func (l *TrafficStatisticsLogic) ProcessTask(ctx context.Context, task *asynq.Ta
 	}
 
 	now := time.Now()
-	realTimeMultiplier := l.svc.NodeMultiplierManager.GetMultiplier(now)
+	realTimeMultiplier := float32(1.0)
+	if l.deps.NodeMultiplierManager != nil {
+		realTimeMultiplier = l.deps.NodeMultiplierManager.GetMultiplier(now)
+	}
+	cfg := l.deps.currentConfig()
 	logger.Debugf("[TrafficStatisticsLogic] Current time traffic multiplier: %.2f", realTimeMultiplier)
 	for _, log := range payload.Logs {
 		// query user Subscribe Info
-		sub, err := l.svc.UserModel.FindOneSubscribe(ctx, log.SID)
+		sub, err := l.deps.UserModel.FindOneSubscribe(ctx, log.SID)
 		if err != nil {
 			logger.WithContext(ctx).Error("[TrafficStatistics] Find user Subscribe Info failed",
 				logger.Field("uid", log.SID),
@@ -91,14 +94,14 @@ func (l *TrafficStatisticsLogic) ProcessTask(ctx context.Context, task *asynq.Ta
 			continue
 		}
 
-		if log.Download+log.Upload <= l.svc.Config.Node.TrafficReportThreshold {
+		if log.Download+log.Upload <= cfg.Node.TrafficReportThreshold {
 			// no traffic, skip
 			continue
 		}
 		// update user subscribe with log
 		d := int64(float32(log.Download) * ratio * realTimeMultiplier)
 		u := int64(float32(log.Upload) * ratio * realTimeMultiplier)
-		if err := l.svc.UserModel.UpdateUserSubscribeWithTraffic(ctx, sub.Id, d, u); err != nil {
+		if err := l.deps.UserModel.UpdateUserSubscribeWithTraffic(ctx, sub.Id, d, u); err != nil {
 			logger.WithContext(ctx).Error("[TrafficStatistics] Update user subscribe with log failed",
 				logger.Field("sid", log.SID),
 				logger.Field("download", float32(log.Download)*ratio),
@@ -109,7 +112,7 @@ func (l *TrafficStatisticsLogic) ProcessTask(ctx context.Context, task *asynq.Ta
 		}
 
 		// create log log
-		if err = l.svc.TrafficLogModel.Insert(ctx, &traffic.TrafficLog{
+		if err = l.deps.TrafficLogModel.Insert(ctx, &traffic.TrafficLog{
 			ServerId:    payload.ServerId,
 			SubscribeId: log.SID,
 			UserId:      sub.UserId,

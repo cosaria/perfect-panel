@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/subscribe"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +13,9 @@ type CreateSubscribeGroupInput struct {
 	Body types.CreateSubscribeGroupRequest
 }
 
-func CreateSubscribeGroupHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateSubscribeGroupInput) (*struct{}, error) {
+func CreateSubscribeGroupHandler(deps Deps) func(context.Context, *CreateSubscribeGroupInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateSubscribeGroupInput) (*struct{}, error) {
-		l := NewCreateSubscribeGroupLogic(ctx, svcCtx)
+		l := NewCreateSubscribeGroupLogic(ctx, deps)
 		if err := l.CreateSubscribeGroup(&input.Body); err != nil {
 			return nil, err
 		}
@@ -26,21 +25,21 @@ func CreateSubscribeGroupHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type CreateSubscribeGroupLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Create subscribe group
-func NewCreateSubscribeGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateSubscribeGroupLogic {
+func NewCreateSubscribeGroupLogic(ctx context.Context, deps Deps) *CreateSubscribeGroupLogic {
 	return &CreateSubscribeGroupLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *CreateSubscribeGroupLogic) CreateSubscribeGroup(req *types.CreateSubscribeGroupRequest) error {
-	err := l.svcCtx.DB.Model(&subscribe.Group{}).Create(&subscribe.Group{
+	err := l.deps.DB.Model(&subscribe.Group{}).Create(&subscribe.Group{
 		Name:        req.Name,
 		Description: req.Description,
 	}).Error

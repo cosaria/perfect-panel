@@ -7,6 +7,7 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/routers/middleware"
+	appruntime "github.com/perfect-panel/server/runtime"
 	publicAnnouncement "github.com/perfect-panel/server/services/user/announcement"
 	publicDocument "github.com/perfect-panel/server/services/user/document"
 	publicOrder "github.com/perfect-panel/server/services/user/order"
@@ -15,17 +16,62 @@ import (
 	publicSubscribe "github.com/perfect-panel/server/services/user/subscribe"
 	publicTicket "github.com/perfect-panel/server/services/user/ticket"
 	publicUser "github.com/perfect-panel/server/services/user/user"
-	"github.com/perfect-panel/server/svc"
 )
 
-func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specOnly bool) []huma.API {
+func registerPublicRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specOnly bool) []huma.API {
 	publicAnnouncementGroup := router.Group("/api/v1/public/announcement")
 	if !specOnly {
-		publicAnnouncementGroup.Use(middleware.AuthMiddleware(serverCtx))
+		publicAnnouncementGroup.Use(middleware.AuthMiddleware(runtimeDeps))
 	}
 	publicAnnouncementConfig := governedAPIConfig("Public Announcement API", "1.0.0", "/api/v1/public/announcement", "announcement")
 	publicAnnouncementAPI := humagin.NewWithGroup(router, publicAnnouncementGroup, publicAnnouncementConfig)
-	configureHumaAPI(publicAnnouncementAPI, compatibilityEnabled(serverCtx, specOnly))
+	configureHumaAPI(publicAnnouncementAPI, compatibilityEnabled(runtimeDeps, specOnly))
+	publicAnnouncementDeps := publicAnnouncement.Deps{}
+	publicDocumentDeps := publicDocument.Deps{}
+	publicOrderDeps := publicOrder.Deps{}
+	publicPaymentDeps := publicPayment.Deps{}
+	publicPortalDeps := publicPortal.Deps{}
+	publicSubscribeDeps := publicSubscribe.Deps{}
+	publicTicketDeps := publicTicket.Deps{}
+	publicUserDeps := publicUser.Deps{}
+	if runtimeDeps != nil {
+		publicAnnouncementDeps.AnnouncementModel = runtimeDeps.AnnouncementModel
+		publicDocumentDeps.DocumentModel = runtimeDeps.DocumentModel
+		publicOrderDeps.OrderModel = runtimeDeps.OrderModel
+		publicOrderDeps.PaymentModel = runtimeDeps.PaymentModel
+		publicOrderDeps.SubscribeModel = runtimeDeps.SubscribeModel
+		publicOrderDeps.UserModel = runtimeDeps.UserModel
+		publicOrderDeps.CouponModel = runtimeDeps.CouponModel
+		publicOrderDeps.DB = runtimeDeps.DB
+		publicOrderDeps.Queue = runtimeDeps.Queue
+		publicOrderDeps.Config = runtimeDeps.Config
+		publicPaymentDeps.PaymentModel = runtimeDeps.PaymentModel
+		publicPortalDeps.PaymentModel = runtimeDeps.PaymentModel
+		publicPortalDeps.SubscribeModel = runtimeDeps.SubscribeModel
+		publicPortalDeps.CouponModel = runtimeDeps.CouponModel
+		publicPortalDeps.OrderModel = runtimeDeps.OrderModel
+		publicPortalDeps.UserModel = runtimeDeps.UserModel
+		publicPortalDeps.DB = runtimeDeps.DB
+		publicPortalDeps.Redis = runtimeDeps.Redis
+		publicPortalDeps.Queue = runtimeDeps.Queue
+		publicPortalDeps.Config = runtimeDeps.Config
+		publicPortalDeps.ExchangeRate = runtimeDeps.ExchangeRate
+		publicSubscribeDeps.SubscribeModel = runtimeDeps.SubscribeModel
+		publicSubscribeDeps.UserModel = runtimeDeps.UserModel
+		publicSubscribeDeps.NodeModel = runtimeDeps.NodeModel
+		publicSubscribeDeps.DB = runtimeDeps.DB
+		publicSubscribeDeps.Config = runtimeDeps.Config
+		publicTicketDeps.TicketModel = runtimeDeps.TicketModel
+		publicUserDeps.UserModel = runtimeDeps.UserModel
+		publicUserDeps.LogModel = runtimeDeps.LogModel
+		publicUserDeps.AuthModel = runtimeDeps.AuthModel
+		publicUserDeps.OrderModel = runtimeDeps.OrderModel
+		publicUserDeps.SubscribeModel = runtimeDeps.SubscribeModel
+		publicUserDeps.Redis = runtimeDeps.Redis
+		publicUserDeps.Config = runtimeDeps.Config
+		publicUserDeps.TelegramBot = runtimeDeps.TelegramBot
+		publicUserDeps.DB = runtimeDeps.DB
+	}
 
 	registerOperation(publicAnnouncementAPI, huma.Operation{
 		OperationID: "queryAnnouncement",
@@ -34,15 +80,15 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Query announcement",
 		Tags:        []string{"announcement"},
 		Security:    bearerSecurity,
-	}, publicAnnouncement.QueryAnnouncementHandler(serverCtx))
+	}, publicAnnouncement.QueryAnnouncementHandler(publicAnnouncementDeps))
 
 	publicDocumentGroup := router.Group("/api/v1/public/document")
 	if !specOnly {
-		publicDocumentGroup.Use(middleware.AuthMiddleware(serverCtx))
+		publicDocumentGroup.Use(middleware.AuthMiddleware(runtimeDeps))
 	}
 	publicDocumentConfig := governedAPIConfig("Public Document API", "1.0.0", "/api/v1/public/document", "document")
 	publicDocumentAPI := humagin.NewWithGroup(router, publicDocumentGroup, publicDocumentConfig)
-	configureHumaAPI(publicDocumentAPI, compatibilityEnabled(serverCtx, specOnly))
+	configureHumaAPI(publicDocumentAPI, compatibilityEnabled(runtimeDeps, specOnly))
 
 	registerOperation(publicDocumentAPI, huma.Operation{
 		OperationID: "queryDocumentDetail",
@@ -51,7 +97,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get document detail",
 		Tags:        []string{"document"},
 		Security:    bearerSecurity,
-	}, publicDocument.QueryDocumentDetailHandler(serverCtx))
+	}, publicDocument.QueryDocumentDetailHandler(publicDocumentDeps))
 
 	registerOperation(publicDocumentAPI, huma.Operation{
 		OperationID: "queryDocumentList",
@@ -60,15 +106,15 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get document list",
 		Tags:        []string{"document"},
 		Security:    bearerSecurity,
-	}, publicDocument.QueryDocumentListHandler(serverCtx))
+	}, publicDocument.QueryDocumentListHandler(publicDocumentDeps))
 
 	publicOrderGroup := router.Group("/api/v1/public/order")
 	if !specOnly {
-		publicOrderGroup.Use(middleware.AuthMiddleware(serverCtx))
+		publicOrderGroup.Use(middleware.AuthMiddleware(runtimeDeps))
 	}
 	publicOrderConfig := governedAPIConfig("Public Order API", "1.0.0", "/api/v1/public/order", "order")
 	publicOrderAPI := humagin.NewWithGroup(router, publicOrderGroup, publicOrderConfig)
-	configureHumaAPI(publicOrderAPI, compatibilityEnabled(serverCtx, specOnly))
+	configureHumaAPI(publicOrderAPI, compatibilityEnabled(runtimeDeps, specOnly))
 
 	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "closeOrder",
@@ -77,7 +123,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Close order",
 		Tags:        []string{"order"},
 		Security:    bearerSecurity,
-	}, publicOrder.CloseOrderHandler(serverCtx))
+	}, publicOrder.CloseOrderHandler(publicOrderDeps))
 
 	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "queryOrderDetail",
@@ -86,7 +132,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get order",
 		Tags:        []string{"order"},
 		Security:    bearerSecurity,
-	}, publicOrder.QueryOrderDetailHandler(serverCtx))
+	}, publicOrder.QueryOrderDetailHandler(publicOrderDeps))
 
 	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "queryOrderList",
@@ -95,7 +141,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get order list",
 		Tags:        []string{"order"},
 		Security:    bearerSecurity,
-	}, publicOrder.QueryOrderListHandler(serverCtx))
+	}, publicOrder.QueryOrderListHandler(publicOrderDeps))
 
 	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "preCreateOrder",
@@ -104,7 +150,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Pre create order",
 		Tags:        []string{"order"},
 		Security:    bearerSecurity,
-	}, publicOrder.PreCreateOrderHandler(serverCtx))
+	}, publicOrder.PreCreateOrderHandler(publicOrderDeps))
 
 	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "purchase",
@@ -113,7 +159,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "purchase Subscription",
 		Tags:        []string{"order"},
 		Security:    bearerSecurity,
-	}, publicOrder.PurchaseHandler(serverCtx))
+	}, publicOrder.PurchaseHandler(publicOrderDeps))
 
 	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "recharge",
@@ -122,7 +168,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Recharge",
 		Tags:        []string{"order"},
 		Security:    bearerSecurity,
-	}, publicOrder.RechargeHandler(serverCtx))
+	}, publicOrder.RechargeHandler(publicOrderDeps))
 
 	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "renewal",
@@ -131,7 +177,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Renewal Subscription",
 		Tags:        []string{"order"},
 		Security:    bearerSecurity,
-	}, publicOrder.RenewalHandler(serverCtx))
+	}, publicOrder.RenewalHandler(publicOrderDeps))
 
 	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "resetTraffic",
@@ -140,15 +186,15 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Reset traffic",
 		Tags:        []string{"order"},
 		Security:    bearerSecurity,
-	}, publicOrder.ResetTrafficHandler(serverCtx))
+	}, publicOrder.ResetTrafficHandler(publicOrderDeps))
 
 	publicPaymentGroup := router.Group("/api/v1/public/payment")
 	if !specOnly {
-		publicPaymentGroup.Use(middleware.AuthMiddleware(serverCtx))
+		publicPaymentGroup.Use(middleware.AuthMiddleware(runtimeDeps))
 	}
 	publicPaymentConfig := governedAPIConfig("Public Payment API", "1.0.0", "/api/v1/public/payment", "payment")
 	publicPaymentAPI := humagin.NewWithGroup(router, publicPaymentGroup, publicPaymentConfig)
-	configureHumaAPI(publicPaymentAPI, compatibilityEnabled(serverCtx, specOnly))
+	configureHumaAPI(publicPaymentAPI, compatibilityEnabled(runtimeDeps, specOnly))
 
 	registerOperation(publicPaymentAPI, huma.Operation{
 		OperationID: "getAvailablePaymentMethods",
@@ -157,15 +203,15 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get available payment methods",
 		Tags:        []string{"payment"},
 		Security:    bearerSecurity,
-	}, publicPayment.GetAvailablePaymentMethodsHandler(serverCtx))
+	}, publicPayment.GetAvailablePaymentMethodsHandler(publicPaymentDeps))
 
 	publicSubscribeGroup := router.Group("/api/v1/public/subscribe")
 	if !specOnly {
-		publicSubscribeGroup.Use(middleware.AuthMiddleware(serverCtx))
+		publicSubscribeGroup.Use(middleware.AuthMiddleware(runtimeDeps))
 	}
 	publicSubscribeConfig := governedAPIConfig("Public Subscribe API", "1.0.0", "/api/v1/public/subscribe", "subscribe")
 	publicSubscribeAPI := humagin.NewWithGroup(router, publicSubscribeGroup, publicSubscribeConfig)
-	configureHumaAPI(publicSubscribeAPI, compatibilityEnabled(serverCtx, specOnly))
+	configureHumaAPI(publicSubscribeAPI, compatibilityEnabled(runtimeDeps, specOnly))
 
 	registerOperation(publicSubscribeAPI, huma.Operation{
 		OperationID: "querySubscribeList",
@@ -174,7 +220,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get subscribe list",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, publicSubscribe.QuerySubscribeListHandler(serverCtx))
+	}, publicSubscribe.QuerySubscribeListHandler(publicSubscribeDeps))
 
 	registerOperation(publicSubscribeAPI, huma.Operation{
 		OperationID: "queryUserSubscribeNodeList",
@@ -183,15 +229,15 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get user subscribe node info",
 		Tags:        []string{"subscribe"},
 		Security:    bearerSecurity,
-	}, publicSubscribe.QueryUserSubscribeNodeListHandler(serverCtx))
+	}, publicSubscribe.QueryUserSubscribeNodeListHandler(publicSubscribeDeps))
 
 	publicTicketGroup := router.Group("/api/v1/public/ticket")
 	if !specOnly {
-		publicTicketGroup.Use(middleware.AuthMiddleware(serverCtx))
+		publicTicketGroup.Use(middleware.AuthMiddleware(runtimeDeps))
 	}
 	publicTicketConfig := governedAPIConfig("Public Ticket API", "1.0.0", "/api/v1/public/ticket", "ticket")
 	publicTicketAPI := humagin.NewWithGroup(router, publicTicketGroup, publicTicketConfig)
-	configureHumaAPI(publicTicketAPI, compatibilityEnabled(serverCtx, specOnly))
+	configureHumaAPI(publicTicketAPI, compatibilityEnabled(runtimeDeps, specOnly))
 
 	registerOperation(publicTicketAPI, huma.Operation{
 		OperationID: "updateUserTicketStatus",
@@ -200,7 +246,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Update ticket status",
 		Tags:        []string{"ticket"},
 		Security:    bearerSecurity,
-	}, publicTicket.UpdateUserTicketStatusHandler(serverCtx))
+	}, publicTicket.UpdateUserTicketStatusHandler(publicTicketDeps))
 
 	registerOperation(publicTicketAPI, huma.Operation{
 		OperationID: "createUserTicket",
@@ -209,7 +255,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Create ticket",
 		Tags:        []string{"ticket"},
 		Security:    bearerSecurity,
-	}, publicTicket.CreateUserTicketHandler(serverCtx))
+	}, publicTicket.CreateUserTicketHandler(publicTicketDeps))
 
 	registerOperation(publicTicketAPI, huma.Operation{
 		OperationID: "getUserTicketDetails",
@@ -218,7 +264,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get ticket detail",
 		Tags:        []string{"ticket"},
 		Security:    bearerSecurity,
-	}, publicTicket.GetUserTicketDetailsHandler(serverCtx))
+	}, publicTicket.GetUserTicketDetailsHandler(publicTicketDeps))
 
 	registerOperation(publicTicketAPI, huma.Operation{
 		OperationID: "createUserTicketFollow",
@@ -227,7 +273,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Create ticket follow",
 		Tags:        []string{"ticket"},
 		Security:    bearerSecurity,
-	}, publicTicket.CreateUserTicketFollowHandler(serverCtx))
+	}, publicTicket.CreateUserTicketFollowHandler(publicTicketDeps))
 
 	registerOperation(publicTicketAPI, huma.Operation{
 		OperationID: "getUserTicketList",
@@ -236,15 +282,15 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get ticket list",
 		Tags:        []string{"ticket"},
 		Security:    bearerSecurity,
-	}, publicTicket.GetUserTicketListHandler(serverCtx))
+	}, publicTicket.GetUserTicketListHandler(publicTicketDeps))
 
 	publicUserGroup := router.Group("/api/v1/public/user")
 	if !specOnly {
-		publicUserGroup.Use(middleware.AuthMiddleware(serverCtx))
+		publicUserGroup.Use(middleware.AuthMiddleware(runtimeDeps))
 	}
 	publicUserConfig := governedAPIConfig("Public User API", "1.0.0", "/api/v1/public/user", "user")
 	publicUserAPI := humagin.NewWithGroup(router, publicUserGroup, publicUserConfig)
-	configureHumaAPI(publicUserAPI, compatibilityEnabled(serverCtx, specOnly))
+	configureHumaAPI(publicUserAPI, compatibilityEnabled(runtimeDeps, specOnly))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserAffiliate",
@@ -253,7 +299,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Query User Affiliate Count",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.QueryUserAffiliateHandler(serverCtx))
+	}, publicUser.QueryUserAffiliateHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserAffiliateList",
@@ -262,7 +308,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Query User Affiliate List",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.QueryUserAffiliateListHandler(serverCtx))
+	}, publicUser.QueryUserAffiliateListHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserBalanceLog",
@@ -271,7 +317,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Query User Balance Log",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.QueryUserBalanceLogHandler(serverCtx))
+	}, publicUser.QueryUserBalanceLogHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateBindEmail",
@@ -280,7 +326,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Update Bind Email",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.UpdateBindEmailHandler(serverCtx))
+	}, publicUser.UpdateBindEmailHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateBindMobile",
@@ -289,7 +335,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Update Bind Mobile",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.UpdateBindMobileHandler(serverCtx))
+	}, publicUser.UpdateBindMobileHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "bindOAuth",
@@ -298,7 +344,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Bind OAuth",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.BindOAuthHandler(serverCtx))
+	}, publicUser.BindOAuthHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "bindOAuthCallback",
@@ -307,7 +353,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Bind OAuth Callback",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.BindOAuthCallbackHandler(serverCtx))
+	}, publicUser.BindOAuthCallbackHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "bindTelegram",
@@ -316,7 +362,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Bind Telegram",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.BindTelegramHandler(serverCtx))
+	}, publicUser.BindTelegramHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserCommissionLog",
@@ -325,7 +371,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Query User Commission Log",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.QueryUserCommissionLogHandler(serverCtx))
+	}, publicUser.QueryUserCommissionLogHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "commissionWithdraw",
@@ -334,7 +380,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Commission Withdraw",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.CommissionWithdrawHandler(serverCtx))
+	}, publicUser.CommissionWithdrawHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "getDeviceList",
@@ -343,7 +389,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get Device List",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.GetDeviceListHandler(serverCtx))
+	}, publicUser.GetDeviceListHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserInfo",
@@ -352,7 +398,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Query User Info",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.QueryUserInfoHandler(serverCtx))
+	}, publicUser.QueryUserInfoHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "getLoginLog",
@@ -361,7 +407,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get Login Log",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.GetLoginLogHandler(serverCtx))
+	}, publicUser.GetLoginLogHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateUserNotify",
@@ -370,7 +416,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Update User Notify",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.UpdateUserNotifyHandler(serverCtx))
+	}, publicUser.UpdateUserNotifyHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "getOAuthMethods",
@@ -379,7 +425,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get OAuth Methods",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.GetOAuthMethodsHandler(serverCtx))
+	}, publicUser.GetOAuthMethodsHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateUserPassword",
@@ -388,7 +434,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Update User Password",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.UpdateUserPasswordHandler(serverCtx))
+	}, publicUser.UpdateUserPasswordHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateUserRules",
@@ -397,7 +443,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Update User Rules",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.UpdateUserRulesHandler(serverCtx))
+	}, publicUser.UpdateUserRulesHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserSubscribe",
@@ -406,7 +452,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Query User Subscribe",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.QueryUserSubscribeHandler(serverCtx))
+	}, publicUser.QueryUserSubscribeHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "getSubscribeLog",
@@ -415,7 +461,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Get Subscribe Log",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.GetSubscribeLogHandler(serverCtx))
+	}, publicUser.GetSubscribeLogHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateUserSubscribeNote",
@@ -424,7 +470,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Update User Subscribe Note",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.UpdateUserSubscribeNoteHandler(serverCtx))
+	}, publicUser.UpdateUserSubscribeNoteHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "resetUserSubscribeToken",
@@ -433,7 +479,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Reset User Subscribe Token",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.ResetUserSubscribeTokenHandler(serverCtx))
+	}, publicUser.ResetUserSubscribeTokenHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "unbindDevice",
@@ -442,7 +488,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Unbind Device",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.UnbindDeviceHandler(serverCtx))
+	}, publicUser.UnbindDeviceHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "unbindOAuth",
@@ -451,7 +497,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Unbind OAuth",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.UnbindOAuthHandler(serverCtx))
+	}, publicUser.UnbindOAuthHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "unbindTelegram",
@@ -460,7 +506,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Unbind Telegram",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.UnbindTelegramHandler(serverCtx))
+	}, publicUser.UnbindTelegramHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "unsubscribe",
@@ -469,7 +515,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Unsubscribe",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.UnsubscribeHandler(serverCtx))
+	}, publicUser.UnsubscribeHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "preUnsubscribe",
@@ -478,7 +524,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Pre Unsubscribe",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.PreUnsubscribeHandler(serverCtx))
+	}, publicUser.PreUnsubscribeHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "verifyEmail",
@@ -487,7 +533,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Verify Email",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.VerifyEmailHandler(serverCtx))
+	}, publicUser.VerifyEmailHandler(publicUserDeps))
 
 	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryWithdrawalLog",
@@ -496,15 +542,15 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Summary:     "Query Withdrawal Log",
 		Tags:        []string{"user"},
 		Security:    bearerSecurity,
-	}, publicUser.QueryWithdrawalLogHandler(serverCtx))
+	}, publicUser.QueryWithdrawalLogHandler(publicUserDeps))
 
 	portalGroup := router.Group("/api/v1/public/portal")
 	if !specOnly {
-		portalGroup.Use(middleware.DeviceMiddleware(serverCtx))
+		portalGroup.Use(middleware.DeviceMiddleware(runtimeDeps))
 	}
 	portalConfig := governedAPIConfig("Portal API", "1.0.0", "/api/v1/public/portal", "portal")
 	portalAPI := humagin.NewWithGroup(router, portalGroup, portalConfig)
-	configureHumaAPI(portalAPI, compatibilityEnabled(serverCtx, specOnly))
+	configureHumaAPI(portalAPI, compatibilityEnabled(runtimeDeps, specOnly))
 
 	registerOperation(portalAPI, huma.Operation{
 		OperationID: "purchaseCheckout",
@@ -512,7 +558,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Path:        "/order/checkout",
 		Summary:     "Purchase Checkout",
 		Tags:        []string{"portal"},
-	}, publicPortal.PurchaseCheckoutHandler(serverCtx))
+	}, publicPortal.PurchaseCheckoutHandler(publicPortalDeps))
 
 	registerOperation(portalAPI, huma.Operation{
 		OperationID: "queryPurchaseOrder",
@@ -520,7 +566,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Path:        "/order/status",
 		Summary:     "Query Purchase Order",
 		Tags:        []string{"portal"},
-	}, publicPortal.QueryPurchaseOrderHandler(serverCtx))
+	}, publicPortal.QueryPurchaseOrderHandler(publicPortalDeps))
 
 	registerOperation(portalAPI, huma.Operation{
 		OperationID: "portalGetAvailablePaymentMethods",
@@ -528,7 +574,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Path:        "/payment-method",
 		Summary:     "Get available payment methods",
 		Tags:        []string{"portal"},
-	}, publicPortal.GetAvailablePaymentMethodsHandler(serverCtx))
+	}, publicPortal.GetAvailablePaymentMethodsHandler(publicPortalDeps))
 
 	registerOperation(portalAPI, huma.Operation{
 		OperationID: "prePurchaseOrder",
@@ -536,7 +582,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Path:        "/pre",
 		Summary:     "Pre Purchase Order",
 		Tags:        []string{"portal"},
-	}, publicPortal.PrePurchaseOrderHandler(serverCtx))
+	}, publicPortal.PrePurchaseOrderHandler(publicPortalDeps))
 
 	registerOperation(portalAPI, huma.Operation{
 		OperationID: "portalPurchase",
@@ -544,7 +590,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Path:        "/purchase",
 		Summary:     "Purchase subscription",
 		Tags:        []string{"portal"},
-	}, publicPortal.PurchaseHandler(serverCtx))
+	}, publicPortal.PurchaseHandler(publicPortalDeps))
 
 	registerOperation(portalAPI, huma.Operation{
 		OperationID: "getSubscription",
@@ -552,7 +598,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Path:        "/subscribe",
 		Summary:     "Get Subscription",
 		Tags:        []string{"portal"},
-	}, publicPortal.GetSubscriptionHandler(serverCtx))
+	}, publicPortal.GetSubscriptionHandler(publicPortalDeps))
 
 	return []huma.API{
 		publicAnnouncementAPI,

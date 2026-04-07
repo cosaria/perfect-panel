@@ -7,7 +7,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 
 	"github.com/perfect-panel/server/routers/response"
-	"github.com/perfect-panel/server/svc"
+	appruntime "github.com/perfect-panel/server/runtime"
 )
 
 var defaultOperationErrors = []int{
@@ -29,8 +29,8 @@ func configureHumaAPI(api huma.API, compatibilityMode bool) {
 	})
 }
 
-func compatibilityEnabled(serverCtx *svc.ServiceContext, specOnly bool) bool {
-	return !specOnly && serverCtx != nil && serverCtx.Config.ErrorCompatibilityMode
+func compatibilityEnabled(runtimeDeps *appruntime.Deps, specOnly bool) bool {
+	return !specOnly && runtimeDeps != nil && runtimeDeps.Config != nil && runtimeDeps.Config.ErrorCompatibilityMode
 }
 
 func registerOperation[I, O any](api huma.API, op huma.Operation, handler func(context.Context, *I) (*O, error)) {

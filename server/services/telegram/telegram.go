@@ -3,6 +3,7 @@ package telegram
 import (
 	"context"
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/perfect-panel/server/config"
@@ -10,7 +11,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
@@ -19,16 +19,17 @@ import (
 	"time"
 )
 
-func RegisterTelegramHandlers(router *gin.Engine, serverCtx *svc.ServiceContext) {
-	router.POST("/api/v1/telegram/webhook", TelegramHandler(serverCtx))
+func RegisterTelegramHandlers(router *gin.Engine, deps Deps) {
+	router.POST("/api/v1/telegram/webhook", TelegramHandler(deps))
 }
 
-func TelegramHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
+func TelegramHandler(deps Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
+		cfg := deps.currentConfig()
 		// auth secret
 		secret := c.Query("secret")
-		if secret != tool.Md5Encode(svcCtx.Config.Telegram.BotToken, false) {
-			logger.WithContext(c.Request.Context()).Error("[TelegramHandler] Secret is wrong", logger.Field("request secret", secret), logger.Field("config secret", tool.Md5Encode(svcCtx.Config.Telegram.BotToken, false)), logger.Field("token", svcCtx.Config.Telegram.BotToken))
+		if secret != tool.Md5Encode(cfg.Telegram.BotToken, false) {
+			logger.WithContext(c.Request.Context()).Error("[TelegramHandler] Secret is wrong", logger.Field("request secret", secret), logger.Field("config secret", tool.Md5Encode(cfg.Telegram.BotToken, false)), logger.Field("token", cfg.Telegram.BotToken))
 			c.AbortWithStatus(http.StatusOK)
 			return
 		}
@@ -38,22 +39,22 @@ func TelegramHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 			c.AbortWithStatus(http.StatusOK)
 			return
 		}
-		l := NewTelegramLogic(c, svcCtx)
+		l := NewTelegramLogic(c, deps)
 		l.TelegramLogic(&request)
 	}
 }
 
 type TelegramLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
-func NewTelegramLogic(ctx context.Context, svcCtx *svc.ServiceContext) *TelegramLogic {
+func NewTelegramLogic(ctx context.Context, deps Deps) *TelegramLogic {
 	return &TelegramLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -95,33 +96,33 @@ func (l *TelegramLogic) bind(userId int64, token string) error {
 
 func (l *TelegramLogic) start(req *tgbotapi.Update) error {
 	if req.Message.CommandArguments() == "" {
-		return l.sendMessage(l.svcCtx.TelegramBot, "Please bind account!", req.Message.Chat.ID)
+		return l.sendMessage(l.deps.TelegramBot, "Please bind account!", req.Message.Chat.ID)
 	} else {
 		sessionId := req.Message.CommandArguments()
 		// get session id from redis
 		sessionIdCacheKey := fmt.Sprintf("%v:%v", config.SessionIdKey, sessionId)
-		value, err := l.svcCtx.Redis.Get(context.Background(), sessionIdCacheKey).Result()
+		value, err := l.deps.Redis.Get(context.Background(), sessionIdCacheKey).Result()
 		if err != nil && !errors.Is(err, redis.Nil) {
 			l.Errorw("TelegramLogic start Redis Get Error: ", logger.Field("error", err.Error()), logger.Field("session", sessionId))
-			return l.sendMessage(l.svcCtx.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+			return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
 		}
 		if value == "" {
 			l.Errorw("TelegramLogic start Redis Get Error: ", logger.Field("error", "session not found"), logger.Field("session", sessionId))
-			return l.sendMessage(l.svcCtx.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+			return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
 		}
 		userId, err := strconv.ParseInt(value, 10, 64)
 		if err != nil {
 			l.Errorw("TelegramLogic start ParseInt Error: ", logger.Field("error", err.Error()), logger.Field("session", sessionId))
-			return l.sendMessage(l.svcCtx.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+			return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
 		}
 
-		method, err := l.svcCtx.UserModel.FindUserAuthMethodByPlatform(l.ctx, userId, "telegram")
+		method, err := l.deps.UserModel.FindUserAuthMethodByPlatform(l.ctx, userId, "telegram")
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			l.Errorw("TelegramLogic start FindUserAuthMethodByPlatform Error: ", logger.Field("error", err.Error()), logger.Field("userId", userId))
-			return l.sendMessage(l.svcCtx.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+			return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
 		}
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			if err := l.svcCtx.UserModel.InsertUserAuthMethods(l.ctx, &user.AuthMethods{
+			if err := l.deps.UserModel.InsertUserAuthMethods(l.ctx, &user.AuthMethods{
 				UserId:         userId,
 				AuthType:       "telegram",
 				AuthIdentifier: strconv.FormatInt(req.Message.Chat.ID, 10),
@@ -130,17 +131,17 @@ func (l *TelegramLogic) start(req *tgbotapi.Update) error {
 				UpdatedAt:      time.Now(),
 			}); err != nil {
 				l.Errorw("TelegramLogic start InsertUserAuthMethod Error: ", logger.Field("error", err.Error()), logger.Field("userId", userId))
-				return l.sendMessage(l.svcCtx.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+				return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
 			}
 		} else {
 			method.AuthIdentifier = strconv.FormatInt(req.Message.Chat.ID, 10)
-			if err := l.svcCtx.UserModel.InsertUserAuthMethods(l.ctx, method); err != nil {
+			if err := l.deps.UserModel.InsertUserAuthMethods(l.ctx, method); err != nil {
 				l.Errorw("TelegramLogic start UpdateUserAuthMethod Error: ", logger.Field("error", err.Error()), logger.Field("userId", userId))
-				return l.sendMessage(l.svcCtx.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+				return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
 			}
 		}
 		// update user info to redis
-		err = l.svcCtx.UserModel.UpdateUserCache(l.ctx, &user.User{
+		err = l.deps.UserModel.UpdateUserCache(l.ctx, &user.User{
 			Id: userId,
 		})
 		if err != nil {
@@ -154,6 +155,6 @@ func (l *TelegramLogic) start(req *tgbotapi.Update) error {
 		if err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "render template failed")
 		}
-		return l.sendMessage(l.svcCtx.TelegramBot, text, req.Message.Chat.ID)
+		return l.sendMessage(l.deps.TelegramBot, text, req.Message.Chat.ID)
 	}
 }

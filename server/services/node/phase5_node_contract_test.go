@@ -12,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 	nodeModel "github.com/perfect-panel/server/models/node"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/require"
 )
@@ -45,7 +44,7 @@ func TestPhase5GetServerConfigReturnsEmpty304OnMatchingETag(t *testing.T) {
 	etag := tool.GenerateETag([]byte(cached))
 
 	router := gin.New()
-	router.GET("/node/config", GetServerConfigHandler(&svc.ServiceContext{Redis: client}))
+	router.GET("/node/config", GetServerConfigHandler(Deps{Redis: client}))
 
 	req := httptest.NewRequest(http.MethodGet, "/node/config?server_id=1&protocol=vless", nil)
 	req.Header.Set("If-None-Match", etag)
@@ -64,7 +63,7 @@ func TestPhase5GetServerUserListReturnsCoarseProblemOnLookupFailure(t *testing.T
 	client := redis.NewClient(&redis.Options{Addr: mr.Addr()})
 
 	router := gin.New()
-	router.GET("/node/users", GetServerUserListHandler(&svc.ServiceContext{
+	router.GET("/node/users", GetServerUserListHandler(Deps{
 		Redis:     client,
 		NodeModel: failingNodeModel{},
 	}))

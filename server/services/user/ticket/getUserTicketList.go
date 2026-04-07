@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -20,9 +19,9 @@ type GetUserTicketListOutput struct {
 	Body *types.GetUserTicketListResponse
 }
 
-func GetUserTicketListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserTicketListInput) (*GetUserTicketListOutput, error) {
+func GetUserTicketListHandler(deps Deps) func(context.Context, *GetUserTicketListInput) (*GetUserTicketListOutput, error) {
 	return func(ctx context.Context, input *GetUserTicketListInput) (*GetUserTicketListOutput, error) {
-		l := NewGetUserTicketListLogic(ctx, svcCtx)
+		l := NewGetUserTicketListLogic(ctx, deps)
 		resp, err := l.GetUserTicketList(&input.Body)
 		if err != nil {
 			return nil, err
@@ -33,16 +32,16 @@ func GetUserTicketListHandler(svcCtx *svc.ServiceContext) func(context.Context, 
 
 type GetUserTicketListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get ticket list
-func NewGetUserTicketListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserTicketListLogic {
+func NewGetUserTicketListLogic(ctx context.Context, deps Deps) *GetUserTicketListLogic {
 	return &GetUserTicketListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -52,7 +51,7 @@ func (l *GetUserTicketListLogic) GetUserTicketList(req *types.GetUserTicketListR
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}
 	l.Logger.Debugf("Current user: %v", u.Id)
-	total, list, err := l.svcCtx.TicketModel.QueryTicketList(l.ctx, req.Page, req.Size, u.Id, req.Status, req.Search)
+	total, list, err := l.deps.TicketModel.QueryTicketList(l.ctx, req.Page, req.Size, u.Id, req.Status, req.Search)
 	if err != nil {
 		l.Errorw("[GetUserTicketListLogic] Database Error", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "QueryTicketList error: %v", err)

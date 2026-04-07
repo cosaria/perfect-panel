@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/ads"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"time"
@@ -15,9 +14,9 @@ type CreateAdsInput struct {
 	Body types.CreateAdsRequest
 }
 
-func CreateAdsHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateAdsInput) (*struct{}, error) {
+func CreateAdsHandler(deps Deps) func(context.Context, *CreateAdsInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateAdsInput) (*struct{}, error) {
-		l := NewCreateAdsLogic(ctx, svcCtx)
+		l := NewCreateAdsLogic(ctx, deps)
 		if err := l.CreateAds(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,21 +26,21 @@ func CreateAdsHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateA
 
 type CreateAdsLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Create Ads
-func NewCreateAdsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateAdsLogic {
+func NewCreateAdsLogic(ctx context.Context, deps Deps) *CreateAdsLogic {
 	return &CreateAdsLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *CreateAdsLogic) CreateAds(req *types.CreateAdsRequest) error {
-	if err := l.svcCtx.AdsModel.Insert(l.ctx, &ads.Ads{
+	if err := l.deps.AdsModel.Insert(l.ctx, &ads.Ads{
 		Title:     req.Title,
 		Type:      req.Type,
 		Content:   req.Content,

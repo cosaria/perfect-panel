@@ -10,7 +10,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/random"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	queue "github.com/perfect-panel/server/worker"
 	"github.com/pkg/errors"
@@ -26,9 +25,9 @@ type SendEmailCodeOutput struct {
 	Body *types.SendCodeResponse
 }
 
-func SendEmailCodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *SendEmailCodeInput) (*SendEmailCodeOutput, error) {
+func SendEmailCodeHandler(deps Deps) func(context.Context, *SendEmailCodeInput) (*SendEmailCodeOutput, error) {
 	return func(ctx context.Context, input *SendEmailCodeInput) (*SendEmailCodeOutput, error) {
-		l := NewSendEmailCodeLogic(ctx, svcCtx)
+		l := NewSendEmailCodeLogic(ctx, deps)
 		resp, err := l.SendEmailCode(&input.Body)
 		if err != nil {
 			return nil, err
@@ -39,8 +38,8 @@ func SendEmailCodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *Sen
 
 type SendEmailCodeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 const (
@@ -60,19 +59,20 @@ type CacheKeyPayload struct {
 }
 
 // NewSendEmailCodeLogic Get verification code
-func NewSendEmailCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendEmailCodeLogic {
+func NewSendEmailCodeLogic(ctx context.Context, deps Deps) *SendEmailCodeLogic {
 	return &SendEmailCodeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *SendEmailCodeLogic) SendEmailCode(req *types.SendCodeRequest) (resp *types.SendCodeResponse, err error) {
+	cfg := l.deps.currentConfig()
 	// Check if there is Redis in the code
 	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeCacheKey, config.ParseVerifyType(req.Type), req.Email)
 	// Check if the limit is exceeded of current request
-	limiter := limit.NewPeriodLimit(60, 1, l.svcCtx.Redis, fmt.Sprintf("%s:%s:%s", config.SendIntervalKeyPrefix, "email", config.ParseVerifyType(req.Type)))
+	limiter := limit.NewPeriodLimit(60, 1, l.deps.Redis, fmt.Sprintf("%s:%s:%s", config.SendIntervalKeyPrefix, "email", config.ParseVerifyType(req.Type)))
 	permit, err := limiter.Take(req.Email)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Failed to take limit")
@@ -81,14 +81,14 @@ func (l *SendEmailCodeLogic) SendEmailCode(req *types.SendCodeRequest) (resp *ty
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TooManyRequests), "send email too many requests")
 	}
 	// Check if the limit is exceeded of today
-	permit, err = l.svcCtx.AuthLimiter.Take(fmt.Sprintf("%s:%s:%s", "email", config.ParseVerifyType(req.Type), req.Email))
+	permit, err = l.deps.AuthLimiter.Take(fmt.Sprintf("%s:%s:%s", "email", config.ParseVerifyType(req.Type), req.Email))
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Failed to take limit")
 	}
-	if !l.svcCtx.AuthLimiter.ParsePermitState(permit) {
+	if !l.deps.AuthLimiter.ParsePermitState(permit) {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TodaySendCountExceedsLimit), "send email too many requests")
 	}
-	m, err := l.svcCtx.UserModel.FindUserAuthMethodByOpenID(l.ctx, "email", req.Email)
+	m, err := l.deps.UserModel.FindUserAuthMethodByOpenID(l.ctx, "email", req.Email)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindUserAuthMethodByOpenID error")
 	}
@@ -107,8 +107,8 @@ func (l *SendEmailCodeLogic) SendEmailCode(req *types.SendCodeRequest) (resp *ty
 	taskPayload.Subject = "Verification code"
 	taskPayload.Content = map[string]interface{}{
 		"Type":     req.Type,
-		"SiteLogo": l.svcCtx.Config.Site.SiteLogo,
-		"SiteName": l.svcCtx.Config.Site.SiteName,
+		"SiteLogo": cfg.Site.SiteLogo,
+		"SiteName": cfg.Site.SiteName,
 		"Expire":   5,
 		"Code":     code,
 	}
@@ -119,7 +119,7 @@ func (l *SendEmailCodeLogic) SendEmailCode(req *types.SendCodeRequest) (resp *ty
 	}
 	// Marshal the payload
 	val, _ := json.Marshal(payload)
-	if err = l.svcCtx.Redis.Set(l.ctx, cacheKey, string(val), time.Second*IntervalTime*5).Err(); err != nil {
+	if err = l.deps.Redis.Set(l.ctx, cacheKey, string(val), time.Second*IntervalTime*5).Err(); err != nil {
 		l.Errorw("[SendEmailCode]: Redis Error", logger.Field("error", err.Error()), logger.Field("cacheKey", cacheKey))
 		return nil, errors.Wrap(xerr.NewErrCode(xerr.ERROR), "Failed to set verification code")
 	}
@@ -133,13 +133,13 @@ func (l *SendEmailCodeLogic) SendEmailCode(req *types.SendCodeRequest) (resp *ty
 	// Create a queue task
 	task := asynq.NewTask(queue.ForthwithSendEmail, payloadBuy, asynq.MaxRetry(3))
 	// Enqueue the task
-	taskInfo, err := l.svcCtx.Queue.Enqueue(task)
+	taskInfo, err := l.deps.Queue.Enqueue(task)
 	if err != nil {
 		l.Errorw("[SendEmailCode]: Enqueue Error", logger.Field("error", err.Error()), logger.Field("payload", string(payloadBuy)))
 		return nil, errors.Wrap(xerr.NewErrCode(xerr.ERROR), "Failed to enqueue task")
 	}
 	l.Infow("[SendEmailCode]: Enqueue Success", logger.Field("taskID", taskInfo.ID), logger.Field("payload", string(payloadBuy)))
-	if l.svcCtx.Config.Model == config.DevMode {
+	if cfg.Model == config.DevMode {
 		return &types.SendCodeResponse{
 			Code:   payload.Code,
 			Status: true,

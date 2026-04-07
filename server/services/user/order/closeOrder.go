@@ -10,7 +10,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment/alipay"
 	"github.com/perfect-panel/server/modules/payment/stripe"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"gorm.io/gorm"
 	"time"
@@ -20,9 +19,9 @@ type CloseOrderInput struct {
 	Body types.CloseOrderRequest
 }
 
-func CloseOrderHandler(svcCtx *svc.ServiceContext) func(context.Context, *CloseOrderInput) (*struct{}, error) {
+func CloseOrderHandler(deps Deps) func(context.Context, *CloseOrderInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CloseOrderInput) (*struct{}, error) {
-		l := NewCloseOrderLogic(ctx, svcCtx)
+		l := NewCloseOrderLogic(ctx, deps)
 		if err := l.CloseOrder(&input.Body); err != nil {
 			return nil, err
 		}
@@ -32,22 +31,22 @@ func CloseOrderHandler(svcCtx *svc.ServiceContext) func(context.Context, *CloseO
 
 type CloseOrderLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewCloseOrderLogic Close order
-func NewCloseOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CloseOrderLogic {
+func NewCloseOrderLogic(ctx context.Context, deps Deps) *CloseOrderLogic {
 	return &CloseOrderLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *CloseOrderLogic) CloseOrder(req *types.CloseOrderRequest) error {
 	// Find order information by order number
-	orderInfo, err := l.svcCtx.OrderModel.FindOneByOrderNo(l.ctx, req.OrderNo)
+	orderInfo, err := l.deps.OrderModel.FindOneByOrderNo(l.ctx, req.OrderNo)
 	if err != nil {
 		l.Errorw("[CloseOrder] Find order info failed",
 			logger.Field("error", err.Error()),
@@ -64,7 +63,7 @@ func (l *CloseOrderLogic) CloseOrder(req *types.CloseOrderRequest) error {
 		return nil
 	}
 
-	sub, err := l.svcCtx.SubscribeModel.FindOne(l.ctx, orderInfo.SubscribeId)
+	sub, err := l.deps.SubscribeModel.FindOne(l.ctx, orderInfo.SubscribeId)
 	if err != nil {
 		l.Errorw("[CloseOrder] Find subscribe info failed",
 			logger.Field("error", err.Error()),
@@ -73,7 +72,7 @@ func (l *CloseOrderLogic) CloseOrder(req *types.CloseOrderRequest) error {
 		return nil
 	}
 
-	err = l.svcCtx.DB.Transaction(func(tx *gorm.DB) error {
+	err = l.deps.DB.Transaction(func(tx *gorm.DB) error {
 		// update order status
 		err := tx.Model(&order.Order{}).Where("order_no = ?", req.OrderNo).Update("status", 3).Error
 		if err != nil {
@@ -97,7 +96,7 @@ func (l *CloseOrderLogic) CloseOrder(req *types.CloseOrderRequest) error {
 		}
 		// refund deduction amount to user deduction balance
 		if orderInfo.GiftAmount > 0 {
-			userInfo, err := l.svcCtx.UserModel.FindOne(l.ctx, orderInfo.UserId)
+			userInfo, err := l.deps.UserModel.FindOne(l.ctx, orderInfo.UserId)
 			if err != nil {
 				l.Errorw("[CloseOrder] Find user info failed",
 					logger.Field("error", err.Error()),
@@ -144,11 +143,11 @@ func (l *CloseOrderLogic) CloseOrder(req *types.CloseOrderRequest) error {
 				return err
 			}
 			// update user cache
-			return l.svcCtx.UserModel.UpdateUserCache(l.ctx, userInfo)
+			return l.deps.UserModel.UpdateUserCache(l.ctx, userInfo)
 		}
 		if sub.Inventory != -1 {
 			sub.Inventory++
-			if e := l.svcCtx.SubscribeModel.Update(l.ctx, sub, tx); e != nil {
+			if e := l.deps.SubscribeModel.Update(l.ctx, sub, tx); e != nil {
 				l.Errorw("[CloseOrder] Restore subscribe inventory failed",
 					logger.Field("error", e.Error()),
 					logger.Field("subscribeId", sub.Id),
@@ -170,7 +169,7 @@ func (l *CloseOrderLogic) CloseOrder(req *types.CloseOrderRequest) error {
 //
 //nolint:unused
 func (l *CloseOrderLogic) confirmationPayment(order *order.Order) bool {
-	paymentConfig, err := l.svcCtx.PaymentModel.FindOne(l.ctx, order.PaymentId)
+	paymentConfig, err := l.deps.PaymentModel.FindOne(l.ctx, order.PaymentId)
 	if err != nil {
 		l.Errorw("[CloseOrder] Find payment config failed", logger.Field("error", err.Error()), logger.Field("paymentMark", order.Method))
 		return false

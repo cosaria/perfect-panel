@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/document"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"strings"
@@ -15,9 +14,9 @@ type UpdateDocumentInput struct {
 	Body types.UpdateDocumentRequest
 }
 
-func UpdateDocumentHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateDocumentInput) (*struct{}, error) {
+func UpdateDocumentHandler(deps Deps) func(context.Context, *UpdateDocumentInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateDocumentInput) (*struct{}, error) {
-		l := NewUpdateDocumentLogic(ctx, svcCtx)
+		l := NewUpdateDocumentLogic(ctx, deps)
 		if err := l.UpdateDocument(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,21 +26,21 @@ func UpdateDocumentHandler(svcCtx *svc.ServiceContext) func(context.Context, *Up
 
 type UpdateDocumentLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Update document
-func NewUpdateDocumentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateDocumentLogic {
+func NewUpdateDocumentLogic(ctx context.Context, deps Deps) *UpdateDocumentLogic {
 	return &UpdateDocumentLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *UpdateDocumentLogic) UpdateDocument(req *types.UpdateDocumentRequest) error {
-	if err := l.svcCtx.DocumentModel.Update(l.ctx, &document.Document{
+	if err := l.deps.DocumentModel.Update(l.ctx, &document.Document{
 		Id:      req.Id,
 		Title:   req.Title,
 		Content: req.Content,

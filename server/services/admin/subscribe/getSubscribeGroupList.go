@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -15,9 +14,9 @@ type GetSubscribeGroupListOutput struct {
 	Body *types.GetSubscribeGroupListResponse
 }
 
-func GetSubscribeGroupListHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetSubscribeGroupListOutput, error) {
+func GetSubscribeGroupListHandler(deps Deps) func(context.Context, *struct{}) (*GetSubscribeGroupListOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetSubscribeGroupListOutput, error) {
-		l := NewGetSubscribeGroupListLogic(ctx, svcCtx)
+		l := NewGetSubscribeGroupListLogic(ctx, deps)
 		resp, err := l.GetSubscribeGroupList()
 		if err != nil {
 			return nil, err
@@ -28,23 +27,23 @@ func GetSubscribeGroupListHandler(svcCtx *svc.ServiceContext) func(context.Conte
 
 type GetSubscribeGroupListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get subscribe group list
-func NewGetSubscribeGroupListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSubscribeGroupListLogic {
+func NewGetSubscribeGroupListLogic(ctx context.Context, deps Deps) *GetSubscribeGroupListLogic {
 	return &GetSubscribeGroupListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetSubscribeGroupListLogic) GetSubscribeGroupList() (resp *types.GetSubscribeGroupListResponse, err error) {
 	var list []*subscribe.Group
 	var total int64
-	err = l.svcCtx.DB.Model(&subscribe.Group{}).Count(&total).Find(&list).Error
+	err = l.deps.DB.Model(&subscribe.Group{}).Count(&total).Find(&list).Error
 	if err != nil {
 		l.Logger.Error("[GetSubscribeGroupListLogic] get subscribe group list failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get subscribe group list failed: %v", err.Error())

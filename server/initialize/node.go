@@ -9,12 +9,11 @@ import (
 	"github.com/perfect-panel/server/models/system"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 )
 
-func Node(ctx *svc.ServiceContext) {
+func Node(deps Deps) {
 	logger.Debug("Node config initialization")
-	configs, err := ctx.SystemModel.GetNodeConfig(context.Background())
+	configs, err := deps.SystemModel.GetNodeConfig(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -51,11 +50,13 @@ func Node(ctx *svc.ServiceContext) {
 		c.Outbound = outbound
 	}
 
-	ctx.Config.Node = c
+	if deps.Config != nil {
+		deps.Config.Node = c
+	}
 
 	// Manager initialization
-	if ctx.DB.Model(&system.System{}).Where("`key` = ?", "NodeMultiplierConfig").Find(&system.System{}).RowsAffected == 0 {
-		if err := ctx.DB.Model(&system.System{}).Create(&system.System{
+	if deps.DB.Model(&system.System{}).Where("`key` = ?", "NodeMultiplierConfig").Find(&system.System{}).RowsAffected == 0 {
+		if err := deps.DB.Model(&system.System{}).Create(&system.System{
 			Key:      "NodeMultiplierConfig",
 			Value:    "[]",
 			Type:     "string",
@@ -67,7 +68,7 @@ func Node(ctx *svc.ServiceContext) {
 		return
 	}
 
-	nodeMultiplierData, err := ctx.SystemModel.FindNodeMultiplierConfig(context.Background())
+	nodeMultiplierData, err := deps.SystemModel.FindNodeMultiplierConfig(context.Background())
 	if err != nil {
 		logger.Error("Get Node Multiplier Config Error: ", logger.Field("error", err.Error()))
 		return
@@ -76,5 +77,7 @@ func Node(ctx *svc.ServiceContext) {
 	if err := json.Unmarshal([]byte(nodeMultiplierData.Value), &periods); err != nil {
 		logger.Error("Unmarshal Node Multiplier Config Error: ", logger.Field("error", err.Error()), logger.Field("value", nodeMultiplierData.Value))
 	}
-	ctx.NodeMultiplierManager = node.NewNodeMultiplierManager(periods)
+	if deps.SetNodeMultiplierManager != nil {
+		deps.SetNodeMultiplierManager(node.NewNodeMultiplierManager(periods))
+	}
 }

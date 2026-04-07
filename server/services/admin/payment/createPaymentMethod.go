@@ -11,7 +11,6 @@ import (
 	"github.com/perfect-panel/server/modules/payment/stripe"
 	"github.com/perfect-panel/server/modules/util/random"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -25,9 +24,9 @@ type CreatePaymentMethodOutput struct {
 	Body *types.PaymentConfig
 }
 
-func CreatePaymentMethodHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreatePaymentMethodInput) (*CreatePaymentMethodOutput, error) {
+func CreatePaymentMethodHandler(deps Deps) func(context.Context, *CreatePaymentMethodInput) (*CreatePaymentMethodOutput, error) {
 	return func(ctx context.Context, input *CreatePaymentMethodInput) (*CreatePaymentMethodOutput, error) {
-		l := NewCreatePaymentMethodLogic(ctx, svcCtx)
+		l := NewCreatePaymentMethodLogic(ctx, deps)
 		resp, err := l.CreatePaymentMethod(&input.Body)
 		if err != nil {
 			return nil, err
@@ -38,16 +37,16 @@ func CreatePaymentMethodHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type CreatePaymentMethodLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewCreatePaymentMethodLogic Create Payment Method
-func NewCreatePaymentMethodLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreatePaymentMethodLogic {
+func NewCreatePaymentMethodLogic(ctx context.Context, deps Deps) *CreatePaymentMethodLogic {
 	return &CreatePaymentMethodLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -70,7 +69,7 @@ func (l *CreatePaymentMethodLogic) CreatePaymentMethod(req *types.CreatePaymentM
 		Enable:      req.Enable,
 		Token:       random.KeyNew(8, 1),
 	}
-	err = l.svcCtx.PaymentModel.Transaction(l.ctx, func(tx *gorm.DB) error {
+	err = l.deps.PaymentModel.Transaction(l.ctx, func(tx *gorm.DB) error {
 		if req.Platform == "Stripe" {
 			var cfg paymentModel.StripeConfig
 			if err = cfg.Unmarshal([]byte(paymentMethod.Config)); err != nil {

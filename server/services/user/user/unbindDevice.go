@@ -3,11 +3,11 @@ package user
 import (
 	"context"
 	"fmt"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -17,9 +17,9 @@ type UnbindDeviceInput struct {
 	Body types.UnbindDeviceRequest
 }
 
-func UnbindDeviceHandler(svcCtx *svc.ServiceContext) func(context.Context, *UnbindDeviceInput) (*struct{}, error) {
+func UnbindDeviceHandler(deps Deps) func(context.Context, *UnbindDeviceInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UnbindDeviceInput) (*struct{}, error) {
-		l := NewUnbindDeviceLogic(ctx, svcCtx)
+		l := NewUnbindDeviceLogic(ctx, deps)
 		if err := l.UnbindDevice(&input.Body); err != nil {
 			return nil, err
 		}
@@ -29,22 +29,22 @@ func UnbindDeviceHandler(svcCtx *svc.ServiceContext) func(context.Context, *Unbi
 
 type UnbindDeviceLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Unbind Device
-func NewUnbindDeviceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UnbindDeviceLogic {
+func NewUnbindDeviceLogic(ctx context.Context, deps Deps) *UnbindDeviceLogic {
 	return &UnbindDeviceLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *UnbindDeviceLogic) UnbindDevice(req *types.UnbindDeviceRequest) error {
 	userInfo := l.ctx.Value(config.CtxKeyUser).(*user.User)
-	device, err := l.svcCtx.UserModel.FindOneDevice(l.ctx, req.Id)
+	device, err := l.deps.UserModel.FindOneDevice(l.ctx, req.Id)
 	if err != nil {
 		return errors.Wrapf(xerr.NewErrCode(xerr.DeviceNotExist), "find device")
 	}
@@ -53,7 +53,7 @@ func (l *UnbindDeviceLogic) UnbindDevice(req *types.UnbindDeviceRequest) error {
 		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidParams), "device not belong to user")
 	}
 
-	return l.svcCtx.DB.Transaction(func(tx *gorm.DB) error {
+	return l.deps.DB.Transaction(func(tx *gorm.DB) error {
 		var deleteDevice user.Device
 		err = tx.Model(&deleteDevice).Where("id = ?", req.Id).First(&deleteDevice).Error
 		if err != nil {
@@ -78,7 +78,7 @@ func (l *UnbindDeviceLogic) UnbindDevice(req *types.UnbindDeviceRequest) error {
 		}
 		sessionId := l.ctx.Value(config.CtxKeySessionID)
 		sessionIdCacheKey := fmt.Sprintf("%v:%v", config.SessionIdKey, sessionId)
-		l.svcCtx.Redis.Del(l.ctx, sessionIdCacheKey)
+		l.deps.Redis.Del(l.ctx, sessionIdCacheKey)
 		return nil
 	})
 }

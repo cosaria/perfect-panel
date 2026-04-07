@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/modules/infra/limit"
@@ -11,7 +12,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/notify/phone"
 	"github.com/perfect-panel/server/modules/util/random"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	queue "github.com/perfect-panel/server/worker"
 	"github.com/pkg/errors"
@@ -27,9 +27,9 @@ type SendSmsCodeOutput struct {
 	Body *types.SendCodeResponse
 }
 
-func SendSmsCodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *SendSmsCodeInput) (*SendSmsCodeOutput, error) {
+func SendSmsCodeHandler(deps Deps) func(context.Context, *SendSmsCodeInput) (*SendSmsCodeOutput, error) {
 	return func(ctx context.Context, input *SendSmsCodeInput) (*SendSmsCodeOutput, error) {
-		l := NewSendSmsCodeLogic(ctx, svcCtx)
+		l := NewSendSmsCodeLogic(ctx, deps)
 		resp, err := l.SendSmsCode(&input.Body)
 		if err != nil {
 			return nil, err
@@ -45,20 +45,21 @@ type SmsSendCount struct {
 
 type SendSmsCodeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewSendSmsCodeLogic Get sms verification code
-func NewSendSmsCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *SendSmsCodeLogic {
+func NewSendSmsCodeLogic(ctx context.Context, deps Deps) *SendSmsCodeLogic {
 	return &SendSmsCodeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *SendSmsCodeLogic) SendSmsCode(req *types.SendSmsCodeRequest) (resp *types.SendCodeResponse, err error) {
+	cfg := l.deps.currentConfig()
 	phoneNumber, err := phone.FormatToE164(req.TelephoneAreaCode, req.Telephone)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TelephoneError), "Invalid phone number")
@@ -66,7 +67,7 @@ func (l *SendSmsCodeLogic) SendSmsCode(req *types.SendSmsCodeRequest) (resp *typ
 
 	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeTelephoneCacheKey, config.ParseVerifyType(req.Type), phoneNumber)
 	// Check if the limit is exceeded of current request
-	limiter := limit.NewPeriodLimit(60, 1, l.svcCtx.Redis, fmt.Sprintf("%s:%s:%s", config.SendIntervalKeyPrefix, "mobile", config.ParseVerifyType(req.Type)))
+	limiter := limit.NewPeriodLimit(60, 1, l.deps.Redis, fmt.Sprintf("%s:%s:%s", config.SendIntervalKeyPrefix, "mobile", config.ParseVerifyType(req.Type)))
 	permit, err := limiter.Take(phoneNumber)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Failed to take limit")
@@ -75,14 +76,14 @@ func (l *SendSmsCodeLogic) SendSmsCode(req *types.SendSmsCodeRequest) (resp *typ
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TooManyRequests), "send sms too many requests")
 	}
 	// Check if the limit is exceeded of the today
-	permit, err = l.svcCtx.AuthLimiter.Take(fmt.Sprintf("%s:%s:%s", "mobile", config.ParseVerifyType(req.Type), phoneNumber))
+	permit, err = l.deps.AuthLimiter.Take(fmt.Sprintf("%s:%s:%s", "mobile", config.ParseVerifyType(req.Type), phoneNumber))
 	if err != nil {
 		return nil, err
 	}
-	if !l.svcCtx.AuthLimiter.ParsePermitState(permit) {
+	if !l.deps.AuthLimiter.ParsePermitState(permit) {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TodaySendCountExceedsLimit), "This account has reached the limit of sending times today")
 	}
-	m, err := l.svcCtx.UserModel.FindUserAuthMethodByOpenID(l.ctx, "mobile", phoneNumber)
+	m, err := l.deps.UserModel.FindUserAuthMethodByOpenID(l.ctx, "mobile", phoneNumber)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindUserAuthMethodByOpenID error")
 	}
@@ -108,7 +109,7 @@ func (l *SendSmsCodeLogic) SendSmsCode(req *types.SendSmsCodeRequest) (resp *typ
 	}
 	// Marshal the payload
 	val, _ := json.Marshal(payload)
-	if err = l.svcCtx.Redis.Set(l.ctx, cacheKey, string(val), time.Second*time.Duration(l.svcCtx.Config.VerifyCode.ExpireTime)).Err(); err != nil {
+	if err = l.deps.Redis.Set(l.ctx, cacheKey, string(val), time.Second*time.Duration(cfg.VerifyCode.ExpireTime)).Err(); err != nil {
 		l.Errorw("[SendSmsCode]: Redis Error", logger.Field("error", err.Error()), logger.Field("cacheKey", cacheKey))
 		return nil, errors.Wrap(xerr.NewErrCode(xerr.ERROR), "Failed to set verification code")
 	}
@@ -122,13 +123,13 @@ func (l *SendSmsCodeLogic) SendSmsCode(req *types.SendSmsCodeRequest) (resp *typ
 	// Create a queue task
 	task := asynq.NewTask(queue.ForthwithSendSms, payloadValue)
 	// Enqueue the task
-	taskInfo, err := l.svcCtx.Queue.Enqueue(task)
+	taskInfo, err := l.deps.Queue.Enqueue(task)
 	if err != nil {
 		l.Errorw("[SendSmsCode]: Enqueue Error", logger.Field("error", err.Error()), logger.Field("payload", string(payloadValue)))
 		return nil, errors.Wrap(xerr.NewErrCode(xerr.ERROR), "Failed to enqueue task")
 	}
 	l.Infow("[SendSmsCode]: Enqueue Success", logger.Field("taskID", taskInfo.ID), logger.Field("payload", string(payloadValue)))
-	if l.svcCtx.Config.Model == config.DevMode {
+	if cfg.Model == config.DevMode {
 		return &types.SendCodeResponse{
 			Code:   taskPayload.Content,
 			Status: true,

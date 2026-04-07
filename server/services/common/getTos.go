@@ -2,10 +2,10 @@ package common
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +14,9 @@ type GetTosOutput struct {
 	Body *types.GetTosResponse
 }
 
-func GetTosHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetTosOutput, error) {
+func GetTosHandler(deps Deps) func(context.Context, *struct{}) (*GetTosOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetTosOutput, error) {
-		l := NewGetTosLogic(ctx, svcCtx)
+		l := NewGetTosLogic(ctx, deps)
 		resp, err := l.GetTos()
 		if err != nil {
 			return nil, err
@@ -27,23 +27,23 @@ func GetTosHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) 
 
 type GetTosLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get Tos
-func NewGetTosLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetTosLogic {
+func NewGetTosLogic(ctx context.Context, deps Deps) *GetTosLogic {
 	return &GetTosLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetTosLogic) GetTos() (resp *types.GetTosResponse, err error) {
 	resp = &types.GetTosResponse{}
 	// get Tos config from db
-	configs, err := l.svcCtx.SystemModel.GetTosConfig(l.ctx)
+	configs, err := l.deps.SystemModel.GetTosConfig(l.ctx)
 	if err != nil {
 		l.Errorw("[GetTosLogic] GetTos error: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "GetTos error: %v", err.Error())

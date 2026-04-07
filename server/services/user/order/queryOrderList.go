@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -20,9 +19,9 @@ type QueryOrderListOutput struct {
 	Body *types.QueryOrderListResponse
 }
 
-func QueryOrderListHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryOrderListInput) (*QueryOrderListOutput, error) {
+func QueryOrderListHandler(deps Deps) func(context.Context, *QueryOrderListInput) (*QueryOrderListOutput, error) {
 	return func(ctx context.Context, input *QueryOrderListInput) (*QueryOrderListOutput, error) {
-		l := NewQueryOrderListLogic(ctx, svcCtx)
+		l := NewQueryOrderListLogic(ctx, deps)
 		resp, err := l.QueryOrderList(&input.QueryOrderListRequest)
 		if err != nil {
 			return nil, err
@@ -33,16 +32,16 @@ func QueryOrderListHandler(svcCtx *svc.ServiceContext) func(context.Context, *Qu
 
 type QueryOrderListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get order list
-func NewQueryOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryOrderListLogic {
+func NewQueryOrderListLogic(ctx context.Context, deps Deps) *QueryOrderListLogic {
 	return &QueryOrderListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -52,7 +51,7 @@ func (l *QueryOrderListLogic) QueryOrderList(req *types.QueryOrderListRequest) (
 		logger.Error("current user is not found in context")
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}
-	total, data, err := l.svcCtx.OrderModel.QueryOrderListByPage(l.ctx, req.Page, req.Size, 0, u.Id, 0, "")
+	total, data, err := l.deps.OrderModel.QueryOrderListByPage(l.ctx, req.Page, req.Size, 0, u.Id, 0, "")
 	if err != nil {
 		l.Errorw("[QueryOrderListLogic] Query order list failed", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Query order list failed")

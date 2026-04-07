@@ -3,7 +3,7 @@ package common
 
 import (
 	"context"
-	"github.com/perfect-panel/server/svc"
+
 	"github.com/perfect-panel/server/types"
 )
 
@@ -15,9 +15,9 @@ type CheckVerificationCodeOutput struct {
 	Body *types.CheckVerificationCodeRespone
 }
 
-func CheckVerificationCodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *CheckVerificationCodeInput) (*CheckVerificationCodeOutput, error) {
+func CheckVerificationCodeHandler(deps Deps) func(context.Context, *CheckVerificationCodeInput) (*CheckVerificationCodeOutput, error) {
 	return func(ctx context.Context, input *CheckVerificationCodeInput) (*CheckVerificationCodeOutput, error) {
-		l := NewCheckVerificationCodeLogic(ctx, svcCtx)
+		l := NewCheckVerificationCodeLogic(ctx, deps)
 		resp, err := l.CheckVerificationCode(&input.Body)
 		if err != nil {
 			return nil, err

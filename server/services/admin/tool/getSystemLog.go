@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +13,9 @@ type GetSystemLogOutput struct {
 	Body *types.LogResponse
 }
 
-func GetSystemLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetSystemLogOutput, error) {
+func GetSystemLogHandler(deps Deps) func(context.Context, *struct{}) (*GetSystemLogOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetSystemLogOutput, error) {
-		l := NewGetSystemLogLogic(ctx, svcCtx)
+		l := NewGetSystemLogLogic(ctx, deps)
 		resp, err := l.GetSystemLog()
 		if err != nil {
 			return nil, err
@@ -27,21 +26,25 @@ func GetSystemLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *stru
 
 type GetSystemLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetSystemLogLogic Get System Log
-func NewGetSystemLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSystemLogLogic {
+func NewGetSystemLogLogic(ctx context.Context, deps Deps) *GetSystemLogLogic {
 	return &GetSystemLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetSystemLogLogic) GetSystemLog() (resp *types.LogResponse, err error) {
-	lines, err := logger.ReadLastNLines(l.svcCtx.Config.Logger.Path, 50)
+	if l.deps.Config == nil {
+		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "system log path is not configured")
+	}
+
+	lines, err := logger.ReadLastNLines(l.deps.Config.Logger.Path, 50)
 	if err != nil {
 		l.Error(err)
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "get system log error: %v", err.Error())

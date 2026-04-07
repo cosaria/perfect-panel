@@ -3,12 +3,12 @@ package user
 import (
 	"context"
 	"fmt"
+
 	"github.com/perfect-panel/server/models/auth"
 	"github.com/perfect-panel/server/modules/auth/oauth/google"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/random"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
@@ -23,9 +23,9 @@ type BindOAuthOutput struct {
 	Body *types.BindOAuthResponse
 }
 
-func BindOAuthHandler(svcCtx *svc.ServiceContext) func(context.Context, *BindOAuthInput) (*BindOAuthOutput, error) {
+func BindOAuthHandler(deps Deps) func(context.Context, *BindOAuthInput) (*BindOAuthOutput, error) {
 	return func(ctx context.Context, input *BindOAuthInput) (*BindOAuthOutput, error) {
-		l := NewBindOAuthLogic(ctx, svcCtx)
+		l := NewBindOAuthLogic(ctx, deps)
 		resp, err := l.BindOAuth(&input.Body)
 		if err != nil {
 			return nil, err
@@ -36,16 +36,16 @@ func BindOAuthHandler(svcCtx *svc.ServiceContext) func(context.Context, *BindOAu
 
 type BindOAuthLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Bind OAuth
-func NewBindOAuthLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BindOAuthLogic {
+func NewBindOAuthLogic(ctx context.Context, deps Deps) *BindOAuthLogic {
 	return &BindOAuthLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -74,7 +74,7 @@ func (l *BindOAuthLogic) BindOAuth(req *types.BindOAuthRequest) (resp *types.Bin
 }
 
 func (l *BindOAuthLogic) google(req *types.BindOAuthRequest) (string, error) {
-	authMethod, err := l.svcCtx.AuthModel.FindOneByMethod(l.ctx, "google")
+	authMethod, err := l.deps.AuthModel.FindOneByMethod(l.ctx, "google")
 	if err != nil {
 		return "", err
 	}
@@ -92,7 +92,7 @@ func (l *BindOAuthLogic) google(req *types.BindOAuthRequest) (string, error) {
 	// generate the state code
 	code := random.KeyNew(8, 1)
 	// save the state code
-	err = l.svcCtx.Redis.Set(l.ctx, fmt.Sprintf("google:%s", code), req.Redirect, 5*60*time.Second).Err()
+	err = l.deps.Redis.Set(l.ctx, fmt.Sprintf("google:%s", code), req.Redirect, 5*60*time.Second).Err()
 	if err != nil {
 		return "", err
 	}
@@ -104,7 +104,7 @@ func (l *BindOAuthLogic) facebook() (string, error) {
 	return "", nil
 }
 func (l *BindOAuthLogic) apple(req *types.BindOAuthRequest) (string, error) {
-	authMethod, err := l.svcCtx.AuthModel.FindOneByMethod(l.ctx, "apple")
+	authMethod, err := l.deps.AuthModel.FindOneByMethod(l.ctx, "apple")
 	if err != nil {
 		return "", err
 	}
@@ -118,7 +118,7 @@ func (l *BindOAuthLogic) apple(req *types.BindOAuthRequest) (string, error) {
 	// generate the state code
 	code := random.KeyNew(8, 1)
 	// save the state code
-	err = l.svcCtx.Redis.Set(l.ctx, fmt.Sprintf("apple:%s", code), req.Redirect, 5*60*time.Second).Err()
+	err = l.deps.Redis.Set(l.ctx, fmt.Sprintf("apple:%s", code), req.Redirect, 5*60*time.Second).Err()
 	if err != nil {
 		l.Errorw("error save state code to redis: %v", logger.Field("code", code), logger.Field("error", err.Error()))
 	}

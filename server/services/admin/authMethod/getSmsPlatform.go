@@ -2,9 +2,9 @@ package authMethod
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/notify/sms"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
@@ -12,9 +12,9 @@ type GetSmsPlatformOutput struct {
 	Body *types.PlatformResponse
 }
 
-func GetSmsPlatformHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetSmsPlatformOutput, error) {
+func GetSmsPlatformHandler(deps Deps) func(context.Context, *struct{}) (*GetSmsPlatformOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetSmsPlatformOutput, error) {
-		l := NewGetSmsPlatformLogic(ctx, svcCtx)
+		l := NewGetSmsPlatformLogic(ctx, deps)
 		resp, err := l.GetSmsPlatform()
 		if err != nil {
 			return nil, err
@@ -25,16 +25,16 @@ func GetSmsPlatformHandler(svcCtx *svc.ServiceContext) func(context.Context, *st
 
 type GetSmsPlatformLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get sms support platform
-func NewGetSmsPlatformLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetSmsPlatformLogic {
+func NewGetSmsPlatformLogic(ctx context.Context, deps Deps) *GetSmsPlatformLogic {
 	return &GetSmsPlatformLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 

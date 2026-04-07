@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -16,9 +15,9 @@ type CreateSubscribeInput struct {
 	Body types.CreateSubscribeRequest
 }
 
-func CreateSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateSubscribeInput) (*struct{}, error) {
+func CreateSubscribeHandler(deps Deps) func(context.Context, *CreateSubscribeInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateSubscribeInput) (*struct{}, error) {
-		l := NewCreateSubscribeLogic(ctx, svcCtx)
+		l := NewCreateSubscribeLogic(ctx, deps)
 		if err := l.CreateSubscribe(&input.Body); err != nil {
 			return nil, err
 		}
@@ -28,16 +27,16 @@ func CreateSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *C
 
 type CreateSubscribeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewCreateSubscribeLogic Create subscribe
-func NewCreateSubscribeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateSubscribeLogic {
+func NewCreateSubscribeLogic(ctx context.Context, deps Deps) *CreateSubscribeLogic {
 	return &CreateSubscribeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -72,7 +71,7 @@ func (l *CreateSubscribeLogic) CreateSubscribe(req *types.CreateSubscribeRequest
 		RenewalReset:      req.RenewalReset,
 		ShowOriginalPrice: req.ShowOriginalPrice,
 	}
-	err := l.svcCtx.SubscribeModel.Insert(l.ctx, sub)
+	err := l.deps.SubscribeModel.Insert(l.ctx, sub)
 	if err != nil {
 		l.Logger.Error("[CreateSubscribeLogic] create subscribe error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "create subscribe error: %v", err.Error())

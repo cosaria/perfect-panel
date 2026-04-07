@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/gin-gonic/gin"
-	"github.com/perfect-panel/server/svc"
+	appruntime "github.com/perfect-panel/server/runtime"
 )
 
 type responseBodyWriter struct {
@@ -25,7 +25,7 @@ func (r responseBodyWriter) Write(b []byte) (int, error) {
 	return r.ResponseWriter.Write(b)
 }
 
-func LoggerMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
+func LoggerMiddleware(runtimeDeps *appruntime.Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		// get response body
 		w := &responseBodyWriter{body: &bytes.Buffer{}, ResponseWriter: c.Writer}
@@ -92,8 +92,8 @@ func LoggerMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
 			logger.WithContext(c.Request.Context()).Infow("HTTP Request", logs...)
 		}
 
-		if responseStatus == 404 {
-			logger.WithContext(c.Request.Context()).Debugf("404 Not Found: Host:%s Path:%s IsPanDomain:%v", host, c.Request.URL.Path, svc.Config.Subscribe.PanDomain)
+		if responseStatus == 404 && runtimeDeps != nil && runtimeDeps.Config != nil {
+			logger.WithContext(c.Request.Context()).Debugf("404 Not Found: Host:%s Path:%s IsPanDomain:%v", host, c.Request.URL.Path, runtimeDeps.Config.Subscribe.PanDomain)
 		}
 	}
 }

@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type GetUserSubscribeDevicesOutput struct {
 	Body *types.GetUserSubscribeDevicesResponse
 }
 
-func GetUserSubscribeDevicesHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetUserSubscribeDevicesInput) (*GetUserSubscribeDevicesOutput, error) {
+func GetUserSubscribeDevicesHandler(deps Deps) func(context.Context, *GetUserSubscribeDevicesInput) (*GetUserSubscribeDevicesOutput, error) {
 	return func(ctx context.Context, input *GetUserSubscribeDevicesInput) (*GetUserSubscribeDevicesOutput, error) {
-		l := NewGetUserSubscribeDevicesLogic(ctx, svcCtx)
+		l := NewGetUserSubscribeDevicesLogic(ctx, deps)
 		resp, err := l.GetUserSubscribeDevices(&input.GetUserSubscribeDevicesRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func GetUserSubscribeDevicesHandler(svcCtx *svc.ServiceContext) func(context.Con
 
 type GetUserSubscribeDevicesLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get user subcribe devices
-func NewGetUserSubscribeDevicesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserSubscribeDevicesLogic {
+func NewGetUserSubscribeDevicesLogic(ctx context.Context, deps Deps) *GetUserSubscribeDevicesLogic {
 	return &GetUserSubscribeDevicesLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetUserSubscribeDevicesLogic) GetUserSubscribeDevices(req *types.GetUserSubscribeDevicesRequest) (resp *types.GetUserSubscribeDevicesResponse, err error) {
-	list, total, err := l.svcCtx.UserModel.QueryDevicePageList(l.ctx, req.UserId, req.SubscribeId, req.Page, req.Size)
+	list, total, err := l.deps.UserModel.QueryDevicePageList(l.ctx, req.UserId, req.SubscribeId, req.Page, req.Size)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "GetUserSubscribeDevices failed: %v", err.Error())
 	}

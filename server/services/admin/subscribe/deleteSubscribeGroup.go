@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/subscribe"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +13,9 @@ type DeleteSubscribeGroupInput struct {
 	Body types.DeleteSubscribeGroupRequest
 }
 
-func DeleteSubscribeGroupHandler(svcCtx *svc.ServiceContext) func(context.Context, *DeleteSubscribeGroupInput) (*struct{}, error) {
+func DeleteSubscribeGroupHandler(deps Deps) func(context.Context, *DeleteSubscribeGroupInput) (*struct{}, error) {
 	return func(ctx context.Context, input *DeleteSubscribeGroupInput) (*struct{}, error) {
-		l := NewDeleteSubscribeGroupLogic(ctx, svcCtx)
+		l := NewDeleteSubscribeGroupLogic(ctx, deps)
 		if err := l.DeleteSubscribeGroup(&input.Body); err != nil {
 			return nil, err
 		}
@@ -26,21 +25,21 @@ func DeleteSubscribeGroupHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type DeleteSubscribeGroupLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Delete subscribe group
-func NewDeleteSubscribeGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteSubscribeGroupLogic {
+func NewDeleteSubscribeGroupLogic(ctx context.Context, deps Deps) *DeleteSubscribeGroupLogic {
 	return &DeleteSubscribeGroupLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *DeleteSubscribeGroupLogic) DeleteSubscribeGroup(req *types.DeleteSubscribeGroupRequest) error {
-	err := l.svcCtx.DB.Model(&subscribe.Group{}).Where("id = ?", req.Id).Delete(&subscribe.Group{}).Error
+	err := l.deps.DB.Model(&subscribe.Group{}).Where("id = ?", req.Id).Delete(&subscribe.Group{}).Error
 	if err != nil {
 		l.Logger.Error("[DeleteSubscribeGroupLogic] delete subscribe group failed: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "delete subscribe group failed: %v", err.Error())

@@ -12,17 +12,16 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/notify/email"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/worker/spec"
 )
 
 type SendEmailLogic struct {
-	svcCtx *svc.ServiceContext
+	deps Deps
 }
 
-func NewSendEmailLogic(svcCtx *svc.ServiceContext) *SendEmailLogic {
+func NewSendEmailLogic(deps Deps) *SendEmailLogic {
 	return &SendEmailLogic{
-		svcCtx: svcCtx,
+		deps: deps,
 	}
 }
 func (l *SendEmailLogic) ProcessTask(ctx context.Context, task *asynq.Task) error {
@@ -34,13 +33,14 @@ func (l *SendEmailLogic) ProcessTask(ctx context.Context, task *asynq.Task) erro
 		)
 		return nil
 	}
+	cfg := l.deps.currentConfig()
 	messageLog := log.Message{
-		Platform: l.svcCtx.Config.Email.Platform,
+		Platform: cfg.Email.Platform,
 		To:       payload.Email,
 		Subject:  payload.Subject,
 		Content:  payload.Content,
 	}
-	sender, err := email.NewSender(l.svcCtx.Config.Email.Platform, l.svcCtx.Config.Email.PlatformConfig, l.svcCtx.Config.Site.SiteName)
+	sender, err := email.NewSender(cfg.Email.Platform, cfg.Email.PlatformConfig, cfg.Site.SiteName)
 	if err != nil {
 		logger.WithContext(ctx).Error("[SendEmailLogic] NewSender failed", logger.Field("error", err.Error()))
 		return nil
@@ -48,7 +48,7 @@ func (l *SendEmailLogic) ProcessTask(ctx context.Context, task *asynq.Task) erro
 	var content string
 	switch payload.Type {
 	case spec.EmailTypeVerify:
-		tpl, _ := template.New("verify").Parse(l.svcCtx.Config.Email.VerifyEmailTemplate)
+		tpl, _ := template.New("verify").Parse(cfg.Email.VerifyEmailTemplate)
 		var result bytes.Buffer
 
 		payload.Content["Type"] = uint8(payload.Content["Type"].(float64))
@@ -63,39 +63,39 @@ func (l *SendEmailLogic) ProcessTask(ctx context.Context, task *asynq.Task) erro
 		}
 		content = result.String()
 	case spec.EmailTypeMaintenance:
-		tpl, _ := template.New("maintenance").Parse(l.svcCtx.Config.Email.MaintenanceEmailTemplate)
+		tpl, _ := template.New("maintenance").Parse(cfg.Email.MaintenanceEmailTemplate)
 		var result bytes.Buffer
 		err = tpl.Execute(&result, payload.Content)
 		if err != nil {
 			logger.WithContext(ctx).Error("[SendEmailLogic] Execute template failed",
 				logger.Field("error", err.Error()),
-				logger.Field("template", l.svcCtx.Config.Email.MaintenanceEmailTemplate),
+				logger.Field("template", cfg.Email.MaintenanceEmailTemplate),
 				logger.Field("data", payload.Content),
 			)
 			return nil
 		}
 		content = result.String()
 	case spec.EmailTypeExpiration:
-		tpl, _ := template.New("expiration").Parse(l.svcCtx.Config.Email.ExpirationEmailTemplate)
+		tpl, _ := template.New("expiration").Parse(cfg.Email.ExpirationEmailTemplate)
 		var result bytes.Buffer
 		err = tpl.Execute(&result, payload.Content)
 		if err != nil {
 			logger.WithContext(ctx).Error("[SendEmailLogic] Execute template failed",
 				logger.Field("error", err.Error()),
-				logger.Field("template", l.svcCtx.Config.Email.ExpirationEmailTemplate),
+				logger.Field("template", cfg.Email.ExpirationEmailTemplate),
 				logger.Field("data", payload.Content),
 			)
 			return nil
 		}
 		content = result.String()
 	case spec.EmailTypeTrafficExceed:
-		tpl, _ := template.New("traffic_exceed").Parse(l.svcCtx.Config.Email.TrafficExceedEmailTemplate)
+		tpl, _ := template.New("traffic_exceed").Parse(cfg.Email.TrafficExceedEmailTemplate)
 		var result bytes.Buffer
 		err = tpl.Execute(&result, payload.Content)
 		if err != nil {
 			logger.WithContext(ctx).Error("[SendEmailLogic] Execute template failed",
 				logger.Field("error", err.Error()),
-				logger.Field("template", l.svcCtx.Config.Email.TrafficExceedEmailTemplate),
+				logger.Field("template", cfg.Email.TrafficExceedEmailTemplate),
 				logger.Field("data", payload.Content),
 			)
 			return nil
@@ -139,7 +139,7 @@ func (l *SendEmailLogic) ProcessTask(ctx context.Context, task *asynq.Task) erro
 		return nil
 	}
 
-	if err = l.svcCtx.LogModel.Insert(ctx, &log.SystemLog{
+	if err = l.deps.LogModel.Insert(ctx, &log.SystemLog{
 		Type:     log.TypeEmailMessage.Uint8(),
 		Date:     time.Now().Format("2006-01-02"),
 		ObjectID: 0,

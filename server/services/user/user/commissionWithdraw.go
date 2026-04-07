@@ -2,12 +2,12 @@ package user
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"time"
@@ -21,9 +21,9 @@ type CommissionWithdrawOutput struct {
 	Body *types.WithdrawalLog
 }
 
-func CommissionWithdrawHandler(svcCtx *svc.ServiceContext) func(context.Context, *CommissionWithdrawInput) (*CommissionWithdrawOutput, error) {
+func CommissionWithdrawHandler(deps Deps) func(context.Context, *CommissionWithdrawInput) (*CommissionWithdrawOutput, error) {
 	return func(ctx context.Context, input *CommissionWithdrawInput) (*CommissionWithdrawOutput, error) {
-		l := NewCommissionWithdrawLogic(ctx, svcCtx)
+		l := NewCommissionWithdrawLogic(ctx, deps)
 		resp, err := l.CommissionWithdraw(&input.Body)
 		if err != nil {
 			return nil, err
@@ -34,16 +34,16 @@ func CommissionWithdrawHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type CommissionWithdrawLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Commission Withdraw
-func NewCommissionWithdrawLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CommissionWithdrawLogic {
+func NewCommissionWithdrawLogic(ctx context.Context, deps Deps) *CommissionWithdrawLogic {
 	return &CommissionWithdrawLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -59,11 +59,11 @@ func (l *CommissionWithdrawLogic) CommissionWithdraw(req *types.CommissionWithdr
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.UserCommissionNotEnough), "User %d has insufficient commission balance", u.Id)
 	}
 
-	tx := l.svcCtx.DB.WithContext(l.ctx).Begin()
+	tx := l.deps.DB.WithContext(l.ctx).Begin()
 
 	// update user commission balance
 	u.Commission -= req.Amount
-	if err = l.svcCtx.UserModel.Update(l.ctx, u, tx); err != nil {
+	if err = l.deps.UserModel.Update(l.ctx, u, tx); err != nil {
 		tx.Rollback()
 		l.Errorf("Failed to update user %d commission balance: %v", u.Id, err)
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "Failed to update user %d commission balance: %v", u.Id, err)

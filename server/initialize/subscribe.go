@@ -7,12 +7,11 @@ import (
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 )
 
-func Subscribe(svc *svc.ServiceContext) {
+func Subscribe(deps Deps) {
 	logger.Debug("Subscribe config initialization")
-	configs, err := svc.SystemModel.GetSubscribeConfig(context.Background())
+	configs, err := deps.SystemModel.GetSubscribeConfig(context.Background())
 	if err != nil {
 		logger.Error("[Init Subscribe Config] Get Subscribe Config Error: ", logger.Field("error", err.Error()))
 		return
@@ -20,5 +19,7 @@ func Subscribe(svc *svc.ServiceContext) {
 
 	var subscribeConfig config.SubscribeConfig
 	tool.SystemConfigSliceReflectToStruct(configs, &subscribeConfig)
-	svc.Config.Subscribe = subscribeConfig
+	if deps.Config != nil {
+		deps.Config.Subscribe = subscribeConfig
+	}
 }

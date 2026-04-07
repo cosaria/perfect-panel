@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/perfect-panel/server/models/auth"
 	"github.com/perfect-panel/server/modules/auth/oauth/google"
 	"github.com/perfect-panel/server/modules/auth/oauth/telegram"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/random"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
@@ -25,9 +25,9 @@ type OAuthLoginOutput struct {
 	Body *types.OAuthLoginResponse
 }
 
-func OAuthLoginHandler(svcCtx *svc.ServiceContext) func(context.Context, *OAuthLoginInput) (*OAuthLoginOutput, error) {
+func OAuthLoginHandler(deps Deps) func(context.Context, *OAuthLoginInput) (*OAuthLoginOutput, error) {
 	return func(ctx context.Context, input *OAuthLoginInput) (*OAuthLoginOutput, error) {
-		l := NewOAuthLoginLogic(ctx, svcCtx)
+		l := NewOAuthLoginLogic(ctx, deps)
 		resp, err := l.OAuthLogin(&input.Body)
 		if err != nil {
 			return nil, err
@@ -38,16 +38,16 @@ func OAuthLoginHandler(svcCtx *svc.ServiceContext) func(context.Context, *OAuthL
 
 type OAuthLoginLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // OAuth login
-func NewOAuthLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OAuthLoginLogic {
+func NewOAuthLoginLogic(ctx context.Context, deps Deps) *OAuthLoginLogic {
 	return &OAuthLoginLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -76,7 +76,7 @@ func (l *OAuthLoginLogic) OAuthLogin(req *types.OAuthLoginRequest) (resp *types.
 }
 
 func (l *OAuthLoginLogic) google(req *types.OAuthLoginRequest) (string, error) {
-	authMethod, err := l.svcCtx.AuthModel.FindOneByMethod(l.ctx, "google")
+	authMethod, err := l.deps.AuthModel.FindOneByMethod(l.ctx, "google")
 	if err != nil {
 		return "", err
 	}
@@ -94,7 +94,7 @@ func (l *OAuthLoginLogic) google(req *types.OAuthLoginRequest) (string, error) {
 	// generate the state code
 	code := random.KeyNew(8, 1)
 	// save the state code
-	err = l.svcCtx.Redis.Set(l.ctx, fmt.Sprintf("google:%s", code), req.Redirect, 5*60*time.Second).Err()
+	err = l.deps.Redis.Set(l.ctx, fmt.Sprintf("google:%s", code), req.Redirect, 5*60*time.Second).Err()
 	if err != nil {
 		return "", err
 	}
@@ -106,7 +106,7 @@ func (l *OAuthLoginLogic) facebook() (string, error) {
 	return "", nil
 }
 func (l *OAuthLoginLogic) apple(req *types.OAuthLoginRequest) (string, error) {
-	authMethod, err := l.svcCtx.AuthModel.FindOneByMethod(l.ctx, "apple")
+	authMethod, err := l.deps.AuthModel.FindOneByMethod(l.ctx, "apple")
 	if err != nil {
 		return "", err
 	}
@@ -120,7 +120,7 @@ func (l *OAuthLoginLogic) apple(req *types.OAuthLoginRequest) (string, error) {
 	// generate the state code
 	code := random.KeyNew(8, 1)
 	// save the state code
-	err = l.svcCtx.Redis.Set(l.ctx, fmt.Sprintf("apple:%s", code), req.Redirect, 5*60*time.Second).Err()
+	err = l.deps.Redis.Set(l.ctx, fmt.Sprintf("apple:%s", code), req.Redirect, 5*60*time.Second).Err()
 	if err != nil {
 		l.Errorw("error save state code to redis: %v", logger.Field("code", code), logger.Field("error", err.Error()))
 	}
@@ -130,7 +130,7 @@ func (l *OAuthLoginLogic) github() (string, error) {
 	return "", nil
 }
 func (l *OAuthLoginLogic) telegram(req *types.OAuthLoginRequest) (string, error) {
-	authMethod, err := l.svcCtx.AuthModel.FindOneByMethod(l.ctx, "telegram")
+	authMethod, err := l.deps.AuthModel.FindOneByMethod(l.ctx, "telegram")
 	if err != nil {
 		return "", err
 	}
@@ -143,7 +143,7 @@ func (l *OAuthLoginLogic) telegram(req *types.OAuthLoginRequest) (string, error)
 	// generate the state code
 	code := random.KeyNew(8, 1)
 	// save the state code
-	err = l.svcCtx.Redis.Set(l.ctx, fmt.Sprintf("apple:%s", code), req.Redirect, 5*60*time.Second).Err()
+	err = l.deps.Redis.Set(l.ctx, fmt.Sprintf("apple:%s", code), req.Redirect, 5*60*time.Second).Err()
 	if err != nil {
 		l.Errorw("error save state code to redis", logger.Field("code", code), logger.Field("error", err.Error()))
 		return "", errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "error save state code to redis")

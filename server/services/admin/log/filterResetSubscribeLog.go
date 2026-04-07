@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type FilterResetSubscribeLogOutput struct {
 	Body *types.FilterResetSubscribeLogResponse
 }
 
-func FilterResetSubscribeLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterResetSubscribeLogInput) (*FilterResetSubscribeLogOutput, error) {
+func FilterResetSubscribeLogHandler(deps Deps) func(context.Context, *FilterResetSubscribeLogInput) (*FilterResetSubscribeLogOutput, error) {
 	return func(ctx context.Context, input *FilterResetSubscribeLogInput) (*FilterResetSubscribeLogOutput, error) {
-		l := NewFilterResetSubscribeLogLogic(ctx, svcCtx)
+		l := NewFilterResetSubscribeLogLogic(ctx, deps)
 		resp, err := l.FilterResetSubscribeLog(&input.FilterResetSubscribeLogRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func FilterResetSubscribeLogHandler(svcCtx *svc.ServiceContext) func(context.Con
 
 type FilterResetSubscribeLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewFilterResetSubscribeLogLogic Filter reset subscribe log
-func NewFilterResetSubscribeLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterResetSubscribeLogLogic {
+func NewFilterResetSubscribeLogLogic(ctx context.Context, deps Deps) *FilterResetSubscribeLogLogic {
 	return &FilterResetSubscribeLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *FilterResetSubscribeLogLogic) FilterResetSubscribeLog(req *types.FilterResetSubscribeLogRequest) (resp *types.FilterResetSubscribeLogResponse, err error) {
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:     req.Page,
 		Size:     req.Size,
 		Type:     log.TypeResetSubscribe.Uint8(),

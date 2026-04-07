@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +13,9 @@ type QueryDocumentListOutput struct {
 	Body *types.QueryDocumentListResponse
 }
 
-func QueryDocumentListHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryDocumentListOutput, error) {
+func QueryDocumentListHandler(deps Deps) func(context.Context, *struct{}) (*QueryDocumentListOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*QueryDocumentListOutput, error) {
-		l := NewQueryDocumentListLogic(ctx, svcCtx)
+		l := NewQueryDocumentListLogic(ctx, deps)
 		resp, err := l.QueryDocumentList()
 		if err != nil {
 			return nil, err
@@ -27,21 +26,21 @@ func QueryDocumentListHandler(svcCtx *svc.ServiceContext) func(context.Context, 
 
 type QueryDocumentListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get document list
-func NewQueryDocumentListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryDocumentListLogic {
+func NewQueryDocumentListLogic(ctx context.Context, deps Deps) *QueryDocumentListLogic {
 	return &QueryDocumentListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *QueryDocumentListLogic) QueryDocumentList() (resp *types.QueryDocumentListResponse, err error) {
-	total, data, err := l.svcCtx.DocumentModel.GetDocumentListByAll(l.ctx)
+	total, data, err := l.deps.DocumentModel.GetDocumentListByAll(l.ctx)
 	if err != nil {
 		l.Errorw("[QueryDocumentList] error", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "QueryDocumentList error: %v", err.Error())

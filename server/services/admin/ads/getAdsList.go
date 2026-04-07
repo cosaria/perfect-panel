@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -19,9 +18,9 @@ type GetAdsListOutput struct {
 	Body *types.GetAdsListResponse
 }
 
-func GetAdsListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetAdsListInput) (*GetAdsListOutput, error) {
+func GetAdsListHandler(deps Deps) func(context.Context, *GetAdsListInput) (*GetAdsListOutput, error) {
 	return func(ctx context.Context, input *GetAdsListInput) (*GetAdsListOutput, error) {
-		l := NewGetAdsListLogic(ctx, svcCtx)
+		l := NewGetAdsListLogic(ctx, deps)
 		resp, err := l.GetAdsList(&input.Body)
 		if err != nil {
 			return nil, err
@@ -32,21 +31,21 @@ func GetAdsListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetAds
 
 type GetAdsListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get Ads List
-func NewGetAdsListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAdsListLogic {
+func NewGetAdsListLogic(ctx context.Context, deps Deps) *GetAdsListLogic {
 	return &GetAdsListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetAdsListLogic) GetAdsList(req *types.GetAdsListRequest) (resp *types.GetAdsListResponse, err error) {
-	total, data, err := l.svcCtx.AdsModel.GetAdsListByPage(l.ctx, req.Page, req.Size, ads.Filter{
+	total, data, err := l.deps.AdsModel.GetAdsListByPage(l.ctx, req.Page, req.Size, ads.Filter{
 		Search: req.Search,
 		Status: req.Status,
 	})

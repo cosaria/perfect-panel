@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/notify/phone"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -19,9 +19,9 @@ type UpdateBindMobileInput struct {
 	Body types.UpdateBindMobileRequest
 }
 
-func UpdateBindMobileHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateBindMobileInput) (*struct{}, error) {
+func UpdateBindMobileHandler(deps Deps) func(context.Context, *UpdateBindMobileInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateBindMobileInput) (*struct{}, error) {
-		l := NewUpdateBindMobileLogic(ctx, svcCtx)
+		l := NewUpdateBindMobileLogic(ctx, deps)
 		if err := l.UpdateBindMobile(&input.Body); err != nil {
 			return nil, err
 		}
@@ -31,16 +31,16 @@ func UpdateBindMobileHandler(svcCtx *svc.ServiceContext) func(context.Context, *
 
 type UpdateBindMobileLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Update Bind Mobile
-func NewUpdateBindMobileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateBindMobileLogic {
+func NewUpdateBindMobileLogic(ctx context.Context, deps Deps) *UpdateBindMobileLogic {
 	return &UpdateBindMobileLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -56,7 +56,7 @@ func (l *UpdateBindMobileLogic) UpdateBindMobile(req *types.UpdateBindMobileRequ
 		return errors.Wrapf(xerr.NewErrCode(xerr.TelephoneError), "Invalid phone number")
 	}
 	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeTelephoneCacheKey, config.Register, phoneNumber)
-	code, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
+	code, err := l.deps.Redis.Get(l.ctx, cacheKey).Result()
 	if err != nil {
 		l.Errorw("Redis Error", logger.Field("error", err.Error()), logger.Field("cacheKey", cacheKey))
 		return errors.Wrapf(xerr.NewErrCode(xerr.VerifyCodeError), "code error")
@@ -70,9 +70,9 @@ func (l *UpdateBindMobileLogic) UpdateBindMobile(req *types.UpdateBindMobileRequ
 	if payload.Code != req.Code {
 		return errors.Wrapf(xerr.NewErrCode(xerr.VerifyCodeError), "code error")
 	}
-	l.svcCtx.Redis.Del(l.ctx, cacheKey)
+	l.deps.Redis.Del(l.ctx, cacheKey)
 
-	m, err := l.svcCtx.UserModel.FindUserAuthMethodByOpenID(l.ctx, "mobile", req.Mobile)
+	m, err := l.deps.UserModel.FindUserAuthMethodByOpenID(l.ctx, "mobile", req.Mobile)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindUserAuthMethodByOpenID error")
 	}
@@ -80,8 +80,8 @@ func (l *UpdateBindMobileLogic) UpdateBindMobile(req *types.UpdateBindMobileRequ
 		return errors.Wrapf(xerr.NewErrCode(xerr.UserExist), "mobile already bind")
 	}
 
-	method, err := l.svcCtx.UserModel.FindUserAuthMethodByUserId(l.ctx, "mobile", u.Id)
-	if err != nil {
+	method, err := l.deps.UserModel.FindUserAuthMethodByUserId(l.ctx, "mobile", u.Id)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindUserAuthMethodByOpenID error")
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -91,13 +91,13 @@ func (l *UpdateBindMobileLogic) UpdateBindMobile(req *types.UpdateBindMobileRequ
 			AuthIdentifier: req.Mobile,
 			Verified:       true,
 		}
-		if err := l.svcCtx.UserModel.InsertUserAuthMethods(l.ctx, method); err != nil {
+		if err := l.deps.UserModel.InsertUserAuthMethods(l.ctx, method); err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "InsertUserAuthMethods error")
 		}
 	} else {
 		method.Verified = true
 		method.AuthIdentifier = req.Mobile
-		if err := l.svcCtx.UserModel.UpdateUserAuthMethods(l.ctx, method); err != nil {
+		if err := l.deps.UserModel.UpdateUserAuthMethods(l.ctx, method); err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "UpdateUserAuthMethods error")
 		}
 	}

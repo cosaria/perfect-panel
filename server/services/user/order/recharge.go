@@ -10,7 +10,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	queue "github.com/perfect-panel/server/worker/spec"
 	"github.com/pkg/errors"
@@ -25,9 +24,9 @@ type RechargeOutput struct {
 	Body *types.RechargeOrderResponse
 }
 
-func RechargeHandler(svcCtx *svc.ServiceContext) func(context.Context, *RechargeInput) (*RechargeOutput, error) {
+func RechargeHandler(deps Deps) func(context.Context, *RechargeInput) (*RechargeOutput, error) {
 	return func(ctx context.Context, input *RechargeInput) (*RechargeOutput, error) {
-		l := NewRechargeLogic(ctx, svcCtx)
+		l := NewRechargeLogic(ctx, deps)
 		resp, err := l.Recharge(&input.Body)
 		if err != nil {
 			return nil, err
@@ -38,16 +37,16 @@ func RechargeHandler(svcCtx *svc.ServiceContext) func(context.Context, *Recharge
 
 type RechargeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Recharge
-func NewRechargeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RechargeLogic {
+func NewRechargeLogic(ctx context.Context, deps Deps) *RechargeLogic {
 	return &RechargeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -73,7 +72,7 @@ func (l *RechargeLogic) Recharge(req *types.RechargeOrderRequest) (resp *types.R
 	}
 
 	// find payment method
-	payment, err := l.svcCtx.PaymentModel.FindOne(l.ctx, req.Payment)
+	payment, err := l.deps.PaymentModel.FindOne(l.ctx, req.Payment)
 	if err != nil {
 		l.Errorw("[Recharge] Database query error", logger.Field("error", err.Error()), logger.Field("payment", req.Payment))
 		return nil, errors.Wrapf(err, "find payment error: %v", err.Error())
@@ -92,7 +91,7 @@ func (l *RechargeLogic) Recharge(req *types.RechargeOrderRequest) (resp *types.R
 	}
 
 	// query user is new purchase or renewal
-	isNew, err := l.svcCtx.OrderModel.IsUserEligibleForNewOrder(l.ctx, u.Id)
+	isNew, err := l.deps.OrderModel.IsUserEligibleForNewOrder(l.ctx, u.Id)
 	if err != nil {
 		l.Errorw("[Recharge] Database query error", logger.Field("error", err.Error()), logger.Field("user_id", u.Id))
 		return nil, errors.Wrapf(err, "query user error: %v", err.Error())
@@ -109,7 +108,7 @@ func (l *RechargeLogic) Recharge(req *types.RechargeOrderRequest) (resp *types.R
 		Status:    1,
 		IsNew:     isNew,
 	}
-	err = l.svcCtx.OrderModel.Insert(l.ctx, &orderInfo)
+	err = l.deps.OrderModel.Insert(l.ctx, &orderInfo)
 	if err != nil {
 		l.Errorw("[Recharge] Database insert error", logger.Field("error", err.Error()), logger.Field("order", orderInfo))
 		return nil, errors.Wrapf(err, "insert order error: %v", err.Error())
@@ -123,7 +122,7 @@ func (l *RechargeLogic) Recharge(req *types.RechargeOrderRequest) (resp *types.R
 		l.Errorw("[Recharge] Marshal payload error", logger.Field("error", err.Error()), logger.Field("payload", payload))
 	}
 	task := asynq.NewTask(queue.DeferCloseOrder, val, asynq.MaxRetry(3))
-	taskInfo, err := l.svcCtx.Queue.Enqueue(task, asynq.ProcessIn(CloseOrderTimeMinutes*time.Minute))
+	taskInfo, err := l.deps.Queue.Enqueue(task, asynq.ProcessIn(CloseOrderTimeMinutes*time.Minute))
 	if err != nil {
 		l.Errorw("[Recharge] Enqueue task error", logger.Field("error", err.Error()), logger.Field("task", task))
 	} else {

@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"strings"
@@ -16,9 +15,9 @@ type QueryNodeTagOutput struct {
 	Body *types.QueryNodeTagResponse
 }
 
-func QueryNodeTagHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryNodeTagOutput, error) {
+func QueryNodeTagHandler(deps Deps) func(context.Context, *struct{}) (*QueryNodeTagOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*QueryNodeTagOutput, error) {
-		l := NewQueryNodeTagLogic(ctx, svcCtx)
+		l := NewQueryNodeTagLogic(ctx, deps)
 		resp, err := l.QueryNodeTag()
 		if err != nil {
 			return nil, err
@@ -29,23 +28,23 @@ func QueryNodeTagHandler(svcCtx *svc.ServiceContext) func(context.Context, *stru
 
 type QueryNodeTagLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewQueryNodeTagLogic Query all node tags
-func NewQueryNodeTagLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryNodeTagLogic {
+func NewQueryNodeTagLogic(ctx context.Context, deps Deps) *QueryNodeTagLogic {
 	return &QueryNodeTagLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *QueryNodeTagLogic) QueryNodeTag() (resp *types.QueryNodeTagResponse, err error) {
 
 	var nodes []*node.Node
-	if err = l.svcCtx.DB.WithContext(l.ctx).Model(&node.Node{}).Find(&nodes).Error; err != nil {
+	if err = l.deps.DB.WithContext(l.ctx).Model(&node.Node{}).Find(&nodes).Error; err != nil {
 		l.Errorw("[QueryNodeTag] Query Database Error: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "[QueryNodeTag] Query Database Error")
 	}

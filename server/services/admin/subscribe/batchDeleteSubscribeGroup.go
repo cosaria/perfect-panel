@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/subscribe"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -14,9 +13,9 @@ type BatchDeleteSubscribeGroupInput struct {
 	Body types.BatchDeleteSubscribeGroupRequest
 }
 
-func BatchDeleteSubscribeGroupHandler(svcCtx *svc.ServiceContext) func(context.Context, *BatchDeleteSubscribeGroupInput) (*struct{}, error) {
+func BatchDeleteSubscribeGroupHandler(deps Deps) func(context.Context, *BatchDeleteSubscribeGroupInput) (*struct{}, error) {
 	return func(ctx context.Context, input *BatchDeleteSubscribeGroupInput) (*struct{}, error) {
-		l := NewBatchDeleteSubscribeGroupLogic(ctx, svcCtx)
+		l := NewBatchDeleteSubscribeGroupLogic(ctx, deps)
 		if err := l.BatchDeleteSubscribeGroup(&input.Body); err != nil {
 			return nil, err
 		}
@@ -26,21 +25,21 @@ func BatchDeleteSubscribeGroupHandler(svcCtx *svc.ServiceContext) func(context.C
 
 type BatchDeleteSubscribeGroupLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Batch delete subscribe group
-func NewBatchDeleteSubscribeGroupLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BatchDeleteSubscribeGroupLogic {
+func NewBatchDeleteSubscribeGroupLogic(ctx context.Context, deps Deps) *BatchDeleteSubscribeGroupLogic {
 	return &BatchDeleteSubscribeGroupLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *BatchDeleteSubscribeGroupLogic) BatchDeleteSubscribeGroup(req *types.BatchDeleteSubscribeGroupRequest) error {
-	err := l.svcCtx.DB.Model(&subscribe.Group{}).Where("id in ?", req.Ids).Delete(&subscribe.Group{}).Error
+	err := l.deps.DB.Model(&subscribe.Group{}).Where("id in ?", req.Ids).Delete(&subscribe.Group{}).Error
 	if err != nil {
 		l.Logger.Error("[BatchDeleteSubscribeGroup] Delete Database Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "batch delete subscribe group failed: %v", err.Error())

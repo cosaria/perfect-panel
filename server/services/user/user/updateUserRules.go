@@ -3,11 +3,11 @@ package user
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -16,9 +16,9 @@ type UpdateUserRulesInput struct {
 	Body types.UpdateUserRulesRequest
 }
 
-func UpdateUserRulesHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateUserRulesInput) (*struct{}, error) {
+func UpdateUserRulesHandler(deps Deps) func(context.Context, *UpdateUserRulesInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateUserRulesInput) (*struct{}, error) {
-		l := NewUpdateUserRulesLogic(ctx, svcCtx)
+		l := NewUpdateUserRulesLogic(ctx, deps)
 		if err := l.UpdateUserRules(&input.Body); err != nil {
 			return nil, err
 		}
@@ -28,16 +28,16 @@ func UpdateUserRulesHandler(svcCtx *svc.ServiceContext) func(context.Context, *U
 
 type UpdateUserRulesLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewUpdateUserRulesLogic Update User Rules
-func NewUpdateUserRulesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateUserRulesLogic {
+func NewUpdateUserRulesLogic(ctx context.Context, deps Deps) *UpdateUserRulesLogic {
 	return &UpdateUserRulesLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -54,7 +54,7 @@ func (l *UpdateUserRulesLogic) UpdateUserRules(req *types.UpdateUserRulesRequest
 			return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "json marshal rules failed: %v", err.Error())
 		}
 		u.Rules = string(bytes)
-		err = l.svcCtx.UserModel.Update(l.ctx, u)
+		err = l.deps.UserModel.Update(l.ctx, u)
 		if err != nil {
 			l.Logger.Errorf("UpdateUserRulesLogic UpdateUserRules error: %v", err)
 			return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update user rules failed: %v", err.Error())

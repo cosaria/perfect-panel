@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/traffic"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"time"
@@ -19,9 +18,9 @@ type FilterTrafficLogDetailsOutput struct {
 	Body *types.FilterTrafficLogDetailsResponse
 }
 
-func FilterTrafficLogDetailsHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterTrafficLogDetailsInput) (*FilterTrafficLogDetailsOutput, error) {
+func FilterTrafficLogDetailsHandler(deps Deps) func(context.Context, *FilterTrafficLogDetailsInput) (*FilterTrafficLogDetailsOutput, error) {
 	return func(ctx context.Context, input *FilterTrafficLogDetailsInput) (*FilterTrafficLogDetailsOutput, error) {
-		l := NewFilterTrafficLogDetailsLogic(ctx, svcCtx)
+		l := NewFilterTrafficLogDetailsLogic(ctx, deps)
 		resp, err := l.FilterTrafficLogDetails(&input.FilterTrafficLogDetailsRequest)
 		if err != nil {
 			return nil, err
@@ -32,16 +31,16 @@ func FilterTrafficLogDetailsHandler(svcCtx *svc.ServiceContext) func(context.Con
 
 type FilterTrafficLogDetailsLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewFilterTrafficLogDetailsLogic Filter traffic log details
-func NewFilterTrafficLogDetailsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterTrafficLogDetailsLogic {
+func NewFilterTrafficLogDetailsLogic(ctx context.Context, deps Deps) *FilterTrafficLogDetailsLogic {
 	return &FilterTrafficLogDetailsLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -62,7 +61,7 @@ func (l *FilterTrafficLogDetailsLogic) FilterTrafficLogDetails(req *types.Filter
 		end = start.Add(24*time.Hour - time.Nanosecond)
 	}
 	var data []*traffic.TrafficLog
-	tx := l.svcCtx.DB.WithContext(l.ctx).Model(&traffic.TrafficLog{})
+	tx := l.deps.DB.WithContext(l.ctx).Model(&traffic.TrafficLog{})
 	if req.ServerId != 0 {
 		tx = tx.Where("server_id = ?", req.ServerId)
 	}

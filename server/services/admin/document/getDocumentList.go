@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type GetDocumentListOutput struct {
 	Body *types.GetDocumentListResponse
 }
 
-func GetDocumentListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetDocumentListInput) (*GetDocumentListOutput, error) {
+func GetDocumentListHandler(deps Deps) func(context.Context, *GetDocumentListInput) (*GetDocumentListOutput, error) {
 	return func(ctx context.Context, input *GetDocumentListInput) (*GetDocumentListOutput, error) {
-		l := NewGetDocumentListLogic(ctx, svcCtx)
+		l := NewGetDocumentListLogic(ctx, deps)
 		resp, err := l.GetDocumentList(&input.GetDocumentListRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func GetDocumentListHandler(svcCtx *svc.ServiceContext) func(context.Context, *G
 
 type GetDocumentListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get document list
-func NewGetDocumentListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetDocumentListLogic {
+func NewGetDocumentListLogic(ctx context.Context, deps Deps) *GetDocumentListLogic {
 	return &GetDocumentListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetDocumentListLogic) GetDocumentList(req *types.GetDocumentListRequest) (resp *types.GetDocumentListResponse, err error) {
-	total, data, err := l.svcCtx.DocumentModel.QueryDocumentList(l.ctx, int(req.Page), int(req.Size), req.Tag, req.Search)
+	total, data, err := l.deps.DocumentModel.QueryDocumentList(l.ctx, int(req.Page), int(req.Size), req.Tag, req.Search)
 	if err != nil {
 		l.Errorw("[GetDocumentList] Database Error", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "QueryDocumentList error: %v", err.Error())

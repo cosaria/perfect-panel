@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/models/traffic"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"time"
@@ -20,9 +19,9 @@ type FilterServerTrafficLogOutput struct {
 	Body *types.FilterServerTrafficLogResponse
 }
 
-func FilterServerTrafficLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterServerTrafficLogInput) (*FilterServerTrafficLogOutput, error) {
+func FilterServerTrafficLogHandler(deps Deps) func(context.Context, *FilterServerTrafficLogInput) (*FilterServerTrafficLogOutput, error) {
 	return func(ctx context.Context, input *FilterServerTrafficLogInput) (*FilterServerTrafficLogOutput, error) {
-		l := NewFilterServerTrafficLogLogic(ctx, svcCtx)
+		l := NewFilterServerTrafficLogLogic(ctx, deps)
 		resp, err := l.FilterServerTrafficLog(&input.FilterServerTrafficLogRequest)
 		if err != nil {
 			return nil, err
@@ -33,20 +32,21 @@ func FilterServerTrafficLogHandler(svcCtx *svc.ServiceContext) func(context.Cont
 
 type FilterServerTrafficLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewFilterServerTrafficLogLogic Filter server traffic log
-func NewFilterServerTrafficLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterServerTrafficLogLogic {
+func NewFilterServerTrafficLogLogic(ctx context.Context, deps Deps) *FilterServerTrafficLogLogic {
 	return &FilterServerTrafficLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 func (l *FilterServerTrafficLogLogic) FilterServerTrafficLog(req *types.FilterServerTrafficLogRequest) (resp *types.FilterServerTrafficLogResponse, err error) {
 	today := time.Now().Format("2006-01-02")
+	cfg := l.deps.currentConfig()
 	var list []types.ServerTrafficLog
 	var total int64
 
@@ -56,7 +56,7 @@ func (l *FilterServerTrafficLogLogic) FilterServerTrafficLog(req *types.FilterSe
 		end := start.Add(24 * time.Hour).Add(-time.Nanosecond)
 
 		var serverTraffic []log.ServerTraffic
-		err = l.svcCtx.DB.WithContext(l.ctx).
+		err = l.deps.DB.WithContext(l.ctx).
 			Model(&traffic.TrafficLog{}).
 			Select("server_id, SUM(download + upload) AS total, SUM(download) AS download, SUM(upload) AS upload").
 			Where("timestamp BETWEEN ? AND ?", start, end).
@@ -97,7 +97,7 @@ func (l *FilterServerTrafficLogLogic) FilterServerTrafficLog(req *types.FilterSe
 
 		need := endIdx - todayTotal
 		historyPage := (need + req.Size - 1) / req.Size // 算出需要的历史页数
-		historyData, historyTotal, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+		historyData, historyTotal, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 			Page: historyPage,
 			Size: need,
 			Type: log.TypeServerTraffic.Uint8(),
@@ -115,8 +115,8 @@ func (l *FilterServerTrafficLogLogic) FilterServerTrafficLog(req *types.FilterSe
 			}
 
 			hasDetails := true
-			if l.svcCtx.Config.Log.AutoClear {
-				last := now.AddDate(0, 0, int(-l.svcCtx.Config.Log.ClearDays))
+			if cfg.Log.AutoClear {
+				last := now.AddDate(0, 0, int(-cfg.Log.ClearDays))
 				dataTime, err := time.Parse(time.DateOnly, item.Date)
 				if err != nil {
 					l.Errorw("[FilterServerTrafficLog] Parse Date Error", logger.Field("error", err.Error()), logger.Field("date", item.Date))
@@ -151,7 +151,7 @@ func (l *FilterServerTrafficLogLogic) FilterServerTrafficLog(req *types.FilterSe
 		}, nil
 	}
 
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page: req.Page,
 		Size: req.Size,
 		Type: log.TypeServerTraffic.Uint8(),

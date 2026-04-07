@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/uuidx"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"strconv"
@@ -17,9 +16,9 @@ type ResetAllSubscribeTokenOutput struct {
 	Body *types.ResetAllSubscribeTokenResponse
 }
 
-func ResetAllSubscribeTokenHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*ResetAllSubscribeTokenOutput, error) {
+func ResetAllSubscribeTokenHandler(deps Deps) func(context.Context, *struct{}) (*ResetAllSubscribeTokenOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*ResetAllSubscribeTokenOutput, error) {
-		l := NewResetAllSubscribeTokenLogic(ctx, svcCtx)
+		l := NewResetAllSubscribeTokenLogic(ctx, deps)
 		resp, err := l.ResetAllSubscribeToken()
 		if err != nil {
 			return nil, err
@@ -30,22 +29,22 @@ func ResetAllSubscribeTokenHandler(svcCtx *svc.ServiceContext) func(context.Cont
 
 type ResetAllSubscribeTokenLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Reset all subscribe tokens
-func NewResetAllSubscribeTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ResetAllSubscribeTokenLogic {
+func NewResetAllSubscribeTokenLogic(ctx context.Context, deps Deps) *ResetAllSubscribeTokenLogic {
 	return &ResetAllSubscribeTokenLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *ResetAllSubscribeTokenLogic) ResetAllSubscribeToken() (resp *types.ResetAllSubscribeTokenResponse, err error) {
 	var list []*user.Subscribe
-	tx := l.svcCtx.DB.WithContext(l.ctx).Begin()
+	tx := l.deps.DB.WithContext(l.ctx).Begin()
 	// select all active and Finished subscriptions
 	if err = tx.Model(&user.Subscribe{}).Where("`status` IN ?", []int64{1, 2}).Find(&list).Error; err != nil {
 		logger.Errorf("[ResetAllSubscribeToken] Failed to fetch subscribe list: %v", err.Error())

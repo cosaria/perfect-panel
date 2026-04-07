@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"os"
@@ -15,9 +14,9 @@ type DeleteUserInput struct {
 	Body types.GetDetailRequest
 }
 
-func DeleteUserHandler(svcCtx *svc.ServiceContext) func(context.Context, *DeleteUserInput) (*struct{}, error) {
+func DeleteUserHandler(deps Deps) func(context.Context, *DeleteUserInput) (*struct{}, error) {
 	return func(ctx context.Context, input *DeleteUserInput) (*struct{}, error) {
-		l := NewDeleteUserLogic(ctx, svcCtx)
+		l := NewDeleteUserLogic(ctx, deps)
 		if err := l.DeleteUser(&input.Body); err != nil {
 			return nil, err
 		}
@@ -26,15 +25,15 @@ func DeleteUserHandler(svcCtx *svc.ServiceContext) func(context.Context, *Delete
 }
 
 type DeleteUserLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 	logger.Logger
 }
 
-func NewDeleteUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteUserLogic {
+func NewDeleteUserLogic(ctx context.Context, deps Deps) *DeleteUserLogic {
 	return &DeleteUserLogic{
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 		Logger: logger.WithContext(ctx),
 	}
 }
@@ -45,7 +44,7 @@ func (l *DeleteUserLogic) DeleteUser(req *types.GetDetailRequest) error {
 	if req.Id == 2 && isDemo {
 		return errors.Wrapf(xerr.NewErrCodeMsg(503, "Demo mode does not allow deletion of the admin user"), "delete user failed: cannot delete admin user in demo mode")
 	}
-	err := l.svcCtx.UserModel.Delete(l.ctx, req.Id)
+	err := l.deps.UserModel.Delete(l.ctx, req.Id)
 	if err != nil {
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "delete user error: %v", err.Error())
 	}

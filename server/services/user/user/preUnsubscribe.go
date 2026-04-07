@@ -2,8 +2,8 @@ package user
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
@@ -15,9 +15,9 @@ type PreUnsubscribeOutput struct {
 	Body *types.PreUnsubscribeResponse
 }
 
-func PreUnsubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *PreUnsubscribeInput) (*PreUnsubscribeOutput, error) {
+func PreUnsubscribeHandler(deps Deps) func(context.Context, *PreUnsubscribeInput) (*PreUnsubscribeOutput, error) {
 	return func(ctx context.Context, input *PreUnsubscribeInput) (*PreUnsubscribeOutput, error) {
-		l := NewPreUnsubscribeLogic(ctx, svcCtx)
+		l := NewPreUnsubscribeLogic(ctx, deps)
 		resp, err := l.PreUnsubscribe(&input.Body)
 		if err != nil {
 			return nil, err
@@ -28,21 +28,21 @@ func PreUnsubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *Pr
 
 type PreUnsubscribeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewPreUnsubscribeLogic Pre Unsubscribe
-func NewPreUnsubscribeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PreUnsubscribeLogic {
+func NewPreUnsubscribeLogic(ctx context.Context, deps Deps) *PreUnsubscribeLogic {
 	return &PreUnsubscribeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *PreUnsubscribeLogic) PreUnsubscribe(req *types.PreUnsubscribeRequest) (resp *types.PreUnsubscribeResponse, err error) {
-	remainingAmount, err := CalculateRemainingAmount(l.ctx, l.svcCtx, req.Id)
+	remainingAmount, err := CalculateRemainingAmount(l.ctx, l.deps, req.Id)
 	if err != nil {
 		l.Errorw("[PreUnsubscribeLogic] Calculate Remaining Amount Error:", logger.Field("err", err.Error()))
 		return nil, err

@@ -8,7 +8,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/random"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"math/rand"
@@ -19,9 +18,9 @@ type CreateCouponInput struct {
 	Body types.CreateCouponRequest
 }
 
-func CreateCouponHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateCouponInput) (*struct{}, error) {
+func CreateCouponHandler(deps Deps) func(context.Context, *CreateCouponInput) (*struct{}, error) {
 	return func(ctx context.Context, input *CreateCouponInput) (*struct{}, error) {
-		l := NewCreateCouponLogic(ctx, svcCtx)
+		l := NewCreateCouponLogic(ctx, deps)
 		if err := l.CreateCoupon(&input.Body); err != nil {
 			return nil, err
 		}
@@ -31,16 +30,16 @@ func CreateCouponHandler(svcCtx *svc.ServiceContext) func(context.Context, *Crea
 
 type CreateCouponLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Create coupon
-func NewCreateCouponLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateCouponLogic {
+func NewCreateCouponLogic(ctx context.Context, deps Deps) *CreateCouponLogic {
 	return &CreateCouponLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -53,7 +52,7 @@ func (l *CreateCouponLogic) CreateCoupon(req *types.CreateCouponRequest) error {
 	couponInfo := &coupon.Coupon{}
 	tool.DeepCopy(couponInfo, req)
 	couponInfo.Subscribe = tool.Int64SliceToString(req.Subscribe)
-	err := l.svcCtx.CouponModel.Insert(l.ctx, couponInfo)
+	err := l.deps.CouponModel.Insert(l.ctx, couponInfo)
 	if err != nil {
 		l.Errorw("[CreateCoupon] Database Error", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "create coupon error: %v", err.Error())

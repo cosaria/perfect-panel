@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type FilterBalanceLogOutput struct {
 	Body *types.FilterBalanceLogResponse
 }
 
-func FilterBalanceLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterBalanceLogInput) (*FilterBalanceLogOutput, error) {
+func FilterBalanceLogHandler(deps Deps) func(context.Context, *FilterBalanceLogInput) (*FilterBalanceLogOutput, error) {
 	return func(ctx context.Context, input *FilterBalanceLogInput) (*FilterBalanceLogOutput, error) {
-		l := NewFilterBalanceLogLogic(ctx, svcCtx)
+		l := NewFilterBalanceLogLogic(ctx, deps)
 		resp, err := l.FilterBalanceLog(&input.FilterBalanceLogRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func FilterBalanceLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *
 
 type FilterBalanceLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewFilterBalanceLogLogic Filter balance log
-func NewFilterBalanceLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterBalanceLogLogic {
+func NewFilterBalanceLogLogic(ctx context.Context, deps Deps) *FilterBalanceLogLogic {
 	return &FilterBalanceLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *FilterBalanceLogLogic) FilterBalanceLog(req *types.FilterBalanceLogRequest) (resp *types.FilterBalanceLogResponse, err error) {
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:     req.Page,
 		Size:     req.Size,
 		Type:     log.TypeBalance.Uint8(),

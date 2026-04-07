@@ -2,8 +2,8 @@ package user
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
@@ -15,9 +15,9 @@ type QueryWithdrawalLogOutput struct {
 	Body *types.QueryWithdrawalLogListResponse
 }
 
-func QueryWithdrawalLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryWithdrawalLogInput) (*QueryWithdrawalLogOutput, error) {
+func QueryWithdrawalLogHandler(deps Deps) func(context.Context, *QueryWithdrawalLogInput) (*QueryWithdrawalLogOutput, error) {
 	return func(ctx context.Context, input *QueryWithdrawalLogInput) (*QueryWithdrawalLogOutput, error) {
-		l := NewQueryWithdrawalLogLogic(ctx, svcCtx)
+		l := NewQueryWithdrawalLogLogic(ctx, deps)
 		resp, err := l.QueryWithdrawalLog(&input.QueryWithdrawalLogListRequest)
 		if err != nil {
 			return nil, err
@@ -28,16 +28,16 @@ func QueryWithdrawalLogHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type QueryWithdrawalLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewQueryWithdrawalLogLogic Query Withdrawal Log
-func NewQueryWithdrawalLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryWithdrawalLogLogic {
+func NewQueryWithdrawalLogLogic(ctx context.Context, deps Deps) *QueryWithdrawalLogLogic {
 	return &QueryWithdrawalLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 

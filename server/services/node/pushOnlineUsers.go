@@ -8,22 +8,21 @@ import (
 	"github.com/perfect-panel/server/models/node"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/routers/response"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
-func PushOnlineUsersHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
+func PushOnlineUsersHandler(deps Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var req types.OnlineUsersRequest
 		_ = c.ShouldBind(&req)
 		_ = c.ShouldBindQuery(&req.ServerCommon)
-		validateErr := svcCtx.Validate(&req)
+		validateErr := validateRequest(&req)
 		if validateErr != nil {
 			response.ParamErrorResult(c, validateErr)
 			return
 		}
 
-		l := NewPushOnlineUsersLogic(c.Request.Context(), svcCtx)
+		l := NewPushOnlineUsersLogic(c.Request.Context(), deps)
 		err := l.PushOnlineUsers(&req)
 		response.HttpResult(c, nil, err)
 	}
@@ -31,16 +30,16 @@ func PushOnlineUsersHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 
 type PushOnlineUsersLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewPushOnlineUsersLogic Push online users
-func NewPushOnlineUsersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PushOnlineUsersLogic {
+func NewPushOnlineUsersLogic(ctx context.Context, deps Deps) *PushOnlineUsersLogic {
 	return &PushOnlineUsersLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -58,7 +57,7 @@ func (l *PushOnlineUsersLogic) PushOnlineUsers(req *types.OnlineUsersRequest) er
 	}
 
 	// Find server info
-	_, err := l.svcCtx.NodeModel.FindOneServer(l.ctx, req.ServerId)
+	_, err := l.deps.NodeModel.FindOneServer(l.ctx, req.ServerId)
 	if err != nil {
 		l.Errorw("[PushOnlineUsers] FindOne error", logger.Field("error", err))
 		return fmt.Errorf("server not found: %w", err)
@@ -75,13 +74,13 @@ func (l *PushOnlineUsersLogic) PushOnlineUsers(req *types.OnlineUsersRequest) er
 			onlineUsers[user.SID] = []string{user.IP}
 		}
 	}
-	err = l.svcCtx.NodeModel.UpdateOnlineUserSubscribe(l.ctx, req.ServerId, req.Protocol, onlineUsers)
+	err = l.deps.NodeModel.UpdateOnlineUserSubscribe(l.ctx, req.ServerId, req.Protocol, onlineUsers)
 	if err != nil {
 		l.Errorw("[PushOnlineUsers] cache operation error", logger.Field("error", err))
 		return err
 	}
 
-	err = l.svcCtx.NodeModel.UpdateOnlineUserSubscribeGlobal(l.ctx, onlineUsers)
+	err = l.deps.NodeModel.UpdateOnlineUserSubscribeGlobal(l.ctx, onlineUsers)
 
 	if err != nil {
 		l.Errorw("[PushOnlineUsers] cache operation error", logger.Field("error", err))

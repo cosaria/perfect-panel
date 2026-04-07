@@ -3,12 +3,12 @@ package user
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"time"
@@ -18,9 +18,9 @@ type QueryUserSubscribeOutput struct {
 	Body *types.QueryUserSubscribeListResponse
 }
 
-func QueryUserSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*QueryUserSubscribeOutput, error) {
+func QueryUserSubscribeHandler(deps Deps) func(context.Context, *struct{}) (*QueryUserSubscribeOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*QueryUserSubscribeOutput, error) {
-		l := NewQueryUserSubscribeLogic(ctx, svcCtx)
+		l := NewQueryUserSubscribeLogic(ctx, deps)
 		resp, err := l.QueryUserSubscribe()
 		if err != nil {
 			return nil, err
@@ -31,16 +31,16 @@ func QueryUserSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type QueryUserSubscribeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Query User Subscribe
-func NewQueryUserSubscribeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryUserSubscribeLogic {
+func NewQueryUserSubscribeLogic(ctx context.Context, deps Deps) *QueryUserSubscribeLogic {
 	return &QueryUserSubscribeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -50,7 +50,7 @@ func (l *QueryUserSubscribeLogic) QueryUserSubscribe() (resp *types.QueryUserSub
 		logger.Error("current user is not found in context")
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}
-	data, err := l.svcCtx.UserModel.QueryUserSubscribe(l.ctx, u.Id, 0, 1, 2, 3)
+	data, err := l.deps.UserModel.QueryUserSubscribe(l.ctx, u.Id, 0, 1, 2, 3)
 	if err != nil {
 		l.Errorw("[QueryUserSubscribeLogic] Query User Subscribe Error:", logger.Field("err", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Query User Subscribe Error")

@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"os"
@@ -16,9 +15,9 @@ type BatchDeleteUserInput struct {
 	Body types.BatchDeleteUserRequest
 }
 
-func BatchDeleteUserHandler(svcCtx *svc.ServiceContext) func(context.Context, *BatchDeleteUserInput) (*struct{}, error) {
+func BatchDeleteUserHandler(deps Deps) func(context.Context, *BatchDeleteUserInput) (*struct{}, error) {
 	return func(ctx context.Context, input *BatchDeleteUserInput) (*struct{}, error) {
-		l := NewBatchDeleteUserLogic(ctx, svcCtx)
+		l := NewBatchDeleteUserLogic(ctx, deps)
 		if err := l.BatchDeleteUser(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,15 +26,15 @@ func BatchDeleteUserHandler(svcCtx *svc.ServiceContext) func(context.Context, *B
 }
 
 type BatchDeleteUserLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 	logger.Logger
 }
 
-func NewBatchDeleteUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BatchDeleteUserLogic {
+func NewBatchDeleteUserLogic(ctx context.Context, deps Deps) *BatchDeleteUserLogic {
 	return &BatchDeleteUserLogic{
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 		Logger: logger.WithContext(ctx),
 	}
 }
@@ -47,7 +46,7 @@ func (l *BatchDeleteUserLogic) BatchDeleteUser(req *types.BatchDeleteUserRequest
 		return errors.Wrapf(xerr.NewErrCodeMsg(503, "Demo mode does not allow deletion of the admin user"), "BatchDeleteUser failed: cannot delete admin user in demo mode")
 	}
 
-	err := l.svcCtx.UserModel.BatchDeleteUser(l.ctx, req.Ids)
+	err := l.deps.UserModel.BatchDeleteUser(l.ctx, req.Ids)
 	if err != nil {
 		l.Logger.Error("[BatchDeleteUserLogic] BatchDeleteUser failed: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "BatchDeleteUser failed: %v", err.Error())

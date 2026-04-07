@@ -2,10 +2,10 @@ package auth
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/notify/phone"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -19,9 +19,9 @@ type CheckUserTelephoneOutput struct {
 	Body *types.TelephoneCheckUserResponse
 }
 
-func CheckUserTelephoneHandler(svcCtx *svc.ServiceContext) func(context.Context, *CheckUserTelephoneInput) (*CheckUserTelephoneOutput, error) {
+func CheckUserTelephoneHandler(deps Deps) func(context.Context, *CheckUserTelephoneInput) (*CheckUserTelephoneOutput, error) {
 	return func(ctx context.Context, input *CheckUserTelephoneInput) (*CheckUserTelephoneOutput, error) {
-		l := NewCheckUserTelephoneLogic(ctx, svcCtx)
+		l := NewCheckUserTelephoneLogic(ctx, deps)
 		resp, err := l.CheckUserTelephone(&input.TelephoneCheckUserRequest)
 		if err != nil {
 			return nil, err
@@ -32,16 +32,16 @@ func CheckUserTelephoneHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type CheckUserTelephoneLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Check user telephone is exist
-func NewCheckUserTelephoneLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckUserTelephoneLogic {
+func NewCheckUserTelephoneLogic(ctx context.Context, deps Deps) *CheckUserTelephoneLogic {
 	return &CheckUserTelephoneLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -50,7 +50,7 @@ func (l *CheckUserTelephoneLogic) CheckUserTelephone(req *types.TelephoneCheckUs
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TelephoneError), "Invalid phone number")
 	}
-	authMethods, err := l.svcCtx.UserModel.FindUserAuthMethodByOpenID(l.ctx, "mobile", phoneNumber)
+	authMethods, err := l.deps.UserModel.FindUserAuthMethodByOpenID(l.ctx, "mobile", phoneNumber)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find user by email error: %v", err.Error())
 	}

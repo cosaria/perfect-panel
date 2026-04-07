@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -13,9 +12,9 @@ type BatchDeleteDocumentInput struct {
 	Body types.BatchDeleteDocumentRequest
 }
 
-func BatchDeleteDocumentHandler(svcCtx *svc.ServiceContext) func(context.Context, *BatchDeleteDocumentInput) (*struct{}, error) {
+func BatchDeleteDocumentHandler(deps Deps) func(context.Context, *BatchDeleteDocumentInput) (*struct{}, error) {
 	return func(ctx context.Context, input *BatchDeleteDocumentInput) (*struct{}, error) {
-		l := NewBatchDeleteDocumentLogic(ctx, svcCtx)
+		l := NewBatchDeleteDocumentLogic(ctx, deps)
 		if err := l.BatchDeleteDocument(&input.Body); err != nil {
 			return nil, err
 		}
@@ -25,22 +24,22 @@ func BatchDeleteDocumentHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type BatchDeleteDocumentLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Batch delete document
-func NewBatchDeleteDocumentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BatchDeleteDocumentLogic {
+func NewBatchDeleteDocumentLogic(ctx context.Context, deps Deps) *BatchDeleteDocumentLogic {
 	return &BatchDeleteDocumentLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *BatchDeleteDocumentLogic) BatchDeleteDocument(req *types.BatchDeleteDocumentRequest) error {
 	for _, id := range req.Ids {
-		if err := l.svcCtx.DocumentModel.Delete(l.ctx, id); err != nil {
+		if err := l.deps.DocumentModel.Delete(l.ctx, id); err != nil {
 			l.Errorw("[BatchDeleteDocument] Database Error", logger.Field("error", err.Error()))
 			return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "failed to delete document: %v", err.Error())
 		}

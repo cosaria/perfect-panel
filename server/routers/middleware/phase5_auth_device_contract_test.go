@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/config"
 	authjwt "github.com/perfect-panel/server/modules/auth/jwt"
-	"github.com/perfect-panel/server/svc"
+	appruntime "github.com/perfect-panel/server/runtime"
 	"github.com/stretchr/testify/require"
 )
 
@@ -27,8 +27,8 @@ func TestPhase5AuthMiddlewareCollapsesMissingTokenToCoarseUnauthorizedProblem(t 
 	gin.SetMode(gin.TestMode)
 
 	router := gin.New()
-	router.Use(AuthMiddleware(&svc.ServiceContext{
-		Config: config.Config{
+	router.Use(AuthMiddleware(&appruntime.Deps{
+		Config: &config.Config{
 			JwtAuth: config.JwtAuth{AccessSecret: "top-secret"},
 		},
 	}))
@@ -54,8 +54,8 @@ func TestPhase5AuthMiddlewareCollapsesInvalidTokenToCoarseUnauthorizedProblem(t 
 	gin.SetMode(gin.TestMode)
 
 	router := gin.New()
-	router.Use(AuthMiddleware(&svc.ServiceContext{
-		Config: config.Config{
+	router.Use(AuthMiddleware(&appruntime.Deps{
+		Config: &config.Config{
 			JwtAuth: config.JwtAuth{AccessSecret: "top-secret"},
 		},
 	}))
@@ -82,8 +82,8 @@ func TestPhase5DeviceMiddlewareCollapsesInvalidCiphertextToBadRequestProblem(t *
 	gin.SetMode(gin.TestMode)
 
 	router := gin.New()
-	router.Use(DeviceMiddleware(&svc.ServiceContext{
-		Config: config.Config{
+	router.Use(DeviceMiddleware(&appruntime.Deps{
+		Config: &config.Config{
 			Device: config.DeviceConfig{
 				Enable:         true,
 				SecuritySecret: "top-secret",
@@ -122,8 +122,8 @@ func TestPhase5AuthMiddlewareMalformedClaimsDoNotPanic(t *testing.T) {
 	require.NoError(t, err)
 
 	router := gin.New()
-	router.Use(AuthMiddleware(&svc.ServiceContext{
-		Config: config.Config{
+	router.Use(AuthMiddleware(&appruntime.Deps{
+		Config: &config.Config{
 			JwtAuth: config.JwtAuth{AccessSecret: "top-secret"},
 		},
 	}))

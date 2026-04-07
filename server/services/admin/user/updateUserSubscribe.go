@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"time"
@@ -15,9 +14,9 @@ type UpdateUserSubscribeInput struct {
 	Body types.UpdateUserSubscribeRequest
 }
 
-func UpdateUserSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateUserSubscribeInput) (*struct{}, error) {
+func UpdateUserSubscribeHandler(deps Deps) func(context.Context, *UpdateUserSubscribeInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateUserSubscribeInput) (*struct{}, error) {
-		l := NewUpdateUserSubscribeLogic(ctx, svcCtx)
+		l := NewUpdateUserSubscribeLogic(ctx, deps)
 		if err := l.UpdateUserSubscribe(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,21 +26,21 @@ func UpdateUserSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context
 
 type UpdateUserSubscribeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewUpdateUserSubscribeLogic Update user subscribe
-func NewUpdateUserSubscribeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateUserSubscribeLogic {
+func NewUpdateUserSubscribeLogic(ctx context.Context, deps Deps) *UpdateUserSubscribeLogic {
 	return &UpdateUserSubscribeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *UpdateUserSubscribeLogic) UpdateUserSubscribe(req *types.UpdateUserSubscribeRequest) error {
-	userSub, err := l.svcCtx.UserModel.FindOneSubscribe(l.ctx, req.UserSubscribeId)
+	userSub, err := l.deps.UserModel.FindOneSubscribe(l.ctx, req.UserSubscribeId)
 	if err != nil {
 		l.Errorw("FindOneUserSubscribe failed:", logger.Field("error", err.Error()), logger.Field("userSubscribeId", req.UserSubscribeId))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindOneUserSubscribe failed: %v", err.Error())
@@ -53,7 +52,7 @@ func (l *UpdateUserSubscribeLogic) UpdateUserSubscribe(req *types.UpdateUserSubs
 		userSub.Status = 1
 	}
 
-	err = l.svcCtx.UserModel.UpdateSubscribe(l.ctx, &user.Subscribe{
+	err = l.deps.UserModel.UpdateSubscribe(l.ctx, &user.Subscribe{
 		Id:          userSub.Id,
 		UserId:      userSub.UserId,
 		OrderId:     userSub.OrderId,
@@ -73,12 +72,12 @@ func (l *UpdateUserSubscribeLogic) UpdateUserSubscribe(req *types.UpdateUserSubs
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "UpdateSubscribe failed: %v", err.Error())
 	}
 	// Clear user subscribe cache
-	if err = l.svcCtx.UserModel.ClearSubscribeCache(l.ctx, userSub); err != nil {
+	if err = l.deps.UserModel.ClearSubscribeCache(l.ctx, userSub); err != nil {
 		l.Errorw("ClearSubscribeCache failed:", logger.Field("error", err.Error()), logger.Field("userSubscribeId", userSub.Id))
 		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "ClearSubscribeCache failed: %v", err.Error())
 	}
 	// Clear subscribe cache
-	if err = l.svcCtx.SubscribeModel.ClearCache(l.ctx, userSub.SubscribeId); err != nil {
+	if err = l.deps.SubscribeModel.ClearCache(l.ctx, userSub.SubscribeId); err != nil {
 		l.Errorw("failed to clear subscribe cache", logger.Field("error", err.Error()), logger.Field("subscribeId", userSub.SubscribeId))
 		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "failed to clear subscribe cache: %v", err.Error())
 	}

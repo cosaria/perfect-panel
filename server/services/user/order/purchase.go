@@ -11,7 +11,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	queue "github.com/perfect-panel/server/worker/spec"
 	"github.com/pkg/errors"
@@ -27,9 +26,9 @@ type PurchaseOutput struct {
 	Body *types.PurchaseOrderResponse
 }
 
-func PurchaseHandler(svcCtx *svc.ServiceContext) func(context.Context, *PurchaseInput) (*PurchaseOutput, error) {
+func PurchaseHandler(deps Deps) func(context.Context, *PurchaseInput) (*PurchaseOutput, error) {
 	return func(ctx context.Context, input *PurchaseInput) (*PurchaseOutput, error) {
-		l := NewPurchaseLogic(ctx, svcCtx)
+		l := NewPurchaseLogic(ctx, deps)
 		resp, err := l.Purchase(&input.Body)
 		if err != nil {
 			return nil, err
@@ -40,8 +39,8 @@ func PurchaseHandler(svcCtx *svc.ServiceContext) func(context.Context, *Purchase
 
 type PurchaseLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 const (
@@ -50,11 +49,11 @@ const (
 
 // NewPurchaseLogic creates a new purchase logic instance for subscription purchase operations.
 // It initializes the logger with context and sets up the service context for database operations.
-func NewPurchaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PurchaseLogic {
+func NewPurchaseLogic(ctx context.Context, deps Deps) *PurchaseLogic {
 	return &PurchaseLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -81,19 +80,19 @@ func (l *PurchaseLogic) Purchase(req *types.PurchaseOrderRequest) (resp *types.P
 	}
 
 	// find user subscription
-	userSub, err := l.svcCtx.UserModel.QueryUserSubscribe(l.ctx, u.Id)
+	userSub, err := l.deps.UserModel.QueryUserSubscribe(l.ctx, u.Id)
 	if err != nil {
 		l.Errorw("[Purchase] Database query error", logger.Field("error", err.Error()), logger.Field("user_id", u.Id))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find user subscription error: %v", err.Error())
 	}
-	if l.svcCtx.Config.Subscribe.SingleModel {
+	if l.deps.Config.Subscribe.SingleModel {
 		if len(userSub) > 0 {
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.UserSubscribeExist), "user has subscription")
 		}
 	}
 
 	// find subscribe plan
-	sub, err := l.svcCtx.SubscribeModel.FindOne(l.ctx, req.SubscribeId)
+	sub, err := l.deps.SubscribeModel.FindOne(l.ctx, req.SubscribeId)
 
 	if err != nil {
 		l.Errorw("[Purchase] Database query error", logger.Field("error", err.Error()), logger.Field("subscribe_id", req.SubscribeId))
@@ -146,7 +145,7 @@ func (l *PurchaseLogic) Purchase(req *types.PurchaseOrderRequest) (resp *types.P
 	var coupon int64 = 0
 	// Calculate the coupon deduction
 	if req.Coupon != "" {
-		couponInfo, err := l.svcCtx.CouponModel.FindOneByCode(l.ctx, req.Coupon)
+		couponInfo, err := l.deps.CouponModel.FindOneByCode(l.ctx, req.Coupon)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return nil, errors.Wrapf(xerr.NewErrCode(xerr.CouponNotExist), "coupon not found")
@@ -161,7 +160,7 @@ func (l *PurchaseLogic) Purchase(req *types.PurchaseOrderRequest) (resp *types.P
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.CouponNotApplicable), "coupon not match")
 		}
 		var count int64
-		err = l.svcCtx.DB.Transaction(func(tx *gorm.DB) error {
+		err = l.deps.DB.Transaction(func(tx *gorm.DB) error {
 			return tx.Model(&order.Order{}).Where("user_id = ? and coupon = ?", u.Id, req.Coupon).Count(&count).Error
 		})
 
@@ -190,7 +189,7 @@ func (l *PurchaseLogic) Purchase(req *types.PurchaseOrderRequest) (resp *types.P
 		}
 	}
 	// find payment method
-	payment, err := l.svcCtx.PaymentModel.FindOne(l.ctx, req.Payment)
+	payment, err := l.deps.PaymentModel.FindOne(l.ctx, req.Payment)
 	if err != nil {
 		l.Errorw("[Purchase] Database query error", logger.Field("error", err.Error()), logger.Field("payment", req.Payment))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find payment method error: %v", err.Error())
@@ -211,7 +210,7 @@ func (l *PurchaseLogic) Purchase(req *types.PurchaseOrderRequest) (resp *types.P
 		}
 	}
 	// query user is new purchase or renewal
-	isNew, err := l.svcCtx.OrderModel.IsUserEligibleForNewOrder(l.ctx, u.Id)
+	isNew, err := l.deps.OrderModel.IsUserEligibleForNewOrder(l.ctx, u.Id)
 	if err != nil {
 		l.Errorw("[Purchase] Database query error", logger.Field("error", err.Error()), logger.Field("user_id", u.Id))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find user order error: %v", err.Error())
@@ -236,11 +235,11 @@ func (l *PurchaseLogic) Purchase(req *types.PurchaseOrderRequest) (resp *types.P
 		SubscribeId:    req.SubscribeId,
 	}
 	// Database transaction
-	err = l.svcCtx.DB.Transaction(func(db *gorm.DB) error {
+	err = l.deps.DB.Transaction(func(db *gorm.DB) error {
 		// update user deduction && Pre deduction ,Return after canceling the order
 		if orderInfo.GiftAmount > 0 {
 			// update user deduction && Pre deduction ,Return after canceling the order
-			if e := l.svcCtx.UserModel.Update(l.ctx, u, db); e != nil {
+			if e := l.deps.UserModel.Update(l.ctx, u, db); e != nil {
 				l.Errorw("[Purchase] Database update error", logger.Field("error", e.Error()), logger.Field("user", u))
 				return e
 			}
@@ -274,7 +273,7 @@ func (l *PurchaseLogic) Purchase(req *types.PurchaseOrderRequest) (resp *types.P
 			// decrease subscribe plan stock
 			sub.Inventory -= 1
 			// update subscribe plan stock
-			if err = l.svcCtx.SubscribeModel.Update(l.ctx, sub, db); err != nil {
+			if err = l.deps.SubscribeModel.Update(l.ctx, sub, db); err != nil {
 				l.Errorw("[Purchase] Database update error", logger.Field("error", err.Error()), logger.Field("subscribe", sub))
 				return err
 			}
@@ -297,7 +296,7 @@ func (l *PurchaseLogic) Purchase(req *types.PurchaseOrderRequest) (resp *types.P
 		l.Errorw("[Purchase] Marshal payload error", logger.Field("error", err.Error()), logger.Field("payload", payload))
 	}
 	task := asynq.NewTask(queue.DeferCloseOrder, val, asynq.MaxRetry(3))
-	taskInfo, err := l.svcCtx.Queue.Enqueue(task, asynq.ProcessIn(CloseOrderTimeMinutes*time.Minute))
+	taskInfo, err := l.deps.Queue.Enqueue(task, asynq.ProcessIn(CloseOrderTimeMinutes*time.Minute))
 	if err != nil {
 		l.Errorw("[Purchase] Enqueue task error", logger.Field("error", err.Error()), logger.Field("task", task))
 	} else {

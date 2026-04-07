@@ -2,13 +2,13 @@ package user
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -19,9 +19,9 @@ type UnsubscribeInput struct {
 	Body types.UnsubscribeRequest
 }
 
-func UnsubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *UnsubscribeInput) (*struct{}, error) {
+func UnsubscribeHandler(deps Deps) func(context.Context, *UnsubscribeInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UnsubscribeInput) (*struct{}, error) {
-		l := NewUnsubscribeLogic(ctx, svcCtx)
+		l := NewUnsubscribeLogic(ctx, deps)
 		if err := l.Unsubscribe(&input.Body); err != nil {
 			return nil, err
 		}
@@ -31,16 +31,16 @@ func UnsubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *Unsub
 
 type UnsubscribeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewUnsubscribeLogic creates a new instance of UnsubscribeLogic for handling subscription cancellation
-func NewUnsubscribeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UnsubscribeLogic {
+func NewUnsubscribeLogic(ctx context.Context, deps Deps) *UnsubscribeLogic {
 	return &UnsubscribeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -54,7 +54,7 @@ func (l *UnsubscribeLogic) Unsubscribe(req *types.UnsubscribeRequest) error {
 	}
 
 	// find user subscription by ID
-	userSub, err := l.svcCtx.UserModel.FindOneSubscribe(l.ctx, req.Id)
+	userSub, err := l.deps.UserModel.FindOneSubscribe(l.ctx, req.Id)
 	if err != nil {
 		l.Errorw("FindOneSubscribe failed", logger.Field("error", err.Error()), logger.Field("reqId", req.Id))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindOneSubscribe failed: %v", err.Error())
@@ -69,21 +69,21 @@ func (l *UnsubscribeLogic) Unsubscribe(req *types.UnsubscribeRequest) error {
 	}
 
 	// Calculate the remaining amount to refund based on unused subscription time/traffic
-	remainingAmount, err := CalculateRemainingAmount(l.ctx, l.svcCtx, req.Id)
+	remainingAmount, err := CalculateRemainingAmount(l.ctx, l.deps, req.Id)
 	if err != nil {
 		return err
 	}
 
 	// Process unsubscription in a database transaction to ensure data consistency
-	err = l.svcCtx.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	err = l.deps.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		// Find and update subscription status to cancelled (status = 4)
 		userSub.Status = 4 // Set status to cancelled
-		if err = l.svcCtx.UserModel.UpdateSubscribe(l.ctx, userSub); err != nil {
+		if err = l.deps.UserModel.UpdateSubscribe(l.ctx, userSub); err != nil {
 			return err
 		}
 
 		// Query the original order information to determine refund strategy
-		orderInfo, err := l.svcCtx.OrderModel.FindOne(l.ctx, userSub.OrderId)
+		orderInfo, err := l.deps.OrderModel.FindOne(l.ctx, userSub.OrderId)
 		if err != nil {
 			return err
 		}
@@ -155,7 +155,7 @@ func (l *UnsubscribeLogic) Unsubscribe(req *types.UnsubscribeRequest) error {
 
 		// Update user's regular balance and save changes to database
 		u.Balance = balance
-		return l.svcCtx.UserModel.Update(l.ctx, u)
+		return l.deps.UserModel.Update(l.ctx, u)
 	})
 
 	if err != nil {
@@ -164,12 +164,12 @@ func (l *UnsubscribeLogic) Unsubscribe(req *types.UnsubscribeRequest) error {
 	}
 
 	//clear user subscription cache
-	if err = l.svcCtx.UserModel.ClearSubscribeCache(l.ctx, userSub); err != nil {
+	if err = l.deps.UserModel.ClearSubscribeCache(l.ctx, userSub); err != nil {
 		l.Errorw("ClearSubscribeCache failed", logger.Field("error", err.Error()), logger.Field("userSubscribeId", userSub.Id))
 		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "ClearSubscribeCache failed: %v", err.Error())
 	}
 	// Clear subscription cache
-	if err = l.svcCtx.SubscribeModel.ClearCache(l.ctx, userSub.SubscribeId); err != nil {
+	if err = l.deps.SubscribeModel.ClearCache(l.ctx, userSub.SubscribeId); err != nil {
 		l.Errorw("ClearSubscribeCache failed", logger.Field("error", err.Error()), logger.Field("subscribeId", userSub.SubscribeId))
 		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "ClearSubscribeCache failed: %v", err.Error())
 	}

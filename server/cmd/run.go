@@ -89,8 +89,8 @@ func getServers() *service.Group {
 	ctx := svc.NewServiceContext(c)
 	services := service.NewServiceGroup()
 	services.Add(NewService(ctx))
-	services.Add(worker.NewConsumerService(ctx))
-	services.Add(worker.NewSchedulerService(ctx))
+	services.Add(worker.NewConsumerService(ctx.Config, newWorkerRegistryDeps(ctx)))
+	services.Add(worker.NewSchedulerService(ctx.Config))
 	return services
 }
 

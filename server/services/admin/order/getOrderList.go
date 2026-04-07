@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type GetOrderListOutput struct {
 	Body *types.GetOrderListResponse
 }
 
-func GetOrderListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetOrderListInput) (*GetOrderListOutput, error) {
+func GetOrderListHandler(deps Deps) func(context.Context, *GetOrderListInput) (*GetOrderListOutput, error) {
 	return func(ctx context.Context, input *GetOrderListInput) (*GetOrderListOutput, error) {
-		l := NewGetOrderListLogic(ctx, svcCtx)
+		l := NewGetOrderListLogic(ctx, deps)
 		resp, err := l.GetOrderList(&input.GetOrderListRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func GetOrderListHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetO
 
 type GetOrderListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewGetOrderListLogic Get order list
-func NewGetOrderListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetOrderListLogic {
+func NewGetOrderListLogic(ctx context.Context, deps Deps) *GetOrderListLogic {
 	return &GetOrderListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetOrderListLogic) GetOrderList(req *types.GetOrderListRequest) (resp *types.GetOrderListResponse, err error) {
-	total, list, err := l.svcCtx.OrderModel.QueryOrderListByPage(l.ctx, int(req.Page), int(req.Size), req.Status, req.UserId, req.SubscribeId, req.Search)
+	total, list, err := l.deps.OrderModel.QueryOrderListByPage(l.ctx, int(req.Page), int(req.Size), req.Status, req.UserId, req.SubscribeId, req.Search)
 	if err != nil {
 		l.Errorw("[GetOrderList] Database Error", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "QueryOrderListByPage error: %v", err.Error())

@@ -7,7 +7,6 @@ import (
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 )
 
 type verifyConfig struct {
@@ -18,31 +17,36 @@ type verifyConfig struct {
 	EnableResetPasswordVerify bool
 }
 
-func Verify(svc *svc.ServiceContext) {
+func Verify(deps Deps) {
 	logger.Debug("Verify config initialization")
-	configs, err := svc.SystemModel.GetVerifyConfig(context.Background())
+	configs, err := deps.SystemModel.GetVerifyConfig(context.Background())
 	if err != nil {
 		logger.Error("[Init Verify Config] Get Verify Config Error: ", logger.Field("error", err.Error()))
 		return
 	}
 	var verify verifyConfig
 	tool.SystemConfigSliceReflectToStruct(configs, &verify)
-	svc.Config.Verify = config.Verify{
+	verifyCfg := config.Verify{
 		TurnstileSiteKey:    verify.TurnstileSiteKey,
 		TurnstileSecret:     verify.TurnstileSecret,
 		LoginVerify:         verify.EnableLoginVerify,
 		RegisterVerify:      verify.EnableRegisterVerify,
 		ResetPasswordVerify: verify.EnableResetPasswordVerify,
 	}
+	if deps.Config != nil {
+		deps.Config.Verify = verifyCfg
+	}
 
 	logger.Debug("Verify code config initialization")
 
 	var verifyCodeConfig config.VerifyCode
-	cfg, err := svc.SystemModel.GetVerifyCodeConfig(context.Background())
+	cfg, err := deps.SystemModel.GetVerifyCodeConfig(context.Background())
 	if err != nil {
 		logger.Errorf("[Init Verify Config] Get Verify Code Config Error: %s", err.Error())
 		return
 	}
 	tool.SystemConfigSliceReflectToStruct(cfg, &verifyCodeConfig)
-	svc.Config.VerifyCode = verifyCodeConfig
+	if deps.Config != nil {
+		deps.Config.VerifyCode = verifyCodeConfig
+	}
 }

@@ -8,18 +8,17 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/services/user/order"
-	"github.com/perfect-panel/server/svc"
 	internal "github.com/perfect-panel/server/types"
 	"github.com/perfect-panel/server/worker/spec"
 )
 
 type DeferCloseOrderLogic struct {
-	svc *svc.ServiceContext
+	deps Deps
 }
 
-func NewDeferCloseOrderLogic(svc *svc.ServiceContext) *DeferCloseOrderLogic {
+func NewDeferCloseOrderLogic(deps Deps) *DeferCloseOrderLogic {
 	return &DeferCloseOrderLogic{
-		svc: svc,
+		deps: deps,
 	}
 }
 
@@ -33,7 +32,17 @@ func (l *DeferCloseOrderLogic) ProcessTask(ctx context.Context, task *asynq.Task
 		return nil
 	}
 
-	err := order.NewCloseOrderLogic(ctx, l.svc).CloseOrder(&internal.CloseOrderRequest{
+	orderDeps := order.Deps{
+		OrderModel:     l.deps.OrderModel,
+		PaymentModel:   l.deps.PaymentModel,
+		SubscribeModel: l.deps.SubscribeModel,
+		UserModel:      l.deps.UserModel,
+		CouponModel:    l.deps.CouponModel,
+		DB:             l.deps.DB,
+		Queue:          l.deps.Queue,
+		Config:         l.deps.Config,
+	}
+	err := order.NewCloseOrderLogic(ctx, orderDeps).CloseOrder(&internal.CloseOrderRequest{
 		OrderNo: payload.OrderNo,
 	})
 	count, ok := asynq.GetRetryCount(ctx)

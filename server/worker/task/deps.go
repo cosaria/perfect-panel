@@ -1,0 +1,25 @@
+package task
+
+import (
+	serverconfig "github.com/perfect-panel/server/config"
+	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
+	modelsystem "github.com/perfect-panel/server/models/system"
+	modeluser "github.com/perfect-panel/server/models/user"
+	"gorm.io/gorm"
+)
+
+type Deps struct {
+	DB              *gorm.DB
+	SystemModel     modelsystem.Model
+	SubscribeModel  modelsubscribe.Model
+	UserModel       modeluser.Model
+	SetExchangeRate func(float64)
+	Config          *serverconfig.Config
+}
+
+func (d Deps) currentConfig() serverconfig.Config {
+	if d.Config == nil {
+		return serverconfig.Config{}
+	}
+	return *d.Config
+}

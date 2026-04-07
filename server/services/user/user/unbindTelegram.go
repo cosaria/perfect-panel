@@ -2,22 +2,23 @@ package user
 
 import (
 	"context"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/services/telegram"
-	"github.com/perfect-panel/server/svc"
 	"github.com/pkg/errors"
 	"strconv"
 	"time"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func UnbindTelegramHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*struct{}, error) {
+func UnbindTelegramHandler(deps Deps) func(context.Context, *struct{}) (*struct{}, error) {
 	return func(ctx context.Context, _ *struct{}) (*struct{}, error) {
-		l := NewUnbindTelegramLogic(ctx, svcCtx)
+		l := NewUnbindTelegramLogic(ctx, deps)
 		if err := l.UnbindTelegram(); err != nil {
 			return nil, err
 		}
@@ -27,16 +28,16 @@ func UnbindTelegramHandler(svcCtx *svc.ServiceContext) func(context.Context, *st
 
 type UnbindTelegramLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Unbind Telegram
-func NewUnbindTelegramLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UnbindTelegramLogic {
+func NewUnbindTelegramLogic(ctx context.Context, deps Deps) *UnbindTelegramLogic {
 	return &UnbindTelegramLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -48,7 +49,7 @@ func (l *UnbindTelegramLogic) UnbindTelegram() error {
 		logger.Error("current user is not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}
-	method, err := l.svcCtx.UserModel.FindUserAuthMethodByPlatform(l.ctx, u.Id, "telegram")
+	method, err := l.deps.UserModel.FindUserAuthMethodByPlatform(l.ctx, u.Id, "telegram")
 	if err != nil {
 		l.Errorw("UnbindTelegramLogic FindUserAuthMethodByPlatform Error", logger.Field("id", u.Id), logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Find User Auth Method By Platform Failed")
@@ -65,7 +66,7 @@ func (l *UnbindTelegramLogic) UnbindTelegram() error {
 	}
 
 	// Unbind Telegram
-	err = l.svcCtx.UserModel.DeleteUserAuthMethods(l.ctx, u.Id, "telegram")
+	err = l.deps.UserModel.DeleteUserAuthMethods(l.ctx, u.Id, "telegram")
 	if err != nil {
 		l.Errorw("UnbindTelegramLogic DeleteUserAuthMethods Error", logger.Field("id", u.Id), logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "Delete User Auth Methods Failed")
@@ -80,7 +81,7 @@ func (l *UnbindTelegramLogic) UnbindTelegram() error {
 		return nil
 	}
 	msg := tgbotapi.NewMessage(userTelegramChatId, text)
-	_, err = l.svcCtx.TelegramBot.Send(msg)
+	_, err = l.deps.TelegramBot.Send(msg)
 	if err != nil {
 		l.Errorw("UnbindTelegramLogic Send Error", logger.Field("id", u.Id), logger.Field("error", err.Error()))
 		return nil

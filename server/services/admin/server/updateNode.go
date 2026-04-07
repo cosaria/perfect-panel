@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -15,9 +14,9 @@ type UpdateNodeInput struct {
 	Body types.UpdateNodeRequest
 }
 
-func UpdateNodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateNodeInput) (*struct{}, error) {
+func UpdateNodeHandler(deps Deps) func(context.Context, *UpdateNodeInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateNodeInput) (*struct{}, error) {
-		l := NewUpdateNodeLogic(ctx, svcCtx)
+		l := NewUpdateNodeLogic(ctx, deps)
 		if err := l.UpdateNode(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,21 +26,21 @@ func UpdateNodeHandler(svcCtx *svc.ServiceContext) func(context.Context, *Update
 
 type UpdateNodeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewUpdateNodeLogic Update Node
-func NewUpdateNodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateNodeLogic {
+func NewUpdateNodeLogic(ctx context.Context, deps Deps) *UpdateNodeLogic {
 	return &UpdateNodeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *UpdateNodeLogic) UpdateNode(req *types.UpdateNodeRequest) error {
-	data, err := l.svcCtx.NodeModel.FindOneNode(l.ctx, req.Id)
+	data, err := l.deps.NodeModel.FindOneNode(l.ctx, req.Id)
 	if err != nil {
 		l.Errorw("[UpdateNode] Query Database Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "[UpdateNode] Query Database Error")
@@ -53,12 +52,12 @@ func (l *UpdateNodeLogic) UpdateNode(req *types.UpdateNodeRequest) error {
 	data.Address = req.Address
 	data.Protocol = req.Protocol
 	data.Enabled = req.Enabled
-	err = l.svcCtx.NodeModel.UpdateNode(l.ctx, data)
+	err = l.deps.NodeModel.UpdateNode(l.ctx, data)
 	if err != nil {
 		l.Errorw("[UpdateNode] Update Database Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "[UpdateNode] Update Database Error")
 	}
-	return l.svcCtx.NodeModel.ClearNodeCache(l.ctx, &node.FilterNodeParams{
+	return l.deps.NodeModel.ClearNodeCache(l.ctx, &node.FilterNodeParams{
 		Page:     1,
 		Size:     1000,
 		ServerId: []int64{data.ServerId},

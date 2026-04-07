@@ -6,7 +6,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/routers/response"
-	"github.com/perfect-panel/server/svc"
+	appruntime "github.com/perfect-panel/server/runtime"
 )
 
 var bearerSecurity = []map[string][]string{{"bearer": {}}}
@@ -102,26 +102,26 @@ func (a *APIs) UserOpenAPI() (map[string]interface{}, error) {
 	return merged, nil
 }
 
-func RegisterHandlers(router *gin.Engine, serverCtx *svc.ServiceContext) {
-	registerHandlers(router, serverCtx, false)
+func RegisterHandlers(router *gin.Engine, runtimeDeps *appruntime.Deps) {
+	registerHandlers(router, runtimeDeps, false)
 }
 
 // RegisterHandlersForSpec registers only route metadata (no middleware, no server routes).
-// Used by the openapi export command — serverCtx can be nil.
+// Used by the openapi export command — runtime deps can be nil.
 func RegisterHandlersForSpec(router *gin.Engine) *APIs {
 	return registerHandlers(router, nil, true)
 }
 
-func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnly bool) *APIs {
+func registerHandlers(router *gin.Engine, runtimeDeps *appruntime.Deps, specOnly bool) *APIs {
 	response.InstallHumaProblemFactory()
 
 	apis := &APIs{}
 
-	registerAdminRoutes(router, serverCtx, specOnly, apis)
+	registerAdminRoutes(router, runtimeDeps, specOnly, apis)
 
-	registerCommonRoutes(router, serverCtx, specOnly, apis)
-	registerUserRoutes(router, serverCtx, specOnly, apis)
-	registerServerRoutes(router, serverCtx, specOnly)
+	registerCommonRoutes(router, runtimeDeps, specOnly, apis)
+	registerUserRoutes(router, runtimeDeps, specOnly, apis)
+	registerServerRoutes(router, runtimeDeps, specOnly)
 
 	return apis
 }

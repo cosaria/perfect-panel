@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"fmt"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/user"
@@ -11,7 +12,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/modules/util/uuidx"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -27,10 +27,10 @@ type DeviceLoginOutput struct {
 	Body *types.LoginResponse
 }
 
-func DeviceLoginHandler(svcCtx *svc.ServiceContext) func(context.Context, *DeviceLoginInput) (*DeviceLoginOutput, error) {
+func DeviceLoginHandler(deps Deps) func(context.Context, *DeviceLoginInput) (*DeviceLoginOutput, error) {
 	return func(ctx context.Context, input *DeviceLoginInput) (*DeviceLoginOutput, error) {
 		input.Body.IP = input.IP
-		l := NewDeviceLoginLogic(ctx, svcCtx)
+		l := NewDeviceLoginLogic(ctx, deps)
 		resp, err := l.DeviceLogin(&input.Body)
 		if err != nil {
 			return nil, err
@@ -41,21 +41,22 @@ func DeviceLoginHandler(svcCtx *svc.ServiceContext) func(context.Context, *Devic
 
 type DeviceLoginLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Device Login
-func NewDeviceLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeviceLoginLogic {
+func NewDeviceLoginLogic(ctx context.Context, deps Deps) *DeviceLoginLogic {
 	return &DeviceLoginLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *DeviceLoginLogic) DeviceLogin(req *types.DeviceLoginRequest) (resp *types.LoginResponse, err error) {
-	if !l.svcCtx.Config.Device.Enable {
+	cfg := l.deps.currentConfig()
+	if !cfg.Device.Enable {
 		return nil, xerr.NewErrMsg("Device login is disabled")
 	}
 
@@ -72,7 +73,7 @@ func (l *DeviceLoginLogic) DeviceLogin(req *types.DeviceLoginRequest) (resp *typ
 				Timestamp: time.Now().UnixMilli(),
 			}
 			content, _ := loginLog.Marshal()
-			if err := l.svcCtx.LogModel.Insert(l.ctx, &log.SystemLog{
+			if err := l.deps.LogModel.Insert(l.ctx, &log.SystemLog{
 				Type:     log.TypeLogin.Uint8(),
 				Date:     time.Now().Format("2006-01-02"),
 				ObjectID: userInfo.Id,
@@ -88,7 +89,7 @@ func (l *DeviceLoginLogic) DeviceLogin(req *types.DeviceLoginRequest) (resp *typ
 	}()
 
 	// Check if device exists by identifier
-	deviceInfo, err := l.svcCtx.UserModel.FindOneDeviceByIdentifier(l.ctx, req.Identifier)
+	deviceInfo, err := l.deps.UserModel.FindOneDeviceByIdentifier(l.ctx, req.Identifier)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// Device not found, create new user and device
@@ -105,7 +106,7 @@ func (l *DeviceLoginLogic) DeviceLogin(req *types.DeviceLoginRequest) (resp *typ
 		}
 	} else {
 		// Device found, get user info
-		userInfo, err = l.svcCtx.UserModel.FindOne(l.ctx, deviceInfo.UserId)
+		userInfo, err = l.deps.UserModel.FindOne(l.ctx, deviceInfo.UserId)
 		if err != nil {
 			l.Errorw("query user failed",
 				logger.Field("user_id", deviceInfo.UserId),
@@ -120,9 +121,9 @@ func (l *DeviceLoginLogic) DeviceLogin(req *types.DeviceLoginRequest) (resp *typ
 
 	// Generate token
 	token, err := jwt.NewJwtToken(
-		l.svcCtx.Config.JwtAuth.AccessSecret,
+		cfg.JwtAuth.AccessSecret,
 		time.Now().Unix(),
-		l.svcCtx.Config.JwtAuth.AccessExpire,
+		cfg.JwtAuth.AccessExpire,
 		jwt.WithOption("UserId", userInfo.Id),
 		jwt.WithOption("SessionId", sessionId),
 		jwt.WithOption("LoginType", "device"),
@@ -137,7 +138,7 @@ func (l *DeviceLoginLogic) DeviceLogin(req *types.DeviceLoginRequest) (resp *typ
 
 	// Store session id in redis
 	sessionIdCacheKey := fmt.Sprintf("%v:%v", config.SessionIdKey, sessionId)
-	if err = l.svcCtx.Redis.Set(l.ctx, sessionIdCacheKey, userInfo.Id, time.Duration(l.svcCtx.Config.JwtAuth.AccessExpire)*time.Second).Err(); err != nil {
+	if err = l.deps.Redis.Set(l.ctx, sessionIdCacheKey, userInfo.Id, time.Duration(cfg.JwtAuth.AccessExpire)*time.Second).Err(); err != nil {
 		l.Errorw("set session id error",
 			logger.Field("user_id", userInfo.Id),
 			logger.Field("error", err.Error()),
@@ -158,10 +159,11 @@ func (l *DeviceLoginLogic) registerUserAndDevice(req *types.DeviceLoginRequest) 
 	)
 
 	var userInfo *user.User
-	err := l.svcCtx.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
+	cfg := l.deps.currentConfig()
+	err := l.deps.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		// Create new user
 		userInfo = &user.User{
-			OnlyFirstPurchase: &l.svcCtx.Config.Invite.OnlyFirstPurchase,
+			OnlyFirstPurchase: &cfg.Invite.OnlyFirstPurchase,
 		}
 		if err := db.Create(userInfo).Error; err != nil {
 			l.Errorw("failed to create user",
@@ -215,7 +217,7 @@ func (l *DeviceLoginLogic) registerUserAndDevice(req *types.DeviceLoginRequest) 
 		}
 
 		// Activate trial if enabled
-		if l.svcCtx.Config.Register.EnableTrial {
+		if cfg.Register.EnableTrial {
 			if err := l.activeTrial(userInfo.Id, db); err != nil {
 				return err
 			}
@@ -248,7 +250,7 @@ func (l *DeviceLoginLogic) registerUserAndDevice(req *types.DeviceLoginRequest) 
 	}
 	content, _ := registerLog.Marshal()
 
-	if err := l.svcCtx.LogModel.Insert(l.ctx, &log.SystemLog{
+	if err := l.deps.LogModel.Insert(l.ctx, &log.SystemLog{
 		Type:     log.TypeRegister.Uint8(),
 		Date:     time.Now().Format("2006-01-02"),
 		ObjectID: userInfo.Id,
@@ -265,18 +267,19 @@ func (l *DeviceLoginLogic) registerUserAndDevice(req *types.DeviceLoginRequest) 
 }
 
 func (l *DeviceLoginLogic) activeTrial(userId int64, db *gorm.DB) error {
-	sub, err := l.svcCtx.SubscribeModel.FindOne(l.ctx, l.svcCtx.Config.Register.TrialSubscribe)
+	cfg := l.deps.currentConfig()
+	sub, err := l.deps.SubscribeModel.FindOne(l.ctx, cfg.Register.TrialSubscribe)
 	if err != nil {
 		l.Errorw("failed to find trial subscription template",
 			logger.Field("user_id", userId),
-			logger.Field("trial_subscribe_id", l.svcCtx.Config.Register.TrialSubscribe),
+			logger.Field("trial_subscribe_id", cfg.Register.TrialSubscribe),
 			logger.Field("error", err.Error()),
 		)
 		return err
 	}
 
 	startTime := time.Now()
-	expireTime := tool.AddTime(l.svcCtx.Config.Register.TrialTimeUnit, l.svcCtx.Config.Register.TrialTime, startTime)
+	expireTime := tool.AddTime(cfg.Register.TrialTimeUnit, cfg.Register.TrialTime, startTime)
 	subscribeToken := uuidx.SubscribeToken(fmt.Sprintf("Trial-%v", userId))
 	subscribeUUID := uuidx.NewUUID().String()
 

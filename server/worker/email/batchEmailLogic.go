@@ -8,11 +8,10 @@ import (
 	taskModel "github.com/perfect-panel/server/models/task"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/notify/email"
-	"github.com/perfect-panel/server/svc"
 )
 
 type BatchEmailLogic struct {
-	svcCtx *svc.ServiceContext
+	deps Deps
 }
 
 type ErrorInfo struct {
@@ -21,9 +20,9 @@ type ErrorInfo struct {
 	Time  int64  `json:"time"`
 }
 
-func NewBatchEmailLogic(svcCtx *svc.ServiceContext) *BatchEmailLogic {
+func NewBatchEmailLogic(deps Deps) *BatchEmailLogic {
 	return &BatchEmailLogic{
-		svcCtx: svcCtx,
+		deps: deps,
 	}
 }
 
@@ -43,7 +42,7 @@ func (l *BatchEmailLogic) ProcessTask(ctx context.Context, task *asynq.Task) err
 		)
 		return asynq.SkipRetry
 	}
-	tx := l.svcCtx.DB.WithContext(ctx)
+	tx := l.deps.DB.WithContext(ctx)
 	var taskInfo taskModel.Task
 	if err = tx.Model(&taskModel.Task{}).Where("id = ?", taskID).First(&taskInfo).Error; err != nil {
 		logger.WithContext(ctx).Error("[BatchEmailLogic] ProcessTask failed",
@@ -61,12 +60,13 @@ func (l *BatchEmailLogic) ProcessTask(ctx context.Context, task *asynq.Task) err
 		return nil
 	}
 
-	sender, err := email.NewSender(l.svcCtx.Config.Email.Platform, l.svcCtx.Config.Email.PlatformConfig, l.svcCtx.Config.Site.SiteName)
+	cfg := l.deps.currentConfig()
+	sender, err := email.NewSender(cfg.Email.Platform, cfg.Email.PlatformConfig, cfg.Site.SiteName)
 	if err != nil {
 		logger.WithContext(ctx).Error("[BatchEmailLogic] NewSender failed", logger.Field("error", err.Error()))
 		return nil
 	}
-	manager := email.NewWorkerManager(l.svcCtx.DB, sender)
+	manager := email.NewWorkerManager(l.deps.DB, sender)
 	if manager == nil {
 		logger.WithContext(ctx).Error("[BatchEmailLogic] ProcessTask failed: worker manager is nil")
 		return asynq.SkipRetry

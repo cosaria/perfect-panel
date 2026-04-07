@@ -7,7 +7,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
@@ -18,9 +17,9 @@ type CurrentUserOutput struct {
 	Body *types.User
 }
 
-func CurrentUserHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*CurrentUserOutput, error) {
+func CurrentUserHandler(deps Deps) func(context.Context, *struct{}) (*CurrentUserOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*CurrentUserOutput, error) {
-		l := NewCurrentUserLogic(ctx, svcCtx)
+		l := NewCurrentUserLogic(ctx, deps)
 		resp, err := l.CurrentUser()
 		if err != nil {
 			return nil, err
@@ -30,15 +29,15 @@ func CurrentUserHandler(svcCtx *svc.ServiceContext) func(context.Context, *struc
 }
 
 type CurrentUserLogic struct {
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 	logger.Logger
 }
 
-func NewCurrentUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CurrentUserLogic {
+func NewCurrentUserLogic(ctx context.Context, deps Deps) *CurrentUserLogic {
 	return &CurrentUserLogic{
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 		Logger: logger.WithContext(ctx),
 	}
 }

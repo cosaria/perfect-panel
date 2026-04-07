@@ -11,7 +11,6 @@ import (
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/modules/util/uuidx"
 	"github.com/perfect-panel/server/routers/response"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
@@ -19,18 +18,18 @@ import (
 	"strings"
 )
 
-func GetServerUserListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
+func GetServerUserListHandler(deps Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var req types.GetServerUserListRequest
 		_ = c.ShouldBind(&req)
 		_ = c.ShouldBindQuery(&req.ServerCommon)
-		validateErr := svcCtx.Validate(&req)
+		validateErr := validateRequest(&req)
 		if validateErr != nil {
 			response.ParamErrorResult(c, validateErr)
 			return
 		}
 
-		l := NewGetServerUserListLogic(c, svcCtx)
+		l := NewGetServerUserListLogic(c, deps)
 		resp, err := l.GetServerUserList(&req)
 		if err != nil {
 			if errors.Is(err, xerr.StatusNotModified) {
@@ -46,22 +45,22 @@ func GetServerUserListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 
 type GetServerUserListLogic struct {
 	logger.Logger
-	ctx    *gin.Context
-	svcCtx *svc.ServiceContext
+	ctx  *gin.Context
+	deps Deps
 }
 
 // NewGetServerUserListLogic Get user list
-func NewGetServerUserListLogic(ctx *gin.Context, svcCtx *svc.ServiceContext) *GetServerUserListLogic {
+func NewGetServerUserListLogic(ctx *gin.Context, deps Deps) *GetServerUserListLogic {
 	return &GetServerUserListLogic{
 		Logger: logger.WithContext(ctx.Request.Context()),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetServerUserListLogic) GetServerUserList(req *types.GetServerUserListRequest) (resp *types.GetServerUserListResponse, err error) {
 	cacheKey := fmt.Sprintf("%s%d", node.ServerUserListCacheKey, req.ServerId)
-	cache, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
+	cache, err := l.deps.Redis.Get(l.ctx, cacheKey).Result()
 	if err != nil && err != redis.Nil {
 		return nil, err
 	}
@@ -80,12 +79,12 @@ func (l *GetServerUserListLogic) GetServerUserList(req *types.GetServerUserListR
 		}
 		return resp, nil
 	}
-	server, err := l.svcCtx.NodeModel.FindOneServer(l.ctx, req.ServerId)
+	server, err := l.deps.NodeModel.FindOneServer(l.ctx, req.ServerId)
 	if err != nil {
 		return nil, err
 	}
 
-	_, nodes, err := l.svcCtx.NodeModel.FilterNodeList(l.ctx, &node.FilterNodeParams{
+	_, nodes, err := l.deps.NodeModel.FilterNodeList(l.ctx, &node.FilterNodeParams{
 		Page:     1,
 		Size:     1000,
 		ServerId: []int64{server.Id},
@@ -104,7 +103,7 @@ func (l *GetServerUserListLogic) GetServerUserList(req *types.GetServerUserListR
 		}
 	}
 
-	_, subs, err := l.svcCtx.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
+	_, subs, err := l.deps.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
 		Page: 1,
 		Size: 9999,
 		Node: nodeIds,
@@ -126,7 +125,7 @@ func (l *GetServerUserListLogic) GetServerUserList(req *types.GetServerUserListR
 	}
 	users := make([]types.ServerUser, 0)
 	for _, sub := range subs {
-		data, err := l.svcCtx.UserModel.FindUsersSubscribeBySubscribeId(l.ctx, sub.Id)
+		data, err := l.deps.UserModel.FindUsersSubscribeBySubscribeId(l.ctx, sub.Id)
 		if err != nil {
 			return nil, err
 		}
@@ -151,7 +150,7 @@ func (l *GetServerUserListLogic) GetServerUserList(req *types.GetServerUserListR
 	val, _ := json.Marshal(resp)
 	etag := tool.GenerateETag(val)
 	l.ctx.Header("ETag", etag)
-	err = l.svcCtx.Redis.Set(l.ctx, cacheKey, string(val), -1).Err()
+	err = l.deps.Redis.Set(l.ctx, cacheKey, string(val), -1).Err()
 	if err != nil {
 		l.Errorw("[ServerUserListCacheKey] redis set error", logger.Field("error", err.Error()))
 	}

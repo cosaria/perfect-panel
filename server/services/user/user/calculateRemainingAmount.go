@@ -7,21 +7,21 @@ import (
 
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/payment/deduction"
-	"github.com/perfect-panel/server/svc"
 	"github.com/pkg/errors"
 )
 
-func CalculateRemainingAmount(ctx context.Context, svcCtx *svc.ServiceContext, userSubscribeId int64) (int64, error) {
+func CalculateRemainingAmount(ctx context.Context, deps Deps, userSubscribeId int64) (int64, error) {
 	// Find User Subscribe
-	userSubscribe, err := svcCtx.UserModel.FindOneUserSubscribe(ctx, userSubscribeId)
+	userSubscribe, err := deps.UserModel.FindOneUserSubscribe(ctx, userSubscribeId)
 	if err != nil {
-		logger.WithContext(ctx).Error("[func CalculateRemainingAmount(ctx context.Context, svcCtx *svc.ServiceContext, userSubscribeId int64) (int64, error) {\n] FindOneUserSubscribe", logger.Field("err", err.Error()), logger.Field("id", userSubscribeId))
+		logger.WithContext(ctx).Error("[func CalculateRemainingAmount(ctx context.Context, deps Deps, userSubscribeId int64) (int64, error)] FindOneUserSubscribe", logger.Field("err", err.Error()), logger.Field("id", userSubscribeId))
 		return 0, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindOneUserSubscribe failed, id: %d", userSubscribeId)
 	}
 	if userSubscribe.OrderId == 0 {
 		return 0, nil
 	}
-	if !*userSubscribe.Subscribe.AllowDeduction && !svcCtx.Config.Subscribe.SingleModel {
+	cfg := deps.currentConfig()
+	if !*userSubscribe.Subscribe.AllowDeduction && !cfg.Subscribe.SingleModel {
 		return 0, errors.New("The subscription package does not support deductions")
 	}
 
@@ -29,7 +29,7 @@ func CalculateRemainingAmount(ctx context.Context, svcCtx *svc.ServiceContext, u
 		return 0, errors.New("The subscription package is not in use")
 	}
 	// Find Order Details
-	orderDetails, err := svcCtx.OrderModel.FindOneDetails(ctx, userSubscribe.OrderId)
+	orderDetails, err := deps.OrderModel.FindOneDetails(ctx, userSubscribe.OrderId)
 	if err != nil {
 		logger.WithContext(ctx).Error("[PreUnsubscribe] FindOneDetails", logger.Field("err", err.Error()), logger.Field("id", userSubscribe.OrderId))
 		return 0, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindOneDetails failed, id: %d", userSubscribe.OrderId)

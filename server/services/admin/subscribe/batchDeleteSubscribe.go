@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -15,9 +14,9 @@ type BatchDeleteSubscribeInput struct {
 	Body types.BatchDeleteSubscribeRequest
 }
 
-func BatchDeleteSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Context, *BatchDeleteSubscribeInput) (*struct{}, error) {
+func BatchDeleteSubscribeHandler(deps Deps) func(context.Context, *BatchDeleteSubscribeInput) (*struct{}, error) {
 	return func(ctx context.Context, input *BatchDeleteSubscribeInput) (*struct{}, error) {
-		l := NewBatchDeleteSubscribeLogic(ctx, svcCtx)
+		l := NewBatchDeleteSubscribeLogic(ctx, deps)
 		if err := l.BatchDeleteSubscribe(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,23 +26,23 @@ func BatchDeleteSubscribeHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type BatchDeleteSubscribeLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Batch delete subscribe
-func NewBatchDeleteSubscribeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *BatchDeleteSubscribeLogic {
+func NewBatchDeleteSubscribeLogic(ctx context.Context, deps Deps) *BatchDeleteSubscribeLogic {
 	return &BatchDeleteSubscribeLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 var errorIsExistActiveUser = errors.New("subscription ID belongs to an active user subscription")
 
 func (l *BatchDeleteSubscribeLogic) BatchDeleteSubscribe(req *types.BatchDeleteSubscribeRequest) error {
-	err := l.svcCtx.DB.Transaction(func(tx *gorm.DB) error {
+	err := l.deps.DB.Transaction(func(tx *gorm.DB) error {
 		for _, id := range req.Ids {
 			var count int64
 			// Validate whether the subscription ID belongs to an active user subscription.
@@ -54,7 +53,7 @@ func (l *BatchDeleteSubscribeLogic) BatchDeleteSubscribe(req *types.BatchDeleteS
 			if count > 0 {
 				return errorIsExistActiveUser
 			}
-			if err := l.svcCtx.SubscribeModel.Delete(l.ctx, id, tx); err != nil {
+			if err := l.deps.SubscribeModel.Delete(l.ctx, id, tx); err != nil {
 				return err
 			}
 		}

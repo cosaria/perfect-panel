@@ -22,7 +22,6 @@ import (
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/modules/util/uuidx"
 	"github.com/perfect-panel/server/services/telegram"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/worker/spec"
 	"gorm.io/gorm"
 )
@@ -52,13 +51,13 @@ var (
 
 // ActivateOrderLogic handles the activation and processing of paid orders
 type ActivateOrderLogic struct {
-	svc *svc.ServiceContext // Service context containing dependencies
+	deps Deps
 }
 
 // NewActivateOrderLogic creates a new instance of ActivateOrderLogic
-func NewActivateOrderLogic(svc *svc.ServiceContext) *ActivateOrderLogic {
+func NewActivateOrderLogic(deps Deps) *ActivateOrderLogic {
 	return &ActivateOrderLogic{
-		svc: svc,
+		deps: deps,
 	}
 }
 
@@ -101,7 +100,7 @@ func (l *ActivateOrderLogic) parsePayload(ctx context.Context, payload []byte) (
 // validateAndGetOrder retrieves an order by order number and validates its status
 // Returns error if order is not found or not in paid status
 func (l *ActivateOrderLogic) validateAndGetOrder(ctx context.Context, orderNo string) (*order.Order, error) {
-	orderInfo, err := l.svc.OrderModel.FindOneByOrderNo(ctx, orderNo)
+	orderInfo, err := l.deps.OrderModel.FindOneByOrderNo(ctx, orderNo)
 	if err != nil {
 		logger.WithContext(ctx).Error("Find order failed",
 			logger.Field("error", err.Error()),
@@ -143,7 +142,7 @@ func (l *ActivateOrderLogic) processOrderByType(ctx context.Context, orderInfo *
 func (l *ActivateOrderLogic) finalizeCouponAndOrder(ctx context.Context, orderInfo *order.Order) {
 	// Update coupon if exists
 	if orderInfo.Coupon != "" {
-		if err := l.svc.CouponModel.UpdateCount(ctx, orderInfo.Coupon); err != nil {
+		if err := l.deps.CouponModel.UpdateCount(ctx, orderInfo.Coupon); err != nil {
 			logger.WithContext(ctx).Error("Update coupon status failed",
 				logger.Field("error", err.Error()),
 				logger.Field("coupon", orderInfo.Coupon),
@@ -153,7 +152,7 @@ func (l *ActivateOrderLogic) finalizeCouponAndOrder(ctx context.Context, orderIn
 
 	// Update order status
 	orderInfo.Status = OrderStatusFinished
-	if err := l.svc.OrderModel.Update(ctx, orderInfo); err != nil {
+	if err := l.deps.OrderModel.Update(ctx, orderInfo); err != nil {
 		logger.WithContext(ctx).Error("Update order status failed",
 			logger.Field("error", err.Error()),
 			logger.Field("order_no", orderInfo.OrderNo),
@@ -202,7 +201,7 @@ func (l *ActivateOrderLogic) getUserOrCreate(ctx context.Context, orderInfo *ord
 
 // getExistingUser retrieves user information by user ID
 func (l *ActivateOrderLogic) getExistingUser(ctx context.Context, userId int64) (*user.User, error) {
-	userInfo, err := l.svc.UserModel.FindOne(ctx, userId)
+	userInfo, err := l.deps.UserModel.FindOne(ctx, userId)
 	if err != nil {
 		logger.WithContext(ctx).Error("Find user failed",
 			logger.Field("error", err.Error()),
@@ -232,7 +231,7 @@ func (l *ActivateOrderLogic) createGuestUser(ctx context.Context, orderInfo *ord
 		},
 	}
 
-	err = l.svc.UserModel.Transaction(ctx, func(tx *gorm.DB) error {
+	err = l.deps.UserModel.Transaction(ctx, func(tx *gorm.DB) error {
 		if err := tx.Save(userInfo).Error; err != nil {
 			return err
 		}
@@ -266,7 +265,7 @@ func (l *ActivateOrderLogic) createGuestUser(ctx context.Context, orderInfo *ord
 // getTempOrderInfo retrieves temporary order information from Redis cache
 func (l *ActivateOrderLogic) getTempOrderInfo(ctx context.Context, orderNo string) (*config.TemporaryOrderInfo, error) {
 	cacheKey := fmt.Sprintf(config.TempOrderCacheKey, orderNo)
-	data, err := l.svc.Redis.Get(ctx, cacheKey).Result()
+	data, err := l.deps.Redis.Get(ctx, cacheKey).Result()
 	if err != nil {
 		logger.WithContext(ctx).Error("Get temp order cache failed",
 			logger.Field("error", err.Error()),
@@ -294,7 +293,7 @@ func (l *ActivateOrderLogic) handleReferrer(ctx context.Context, userInfo *user.
 		return
 	}
 
-	referer, err := l.svc.UserModel.FindOneByReferCode(ctx, inviteCode)
+	referer, err := l.deps.UserModel.FindOneByReferCode(ctx, inviteCode)
 	if err != nil {
 		logger.WithContext(ctx).Error("Find referer failed",
 			logger.Field("error", err.Error()),
@@ -304,7 +303,7 @@ func (l *ActivateOrderLogic) handleReferrer(ctx context.Context, userInfo *user.
 	}
 
 	userInfo.RefererId = referer.Id
-	if err = l.svc.UserModel.Update(ctx, userInfo); err != nil {
+	if err = l.deps.UserModel.Update(ctx, userInfo); err != nil {
 		logger.WithContext(ctx).Error("Update user referer failed",
 			logger.Field("error", err.Error()),
 			logger.Field("user_id", userInfo.Id),
@@ -314,7 +313,7 @@ func (l *ActivateOrderLogic) handleReferrer(ctx context.Context, userInfo *user.
 
 // getSubscribeInfo retrieves subscription plan details by subscription ID
 func (l *ActivateOrderLogic) getSubscribeInfo(ctx context.Context, subscribeId int64) (*subscribe.Subscribe, error) {
-	sub, err := l.svc.SubscribeModel.FindOne(ctx, subscribeId)
+	sub, err := l.deps.SubscribeModel.FindOne(ctx, subscribeId)
 	if err != nil {
 		logger.WithContext(ctx).Error("Find subscribe failed",
 			logger.Field("error", err.Error()),
@@ -342,7 +341,7 @@ func (l *ActivateOrderLogic) createUserSubscription(ctx context.Context, orderIn
 		Status:      1,
 	}
 
-	if err := l.svc.UserModel.InsertSubscribe(ctx, userSub); err != nil {
+	if err := l.deps.UserModel.InsertSubscribe(ctx, userSub); err != nil {
 		logger.WithContext(ctx).Error("Insert user subscribe failed", logger.Field("error", err.Error()))
 		return nil, err
 	}
@@ -357,7 +356,7 @@ func (l *ActivateOrderLogic) handleCommission(ctx context.Context, userInfo *use
 		return
 	}
 
-	referer, err := l.svc.UserModel.FindOne(ctx, userInfo.RefererId)
+	referer, err := l.deps.UserModel.FindOne(ctx, userInfo.RefererId)
 	if err != nil {
 		logger.WithContext(ctx).Error("Find referer failed",
 			logger.Field("error", err.Error()),
@@ -370,16 +369,17 @@ func (l *ActivateOrderLogic) handleCommission(ctx context.Context, userInfo *use
 	if referer.ReferralPercentage != 0 {
 		referralPercentage = referer.ReferralPercentage
 	} else {
-		referralPercentage = uint8(l.svc.Config.Invite.ReferralPercentage)
+		cfg := l.deps.currentConfig()
+		referralPercentage = uint8(cfg.Invite.ReferralPercentage)
 	}
 
 	// Order commission calculation： (Order Amount - Order Fee) * Referral Percentage
 	amount := l.calculateCommission(orderInfo.Amount-orderInfo.FeeAmount, referralPercentage)
 
 	// Use transaction for commission updates
-	err = l.svc.DB.Transaction(func(tx *gorm.DB) error {
+	err = l.deps.DB.Transaction(func(tx *gorm.DB) error {
 		referer.Commission += amount
-		if err = l.svc.UserModel.Update(ctx, referer, tx); err != nil {
+		if err = l.deps.UserModel.Update(ctx, referer, tx); err != nil {
 			return err
 		}
 
@@ -413,7 +413,7 @@ func (l *ActivateOrderLogic) handleCommission(ctx context.Context, userInfo *use
 	}
 
 	// Update cache
-	if err = l.svc.UserModel.UpdateUserCache(ctx, referer); err != nil {
+	if err = l.deps.UserModel.UpdateUserCache(ctx, referer); err != nil {
 		logger.WithContext(ctx).Error("Update referer cache failed",
 			logger.Field("error", err.Error()),
 			logger.Field("user_id", referer.Id),
@@ -428,7 +428,7 @@ func (l *ActivateOrderLogic) shouldProcessCommission(userInfo *user.User, isFirs
 		return false
 	}
 
-	referer, err := l.svc.UserModel.FindOne(context.Background(), userInfo.RefererId)
+	referer, err := l.deps.UserModel.FindOne(context.Background(), userInfo.RefererId)
 	if err != nil {
 		logger.Errorw("Find referer failed",
 			logger.Field("error", err.Error()),
@@ -448,10 +448,11 @@ func (l *ActivateOrderLogic) shouldProcessCommission(userInfo *user.User, isFirs
 	}
 
 	// use global settings
-	if l.svc.Config.Invite.ReferralPercentage == 0 {
+	cfg := l.deps.currentConfig()
+	if cfg.Invite.ReferralPercentage == 0 {
 		return false
 	}
-	if l.svc.Config.Invite.OnlyFirstPurchase && !isFirstPurchase {
+	if cfg.Invite.OnlyFirstPurchase && !isFirstPurchase {
 		return false
 	}
 
@@ -465,7 +466,7 @@ func (l *ActivateOrderLogic) calculateCommission(price int64, percentage uint8) 
 
 // clearServerCache clears user list cache for all servers associated with the subscription
 func (l *ActivateOrderLogic) clearServerCache(ctx context.Context, sub *subscribe.Subscribe) {
-	if err := l.svc.SubscribeModel.ClearCache(ctx, sub.Id); err != nil {
+	if err := l.deps.SubscribeModel.ClearCache(ctx, sub.Id); err != nil {
 		logger.WithContext(ctx).Error("[Order Queue] Clear subscribe cache failed", logger.Field("error", err.Error()))
 	}
 }
@@ -493,7 +494,7 @@ func (l *ActivateOrderLogic) Renewal(ctx context.Context, orderInfo *order.Order
 	}
 
 	// Clear user subscription cache
-	err = l.svc.UserModel.ClearSubscribeCache(ctx, userSub)
+	err = l.deps.UserModel.ClearSubscribeCache(ctx, userSub)
 	if err != nil {
 		logger.WithContext(ctx).Error("Clear user subscribe cache failed",
 			logger.Field("error", err.Error()),
@@ -516,7 +517,7 @@ func (l *ActivateOrderLogic) Renewal(ctx context.Context, orderInfo *order.Order
 
 // getUserSubscription retrieves user subscription by token
 func (l *ActivateOrderLogic) getUserSubscription(ctx context.Context, token string) (*user.Subscribe, error) {
-	userSub, err := l.svc.UserModel.FindOneSubscribeByToken(ctx, token)
+	userSub, err := l.deps.UserModel.FindOneSubscribeByToken(ctx, token)
 	if err != nil {
 		logger.WithContext(ctx).Error("Find user subscribe failed", logger.Field("error", err.Error()))
 		return nil, err
@@ -553,7 +554,7 @@ func (l *ActivateOrderLogic) updateSubscriptionForRenewal(ctx context.Context, u
 	userSub.ExpireTime = tool.AddTime(sub.UnitTime, orderInfo.Quantity, userSub.ExpireTime)
 	userSub.Status = 1
 
-	if err := l.svc.UserModel.UpdateSubscribe(ctx, userSub); err != nil {
+	if err := l.deps.UserModel.UpdateSubscribe(ctx, userSub); err != nil {
 		logger.WithContext(ctx).Error("Update user subscribe failed", logger.Field("error", err.Error()))
 		return err
 	}
@@ -578,7 +579,7 @@ func (l *ActivateOrderLogic) ResetTraffic(ctx context.Context, orderInfo *order.
 	userSub.Upload = 0
 	userSub.Status = 1
 
-	if err := l.svc.UserModel.UpdateSubscribe(ctx, userSub); err != nil {
+	if err := l.deps.UserModel.UpdateSubscribe(ctx, userSub); err != nil {
 		logger.WithContext(ctx).Error("Update user subscribe failed", logger.Field("error", err.Error()))
 		return err
 	}
@@ -589,7 +590,7 @@ func (l *ActivateOrderLogic) ResetTraffic(ctx context.Context, orderInfo *order.
 	}
 
 	// Clear user subscription cache
-	err = l.svc.UserModel.ClearSubscribeCache(ctx, userSub)
+	err = l.deps.UserModel.ClearSubscribeCache(ctx, userSub)
 	if err != nil {
 		logger.WithContext(ctx).Error("Clear user subscribe cache failed",
 			logger.Field("error", err.Error()),
@@ -610,7 +611,7 @@ func (l *ActivateOrderLogic) ResetTraffic(ctx context.Context, orderInfo *order.
 	}
 
 	content, _ := resetLog.Marshal()
-	if err = l.svc.LogModel.Insert(ctx, &log.SystemLog{
+	if err = l.deps.LogModel.Insert(ctx, &log.SystemLog{
 		Type:     log.TypeResetSubscribe.Uint8(),
 		Date:     time.Now().Format(time.DateOnly),
 		ObjectID: userSub.Id,
@@ -634,9 +635,9 @@ func (l *ActivateOrderLogic) Recharge(ctx context.Context, orderInfo *order.Orde
 	}
 
 	// Update balance in transaction
-	err = l.svc.DB.Transaction(func(tx *gorm.DB) error {
+	err = l.deps.DB.Transaction(func(tx *gorm.DB) error {
 		userInfo.Balance += orderInfo.Price
-		if err = l.svc.UserModel.Update(ctx, userInfo, tx); err != nil {
+		if err = l.deps.UserModel.Update(ctx, userInfo, tx); err != nil {
 			return err
 		}
 
@@ -663,7 +664,7 @@ func (l *ActivateOrderLogic) Recharge(ctx context.Context, orderInfo *order.Orde
 	}
 
 	// clear user cache
-	if err = l.svc.UserModel.UpdateUserCache(ctx, userInfo); err != nil {
+	if err = l.deps.UserModel.UpdateUserCache(ctx, userInfo); err != nil {
 		logger.WithContext(ctx).Error("[Recharge] Update user cache failed", logger.Field("error", err.Error()))
 		return err
 	}
@@ -759,14 +760,17 @@ func (l *ActivateOrderLogic) buildAdminNotificationData(orderInfo *order.Order, 
 func (l *ActivateOrderLogic) sendUserNotifyWithTelegram(chatId int64, text string) {
 	msg := tgbotapi.NewMessage(chatId, text)
 	msg.ParseMode = "markdown"
-	if _, err := l.svc.TelegramBot.Send(msg); err != nil {
+	if l.deps.TelegramBot == nil {
+		return
+	}
+	if _, err := l.deps.TelegramBot.Send(msg); err != nil {
 		logger.Error("Send telegram user message failed", logger.Field("error", err.Error()))
 	}
 }
 
 // sendAdminNotifyWithTelegram sends a notification message to all admin users via Telegram
 func (l *ActivateOrderLogic) sendAdminNotifyWithTelegram(ctx context.Context, text string) {
-	admins, err := l.svc.UserModel.QueryAdminUsers(ctx)
+	admins, err := l.deps.UserModel.QueryAdminUsers(ctx)
 	if err != nil {
 		logger.WithContext(ctx).Error("Query admin users failed", logger.Field("error", err.Error()))
 		return
@@ -776,7 +780,10 @@ func (l *ActivateOrderLogic) sendAdminNotifyWithTelegram(ctx context.Context, te
 		if telegramId, ok := findTelegram(admin); ok {
 			msg := tgbotapi.NewMessage(telegramId, text)
 			msg.ParseMode = "markdown"
-			if _, err := l.svc.TelegramBot.Send(msg); err != nil {
+			if l.deps.TelegramBot == nil {
+				return
+			}
+			if _, err := l.deps.TelegramBot.Send(msg); err != nil {
 				logger.WithContext(ctx).Error("Send telegram admin message failed", logger.Field("error", err.Error()))
 			}
 		}

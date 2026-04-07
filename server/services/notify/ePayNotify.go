@@ -16,7 +16,6 @@ import (
 	"github.com/perfect-panel/server/models/payment"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment/epay"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 
 	queueType "github.com/perfect-panel/server/worker"
@@ -24,16 +23,16 @@ import (
 
 type EPayNotifyLogic struct {
 	logger.Logger
-	ctx    *gin.Context
-	svcCtx *svc.ServiceContext
+	ctx  *gin.Context
+	deps Deps
 }
 
 // EPay notify
-func NewEPayNotifyLogic(ctx *gin.Context, svcCtx *svc.ServiceContext) *EPayNotifyLogic {
+func NewEPayNotifyLogic(ctx *gin.Context, deps Deps) *EPayNotifyLogic {
 	return &EPayNotifyLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -54,7 +53,7 @@ func (l *EPayNotifyLogic) EPayNotify(req *types.EPayNotifyRequest) error {
 	}
 	// Verify sign
 	client := epay.NewClient(config.Pid, config.Url, config.Key, config.Type)
-	if !client.VerifySign(urlParamsToMap(l.ctx.Request.URL.RawQuery)) && !l.svcCtx.Config.Debug {
+	if !client.VerifySign(urlParamsToMap(l.ctx.Request.URL.RawQuery)) && !l.deps.debugEnabled() {
 		l.Logger.Error("[EPayNotify] Verify sign failed")
 		return markInvalidNotification(stderrors.New("verify sign failed"))
 	}
@@ -62,7 +61,7 @@ func (l *EPayNotifyLogic) EPayNotify(req *types.EPayNotifyRequest) error {
 		l.Logger.Error("[EPayNotify] Trade status is not success", logger.Field("orderNo", req.OutTradeNo), logger.Field("tradeStatus", req.TradeStatus))
 		return nil
 	}
-	orderInfo, err := l.svcCtx.OrderModel.FindOneByOrderNo(l.ctx, req.OutTradeNo)
+	orderInfo, err := l.deps.OrderModel.FindOneByOrderNo(l.ctx, req.OutTradeNo)
 	if err != nil {
 		l.Logger.Error("[EPayNotify] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", req.OutTradeNo))
 		return errors.Wrapf(xerr.NewErrCode(xerr.OrderNotExist), "order not exist: %v", req.OutTradeNo)
@@ -71,7 +70,7 @@ func (l *EPayNotifyLogic) EPayNotify(req *types.EPayNotifyRequest) error {
 		return nil
 	}
 	// Update order status
-	err = l.svcCtx.OrderModel.UpdateOrderStatus(l.ctx, req.OutTradeNo, 2)
+	err = l.deps.OrderModel.UpdateOrderStatus(l.ctx, req.OutTradeNo, 2)
 	if err != nil {
 		l.Logger.Error("[EPayNotify] Update order status failed", logger.Field("error", err.Error()), logger.Field("orderNo", req.OutTradeNo))
 		return err
@@ -86,7 +85,7 @@ func (l *EPayNotifyLogic) EPayNotify(req *types.EPayNotifyRequest) error {
 		return err
 	}
 	task := asynq.NewTask(queueType.ForthwithActivateOrder, bytes)
-	taskInfo, err := l.svcCtx.Queue.EnqueueContext(l.ctx, task)
+	taskInfo, err := l.deps.Queue.EnqueueContext(l.ctx, task)
 	if err != nil {
 		l.Logger.Error("[EPayNotify] Enqueue task failed", logger.Field("error", err.Error()))
 		return err

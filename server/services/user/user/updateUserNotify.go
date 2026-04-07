@@ -2,11 +2,11 @@ package user
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -15,9 +15,9 @@ type UpdateUserNotifyInput struct {
 	Body types.UpdateUserNotifyRequest
 }
 
-func UpdateUserNotifyHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateUserNotifyInput) (*struct{}, error) {
+func UpdateUserNotifyHandler(deps Deps) func(context.Context, *UpdateUserNotifyInput) (*struct{}, error) {
 	return func(ctx context.Context, input *UpdateUserNotifyInput) (*struct{}, error) {
-		l := NewUpdateUserNotifyLogic(ctx, svcCtx)
+		l := NewUpdateUserNotifyLogic(ctx, deps)
 		if err := l.UpdateUserNotify(&input.Body); err != nil {
 			return nil, err
 		}
@@ -27,16 +27,16 @@ func UpdateUserNotifyHandler(svcCtx *svc.ServiceContext) func(context.Context, *
 
 type UpdateUserNotifyLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Update User Notify
-func NewUpdateUserNotifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateUserNotifyLogic {
+func NewUpdateUserNotifyLogic(ctx context.Context, deps Deps) *UpdateUserNotifyLogic {
 	return &UpdateUserNotifyLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -53,7 +53,7 @@ func (l *UpdateUserNotifyLogic) UpdateUserNotify(req *types.UpdateUserNotifyRequ
 	u.EnableBalanceNotify = req.EnableBalanceNotify
 	u.EnableSubscribeNotify = req.EnableSubscribeNotify
 	u.EnableTradeNotify = req.EnableTradeNotify
-	if err := l.svcCtx.UserModel.Update(l.ctx, u); err != nil {
+	if err := l.deps.UserModel.Update(l.ctx, u); err != nil {
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "update user notify error: %v", err.Error())
 	}
 	return nil

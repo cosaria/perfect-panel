@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
@@ -12,9 +11,9 @@ type GetPaymentPlatformOutput struct {
 	Body *types.PlatformResponse
 }
 
-func GetPaymentPlatformHandler(svcCtx *svc.ServiceContext) func(context.Context, *struct{}) (*GetPaymentPlatformOutput, error) {
+func GetPaymentPlatformHandler(deps Deps) func(context.Context, *struct{}) (*GetPaymentPlatformOutput, error) {
 	return func(ctx context.Context, _ *struct{}) (*GetPaymentPlatformOutput, error) {
-		l := NewGetPaymentPlatformLogic(ctx, svcCtx)
+		l := NewGetPaymentPlatformLogic(ctx, deps)
 		resp, err := l.GetPaymentPlatform()
 		if err != nil {
 			return nil, err
@@ -25,16 +24,16 @@ func GetPaymentPlatformHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type GetPaymentPlatformLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get supported payment platform
-func NewGetPaymentPlatformLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetPaymentPlatformLogic {
+func NewGetPaymentPlatformLogic(ctx context.Context, deps Deps) *GetPaymentPlatformLogic {
 	return &GetPaymentPlatformLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 

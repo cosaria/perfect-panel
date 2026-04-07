@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/task"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type QueryQuotaTaskStatusOutput struct {
 	Body *types.QueryQuotaTaskStatusResponse
 }
 
-func QueryQuotaTaskStatusHandler(svcCtx *svc.ServiceContext) func(context.Context, *QueryQuotaTaskStatusInput) (*QueryQuotaTaskStatusOutput, error) {
+func QueryQuotaTaskStatusHandler(deps Deps) func(context.Context, *QueryQuotaTaskStatusInput) (*QueryQuotaTaskStatusOutput, error) {
 	return func(ctx context.Context, input *QueryQuotaTaskStatusInput) (*QueryQuotaTaskStatusOutput, error) {
-		l := NewQueryQuotaTaskStatusLogic(ctx, svcCtx)
+		l := NewQueryQuotaTaskStatusLogic(ctx, deps)
 		resp, err := l.QueryQuotaTaskStatus(&input.Body)
 		if err != nil {
 			return nil, err
@@ -31,22 +30,22 @@ func QueryQuotaTaskStatusHandler(svcCtx *svc.ServiceContext) func(context.Contex
 
 type QueryQuotaTaskStatusLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewQueryQuotaTaskStatusLogic Query quota task status
-func NewQueryQuotaTaskStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryQuotaTaskStatusLogic {
+func NewQueryQuotaTaskStatusLogic(ctx context.Context, deps Deps) *QueryQuotaTaskStatusLogic {
 	return &QueryQuotaTaskStatusLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *QueryQuotaTaskStatusLogic) QueryQuotaTaskStatus(req *types.QueryQuotaTaskStatusRequest) (resp *types.QueryQuotaTaskStatusResponse, err error) {
 	var data *task.Task
-	err = l.svcCtx.DB.Model(&task.Task{}).Where("id = ? AND `type` = ?", req.Id, task.TypeQuota).First(&data).Error
+	err = l.deps.DB.Model(&task.Task{}).Where("id = ? AND `type` = ?", req.Id, task.TypeQuota).First(&data).Error
 	if err != nil {
 		l.Errorf("[QueryQuotaTaskStatus] failed to get quota task: %v", err.Error())
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), " failed to get quota task: %v", err.Error())

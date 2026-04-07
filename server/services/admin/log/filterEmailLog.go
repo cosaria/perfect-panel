@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type FilterEmailLogOutput struct {
 	Body *types.FilterEmailLogResponse
 }
 
-func FilterEmailLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterEmailLogInput) (*FilterEmailLogOutput, error) {
+func FilterEmailLogHandler(deps Deps) func(context.Context, *FilterEmailLogInput) (*FilterEmailLogOutput, error) {
 	return func(ctx context.Context, input *FilterEmailLogInput) (*FilterEmailLogOutput, error) {
-		l := NewFilterEmailLogLogic(ctx, svcCtx)
+		l := NewFilterEmailLogLogic(ctx, deps)
 		resp, err := l.FilterEmailLog(&input.FilterLogParams)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func FilterEmailLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *Fi
 
 type FilterEmailLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewFilterEmailLogLogic Filter email log
-func NewFilterEmailLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterEmailLogLogic {
+func NewFilterEmailLogLogic(ctx context.Context, deps Deps) *FilterEmailLogLogic {
 	return &FilterEmailLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *FilterEmailLogLogic) FilterEmailLog(req *types.FilterLogParams) (resp *types.FilterEmailLogResponse, err error) {
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:   req.Page,
 		Size:   req.Size,
 		Type:   log.TypeEmailMessage.Uint8(),

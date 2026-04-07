@@ -8,12 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
 
 // PaymentNotifyHandler Payment Notify
-func PaymentNotifyHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
+func PaymentNotifyHandler(deps Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		platform, ok := c.Request.Context().Value(config.CtxKeyPlatform).(string)
 		if !ok {
@@ -29,7 +28,7 @@ func PaymentNotifyHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 				writePlainText(c, http.StatusBadRequest, "invalid notification")
 				return
 			}
-			l := NewEPayNotifyLogic(c, svcCtx)
+			l := NewEPayNotifyLogic(c, deps)
 			if err := l.EPayNotify(req); err != nil {
 				logger.WithContext(c.Request.Context()).Errorf("EPayNotify failed: %v", err.Error())
 				writeProtocolFailure(c, err, http.StatusBadRequest, "invalid notification", "failed", false)
@@ -37,7 +36,7 @@ func PaymentNotifyHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 			}
 			writePlainText(c, http.StatusOK, "success")
 		case payment.Stripe:
-			l := NewStripeNotifyLogic(c.Request.Context(), svcCtx)
+			l := NewStripeNotifyLogic(c.Request.Context(), deps)
 			if err := l.StripeNotify(c.Request, c.Writer); err != nil {
 				writeProtocolFailure(c, err, http.StatusBadRequest, "", "", true)
 				return
@@ -45,7 +44,7 @@ func PaymentNotifyHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 			writeEmptyStatus(c, http.StatusOK)
 
 		case payment.AlipayF2F:
-			l := NewAlipayNotifyLogic(c.Request.Context(), svcCtx)
+			l := NewAlipayNotifyLogic(c.Request.Context(), deps)
 			if err := l.AlipayNotify(c.Request); err != nil {
 				writeProtocolFailure(c, err, http.StatusBadRequest, "invalid notification", "failed", false)
 				return

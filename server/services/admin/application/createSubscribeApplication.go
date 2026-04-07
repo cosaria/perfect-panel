@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -19,9 +18,9 @@ type CreateSubscribeApplicationOutput struct {
 	Body *types.SubscribeApplication
 }
 
-func CreateSubscribeApplicationHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateSubscribeApplicationInput) (*CreateSubscribeApplicationOutput, error) {
+func CreateSubscribeApplicationHandler(deps Deps) func(context.Context, *CreateSubscribeApplicationInput) (*CreateSubscribeApplicationOutput, error) {
 	return func(ctx context.Context, input *CreateSubscribeApplicationInput) (*CreateSubscribeApplicationOutput, error) {
-		l := NewCreateSubscribeApplicationLogic(ctx, svcCtx)
+		l := NewCreateSubscribeApplicationLogic(ctx, deps)
 		resp, err := l.CreateSubscribeApplication(&input.Body)
 		if err != nil {
 			return nil, err
@@ -32,16 +31,16 @@ func CreateSubscribeApplicationHandler(svcCtx *svc.ServiceContext) func(context.
 
 type CreateSubscribeApplicationLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewCreateSubscribeApplicationLogic Create subscribe application
-func NewCreateSubscribeApplicationLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateSubscribeApplicationLogic {
+func NewCreateSubscribeApplicationLogic(ctx context.Context, deps Deps) *CreateSubscribeApplicationLogic {
 	return &CreateSubscribeApplicationLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
@@ -65,7 +64,7 @@ func (l *CreateSubscribeApplicationLogic) CreateSubscribeApplication(req *types.
 		DownloadLink:      string(linkData),
 	}
 
-	err = l.svcCtx.ClientModel.Insert(l.ctx, data)
+	err = l.deps.ClientModel.Insert(l.ctx, data)
 	if err != nil {
 		l.Errorf("Failed to create subscribe application: %v", err)
 		return nil, errors.Wrap(xerr.NewErrCode(xerr.DatabaseInsertError), "Failed to create subscribe application")

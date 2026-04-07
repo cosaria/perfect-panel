@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type GetServerProtocolsOutput struct {
 	Body *types.GetServerProtocolsResponse
 }
 
-func GetServerProtocolsHandler(svcCtx *svc.ServiceContext) func(context.Context, *GetServerProtocolsInput) (*GetServerProtocolsOutput, error) {
+func GetServerProtocolsHandler(deps Deps) func(context.Context, *GetServerProtocolsInput) (*GetServerProtocolsOutput, error) {
 	return func(ctx context.Context, input *GetServerProtocolsInput) (*GetServerProtocolsOutput, error) {
-		l := NewGetServerProtocolsLogic(ctx, svcCtx)
+		l := NewGetServerProtocolsLogic(ctx, deps)
 		resp, err := l.GetServerProtocols(&input.GetServerProtocolsRequest)
 		if err != nil {
 			return nil, err
@@ -31,22 +30,22 @@ func GetServerProtocolsHandler(svcCtx *svc.ServiceContext) func(context.Context,
 
 type GetServerProtocolsLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // Get Server Protocols
-func NewGetServerProtocolsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetServerProtocolsLogic {
+func NewGetServerProtocolsLogic(ctx context.Context, deps Deps) *GetServerProtocolsLogic {
 	return &GetServerProtocolsLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *GetServerProtocolsLogic) GetServerProtocols(req *types.GetServerProtocolsRequest) (resp *types.GetServerProtocolsResponse, err error) {
 	// find server
-	data, err := l.svcCtx.NodeModel.FindOneServer(l.ctx, req.Id)
+	data, err := l.deps.NodeModel.FindOneServer(l.ctx, req.Id)
 	if err != nil {
 		l.Errorf("[GetServerProtocols] FindOneServer Error: %s", err.Error())
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "[GetServerProtocols] FindOneServer Error: %s", err.Error())

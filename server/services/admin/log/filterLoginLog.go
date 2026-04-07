@@ -5,7 +5,6 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 )
@@ -18,9 +17,9 @@ type FilterLoginLogOutput struct {
 	Body *types.FilterLoginLogResponse
 }
 
-func FilterLoginLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterLoginLogInput) (*FilterLoginLogOutput, error) {
+func FilterLoginLogHandler(deps Deps) func(context.Context, *FilterLoginLogInput) (*FilterLoginLogOutput, error) {
 	return func(ctx context.Context, input *FilterLoginLogInput) (*FilterLoginLogOutput, error) {
-		l := NewFilterLoginLogLogic(ctx, svcCtx)
+		l := NewFilterLoginLogLogic(ctx, deps)
 		resp, err := l.FilterLoginLog(&input.FilterLoginLogRequest)
 		if err != nil {
 			return nil, err
@@ -31,21 +30,21 @@ func FilterLoginLogHandler(svcCtx *svc.ServiceContext) func(context.Context, *Fi
 
 type FilterLoginLogLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewFilterLoginLogLogic Filter login log
-func NewFilterLoginLogLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterLoginLogLogic {
+func NewFilterLoginLogLogic(ctx context.Context, deps Deps) *FilterLoginLogLogic {
 	return &FilterLoginLogLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *FilterLoginLogLogic) FilterLoginLog(req *types.FilterLoginLogRequest) (resp *types.FilterLoginLogResponse, err error) {
-	data, total, err := l.svcCtx.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
+	data, total, err := l.deps.LogModel.FilterSystemLog(l.ctx, &log.FilterParams{
 		Page:     req.Page,
 		Size:     req.Size,
 		Type:     log.TypeLogin.Uint8(),

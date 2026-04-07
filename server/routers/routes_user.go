@@ -2,11 +2,11 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/perfect-panel/server/svc"
+	appruntime "github.com/perfect-panel/server/runtime"
 )
 
-func registerUserRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specOnly bool, apis *APIs) {
-	userAPIs := registerAuthRoutes(router, serverCtx, specOnly)
-	userAPIs = append(userAPIs, registerPublicRoutes(router, serverCtx, specOnly)...)
+func registerUserRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specOnly bool, apis *APIs) {
+	userAPIs := registerAuthRoutes(router, runtimeDeps, specOnly)
+	userAPIs = append(userAPIs, registerPublicRoutes(router, runtimeDeps, specOnly)...)
 	apis.userAPIs = userAPIs
 }

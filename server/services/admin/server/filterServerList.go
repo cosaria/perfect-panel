@@ -6,7 +6,6 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
@@ -22,9 +21,9 @@ type FilterServerListOutput struct {
 	Body *types.FilterServerListResponse
 }
 
-func FilterServerListHandler(svcCtx *svc.ServiceContext) func(context.Context, *FilterServerListInput) (*FilterServerListOutput, error) {
+func FilterServerListHandler(deps Deps) func(context.Context, *FilterServerListInput) (*FilterServerListOutput, error) {
 	return func(ctx context.Context, input *FilterServerListInput) (*FilterServerListOutput, error) {
-		l := NewFilterServerListLogic(ctx, svcCtx)
+		l := NewFilterServerListLogic(ctx, deps)
 		resp, err := l.FilterServerList(&input.FilterServerListRequest)
 		if err != nil {
 			return nil, err
@@ -35,21 +34,21 @@ func FilterServerListHandler(svcCtx *svc.ServiceContext) func(context.Context, *
 
 type FilterServerListLogic struct {
 	logger.Logger
-	ctx    context.Context
-	svcCtx *svc.ServiceContext
+	ctx  context.Context
+	deps Deps
 }
 
 // NewFilterServerListLogic Filter Server List
-func NewFilterServerListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FilterServerListLogic {
+func NewFilterServerListLogic(ctx context.Context, deps Deps) *FilterServerListLogic {
 	return &FilterServerListLogic{
 		Logger: logger.WithContext(ctx),
 		ctx:    ctx,
-		svcCtx: svcCtx,
+		deps:   deps,
 	}
 }
 
 func (l *FilterServerListLogic) FilterServerList(req *types.FilterServerListRequest) (resp *types.FilterServerListResponse, err error) {
-	total, data, err := l.svcCtx.NodeModel.FilterServerList(l.ctx, &node.FilterParams{
+	total, data, err := l.deps.NodeModel.FilterServerList(l.ctx, &node.FilterParams{
 		Page:   req.Page,
 		Size:   req.Size,
 		Search: req.Search,
@@ -75,7 +74,7 @@ func (l *FilterServerListLogic) FilterServerList(req *types.FilterServerListRequ
 		tool.DeepCopy(&protocols, dst)
 		server.Protocols = protocols
 
-		nodeStatus, err := l.svcCtx.NodeModel.StatusCache(l.ctx, datum.Id)
+		nodeStatus, err := l.deps.NodeModel.StatusCache(l.ctx, datum.Id)
 		if err != nil {
 			if !errors.Is(err, redis.Nil) {
 				l.Errorw("[handlerServerStatus] GetNodeStatus Error: ", logger.Field("error", err.Error()), logger.Field("node_id", datum.Id))
@@ -103,7 +102,7 @@ func (l *FilterServerListLogic) handlerServerStatus(id int64, protocols []types.
 
 	for _, protocol := range protocols {
 		// query online user
-		data, err := l.svcCtx.NodeModel.OnlineUserSubscribe(l.ctx, id, protocol.Type)
+		data, err := l.deps.NodeModel.OnlineUserSubscribe(l.ctx, id, protocol.Type)
 		if err != nil {
 			if !errors.Is(err, redis.Nil) {
 				l.Errorw("[handlerServerStatus] OnlineUserSubscribe Error: ", logger.Field("error", err.Error()), logger.Field("node_id", id), logger.Field("protocol", protocol.Type))
@@ -137,7 +136,7 @@ func (l *FilterServerListLogic) handlerServerStatus(id int64, protocols []types.
 			mapResult[item.SubscribeId] = exist
 		} else {
 			// get subscribe info
-			info, err := l.svcCtx.UserModel.FindOneUserSubscribe(l.ctx, item.SubscribeId)
+			info, err := l.deps.UserModel.FindOneUserSubscribe(l.ctx, item.SubscribeId)
 			if err != nil {
 				if !errors.Is(err, gorm.ErrRecordNotFound) {
 					l.Errorw("[handlerServerStatus] FindOneSubscribe Error: ", logger.Field("error", err.Error()), logger.Field("subscribe_id", item.SubscribeId))

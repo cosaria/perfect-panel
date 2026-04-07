@@ -15,7 +15,7 @@ import (
 	pkgaes "github.com/perfect-panel/server/modules/crypto/aes"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/routers/response"
-	"github.com/perfect-panel/server/svc"
+	appruntime "github.com/perfect-panel/server/runtime"
 	"github.com/pkg/errors"
 
 	"github.com/gin-gonic/gin"
@@ -26,15 +26,15 @@ const (
 	defaultStatus = http.StatusOK
 )
 
-func DeviceMiddleware(srvCtx *svc.ServiceContext) func(c *gin.Context) {
+func DeviceMiddleware(runtimeDeps *appruntime.Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
 
-		if !srvCtx.Config.Device.Enable {
+		if runtimeDeps == nil || runtimeDeps.Config == nil || !runtimeDeps.Config.Device.Enable {
 			c.Next()
 			return
 		}
 
-		if srvCtx.Config.Device.SecuritySecret == "" {
+		if runtimeDeps.Config.Device.SecuritySecret == "" {
 			response.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretIsEmpty), "Secret is empty"))
 			c.Abort()
 			return
@@ -52,7 +52,7 @@ func DeviceMiddleware(srvCtx *svc.ServiceContext) func(c *gin.Context) {
 			return
 		}
 
-		rw := NewResponseWriter(c, srvCtx)
+		rw := NewResponseWriter(c, runtimeDeps)
 		if !rw.Decrypt() {
 			response.WriteProblem(c, response.NewPublicProblem(http.StatusBadRequest, response.ProblemTypeInvalidRequest, "Invalid request"))
 			c.Abort()
@@ -64,13 +64,13 @@ func DeviceMiddleware(srvCtx *svc.ServiceContext) func(c *gin.Context) {
 	}
 }
 
-func NewResponseWriter(c *gin.Context, srvCtx *svc.ServiceContext) (rw *ResponseWriter) {
+func NewResponseWriter(c *gin.Context, runtimeDeps *appruntime.Deps) (rw *ResponseWriter) {
 	rw = &ResponseWriter{
 		c:              c,
 		body:           new(bytes.Buffer),
 		ResponseWriter: c.Writer,
 	}
-	rw.encryptionKey = srvCtx.Config.Device.SecuritySecret
+	rw.encryptionKey = runtimeDeps.Config.Device.SecuritySecret
 	rw.encryptionMethod = "AES"
 	rw.encryption = true
 	return rw
