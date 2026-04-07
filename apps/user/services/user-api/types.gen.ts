@@ -88,8 +88,8 @@ export type CreateUserTicketRequest = {
 };
 
 export type DeviceLoginRequest = {
-    IP: string;
-    cf_token: string;
+    IP?: string;
+    cf_token?: string;
     identifier: string;
     user_agent: string;
 };
@@ -117,33 +117,6 @@ export type ErrorDetail = {
      * The value at the given location
      */
     value?: unknown;
-};
-
-export type ErrorModel = {
-    /**
-     * A human-readable explanation specific to this occurrence of the problem.
-     */
-    detail?: string;
-    /**
-     * Optional list of individual error details
-     */
-    errors?: Array<ErrorDetail> | null;
-    /**
-     * A URI reference that identifies the specific occurrence of the problem.
-     */
-    instance?: string;
-    /**
-     * HTTP status code
-     */
-    status?: number;
-    /**
-     * A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
-     */
-    title?: string;
-    /**
-     * A URI reference to human-readable documentation for the error.
-     */
-    type?: string;
 };
 
 export type Follow = {
@@ -297,6 +270,16 @@ export type PreUnsubscribeResponse = {
     deduction_amount: number;
 };
 
+export type Problem = {
+    code?: number;
+    detail?: string;
+    errors?: Array<ErrorDetail> | null;
+    instance?: string;
+    status?: number;
+    title?: string;
+    type?: string;
+};
+
 export type PurchaseOrderRequest = {
     coupon?: string;
     payment?: number;
@@ -406,13 +389,13 @@ export type RenewalOrderResponse = {
 };
 
 export type ResetPasswordRequest = {
-    IP: string;
-    LoginType: string;
-    UserAgent: string;
-    cf_token: string;
-    code: string;
+    IP?: string;
+    LoginType?: string;
+    UserAgent?: string;
+    cf_token?: string;
+    code?: string;
     email: string;
-    identifier: string;
+    identifier?: string;
     password: string;
 };
 
@@ -473,11 +456,11 @@ export type TelephoneCheckUserResponse = {
 };
 
 export type TelephoneLoginRequest = {
-    IP: string;
-    LoginType: string;
-    UserAgent: string;
-    cf_token: string;
-    identifier: string;
+    IP?: string;
+    LoginType?: string;
+    UserAgent?: string;
+    cf_token?: string;
+    identifier?: string;
     password: string;
     telephone: string;
     telephone_area_code: string;
@@ -485,25 +468,25 @@ export type TelephoneLoginRequest = {
 };
 
 export type TelephoneRegisterRequest = {
-    IP: string;
-    LoginType: string;
-    UserAgent: string;
-    cf_token: string;
-    code: string;
-    identifier: string;
-    invite: string;
+    IP?: string;
+    LoginType?: string;
+    UserAgent?: string;
+    cf_token?: string;
+    code?: string;
+    identifier?: string;
+    invite?: string;
     password: string;
     telephone: string;
     telephone_area_code: string;
 };
 
 export type TelephoneResetPasswordRequest = {
-    IP: string;
-    LoginType: string;
-    UserAgent: string;
-    cf_token: string;
-    code: string;
-    identifier: string;
+    IP?: string;
+    LoginType?: string;
+    UserAgent?: string;
+    cf_token?: string;
+    code?: string;
+    identifier?: string;
     password: string;
     telephone: string;
     telephone_area_code: string;
@@ -626,24 +609,24 @@ export type UserLoginLog = {
 };
 
 export type UserLoginRequest = {
-    IP: string;
-    LoginType: string;
-    UserAgent: string;
-    cf_token: string;
+    IP?: string;
+    LoginType?: string;
+    UserAgent?: string;
+    cf_token?: string;
     email: string;
-    identifier: string;
+    identifier?: string;
     password: string;
 };
 
 export type UserRegisterRequest = {
-    IP: string;
-    LoginType: string;
-    UserAgent: string;
-    cf_token: string;
-    code: string;
+    IP?: string;
+    LoginType?: string;
+    UserAgent?: string;
+    cf_token?: string;
+    code?: string;
     email: string;
-    identifier: string;
-    invite: string;
+    identifier?: string;
+    invite?: string;
     password: string;
 };
 
@@ -732,14 +715,42 @@ export type CheckUserData = {
     query?: {
         email?: string;
     };
-    url: '/v1/auth/check';
+    url: '/api/v1/auth/check';
 };
 
 export type CheckUserErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type CheckUserError = CheckUserErrors[keyof CheckUserErrors];
@@ -759,14 +770,42 @@ export type CheckUserTelephoneData = {
     query?: {
         telephone?: string;
     };
-    url: '/v1/auth/check/telephone';
+    url: '/api/v1/auth/check/telephone';
 };
 
 export type CheckUserTelephoneErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type CheckUserTelephoneError = CheckUserTelephoneErrors[keyof CheckUserTelephoneErrors];
@@ -791,17 +830,49 @@ export type UserLoginData = {
          * User agent string
          */
         'User-Agent'?: string;
+        /**
+         * Login type
+         */
+        'Login-Type'?: string;
     };
     path?: never;
     query?: never;
-    url: '/v1/auth/login';
+    url: '/api/v1/auth/login';
 };
 
 export type UserLoginErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UserLoginError = UserLoginErrors[keyof UserLoginErrors];
@@ -817,16 +888,50 @@ export type UserLoginResponse = UserLoginResponses[keyof UserLoginResponses];
 
 export type DeviceLoginData = {
     body: DeviceLoginRequest;
+    headers?: {
+        /**
+         * Client IP from proxy
+         */
+        'X-Original-Forwarded-For'?: string;
+    };
     path?: never;
     query?: never;
-    url: '/v1/auth/login/device';
+    url: '/api/v1/auth/login/device';
 };
 
 export type DeviceLoginErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type DeviceLoginError = DeviceLoginErrors[keyof DeviceLoginErrors];
@@ -851,17 +956,49 @@ export type TelephoneLoginData = {
          * User agent string
          */
         'User-Agent'?: string;
+        /**
+         * Login type
+         */
+        'Login-Type'?: string;
     };
     path?: never;
     query?: never;
-    url: '/v1/auth/login/telephone';
+    url: '/api/v1/auth/login/telephone';
 };
 
 export type TelephoneLoginErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type TelephoneLoginError = TelephoneLoginErrors[keyof TelephoneLoginErrors];
@@ -879,14 +1016,42 @@ export type OAuthLoginData = {
     body: OAthLoginRequest;
     path?: never;
     query?: never;
-    url: '/v1/auth/oauth/login';
+    url: '/api/v1/auth/oauth/login';
 };
 
 export type OAuthLoginErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type OAuthLoginError = OAuthLoginErrors[keyof OAuthLoginErrors];
@@ -914,14 +1079,42 @@ export type OAuthLoginGetTokenData = {
     };
     path?: never;
     query?: never;
-    url: '/v1/auth/oauth/login/token';
+    url: '/api/v1/auth/oauth/login/token';
 };
 
 export type OAuthLoginGetTokenErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type OAuthLoginGetTokenError = OAuthLoginGetTokenErrors[keyof OAuthLoginGetTokenErrors];
@@ -946,17 +1139,49 @@ export type UserRegisterData = {
          * User agent string
          */
         'User-Agent'?: string;
+        /**
+         * Login type
+         */
+        'Login-Type'?: string;
     };
     path?: never;
     query?: never;
-    url: '/v1/auth/register';
+    url: '/api/v1/auth/register';
 };
 
 export type UserRegisterErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UserRegisterError = UserRegisterErrors[keyof UserRegisterErrors];
@@ -981,17 +1206,49 @@ export type TelephoneUserRegisterData = {
          * User agent string
          */
         'User-Agent'?: string;
+        /**
+         * Login type
+         */
+        'Login-Type'?: string;
     };
     path?: never;
     query?: never;
-    url: '/v1/auth/register/telephone';
+    url: '/api/v1/auth/register/telephone';
 };
 
 export type TelephoneUserRegisterErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type TelephoneUserRegisterError = TelephoneUserRegisterErrors[keyof TelephoneUserRegisterErrors];
@@ -1012,17 +1269,53 @@ export type ResetPasswordData = {
          * Client IP from proxy
          */
         'X-Original-Forwarded-For'?: string;
+        /**
+         * User agent string
+         */
+        'User-Agent'?: string;
+        /**
+         * Login type
+         */
+        'Login-Type'?: string;
     };
     path?: never;
     query?: never;
-    url: '/v1/auth/reset';
+    url: '/api/v1/auth/reset';
 };
 
 export type ResetPasswordErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type ResetPasswordError = ResetPasswordErrors[keyof ResetPasswordErrors];
@@ -1043,17 +1336,53 @@ export type TelephoneResetPasswordData = {
          * Client IP from proxy
          */
         'X-Original-Forwarded-For'?: string;
+        /**
+         * User agent string
+         */
+        'User-Agent'?: string;
+        /**
+         * Login type
+         */
+        'Login-Type'?: string;
     };
     path?: never;
     query?: never;
-    url: '/v1/auth/reset/telephone';
+    url: '/api/v1/auth/reset/telephone';
 };
 
 export type TelephoneResetPasswordErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type TelephoneResetPasswordError = TelephoneResetPasswordErrors[keyof TelephoneResetPasswordErrors];
@@ -1071,14 +1400,42 @@ export type QueryAnnouncementData = {
     body: QueryAnnouncementRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/announcement/list';
+    url: '/api/v1/public/announcement/list';
 };
 
 export type QueryAnnouncementErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryAnnouncementError = QueryAnnouncementErrors[keyof QueryAnnouncementErrors];
@@ -1098,14 +1455,42 @@ export type QueryDocumentDetailData = {
     query?: {
         id?: number;
     };
-    url: '/v1/public/document/detail';
+    url: '/api/v1/public/document/detail';
 };
 
 export type QueryDocumentDetailErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryDocumentDetailError = QueryDocumentDetailErrors[keyof QueryDocumentDetailErrors];
@@ -1123,14 +1508,38 @@ export type QueryDocumentListData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/document/list';
+    url: '/api/v1/public/document/list';
 };
 
 export type QueryDocumentListErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryDocumentListError = QueryDocumentListErrors[keyof QueryDocumentListErrors];
@@ -1148,14 +1557,42 @@ export type CloseOrderData = {
     body: CloseOrderRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/order/close';
+    url: '/api/v1/public/order/close';
 };
 
 export type CloseOrderErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type CloseOrderError = CloseOrderErrors[keyof CloseOrderErrors];
@@ -1175,14 +1612,42 @@ export type QueryOrderDetailData = {
     query?: {
         order_no?: string;
     };
-    url: '/v1/public/order/detail';
+    url: '/api/v1/public/order/detail';
 };
 
 export type QueryOrderDetailErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryOrderDetailError = QueryOrderDetailErrors[keyof QueryOrderDetailErrors];
@@ -1203,14 +1668,42 @@ export type QueryOrderListData = {
         page?: number;
         size?: number;
     };
-    url: '/v1/public/order/list';
+    url: '/api/v1/public/order/list';
 };
 
 export type QueryOrderListErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryOrderListError = QueryOrderListErrors[keyof QueryOrderListErrors];
@@ -1228,14 +1721,42 @@ export type PreCreateOrderData = {
     body: PurchaseOrderRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/order/pre';
+    url: '/api/v1/public/order/pre';
 };
 
 export type PreCreateOrderErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type PreCreateOrderError = PreCreateOrderErrors[keyof PreCreateOrderErrors];
@@ -1253,14 +1774,42 @@ export type PurchaseData = {
     body: PurchaseOrderRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/order/purchase';
+    url: '/api/v1/public/order/purchase';
 };
 
 export type PurchaseErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type PurchaseError = PurchaseErrors[keyof PurchaseErrors];
@@ -1278,14 +1827,42 @@ export type RechargeData = {
     body: RechargeOrderRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/order/recharge';
+    url: '/api/v1/public/order/recharge';
 };
 
 export type RechargeErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type RechargeError = RechargeErrors[keyof RechargeErrors];
@@ -1303,14 +1880,42 @@ export type RenewalData = {
     body: RenewalOrderRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/order/renewal';
+    url: '/api/v1/public/order/renewal';
 };
 
 export type RenewalErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type RenewalError = RenewalErrors[keyof RenewalErrors];
@@ -1328,14 +1933,42 @@ export type ResetTrafficData = {
     body: ResetTrafficOrderRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/order/reset';
+    url: '/api/v1/public/order/reset';
 };
 
 export type ResetTrafficErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type ResetTrafficError = ResetTrafficErrors[keyof ResetTrafficErrors];
@@ -1353,14 +1986,38 @@ export type GetAvailablePaymentMethodsData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/payment/methods';
+    url: '/api/v1/public/payment/methods';
 };
 
 export type GetAvailablePaymentMethodsErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type GetAvailablePaymentMethodsError = GetAvailablePaymentMethodsErrors[keyof GetAvailablePaymentMethodsErrors];
@@ -1378,14 +2035,42 @@ export type PurchaseCheckoutData = {
     body: CheckoutOrderRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/portal/order/checkout';
+    url: '/api/v1/public/portal/order/checkout';
 };
 
 export type PurchaseCheckoutErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type PurchaseCheckoutError = PurchaseCheckoutErrors[keyof PurchaseCheckoutErrors];
@@ -1407,14 +2092,42 @@ export type QueryPurchaseOrderData = {
         identifier?: string;
         order_no?: string;
     };
-    url: '/v1/public/portal/order/status';
+    url: '/api/v1/public/portal/order/status';
 };
 
 export type QueryPurchaseOrderErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryPurchaseOrderError = QueryPurchaseOrderErrors[keyof QueryPurchaseOrderErrors];
@@ -1432,14 +2145,38 @@ export type PortalGetAvailablePaymentMethodsData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/portal/payment-method';
+    url: '/api/v1/public/portal/payment-method';
 };
 
 export type PortalGetAvailablePaymentMethodsErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type PortalGetAvailablePaymentMethodsError = PortalGetAvailablePaymentMethodsErrors[keyof PortalGetAvailablePaymentMethodsErrors];
@@ -1457,14 +2194,42 @@ export type PrePurchaseOrderData = {
     body: PrePurchaseOrderRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/portal/pre';
+    url: '/api/v1/public/portal/pre';
 };
 
 export type PrePurchaseOrderErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type PrePurchaseOrderError = PrePurchaseOrderErrors[keyof PrePurchaseOrderErrors];
@@ -1482,14 +2247,42 @@ export type PortalPurchaseData = {
     body: PortalPurchaseRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/portal/purchase';
+    url: '/api/v1/public/portal/purchase';
 };
 
 export type PortalPurchaseErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type PortalPurchaseError = PortalPurchaseErrors[keyof PortalPurchaseErrors];
@@ -1509,14 +2302,42 @@ export type GetSubscriptionData = {
     query?: {
         language?: string;
     };
-    url: '/v1/public/portal/subscribe';
+    url: '/api/v1/public/portal/subscribe';
 };
 
 export type GetSubscriptionErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type GetSubscriptionError = GetSubscriptionErrors[keyof GetSubscriptionErrors];
@@ -1536,14 +2357,42 @@ export type QuerySubscribeListData = {
     query?: {
         language?: string;
     };
-    url: '/v1/public/subscribe/list';
+    url: '/api/v1/public/subscribe/list';
 };
 
 export type QuerySubscribeListErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QuerySubscribeListError = QuerySubscribeListErrors[keyof QuerySubscribeListErrors];
@@ -1561,14 +2410,38 @@ export type QueryUserSubscribeNodeListData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/subscribe/node/list';
+    url: '/api/v1/public/subscribe/node/list';
 };
 
 export type QueryUserSubscribeNodeListErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryUserSubscribeNodeListError = QueryUserSubscribeNodeListErrors[keyof QueryUserSubscribeNodeListErrors];
@@ -1588,14 +2461,42 @@ export type GetUserTicketDetailsData = {
     query?: {
         id?: number;
     };
-    url: '/v1/public/ticket/detail';
+    url: '/api/v1/public/ticket/detail';
 };
 
 export type GetUserTicketDetailsErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type GetUserTicketDetailsError = GetUserTicketDetailsErrors[keyof GetUserTicketDetailsErrors];
@@ -1613,14 +2514,42 @@ export type CreateUserTicketFollowData = {
     body: CreateUserTicketFollowRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/ticket/follow';
+    url: '/api/v1/public/ticket/follow';
 };
 
 export type CreateUserTicketFollowErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type CreateUserTicketFollowError = CreateUserTicketFollowErrors[keyof CreateUserTicketFollowErrors];
@@ -1638,14 +2567,42 @@ export type GetUserTicketListData = {
     body: GetUserTicketListRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/ticket/list';
+    url: '/api/v1/public/ticket/list';
 };
 
 export type GetUserTicketListErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type GetUserTicketListError = GetUserTicketListErrors[keyof GetUserTicketListErrors];
@@ -1663,14 +2620,42 @@ export type CreateUserTicketData = {
     body: CreateUserTicketRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/ticket/ticket';
+    url: '/api/v1/public/ticket/ticket';
 };
 
 export type CreateUserTicketErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type CreateUserTicketError = CreateUserTicketErrors[keyof CreateUserTicketErrors];
@@ -1688,14 +2673,42 @@ export type UpdateUserTicketStatusData = {
     body: UpdateUserTicketStatusRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/ticket/ticket';
+    url: '/api/v1/public/ticket/ticket';
 };
 
 export type UpdateUserTicketStatusErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UpdateUserTicketStatusError = UpdateUserTicketStatusErrors[keyof UpdateUserTicketStatusErrors];
@@ -1713,14 +2726,38 @@ export type QueryUserAffiliateData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/user/affiliate/count';
+    url: '/api/v1/public/user/affiliate/count';
 };
 
 export type QueryUserAffiliateErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryUserAffiliateError = QueryUserAffiliateErrors[keyof QueryUserAffiliateErrors];
@@ -1741,14 +2778,42 @@ export type QueryUserAffiliateListData = {
         page?: number;
         size?: number;
     };
-    url: '/v1/public/user/affiliate/list';
+    url: '/api/v1/public/user/affiliate/list';
 };
 
 export type QueryUserAffiliateListErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryUserAffiliateListError = QueryUserAffiliateListErrors[keyof QueryUserAffiliateListErrors];
@@ -1766,14 +2831,38 @@ export type QueryUserBalanceLogData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/user/balance_log';
+    url: '/api/v1/public/user/balance_log';
 };
 
 export type QueryUserBalanceLogErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryUserBalanceLogError = QueryUserBalanceLogErrors[keyof QueryUserBalanceLogErrors];
@@ -1791,14 +2880,42 @@ export type UpdateBindEmailData = {
     body: UpdateBindEmailRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/bind_email';
+    url: '/api/v1/public/user/bind_email';
 };
 
 export type UpdateBindEmailErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UpdateBindEmailError = UpdateBindEmailErrors[keyof UpdateBindEmailErrors];
@@ -1816,14 +2933,42 @@ export type UpdateBindMobileData = {
     body: UpdateBindMobileRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/bind_mobile';
+    url: '/api/v1/public/user/bind_mobile';
 };
 
 export type UpdateBindMobileErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UpdateBindMobileError = UpdateBindMobileErrors[keyof UpdateBindMobileErrors];
@@ -1841,14 +2986,42 @@ export type BindOAuthData = {
     body: BindOAuthRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/bind_oauth';
+    url: '/api/v1/public/user/bind_oauth';
 };
 
 export type BindOAuthErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type BindOAuthError = BindOAuthErrors[keyof BindOAuthErrors];
@@ -1866,14 +3039,42 @@ export type BindOAuthCallbackData = {
     body: BindOAuthCallbackRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/bind_oauth/callback';
+    url: '/api/v1/public/user/bind_oauth/callback';
 };
 
 export type BindOAuthCallbackErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type BindOAuthCallbackError = BindOAuthCallbackErrors[keyof BindOAuthCallbackErrors];
@@ -1891,14 +3092,38 @@ export type BindTelegramData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/user/bind_telegram';
+    url: '/api/v1/public/user/bind_telegram';
 };
 
 export type BindTelegramErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type BindTelegramError = BindTelegramErrors[keyof BindTelegramErrors];
@@ -1919,14 +3144,42 @@ export type QueryUserCommissionLogData = {
         page?: number;
         size?: number;
     };
-    url: '/v1/public/user/commission_log';
+    url: '/api/v1/public/user/commission_log';
 };
 
 export type QueryUserCommissionLogErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryUserCommissionLogError = QueryUserCommissionLogErrors[keyof QueryUserCommissionLogErrors];
@@ -1944,14 +3197,42 @@ export type CommissionWithdrawData = {
     body: CommissionWithdrawRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/commission_withdraw';
+    url: '/api/v1/public/user/commission_withdraw';
 };
 
 export type CommissionWithdrawErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type CommissionWithdrawError = CommissionWithdrawErrors[keyof CommissionWithdrawErrors];
@@ -1969,14 +3250,38 @@ export type GetDeviceListData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/user/devices';
+    url: '/api/v1/public/user/devices';
 };
 
 export type GetDeviceListErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type GetDeviceListError = GetDeviceListErrors[keyof GetDeviceListErrors];
@@ -1994,14 +3299,38 @@ export type QueryUserInfoData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/user/info';
+    url: '/api/v1/public/user/info';
 };
 
 export type QueryUserInfoErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryUserInfoError = QueryUserInfoErrors[keyof QueryUserInfoErrors];
@@ -2022,14 +3351,42 @@ export type GetLoginLogData = {
         page?: number;
         size?: number;
     };
-    url: '/v1/public/user/login_log';
+    url: '/api/v1/public/user/login_log';
 };
 
 export type GetLoginLogErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type GetLoginLogError = GetLoginLogErrors[keyof GetLoginLogErrors];
@@ -2047,14 +3404,42 @@ export type UpdateUserNotifyData = {
     body: UpdateUserNotifyRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/notify';
+    url: '/api/v1/public/user/notify';
 };
 
 export type UpdateUserNotifyErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UpdateUserNotifyError = UpdateUserNotifyErrors[keyof UpdateUserNotifyErrors];
@@ -2072,14 +3457,38 @@ export type GetOAuthMethodsData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/user/oauth_methods';
+    url: '/api/v1/public/user/oauth_methods';
 };
 
 export type GetOAuthMethodsErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type GetOAuthMethodsError = GetOAuthMethodsErrors[keyof GetOAuthMethodsErrors];
@@ -2097,14 +3506,42 @@ export type UpdateUserPasswordData = {
     body: UpdateUserPasswordRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/password';
+    url: '/api/v1/public/user/password';
 };
 
 export type UpdateUserPasswordErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UpdateUserPasswordError = UpdateUserPasswordErrors[keyof UpdateUserPasswordErrors];
@@ -2122,14 +3559,42 @@ export type UpdateUserRulesData = {
     body: UpdateUserRulesRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/rules';
+    url: '/api/v1/public/user/rules';
 };
 
 export type UpdateUserRulesErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UpdateUserRulesError = UpdateUserRulesErrors[keyof UpdateUserRulesErrors];
@@ -2147,14 +3612,38 @@ export type QueryUserSubscribeData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/user/subscribe';
+    url: '/api/v1/public/user/subscribe';
 };
 
 export type QueryUserSubscribeErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryUserSubscribeError = QueryUserSubscribeErrors[keyof QueryUserSubscribeErrors];
@@ -2175,14 +3664,42 @@ export type GetSubscribeLogData = {
         page?: number;
         size?: number;
     };
-    url: '/v1/public/user/subscribe_log';
+    url: '/api/v1/public/user/subscribe_log';
 };
 
 export type GetSubscribeLogErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type GetSubscribeLogError = GetSubscribeLogErrors[keyof GetSubscribeLogErrors];
@@ -2200,14 +3717,42 @@ export type UpdateUserSubscribeNoteData = {
     body: UpdateUserSubscribeNoteRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/subscribe_note';
+    url: '/api/v1/public/user/subscribe_note';
 };
 
 export type UpdateUserSubscribeNoteErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UpdateUserSubscribeNoteError = UpdateUserSubscribeNoteErrors[keyof UpdateUserSubscribeNoteErrors];
@@ -2225,14 +3770,42 @@ export type ResetUserSubscribeTokenData = {
     body: ResetUserSubscribeTokenRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/subscribe_token';
+    url: '/api/v1/public/user/subscribe_token';
 };
 
 export type ResetUserSubscribeTokenErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type ResetUserSubscribeTokenError = ResetUserSubscribeTokenErrors[keyof ResetUserSubscribeTokenErrors];
@@ -2250,14 +3823,42 @@ export type UnbindDeviceData = {
     body: UnbindDeviceRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/unbind_device';
+    url: '/api/v1/public/user/unbind_device';
 };
 
 export type UnbindDeviceErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UnbindDeviceError = UnbindDeviceErrors[keyof UnbindDeviceErrors];
@@ -2275,14 +3876,42 @@ export type UnbindOAuthData = {
     body: UnbindOAuthRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/unbind_oauth';
+    url: '/api/v1/public/user/unbind_oauth';
 };
 
 export type UnbindOAuthErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UnbindOAuthError = UnbindOAuthErrors[keyof UnbindOAuthErrors];
@@ -2300,14 +3929,38 @@ export type UnbindTelegramData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/v1/public/user/unbind_telegram';
+    url: '/api/v1/public/user/unbind_telegram';
 };
 
 export type UnbindTelegramErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UnbindTelegramError = UnbindTelegramErrors[keyof UnbindTelegramErrors];
@@ -2325,14 +3978,42 @@ export type UnsubscribeData = {
     body: UnsubscribeRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/unsubscribe';
+    url: '/api/v1/public/user/unsubscribe';
 };
 
 export type UnsubscribeErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type UnsubscribeError = UnsubscribeErrors[keyof UnsubscribeErrors];
@@ -2350,14 +4031,42 @@ export type PreUnsubscribeData = {
     body: PreUnsubscribeRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/unsubscribe/pre';
+    url: '/api/v1/public/user/unsubscribe/pre';
 };
 
 export type PreUnsubscribeErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type PreUnsubscribeError = PreUnsubscribeErrors[keyof PreUnsubscribeErrors];
@@ -2375,14 +4084,42 @@ export type VerifyEmailData = {
     body: VerifyEmailRequest;
     path?: never;
     query?: never;
-    url: '/v1/public/user/verify_email';
+    url: '/api/v1/public/user/verify_email';
 };
 
 export type VerifyEmailErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type VerifyEmailError = VerifyEmailErrors[keyof VerifyEmailErrors];
@@ -2403,14 +4140,42 @@ export type QueryWithdrawalLogData = {
         page?: number;
         size?: number;
     };
-    url: '/v1/public/user/withdrawal_log';
+    url: '/api/v1/public/user/withdrawal_log';
 };
 
 export type QueryWithdrawalLogErrors = {
     /**
-     * Error
+     * Bad Request
      */
-    default: ErrorModel;
+    400: Problem;
+    /**
+     * Unauthorized
+     */
+    401: Problem;
+    /**
+     * Forbidden
+     */
+    403: Problem;
+    /**
+     * Not Found
+     */
+    404: Problem;
+    /**
+     * Unprocessable Entity
+     */
+    422: Problem;
+    /**
+     * Too Many Requests
+     */
+    429: Problem;
+    /**
+     * Internal Server Error
+     */
+    500: Problem;
+    /**
+     * Bad Gateway
+     */
+    502: Problem;
 };
 
 export type QueryWithdrawalLogError = QueryWithdrawalLogErrors[keyof QueryWithdrawalLogErrors];

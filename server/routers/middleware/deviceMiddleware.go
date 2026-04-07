@@ -54,7 +54,7 @@ func DeviceMiddleware(srvCtx *svc.ServiceContext) func(c *gin.Context) {
 
 		rw := NewResponseWriter(c, srvCtx)
 		if !rw.Decrypt() {
-			response.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidCiphertext), "Invalid ciphertext"))
+			response.WriteProblem(c, response.NewPublicProblem(http.StatusBadRequest, response.ProblemTypeInvalidRequest, "Invalid request"))
 			c.Abort()
 			return
 		}

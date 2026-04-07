@@ -2,6 +2,7 @@ package notify
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"net/url"
 
 	"github.com/perfect-panel/server/config"
@@ -45,11 +46,6 @@ func (l *EPayNotifyLogic) EPayNotify(req *types.EPayNotifyRequest) error {
 		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "payment config not found")
 	}
 	l.Infof("[EPayNotify] Payment config: %+v", data)
-	orderInfo, err := l.svcCtx.OrderModel.FindOneByOrderNo(l.ctx, req.OutTradeNo)
-	if err != nil {
-		l.Logger.Error("[EPayNotify] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", req.OutTradeNo))
-		return errors.Wrapf(xerr.NewErrCode(xerr.OrderNotExist), "order not exist: %v", req.OutTradeNo)
-	}
 
 	var config payment.EPayConfig
 	if err := json.Unmarshal([]byte(data.Config), &config); err != nil {
@@ -60,11 +56,16 @@ func (l *EPayNotifyLogic) EPayNotify(req *types.EPayNotifyRequest) error {
 	client := epay.NewClient(config.Pid, config.Url, config.Key, config.Type)
 	if !client.VerifySign(urlParamsToMap(l.ctx.Request.URL.RawQuery)) && !l.svcCtx.Config.Debug {
 		l.Logger.Error("[EPayNotify] Verify sign failed")
-		return nil
+		return markInvalidNotification(stderrors.New("verify sign failed"))
 	}
 	if req.TradeStatus != "TRADE_SUCCESS" {
 		l.Logger.Error("[EPayNotify] Trade status is not success", logger.Field("orderNo", req.OutTradeNo), logger.Field("tradeStatus", req.TradeStatus))
 		return nil
+	}
+	orderInfo, err := l.svcCtx.OrderModel.FindOneByOrderNo(l.ctx, req.OutTradeNo)
+	if err != nil {
+		l.Logger.Error("[EPayNotify] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", req.OutTradeNo))
+		return errors.Wrapf(xerr.NewErrCode(xerr.OrderNotExist), "order not exist: %v", req.OutTradeNo)
 	}
 	if orderInfo.Status == 5 {
 		return nil

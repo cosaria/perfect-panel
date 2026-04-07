@@ -15,6 +15,7 @@ import (
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
+	"net/http"
 	"strings"
 )
 
@@ -33,10 +34,10 @@ func GetServerUserListHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 		resp, err := l.GetServerUserList(&req)
 		if err != nil {
 			if errors.Is(err, xerr.StatusNotModified) {
-				c.String(304, "Not Modified")
+				c.Status(http.StatusNotModified)
 				return
 			}
-			c.String(404, "Not Found")
+			response.WriteProblem(c, response.NewPublicProblem(http.StatusBadGateway, response.ProblemTypeNodeUnavailable, "Node resource unavailable"))
 			return
 		}
 		c.JSON(200, resp)

@@ -14,11 +14,7 @@ import { queryUserInfo } from "@/services/user-api/sdk.gen";
 import { getAuthorization, Logout } from "@/utils/common";
 import Loading from "./loading";
 
-export default function Providers({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [queryClient] = useState(
     () =>
@@ -96,9 +92,7 @@ export default function Providers({
           {children}
         </ReactQueryStreamedHydration>
       </QueryClientProvider>
-      {customHtml && (
-        <div id="custom_html" dangerouslySetInnerHTML={{ __html: customHtml }} />
-      )}
+      {customHtml && <div id="custom_html" dangerouslySetInnerHTML={{ __html: customHtml }} />}
     </NextThemesProvider>
   );
 }

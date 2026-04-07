@@ -10,11 +10,11 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/routers/response"
 	"github.com/perfect-panel/server/svc"
 	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -29,15 +29,14 @@ func TelegramHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 		secret := c.Query("secret")
 		if secret != tool.Md5Encode(svcCtx.Config.Telegram.BotToken, false) {
 			logger.WithContext(c.Request.Context()).Error("[TelegramHandler] Secret is wrong", logger.Field("request secret", secret), logger.Field("config secret", tool.Md5Encode(svcCtx.Config.Telegram.BotToken, false)), logger.Field("token", svcCtx.Config.Telegram.BotToken))
-			c.Abort()
-			response.HttpResult(c, nil, nil)
+			c.AbortWithStatus(http.StatusOK)
 			return
 		}
 		var request tgbotapi.Update
 		if err := c.BindJSON(&request); err != nil {
 			logger.WithContext(c.Request.Context()).Error("[TelegramHandler] Failed to bind request", logger.Field("error", err.Error()))
-			c.Abort()
-			response.HttpResult(c, nil, err)
+			c.AbortWithStatus(http.StatusOK)
+			return
 		}
 		l := NewTelegramLogic(c, svcCtx)
 		l.TelegramLogic(&request)

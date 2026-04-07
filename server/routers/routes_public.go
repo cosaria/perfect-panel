@@ -27,8 +27,9 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	publicAnnouncementConfig.Servers = []*huma.Server{{URL: "/api/v1/public/announcement"}}
 	publicAnnouncementConfig.Components.SecuritySchemes = securitySchemes()
 	publicAnnouncementAPI := humagin.NewWithGroup(router, publicAnnouncementGroup, publicAnnouncementConfig)
+	configureHumaAPI(publicAnnouncementAPI, compatibilityEnabled(serverCtx, specOnly))
 
-	huma.Register(publicAnnouncementAPI, huma.Operation{
+	registerOperation(publicAnnouncementAPI, huma.Operation{
 		OperationID: "queryAnnouncement",
 		Method:      http.MethodGet,
 		Path:        "/list",
@@ -45,8 +46,9 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	publicDocumentConfig.Servers = []*huma.Server{{URL: "/api/v1/public/document"}}
 	publicDocumentConfig.Components.SecuritySchemes = securitySchemes()
 	publicDocumentAPI := humagin.NewWithGroup(router, publicDocumentGroup, publicDocumentConfig)
+	configureHumaAPI(publicDocumentAPI, compatibilityEnabled(serverCtx, specOnly))
 
-	huma.Register(publicDocumentAPI, huma.Operation{
+	registerOperation(publicDocumentAPI, huma.Operation{
 		OperationID: "queryDocumentDetail",
 		Method:      http.MethodGet,
 		Path:        "/detail",
@@ -55,7 +57,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicDocument.QueryDocumentDetailHandler(serverCtx))
 
-	huma.Register(publicDocumentAPI, huma.Operation{
+	registerOperation(publicDocumentAPI, huma.Operation{
 		OperationID: "queryDocumentList",
 		Method:      http.MethodGet,
 		Path:        "/list",
@@ -72,8 +74,9 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	publicOrderConfig.Servers = []*huma.Server{{URL: "/api/v1/public/order"}}
 	publicOrderConfig.Components.SecuritySchemes = securitySchemes()
 	publicOrderAPI := humagin.NewWithGroup(router, publicOrderGroup, publicOrderConfig)
+	configureHumaAPI(publicOrderAPI, compatibilityEnabled(serverCtx, specOnly))
 
-	huma.Register(publicOrderAPI, huma.Operation{
+	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "closeOrder",
 		Method:      http.MethodPost,
 		Path:        "/close",
@@ -82,7 +85,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicOrder.CloseOrderHandler(serverCtx))
 
-	huma.Register(publicOrderAPI, huma.Operation{
+	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "queryOrderDetail",
 		Method:      http.MethodGet,
 		Path:        "/detail",
@@ -91,7 +94,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicOrder.QueryOrderDetailHandler(serverCtx))
 
-	huma.Register(publicOrderAPI, huma.Operation{
+	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "queryOrderList",
 		Method:      http.MethodGet,
 		Path:        "/list",
@@ -100,7 +103,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicOrder.QueryOrderListHandler(serverCtx))
 
-	huma.Register(publicOrderAPI, huma.Operation{
+	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "preCreateOrder",
 		Method:      http.MethodPost,
 		Path:        "/pre",
@@ -109,7 +112,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicOrder.PreCreateOrderHandler(serverCtx))
 
-	huma.Register(publicOrderAPI, huma.Operation{
+	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "purchase",
 		Method:      http.MethodPost,
 		Path:        "/purchase",
@@ -118,7 +121,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicOrder.PurchaseHandler(serverCtx))
 
-	huma.Register(publicOrderAPI, huma.Operation{
+	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "recharge",
 		Method:      http.MethodPost,
 		Path:        "/recharge",
@@ -127,7 +130,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicOrder.RechargeHandler(serverCtx))
 
-	huma.Register(publicOrderAPI, huma.Operation{
+	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "renewal",
 		Method:      http.MethodPost,
 		Path:        "/renewal",
@@ -136,7 +139,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicOrder.RenewalHandler(serverCtx))
 
-	huma.Register(publicOrderAPI, huma.Operation{
+	registerOperation(publicOrderAPI, huma.Operation{
 		OperationID: "resetTraffic",
 		Method:      http.MethodPost,
 		Path:        "/reset",
@@ -153,8 +156,9 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	publicPaymentConfig.Servers = []*huma.Server{{URL: "/api/v1/public/payment"}}
 	publicPaymentConfig.Components.SecuritySchemes = securitySchemes()
 	publicPaymentAPI := humagin.NewWithGroup(router, publicPaymentGroup, publicPaymentConfig)
+	configureHumaAPI(publicPaymentAPI, compatibilityEnabled(serverCtx, specOnly))
 
-	huma.Register(publicPaymentAPI, huma.Operation{
+	registerOperation(publicPaymentAPI, huma.Operation{
 		OperationID: "getAvailablePaymentMethods",
 		Method:      http.MethodGet,
 		Path:        "/methods",
@@ -171,8 +175,9 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	publicSubscribeConfig.Servers = []*huma.Server{{URL: "/api/v1/public/subscribe"}}
 	publicSubscribeConfig.Components.SecuritySchemes = securitySchemes()
 	publicSubscribeAPI := humagin.NewWithGroup(router, publicSubscribeGroup, publicSubscribeConfig)
+	configureHumaAPI(publicSubscribeAPI, compatibilityEnabled(serverCtx, specOnly))
 
-	huma.Register(publicSubscribeAPI, huma.Operation{
+	registerOperation(publicSubscribeAPI, huma.Operation{
 		OperationID: "querySubscribeList",
 		Method:      http.MethodGet,
 		Path:        "/list",
@@ -181,7 +186,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicSubscribe.QuerySubscribeListHandler(serverCtx))
 
-	huma.Register(publicSubscribeAPI, huma.Operation{
+	registerOperation(publicSubscribeAPI, huma.Operation{
 		OperationID: "queryUserSubscribeNodeList",
 		Method:      http.MethodGet,
 		Path:        "/node/list",
@@ -198,8 +203,9 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	publicTicketConfig.Servers = []*huma.Server{{URL: "/api/v1/public/ticket"}}
 	publicTicketConfig.Components.SecuritySchemes = securitySchemes()
 	publicTicketAPI := humagin.NewWithGroup(router, publicTicketGroup, publicTicketConfig)
+	configureHumaAPI(publicTicketAPI, compatibilityEnabled(serverCtx, specOnly))
 
-	huma.Register(publicTicketAPI, huma.Operation{
+	registerOperation(publicTicketAPI, huma.Operation{
 		OperationID: "updateUserTicketStatus",
 		Method:      http.MethodPut,
 		Path:        "/ticket",
@@ -208,7 +214,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicTicket.UpdateUserTicketStatusHandler(serverCtx))
 
-	huma.Register(publicTicketAPI, huma.Operation{
+	registerOperation(publicTicketAPI, huma.Operation{
 		OperationID: "createUserTicket",
 		Method:      http.MethodPost,
 		Path:        "/ticket",
@@ -217,7 +223,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicTicket.CreateUserTicketHandler(serverCtx))
 
-	huma.Register(publicTicketAPI, huma.Operation{
+	registerOperation(publicTicketAPI, huma.Operation{
 		OperationID: "getUserTicketDetails",
 		Method:      http.MethodGet,
 		Path:        "/detail",
@@ -226,7 +232,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicTicket.GetUserTicketDetailsHandler(serverCtx))
 
-	huma.Register(publicTicketAPI, huma.Operation{
+	registerOperation(publicTicketAPI, huma.Operation{
 		OperationID: "createUserTicketFollow",
 		Method:      http.MethodPost,
 		Path:        "/follow",
@@ -235,7 +241,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicTicket.CreateUserTicketFollowHandler(serverCtx))
 
-	huma.Register(publicTicketAPI, huma.Operation{
+	registerOperation(publicTicketAPI, huma.Operation{
 		OperationID: "getUserTicketList",
 		Method:      http.MethodGet,
 		Path:        "/list",
@@ -252,8 +258,9 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	publicUserConfig.Servers = []*huma.Server{{URL: "/api/v1/public/user"}}
 	publicUserConfig.Components.SecuritySchemes = securitySchemes()
 	publicUserAPI := humagin.NewWithGroup(router, publicUserGroup, publicUserConfig)
+	configureHumaAPI(publicUserAPI, compatibilityEnabled(serverCtx, specOnly))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserAffiliate",
 		Method:      http.MethodGet,
 		Path:        "/affiliate/count",
@@ -262,7 +269,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.QueryUserAffiliateHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserAffiliateList",
 		Method:      http.MethodGet,
 		Path:        "/affiliate/list",
@@ -271,7 +278,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.QueryUserAffiliateListHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserBalanceLog",
 		Method:      http.MethodGet,
 		Path:        "/balance_log",
@@ -280,7 +287,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.QueryUserBalanceLogHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateBindEmail",
 		Method:      http.MethodPut,
 		Path:        "/bind_email",
@@ -289,7 +296,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.UpdateBindEmailHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateBindMobile",
 		Method:      http.MethodPut,
 		Path:        "/bind_mobile",
@@ -298,7 +305,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.UpdateBindMobileHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "bindOAuth",
 		Method:      http.MethodPost,
 		Path:        "/bind_oauth",
@@ -307,7 +314,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.BindOAuthHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "bindOAuthCallback",
 		Method:      http.MethodPost,
 		Path:        "/bind_oauth/callback",
@@ -316,7 +323,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.BindOAuthCallbackHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "bindTelegram",
 		Method:      http.MethodGet,
 		Path:        "/bind_telegram",
@@ -325,7 +332,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.BindTelegramHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserCommissionLog",
 		Method:      http.MethodGet,
 		Path:        "/commission_log",
@@ -334,7 +341,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.QueryUserCommissionLogHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "commissionWithdraw",
 		Method:      http.MethodPost,
 		Path:        "/commission_withdraw",
@@ -343,7 +350,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.CommissionWithdrawHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "getDeviceList",
 		Method:      http.MethodGet,
 		Path:        "/devices",
@@ -352,7 +359,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.GetDeviceListHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserInfo",
 		Method:      http.MethodGet,
 		Path:        "/info",
@@ -361,7 +368,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.QueryUserInfoHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "getLoginLog",
 		Method:      http.MethodGet,
 		Path:        "/login_log",
@@ -370,7 +377,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.GetLoginLogHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateUserNotify",
 		Method:      http.MethodPut,
 		Path:        "/notify",
@@ -379,7 +386,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.UpdateUserNotifyHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "getOAuthMethods",
 		Method:      http.MethodGet,
 		Path:        "/oauth_methods",
@@ -388,7 +395,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.GetOAuthMethodsHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateUserPassword",
 		Method:      http.MethodPut,
 		Path:        "/password",
@@ -397,7 +404,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.UpdateUserPasswordHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateUserRules",
 		Method:      http.MethodPut,
 		Path:        "/rules",
@@ -406,7 +413,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.UpdateUserRulesHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryUserSubscribe",
 		Method:      http.MethodGet,
 		Path:        "/subscribe",
@@ -415,7 +422,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.QueryUserSubscribeHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "getSubscribeLog",
 		Method:      http.MethodGet,
 		Path:        "/subscribe_log",
@@ -424,7 +431,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.GetSubscribeLogHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "updateUserSubscribeNote",
 		Method:      http.MethodPut,
 		Path:        "/subscribe_note",
@@ -433,7 +440,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.UpdateUserSubscribeNoteHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "resetUserSubscribeToken",
 		Method:      http.MethodPut,
 		Path:        "/subscribe_token",
@@ -442,7 +449,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.ResetUserSubscribeTokenHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "unbindDevice",
 		Method:      http.MethodPut,
 		Path:        "/unbind_device",
@@ -451,7 +458,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.UnbindDeviceHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "unbindOAuth",
 		Method:      http.MethodPost,
 		Path:        "/unbind_oauth",
@@ -460,7 +467,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.UnbindOAuthHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "unbindTelegram",
 		Method:      http.MethodPost,
 		Path:        "/unbind_telegram",
@@ -469,7 +476,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.UnbindTelegramHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "unsubscribe",
 		Method:      http.MethodPost,
 		Path:        "/unsubscribe",
@@ -478,7 +485,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.UnsubscribeHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "preUnsubscribe",
 		Method:      http.MethodPost,
 		Path:        "/unsubscribe/pre",
@@ -487,7 +494,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.PreUnsubscribeHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "verifyEmail",
 		Method:      http.MethodPost,
 		Path:        "/verify_email",
@@ -496,7 +503,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Security:    bearerSecurity,
 	}, publicUser.VerifyEmailHandler(serverCtx))
 
-	huma.Register(publicUserAPI, huma.Operation{
+	registerOperation(publicUserAPI, huma.Operation{
 		OperationID: "queryWithdrawalLog",
 		Method:      http.MethodGet,
 		Path:        "/withdrawal_log",
@@ -512,8 +519,9 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	portalConfig := apiConfig("Portal API", "1.0.0")
 	portalConfig.Servers = []*huma.Server{{URL: "/api/v1/public/portal"}}
 	portalAPI := humagin.NewWithGroup(router, portalGroup, portalConfig)
+	configureHumaAPI(portalAPI, compatibilityEnabled(serverCtx, specOnly))
 
-	huma.Register(portalAPI, huma.Operation{
+	registerOperation(portalAPI, huma.Operation{
 		OperationID: "purchaseCheckout",
 		Method:      http.MethodPost,
 		Path:        "/order/checkout",
@@ -521,7 +529,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"portal"},
 	}, publicPortal.PurchaseCheckoutHandler(serverCtx))
 
-	huma.Register(portalAPI, huma.Operation{
+	registerOperation(portalAPI, huma.Operation{
 		OperationID: "queryPurchaseOrder",
 		Method:      http.MethodGet,
 		Path:        "/order/status",
@@ -529,7 +537,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"portal"},
 	}, publicPortal.QueryPurchaseOrderHandler(serverCtx))
 
-	huma.Register(portalAPI, huma.Operation{
+	registerOperation(portalAPI, huma.Operation{
 		OperationID: "portalGetAvailablePaymentMethods",
 		Method:      http.MethodGet,
 		Path:        "/payment-method",
@@ -537,7 +545,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"portal"},
 	}, publicPortal.GetAvailablePaymentMethodsHandler(serverCtx))
 
-	huma.Register(portalAPI, huma.Operation{
+	registerOperation(portalAPI, huma.Operation{
 		OperationID: "prePurchaseOrder",
 		Method:      http.MethodPost,
 		Path:        "/pre",
@@ -545,7 +553,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"portal"},
 	}, publicPortal.PrePurchaseOrderHandler(serverCtx))
 
-	huma.Register(portalAPI, huma.Operation{
+	registerOperation(portalAPI, huma.Operation{
 		OperationID: "portalPurchase",
 		Method:      http.MethodPost,
 		Path:        "/purchase",
@@ -553,7 +561,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"portal"},
 	}, publicPortal.PurchaseHandler(serverCtx))
 
-	huma.Register(portalAPI, huma.Operation{
+	registerOperation(portalAPI, huma.Operation{
 		OperationID: "getSubscription",
 		Method:      http.MethodGet,
 		Path:        "/subscribe",

@@ -20,8 +20,9 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 	authConfig := apiConfig("Auth API", "1.0.0")
 	authConfig.Servers = []*huma.Server{{URL: "/api/v1/auth"}}
 	authAPI := humagin.NewWithGroup(router, authGroup, authConfig)
+	configureHumaAPI(authAPI, compatibilityEnabled(serverCtx, specOnly))
 
-	huma.Register(authAPI, huma.Operation{
+	registerOperation(authAPI, huma.Operation{
 		OperationID: "checkUser",
 		Method:      http.MethodGet,
 		Path:        "/check",
@@ -29,7 +30,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Tags:        []string{"auth"},
 	}, auth.CheckUserHandler(serverCtx))
 
-	huma.Register(authAPI, huma.Operation{
+	registerOperation(authAPI, huma.Operation{
 		OperationID: "checkUserTelephone",
 		Method:      http.MethodGet,
 		Path:        "/check/telephone",
@@ -37,7 +38,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Tags:        []string{"auth"},
 	}, auth.CheckUserTelephoneHandler(serverCtx))
 
-	huma.Register(authAPI, huma.Operation{
+	registerOperation(authAPI, huma.Operation{
 		OperationID: "userLogin",
 		Method:      http.MethodPost,
 		Path:        "/login",
@@ -45,7 +46,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Tags:        []string{"auth"},
 	}, auth.UserLoginHandler(serverCtx))
 
-	huma.Register(authAPI, huma.Operation{
+	registerOperation(authAPI, huma.Operation{
 		OperationID: "deviceLogin",
 		Method:      http.MethodPost,
 		Path:        "/login/device",
@@ -53,7 +54,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Tags:        []string{"auth"},
 	}, auth.DeviceLoginHandler(serverCtx))
 
-	huma.Register(authAPI, huma.Operation{
+	registerOperation(authAPI, huma.Operation{
 		OperationID: "telephoneLogin",
 		Method:      http.MethodPost,
 		Path:        "/login/telephone",
@@ -61,7 +62,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Tags:        []string{"auth"},
 	}, auth.TelephoneLoginHandler(serverCtx))
 
-	huma.Register(authAPI, huma.Operation{
+	registerOperation(authAPI, huma.Operation{
 		OperationID: "userRegister",
 		Method:      http.MethodPost,
 		Path:        "/register",
@@ -69,7 +70,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Tags:        []string{"auth"},
 	}, auth.UserRegisterHandler(serverCtx))
 
-	huma.Register(authAPI, huma.Operation{
+	registerOperation(authAPI, huma.Operation{
 		OperationID: "telephoneUserRegister",
 		Method:      http.MethodPost,
 		Path:        "/register/telephone",
@@ -77,7 +78,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Tags:        []string{"auth"},
 	}, auth.TelephoneUserRegisterHandler(serverCtx))
 
-	huma.Register(authAPI, huma.Operation{
+	registerOperation(authAPI, huma.Operation{
 		OperationID: "resetPassword",
 		Method:      http.MethodPost,
 		Path:        "/reset",
@@ -85,7 +86,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Tags:        []string{"auth"},
 	}, auth.ResetPasswordHandler(serverCtx))
 
-	huma.Register(authAPI, huma.Operation{
+	registerOperation(authAPI, huma.Operation{
 		OperationID: "telephoneResetPassword",
 		Method:      http.MethodPost,
 		Path:        "/reset/telephone",
@@ -97,11 +98,12 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 	authOauthConfig := apiConfig("Auth OAuth API", "1.0.0")
 	authOauthConfig.Servers = []*huma.Server{{URL: "/api/v1/auth/oauth"}}
 	authOauthAPI := humagin.NewWithGroup(router, authOauthGroup, authOauthConfig)
+	configureHumaAPI(authOauthAPI, compatibilityEnabled(serverCtx, specOnly))
 
 	// AppleLoginCallback stays raw Gin because it needs direct redirect primitives.
 	authOauthGroup.POST("/callback/apple", authOauth.AppleLoginCallbackHandler(serverCtx))
 
-	huma.Register(authOauthAPI, huma.Operation{
+	registerOperation(authOauthAPI, huma.Operation{
 		OperationID: "oAuthLogin",
 		Method:      http.MethodPost,
 		Path:        "/login",
@@ -109,7 +111,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 		Tags:        []string{"oauth"},
 	}, authOauth.OAuthLoginHandler(serverCtx))
 
-	huma.Register(authOauthAPI, huma.Operation{
+	registerOperation(authOauthAPI, huma.Operation{
 		OperationID: "oAuthLoginGetToken",
 		Method:      http.MethodPost,
 		Path:        "/login/token",

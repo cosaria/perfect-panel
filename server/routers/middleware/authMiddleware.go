@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/perfect-panel/server/modules/infra/logger"
@@ -26,7 +27,7 @@ func AuthMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
 		if token == "" {
 			logger.WithContext(c.Request.Context()).Debug("[AuthMiddleware] Token Empty")
-			response.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.ErrorTokenEmpty), "Token Empty"))
+			response.WriteProblem(c, response.NewPublicProblem(http.StatusUnauthorized, response.ProblemTypeUnauthorized, http.StatusText(http.StatusUnauthorized)))
 			c.Abort()
 			return
 		}
@@ -34,25 +35,43 @@ func AuthMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
 		claims, err := jwt.ParseJwtToken(token, jwtConfig.AccessSecret)
 		if err != nil {
 			logger.WithContext(c.Request.Context()).Debug("[AuthMiddleware] ParseJwtToken", logger.Field("error", err.Error()), logger.Field("token", token))
-			response.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.ErrorTokenExpire), "Token Invalid"))
+			response.WriteProblem(c, response.NewPublicProblem(http.StatusUnauthorized, response.ProblemTypeUnauthorized, http.StatusText(http.StatusUnauthorized)))
 			c.Abort()
 			return
 		}
 
 		loginType := ""
 		if claims["LoginType"] != nil {
-			loginType = claims["LoginType"].(string)
+			var ok bool
+			loginType, ok = claims["LoginType"].(string)
+			if !ok {
+				logger.WithContext(c.Request.Context()).Debug("[AuthMiddleware] Invalid LoginType claim", logger.Field("claim", claims["LoginType"]))
+				response.WriteProblem(c, response.NewPublicProblem(http.StatusUnauthorized, response.ProblemTypeUnauthorized, http.StatusText(http.StatusUnauthorized)))
+				c.Abort()
+				return
+			}
 		}
-		// get user id from token
-		userId := int64(claims["UserId"].(float64))
-		// get session id from token
-		sessionId := claims["SessionId"].(string)
+		rawUserId, ok := claims["UserId"].(float64)
+		if !ok {
+			logger.WithContext(c.Request.Context()).Debug("[AuthMiddleware] Invalid UserId claim", logger.Field("claim", claims["UserId"]))
+			response.WriteProblem(c, response.NewPublicProblem(http.StatusUnauthorized, response.ProblemTypeUnauthorized, http.StatusText(http.StatusUnauthorized)))
+			c.Abort()
+			return
+		}
+		userId := int64(rawUserId)
+		sessionId, ok := claims["SessionId"].(string)
+		if !ok || sessionId == "" {
+			logger.WithContext(c.Request.Context()).Debug("[AuthMiddleware] Invalid SessionId claim", logger.Field("claim", claims["SessionId"]))
+			response.WriteProblem(c, response.NewPublicProblem(http.StatusUnauthorized, response.ProblemTypeUnauthorized, http.StatusText(http.StatusUnauthorized)))
+			c.Abort()
+			return
+		}
 		// get session id from redis
 		sessionIdCacheKey := fmt.Sprintf("%v:%v", config.SessionIdKey, sessionId)
 		value, err := svc.Redis.Get(c, sessionIdCacheKey).Result()
 		if err != nil {
 			logger.WithContext(c.Request.Context()).Debug("[AuthMiddleware] Redis Get", logger.Field("error", err.Error()), logger.Field("sessionId", sessionId))
-			response.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access"))
+			response.WriteProblem(c, response.NewPublicProblem(http.StatusUnauthorized, response.ProblemTypeUnauthorized, http.StatusText(http.StatusUnauthorized)))
 			c.Abort()
 			return
 		}
@@ -60,7 +79,7 @@ func AuthMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
 		//verify user id
 		if value != fmt.Sprintf("%v", userId) {
 			logger.WithContext(c.Request.Context()).Debug("[AuthMiddleware] Invalid Access", logger.Field("userId", userId), logger.Field("sessionId", sessionId))
-			response.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access"))
+			response.WriteProblem(c, response.NewPublicProblem(http.StatusUnauthorized, response.ProblemTypeUnauthorized, http.StatusText(http.StatusUnauthorized)))
 			c.Abort()
 			return
 		}
@@ -76,7 +95,7 @@ func AuthMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
 		paths := strings.Split(c.Request.URL.Path, "/")
 		if tool.StringSliceContains(paths, "admin") && !*userInfo.IsAdmin {
 			logger.WithContext(c.Request.Context()).Debug("[AuthMiddleware] Not Admin User", logger.Field("userId", userId), logger.Field("sessionId", sessionId))
-			response.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access"))
+			response.WriteProblem(c, response.NewPublicProblem(http.StatusForbidden, response.ProblemTypeForbidden, http.StatusText(http.StatusForbidden)))
 			c.Abort()
 			return
 		}

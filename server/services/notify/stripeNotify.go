@@ -40,7 +40,7 @@ func (l *StripeNotifyLogic) StripeNotify(r *http.Request, w http.ResponseWriter)
 	payload, err := io.ReadAll(r.Body)
 	if err != nil {
 		l.Errorw("[StripeNotify] error", logger.Field("errors", err.Error()))
-		return err
+		return markInvalidNotification(err)
 	}
 	signature := r.Header.Get("Stripe-Signature")
 	stripeConfig, ok := l.ctx.Value(config.CtxKeyPayment).(*payment.Payment)
@@ -60,7 +60,7 @@ func (l *StripeNotifyLogic) StripeNotify(r *http.Request, w http.ResponseWriter)
 	notify, err := client.ParseNotify(payload, signature)
 	if err != nil {
 		l.Errorw("[StripeNotify] error", logger.Field("errors", err.Error()))
-		return err
+		return markInvalidNotification(err)
 	}
 	orderInfo, err := l.svcCtx.OrderModel.FindOneByOrderNo(l.ctx, notify.OrderNo)
 	if err != nil {

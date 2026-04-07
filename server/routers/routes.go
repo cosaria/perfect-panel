@@ -5,6 +5,7 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/perfect-panel/server/routers/response"
 	"github.com/perfect-panel/server/svc"
 )
 
@@ -100,6 +101,8 @@ func RegisterHandlersForSpec(router *gin.Engine) *APIs {
 }
 
 func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnly bool) *APIs {
+	response.InstallHumaProblemFactory()
+
 	apis := &APIs{}
 
 	registerAdminRoutes(router, serverCtx, specOnly, apis)

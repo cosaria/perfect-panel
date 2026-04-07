@@ -17,9 +17,12 @@ export const locales = packageJSON.i18n.outputLocales;
 export const defaultLocale = packageJSON.i18n.entry;
 
 export const NEXT_PUBLIC_DEFAULT_LANGUAGE =
-  getEnv("NEXT_PUBLIC_DEFAULT_LANGUAGE") ?? process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE ?? defaultLocale;
+  getEnv("NEXT_PUBLIC_DEFAULT_LANGUAGE") ??
+  process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE ??
+  defaultLocale;
 
-export const NEXT_PUBLIC_SITE_URL = getEnv("NEXT_PUBLIC_SITE_URL") ?? process.env.NEXT_PUBLIC_SITE_URL;
+export const NEXT_PUBLIC_SITE_URL =
+  getEnv("NEXT_PUBLIC_SITE_URL") ?? process.env.NEXT_PUBLIC_SITE_URL;
 export const NEXT_PUBLIC_API_URL = getEnv("NEXT_PUBLIC_API_URL") ?? process.env.NEXT_PUBLIC_API_URL;
 export const NEXT_PUBLIC_CDN_URL =
   getEnv("NEXT_PUBLIC_CDN_URL") || process.env.NEXT_PUBLIC_CDN_URL || "https://cdn.jsdelivr.net";
@@ -52,7 +55,8 @@ export const NEXT_PUBLIC_HOME_USER_COUNT = (() => {
 })();
 
 export const NEXT_PUBLIC_HOME_SERVER_COUNT = (() => {
-  const value = getEnv("NEXT_PUBLIC_HOME_SERVER_COUNT") ?? process.env.NEXT_PUBLIC_HOME_SERVER_COUNT;
+  const value =
+    getEnv("NEXT_PUBLIC_HOME_SERVER_COUNT") ?? process.env.NEXT_PUBLIC_HOME_SERVER_COUNT;
   const numberValue = Number(value);
   if (Number.isNaN(numberValue)) return 999;
   return numberValue;
@@ -67,4 +71,5 @@ export const NEXT_PUBLIC_HOME_LOCATION_COUNT = (() => {
 })();
 
 export const NEXT_PUBLIC_HIDDEN_TUTORIAL_DOCUMENT =
-  getEnv("NEXT_PUBLIC_HIDDEN_TUTORIAL_DOCUMENT") ?? process.env.NEXT_PUBLIC_HIDDEN_TUTORIAL_DOCUMENT;
+  getEnv("NEXT_PUBLIC_HIDDEN_TUTORIAL_DOCUMENT") ??
+  process.env.NEXT_PUBLIC_HIDDEN_TUTORIAL_DOCUMENT;

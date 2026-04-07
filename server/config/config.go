@@ -35,6 +35,8 @@ type Config struct {
 		Password string `yaml:"Password" default:"password"`
 	} `yaml:"Administrator"`
 	AdminPath string `yaml:"AdminPath" default:"/admin"`
+
+	ErrorCompatibilityMode bool `yaml:"ErrorCompatibilityMode" default:"false"`
 }
 
 type RedisConfig struct {

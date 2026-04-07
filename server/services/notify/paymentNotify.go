@@ -1,7 +1,6 @@
 package notify
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/perfect-panel/server/config"
@@ -9,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment"
-	"github.com/perfect-panel/server/routers/response"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
@@ -20,7 +18,7 @@ func PaymentNotifyHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 		platform, ok := c.Request.Context().Value(config.CtxKeyPlatform).(string)
 		if !ok {
 			logger.WithContext(c.Request.Context()).Errorf("platform not found")
-			response.HttpResult(c, nil, fmt.Errorf("platform not found"))
+			writePlainText(c, http.StatusBadRequest, "unsupported platform")
 			return
 		}
 
@@ -28,35 +26,35 @@ func PaymentNotifyHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 		case payment.EPay, payment.CryptoSaaS:
 			req := &types.EPayNotifyRequest{}
 			if err := c.ShouldBind(req); err != nil {
-				response.HttpResult(c, nil, err)
+				writePlainText(c, http.StatusBadRequest, "invalid notification")
 				return
 			}
 			l := NewEPayNotifyLogic(c, svcCtx)
 			if err := l.EPayNotify(req); err != nil {
 				logger.WithContext(c.Request.Context()).Errorf("EPayNotify failed: %v", err.Error())
-				c.String(http.StatusBadRequest, err.Error())
+				writeProtocolFailure(c, err, http.StatusBadRequest, "invalid notification", "failed", false)
 				return
 			}
-			c.String(http.StatusOK, "%s", "success")
+			writePlainText(c, http.StatusOK, "success")
 		case payment.Stripe:
 			l := NewStripeNotifyLogic(c.Request.Context(), svcCtx)
 			if err := l.StripeNotify(c.Request, c.Writer); err != nil {
-				response.HttpResult(c, nil, err)
+				writeProtocolFailure(c, err, http.StatusBadRequest, "", "", true)
 				return
 			}
-			response.HttpResult(c, nil, nil)
+			writeEmptyStatus(c, http.StatusOK)
 
 		case payment.AlipayF2F:
 			l := NewAlipayNotifyLogic(c.Request.Context(), svcCtx)
 			if err := l.AlipayNotify(c.Request); err != nil {
-				response.HttpResult(c, nil, err)
+				writeProtocolFailure(c, err, http.StatusBadRequest, "invalid notification", "failed", false)
 				return
 			}
-			// Return success to alipay
-			c.String(http.StatusOK, "%s", "success")
+			writePlainText(c, http.StatusOK, "success")
 
 		default:
 			logger.WithContext(c.Request.Context()).Errorf("platform %s not support", platform)
+			writePlainText(c, http.StatusBadRequest, "unsupported platform")
 		}
 	}
 }

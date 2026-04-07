@@ -54,7 +54,7 @@ func (l *AlipayNotifyLogic) AlipayNotify(r *http.Request) error {
 	notify, err := client.DecodeNotification(r.Form)
 	if err != nil {
 		l.Logger.Error("[AlipayNotify] Decode notification failed", logger.Field("error", err.Error()))
-		return err
+		return markInvalidNotification(err)
 	}
 	if notify.Status == alipay.Success {
 		orderInfo, err := l.svcCtx.OrderModel.FindOneByOrderNo(l.ctx, notify.OrderNo)

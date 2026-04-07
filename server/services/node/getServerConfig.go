@@ -13,6 +13,7 @@ import (
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
+	"net/http"
 )
 
 func GetServerConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
@@ -30,10 +31,10 @@ func GetServerConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 		resp, err := l.GetServerConfig(&req)
 		if err != nil {
 			if errors.Is(err, xerr.StatusNotModified) {
-				c.String(304, "Not Modified")
+				c.Status(http.StatusNotModified)
 				return
 			}
-			c.String(404, "Not Found")
+			response.WriteProblem(c, response.NewPublicProblem(http.StatusBadGateway, response.ProblemTypeNodeUnavailable, "Node resource unavailable"))
 			return
 		}
 		c.JSON(200, resp)

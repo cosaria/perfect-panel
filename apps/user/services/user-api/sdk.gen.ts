@@ -21,18 +21,18 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 /**
  * Check user is exist
  */
-export const checkUser = <ThrowOnError extends boolean = false>(options?: Options<CheckUserData, ThrowOnError>) => (options?.client ?? client).get<CheckUserResponses, CheckUserErrors, ThrowOnError>({ url: '/v1/auth/check', ...options });
+export const checkUser = <ThrowOnError extends boolean = false>(options?: Options<CheckUserData, ThrowOnError>) => (options?.client ?? client).get<CheckUserResponses, CheckUserErrors, ThrowOnError>({ url: '/api/v1/auth/check', ...options });
 
 /**
  * Check user telephone is exist
  */
-export const checkUserTelephone = <ThrowOnError extends boolean = false>(options?: Options<CheckUserTelephoneData, ThrowOnError>) => (options?.client ?? client).get<CheckUserTelephoneResponses, CheckUserTelephoneErrors, ThrowOnError>({ url: '/v1/auth/check/telephone', ...options });
+export const checkUserTelephone = <ThrowOnError extends boolean = false>(options?: Options<CheckUserTelephoneData, ThrowOnError>) => (options?.client ?? client).get<CheckUserTelephoneResponses, CheckUserTelephoneErrors, ThrowOnError>({ url: '/api/v1/auth/check/telephone', ...options });
 
 /**
  * User login
  */
 export const userLogin = <ThrowOnError extends boolean = false>(options: Options<UserLoginData, ThrowOnError>) => (options.client ?? client).post<UserLoginResponses, UserLoginErrors, ThrowOnError>({
-    url: '/v1/auth/login',
+    url: '/api/v1/auth/login',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export const userLogin = <ThrowOnError extends boolean = false>(options: Options
  * Device Login
  */
 export const deviceLogin = <ThrowOnError extends boolean = false>(options: Options<DeviceLoginData, ThrowOnError>) => (options.client ?? client).post<DeviceLoginResponses, DeviceLoginErrors, ThrowOnError>({
-    url: '/v1/auth/login/device',
+    url: '/api/v1/auth/login/device',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export const deviceLogin = <ThrowOnError extends boolean = false>(options: Optio
  * User Telephone login
  */
 export const telephoneLogin = <ThrowOnError extends boolean = false>(options: Options<TelephoneLoginData, ThrowOnError>) => (options.client ?? client).post<TelephoneLoginResponses, TelephoneLoginErrors, ThrowOnError>({
-    url: '/v1/auth/login/telephone',
+    url: '/api/v1/auth/login/telephone',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export const telephoneLogin = <ThrowOnError extends boolean = false>(options: Op
  * OAuth login
  */
 export const oAuthLogin = <ThrowOnError extends boolean = false>(options: Options<OAuthLoginData, ThrowOnError>) => (options.client ?? client).post<OAuthLoginResponses, OAuthLoginErrors, ThrowOnError>({
-    url: '/v1/auth/oauth/login',
+    url: '/api/v1/auth/oauth/login',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export const oAuthLogin = <ThrowOnError extends boolean = false>(options: Option
  * OAuth login get token
  */
 export const oAuthLoginGetToken = <ThrowOnError extends boolean = false>(options: Options<OAuthLoginGetTokenData, ThrowOnError>) => (options.client ?? client).post<OAuthLoginGetTokenResponses, OAuthLoginGetTokenErrors, ThrowOnError>({
-    url: '/v1/auth/oauth/login/token',
+    url: '/api/v1/auth/oauth/login/token',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ export const oAuthLoginGetToken = <ThrowOnError extends boolean = false>(options
  * User register
  */
 export const userRegister = <ThrowOnError extends boolean = false>(options: Options<UserRegisterData, ThrowOnError>) => (options.client ?? client).post<UserRegisterResponses, UserRegisterErrors, ThrowOnError>({
-    url: '/v1/auth/register',
+    url: '/api/v1/auth/register',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ export const userRegister = <ThrowOnError extends boolean = false>(options: Opti
  * User Telephone register
  */
 export const telephoneUserRegister = <ThrowOnError extends boolean = false>(options: Options<TelephoneUserRegisterData, ThrowOnError>) => (options.client ?? client).post<TelephoneUserRegisterResponses, TelephoneUserRegisterErrors, ThrowOnError>({
-    url: '/v1/auth/register/telephone',
+    url: '/api/v1/auth/register/telephone',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ export const telephoneUserRegister = <ThrowOnError extends boolean = false>(opti
  * Reset password
  */
 export const resetPassword = <ThrowOnError extends boolean = false>(options: Options<ResetPasswordData, ThrowOnError>) => (options.client ?? client).post<ResetPasswordResponses, ResetPasswordErrors, ThrowOnError>({
-    url: '/v1/auth/reset',
+    url: '/api/v1/auth/reset',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ export const resetPassword = <ThrowOnError extends boolean = false>(options: Opt
  * Reset password
  */
 export const telephoneResetPassword = <ThrowOnError extends boolean = false>(options: Options<TelephoneResetPasswordData, ThrowOnError>) => (options.client ?? client).post<TelephoneResetPasswordResponses, TelephoneResetPasswordErrors, ThrowOnError>({
-    url: '/v1/auth/reset/telephone',
+    url: '/api/v1/auth/reset/telephone',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ export const telephoneResetPassword = <ThrowOnError extends boolean = false>(opt
  * Query announcement
  */
 export const queryAnnouncement = <ThrowOnError extends boolean = false>(options: Options<QueryAnnouncementData, ThrowOnError>) => (options.client ?? client).get<QueryAnnouncementResponses, QueryAnnouncementErrors, ThrowOnError>({
-    url: '/v1/public/announcement/list',
+    url: '/api/v1/public/announcement/list',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -151,18 +151,18 @@ export const queryAnnouncement = <ThrowOnError extends boolean = false>(options:
 /**
  * Get document detail
  */
-export const queryDocumentDetail = <ThrowOnError extends boolean = false>(options?: Options<QueryDocumentDetailData, ThrowOnError>) => (options?.client ?? client).get<QueryDocumentDetailResponses, QueryDocumentDetailErrors, ThrowOnError>({ url: '/v1/public/document/detail', ...options });
+export const queryDocumentDetail = <ThrowOnError extends boolean = false>(options?: Options<QueryDocumentDetailData, ThrowOnError>) => (options?.client ?? client).get<QueryDocumentDetailResponses, QueryDocumentDetailErrors, ThrowOnError>({ url: '/api/v1/public/document/detail', ...options });
 
 /**
  * Get document list
  */
-export const queryDocumentList = <ThrowOnError extends boolean = false>(options?: Options<QueryDocumentListData, ThrowOnError>) => (options?.client ?? client).get<QueryDocumentListResponses, QueryDocumentListErrors, ThrowOnError>({ url: '/v1/public/document/list', ...options });
+export const queryDocumentList = <ThrowOnError extends boolean = false>(options?: Options<QueryDocumentListData, ThrowOnError>) => (options?.client ?? client).get<QueryDocumentListResponses, QueryDocumentListErrors, ThrowOnError>({ url: '/api/v1/public/document/list', ...options });
 
 /**
  * Close order
  */
 export const closeOrder = <ThrowOnError extends boolean = false>(options: Options<CloseOrderData, ThrowOnError>) => (options.client ?? client).post<CloseOrderResponses, CloseOrderErrors, ThrowOnError>({
-    url: '/v1/public/order/close',
+    url: '/api/v1/public/order/close',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -173,18 +173,18 @@ export const closeOrder = <ThrowOnError extends boolean = false>(options: Option
 /**
  * Get order
  */
-export const queryOrderDetail = <ThrowOnError extends boolean = false>(options?: Options<QueryOrderDetailData, ThrowOnError>) => (options?.client ?? client).get<QueryOrderDetailResponses, QueryOrderDetailErrors, ThrowOnError>({ url: '/v1/public/order/detail', ...options });
+export const queryOrderDetail = <ThrowOnError extends boolean = false>(options?: Options<QueryOrderDetailData, ThrowOnError>) => (options?.client ?? client).get<QueryOrderDetailResponses, QueryOrderDetailErrors, ThrowOnError>({ url: '/api/v1/public/order/detail', ...options });
 
 /**
  * Get order list
  */
-export const queryOrderList = <ThrowOnError extends boolean = false>(options?: Options<QueryOrderListData, ThrowOnError>) => (options?.client ?? client).get<QueryOrderListResponses, QueryOrderListErrors, ThrowOnError>({ url: '/v1/public/order/list', ...options });
+export const queryOrderList = <ThrowOnError extends boolean = false>(options?: Options<QueryOrderListData, ThrowOnError>) => (options?.client ?? client).get<QueryOrderListResponses, QueryOrderListErrors, ThrowOnError>({ url: '/api/v1/public/order/list', ...options });
 
 /**
  * Pre create order
  */
 export const preCreateOrder = <ThrowOnError extends boolean = false>(options: Options<PreCreateOrderData, ThrowOnError>) => (options.client ?? client).post<PreCreateOrderResponses, PreCreateOrderErrors, ThrowOnError>({
-    url: '/v1/public/order/pre',
+    url: '/api/v1/public/order/pre',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -196,7 +196,7 @@ export const preCreateOrder = <ThrowOnError extends boolean = false>(options: Op
  * purchase Subscription
  */
 export const purchase = <ThrowOnError extends boolean = false>(options: Options<PurchaseData, ThrowOnError>) => (options.client ?? client).post<PurchaseResponses, PurchaseErrors, ThrowOnError>({
-    url: '/v1/public/order/purchase',
+    url: '/api/v1/public/order/purchase',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -208,7 +208,7 @@ export const purchase = <ThrowOnError extends boolean = false>(options: Options<
  * Recharge
  */
 export const recharge = <ThrowOnError extends boolean = false>(options: Options<RechargeData, ThrowOnError>) => (options.client ?? client).post<RechargeResponses, RechargeErrors, ThrowOnError>({
-    url: '/v1/public/order/recharge',
+    url: '/api/v1/public/order/recharge',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -220,7 +220,7 @@ export const recharge = <ThrowOnError extends boolean = false>(options: Options<
  * Renewal Subscription
  */
 export const renewal = <ThrowOnError extends boolean = false>(options: Options<RenewalData, ThrowOnError>) => (options.client ?? client).post<RenewalResponses, RenewalErrors, ThrowOnError>({
-    url: '/v1/public/order/renewal',
+    url: '/api/v1/public/order/renewal',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -232,7 +232,7 @@ export const renewal = <ThrowOnError extends boolean = false>(options: Options<R
  * Reset traffic
  */
 export const resetTraffic = <ThrowOnError extends boolean = false>(options: Options<ResetTrafficData, ThrowOnError>) => (options.client ?? client).post<ResetTrafficResponses, ResetTrafficErrors, ThrowOnError>({
-    url: '/v1/public/order/reset',
+    url: '/api/v1/public/order/reset',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -243,13 +243,13 @@ export const resetTraffic = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Get available payment methods
  */
-export const getAvailablePaymentMethods = <ThrowOnError extends boolean = false>(options?: Options<GetAvailablePaymentMethodsData, ThrowOnError>) => (options?.client ?? client).get<GetAvailablePaymentMethodsResponses, GetAvailablePaymentMethodsErrors, ThrowOnError>({ url: '/v1/public/payment/methods', ...options });
+export const getAvailablePaymentMethods = <ThrowOnError extends boolean = false>(options?: Options<GetAvailablePaymentMethodsData, ThrowOnError>) => (options?.client ?? client).get<GetAvailablePaymentMethodsResponses, GetAvailablePaymentMethodsErrors, ThrowOnError>({ url: '/api/v1/public/payment/methods', ...options });
 
 /**
  * Purchase Checkout
  */
 export const purchaseCheckout = <ThrowOnError extends boolean = false>(options: Options<PurchaseCheckoutData, ThrowOnError>) => (options.client ?? client).post<PurchaseCheckoutResponses, PurchaseCheckoutErrors, ThrowOnError>({
-    url: '/v1/public/portal/order/checkout',
+    url: '/api/v1/public/portal/order/checkout',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -260,18 +260,18 @@ export const purchaseCheckout = <ThrowOnError extends boolean = false>(options: 
 /**
  * Query Purchase Order
  */
-export const queryPurchaseOrder = <ThrowOnError extends boolean = false>(options?: Options<QueryPurchaseOrderData, ThrowOnError>) => (options?.client ?? client).get<QueryPurchaseOrderResponses, QueryPurchaseOrderErrors, ThrowOnError>({ url: '/v1/public/portal/order/status', ...options });
+export const queryPurchaseOrder = <ThrowOnError extends boolean = false>(options?: Options<QueryPurchaseOrderData, ThrowOnError>) => (options?.client ?? client).get<QueryPurchaseOrderResponses, QueryPurchaseOrderErrors, ThrowOnError>({ url: '/api/v1/public/portal/order/status', ...options });
 
 /**
  * Get available payment methods
  */
-export const portalGetAvailablePaymentMethods = <ThrowOnError extends boolean = false>(options?: Options<PortalGetAvailablePaymentMethodsData, ThrowOnError>) => (options?.client ?? client).get<PortalGetAvailablePaymentMethodsResponses, PortalGetAvailablePaymentMethodsErrors, ThrowOnError>({ url: '/v1/public/portal/payment-method', ...options });
+export const portalGetAvailablePaymentMethods = <ThrowOnError extends boolean = false>(options?: Options<PortalGetAvailablePaymentMethodsData, ThrowOnError>) => (options?.client ?? client).get<PortalGetAvailablePaymentMethodsResponses, PortalGetAvailablePaymentMethodsErrors, ThrowOnError>({ url: '/api/v1/public/portal/payment-method', ...options });
 
 /**
  * Pre Purchase Order
  */
 export const prePurchaseOrder = <ThrowOnError extends boolean = false>(options: Options<PrePurchaseOrderData, ThrowOnError>) => (options.client ?? client).post<PrePurchaseOrderResponses, PrePurchaseOrderErrors, ThrowOnError>({
-    url: '/v1/public/portal/pre',
+    url: '/api/v1/public/portal/pre',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -283,7 +283,7 @@ export const prePurchaseOrder = <ThrowOnError extends boolean = false>(options: 
  * Purchase subscription
  */
 export const portalPurchase = <ThrowOnError extends boolean = false>(options: Options<PortalPurchaseData, ThrowOnError>) => (options.client ?? client).post<PortalPurchaseResponses, PortalPurchaseErrors, ThrowOnError>({
-    url: '/v1/public/portal/purchase',
+    url: '/api/v1/public/portal/purchase',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -294,28 +294,28 @@ export const portalPurchase = <ThrowOnError extends boolean = false>(options: Op
 /**
  * Get Subscription
  */
-export const getSubscription = <ThrowOnError extends boolean = false>(options?: Options<GetSubscriptionData, ThrowOnError>) => (options?.client ?? client).get<GetSubscriptionResponses, GetSubscriptionErrors, ThrowOnError>({ url: '/v1/public/portal/subscribe', ...options });
+export const getSubscription = <ThrowOnError extends boolean = false>(options?: Options<GetSubscriptionData, ThrowOnError>) => (options?.client ?? client).get<GetSubscriptionResponses, GetSubscriptionErrors, ThrowOnError>({ url: '/api/v1/public/portal/subscribe', ...options });
 
 /**
  * Get subscribe list
  */
-export const querySubscribeList = <ThrowOnError extends boolean = false>(options?: Options<QuerySubscribeListData, ThrowOnError>) => (options?.client ?? client).get<QuerySubscribeListResponses, QuerySubscribeListErrors, ThrowOnError>({ url: '/v1/public/subscribe/list', ...options });
+export const querySubscribeList = <ThrowOnError extends boolean = false>(options?: Options<QuerySubscribeListData, ThrowOnError>) => (options?.client ?? client).get<QuerySubscribeListResponses, QuerySubscribeListErrors, ThrowOnError>({ url: '/api/v1/public/subscribe/list', ...options });
 
 /**
  * Get user subscribe node info
  */
-export const queryUserSubscribeNodeList = <ThrowOnError extends boolean = false>(options?: Options<QueryUserSubscribeNodeListData, ThrowOnError>) => (options?.client ?? client).get<QueryUserSubscribeNodeListResponses, QueryUserSubscribeNodeListErrors, ThrowOnError>({ url: '/v1/public/subscribe/node/list', ...options });
+export const queryUserSubscribeNodeList = <ThrowOnError extends boolean = false>(options?: Options<QueryUserSubscribeNodeListData, ThrowOnError>) => (options?.client ?? client).get<QueryUserSubscribeNodeListResponses, QueryUserSubscribeNodeListErrors, ThrowOnError>({ url: '/api/v1/public/subscribe/node/list', ...options });
 
 /**
  * Get ticket detail
  */
-export const getUserTicketDetails = <ThrowOnError extends boolean = false>(options?: Options<GetUserTicketDetailsData, ThrowOnError>) => (options?.client ?? client).get<GetUserTicketDetailsResponses, GetUserTicketDetailsErrors, ThrowOnError>({ url: '/v1/public/ticket/detail', ...options });
+export const getUserTicketDetails = <ThrowOnError extends boolean = false>(options?: Options<GetUserTicketDetailsData, ThrowOnError>) => (options?.client ?? client).get<GetUserTicketDetailsResponses, GetUserTicketDetailsErrors, ThrowOnError>({ url: '/api/v1/public/ticket/detail', ...options });
 
 /**
  * Create ticket follow
  */
 export const createUserTicketFollow = <ThrowOnError extends boolean = false>(options: Options<CreateUserTicketFollowData, ThrowOnError>) => (options.client ?? client).post<CreateUserTicketFollowResponses, CreateUserTicketFollowErrors, ThrowOnError>({
-    url: '/v1/public/ticket/follow',
+    url: '/api/v1/public/ticket/follow',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -327,7 +327,7 @@ export const createUserTicketFollow = <ThrowOnError extends boolean = false>(opt
  * Get ticket list
  */
 export const getUserTicketList = <ThrowOnError extends boolean = false>(options: Options<GetUserTicketListData, ThrowOnError>) => (options.client ?? client).get<GetUserTicketListResponses, GetUserTicketListErrors, ThrowOnError>({
-    url: '/v1/public/ticket/list',
+    url: '/api/v1/public/ticket/list',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -339,7 +339,7 @@ export const getUserTicketList = <ThrowOnError extends boolean = false>(options:
  * Create ticket
  */
 export const createUserTicket = <ThrowOnError extends boolean = false>(options: Options<CreateUserTicketData, ThrowOnError>) => (options.client ?? client).post<CreateUserTicketResponses, CreateUserTicketErrors, ThrowOnError>({
-    url: '/v1/public/ticket/ticket',
+    url: '/api/v1/public/ticket/ticket',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -351,7 +351,7 @@ export const createUserTicket = <ThrowOnError extends boolean = false>(options: 
  * Update ticket status
  */
 export const updateUserTicketStatus = <ThrowOnError extends boolean = false>(options: Options<UpdateUserTicketStatusData, ThrowOnError>) => (options.client ?? client).put<UpdateUserTicketStatusResponses, UpdateUserTicketStatusErrors, ThrowOnError>({
-    url: '/v1/public/ticket/ticket',
+    url: '/api/v1/public/ticket/ticket',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -362,23 +362,23 @@ export const updateUserTicketStatus = <ThrowOnError extends boolean = false>(opt
 /**
  * Query User Affiliate Count
  */
-export const queryUserAffiliate = <ThrowOnError extends boolean = false>(options?: Options<QueryUserAffiliateData, ThrowOnError>) => (options?.client ?? client).get<QueryUserAffiliateResponses, QueryUserAffiliateErrors, ThrowOnError>({ url: '/v1/public/user/affiliate/count', ...options });
+export const queryUserAffiliate = <ThrowOnError extends boolean = false>(options?: Options<QueryUserAffiliateData, ThrowOnError>) => (options?.client ?? client).get<QueryUserAffiliateResponses, QueryUserAffiliateErrors, ThrowOnError>({ url: '/api/v1/public/user/affiliate/count', ...options });
 
 /**
  * Query User Affiliate List
  */
-export const queryUserAffiliateList = <ThrowOnError extends boolean = false>(options?: Options<QueryUserAffiliateListData, ThrowOnError>) => (options?.client ?? client).get<QueryUserAffiliateListResponses, QueryUserAffiliateListErrors, ThrowOnError>({ url: '/v1/public/user/affiliate/list', ...options });
+export const queryUserAffiliateList = <ThrowOnError extends boolean = false>(options?: Options<QueryUserAffiliateListData, ThrowOnError>) => (options?.client ?? client).get<QueryUserAffiliateListResponses, QueryUserAffiliateListErrors, ThrowOnError>({ url: '/api/v1/public/user/affiliate/list', ...options });
 
 /**
  * Query User Balance Log
  */
-export const queryUserBalanceLog = <ThrowOnError extends boolean = false>(options?: Options<QueryUserBalanceLogData, ThrowOnError>) => (options?.client ?? client).get<QueryUserBalanceLogResponses, QueryUserBalanceLogErrors, ThrowOnError>({ url: '/v1/public/user/balance_log', ...options });
+export const queryUserBalanceLog = <ThrowOnError extends boolean = false>(options?: Options<QueryUserBalanceLogData, ThrowOnError>) => (options?.client ?? client).get<QueryUserBalanceLogResponses, QueryUserBalanceLogErrors, ThrowOnError>({ url: '/api/v1/public/user/balance_log', ...options });
 
 /**
  * Update Bind Email
  */
 export const updateBindEmail = <ThrowOnError extends boolean = false>(options: Options<UpdateBindEmailData, ThrowOnError>) => (options.client ?? client).put<UpdateBindEmailResponses, UpdateBindEmailErrors, ThrowOnError>({
-    url: '/v1/public/user/bind_email',
+    url: '/api/v1/public/user/bind_email',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -390,7 +390,7 @@ export const updateBindEmail = <ThrowOnError extends boolean = false>(options: O
  * Update Bind Mobile
  */
 export const updateBindMobile = <ThrowOnError extends boolean = false>(options: Options<UpdateBindMobileData, ThrowOnError>) => (options.client ?? client).put<UpdateBindMobileResponses, UpdateBindMobileErrors, ThrowOnError>({
-    url: '/v1/public/user/bind_mobile',
+    url: '/api/v1/public/user/bind_mobile',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -402,7 +402,7 @@ export const updateBindMobile = <ThrowOnError extends boolean = false>(options: 
  * Bind OAuth
  */
 export const bindOAuth = <ThrowOnError extends boolean = false>(options: Options<BindOAuthData, ThrowOnError>) => (options.client ?? client).post<BindOAuthResponses, BindOAuthErrors, ThrowOnError>({
-    url: '/v1/public/user/bind_oauth',
+    url: '/api/v1/public/user/bind_oauth',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -414,7 +414,7 @@ export const bindOAuth = <ThrowOnError extends boolean = false>(options: Options
  * Bind OAuth Callback
  */
 export const bindOAuthCallback = <ThrowOnError extends boolean = false>(options: Options<BindOAuthCallbackData, ThrowOnError>) => (options.client ?? client).post<BindOAuthCallbackResponses, BindOAuthCallbackErrors, ThrowOnError>({
-    url: '/v1/public/user/bind_oauth/callback',
+    url: '/api/v1/public/user/bind_oauth/callback',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -425,18 +425,18 @@ export const bindOAuthCallback = <ThrowOnError extends boolean = false>(options:
 /**
  * Bind Telegram
  */
-export const bindTelegram = <ThrowOnError extends boolean = false>(options?: Options<BindTelegramData, ThrowOnError>) => (options?.client ?? client).get<BindTelegramResponses, BindTelegramErrors, ThrowOnError>({ url: '/v1/public/user/bind_telegram', ...options });
+export const bindTelegram = <ThrowOnError extends boolean = false>(options?: Options<BindTelegramData, ThrowOnError>) => (options?.client ?? client).get<BindTelegramResponses, BindTelegramErrors, ThrowOnError>({ url: '/api/v1/public/user/bind_telegram', ...options });
 
 /**
  * Query User Commission Log
  */
-export const queryUserCommissionLog = <ThrowOnError extends boolean = false>(options?: Options<QueryUserCommissionLogData, ThrowOnError>) => (options?.client ?? client).get<QueryUserCommissionLogResponses, QueryUserCommissionLogErrors, ThrowOnError>({ url: '/v1/public/user/commission_log', ...options });
+export const queryUserCommissionLog = <ThrowOnError extends boolean = false>(options?: Options<QueryUserCommissionLogData, ThrowOnError>) => (options?.client ?? client).get<QueryUserCommissionLogResponses, QueryUserCommissionLogErrors, ThrowOnError>({ url: '/api/v1/public/user/commission_log', ...options });
 
 /**
  * Commission Withdraw
  */
 export const commissionWithdraw = <ThrowOnError extends boolean = false>(options: Options<CommissionWithdrawData, ThrowOnError>) => (options.client ?? client).post<CommissionWithdrawResponses, CommissionWithdrawErrors, ThrowOnError>({
-    url: '/v1/public/user/commission_withdraw',
+    url: '/api/v1/public/user/commission_withdraw',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -447,23 +447,23 @@ export const commissionWithdraw = <ThrowOnError extends boolean = false>(options
 /**
  * Get Device List
  */
-export const getDeviceList = <ThrowOnError extends boolean = false>(options?: Options<GetDeviceListData, ThrowOnError>) => (options?.client ?? client).get<GetDeviceListResponses, GetDeviceListErrors, ThrowOnError>({ url: '/v1/public/user/devices', ...options });
+export const getDeviceList = <ThrowOnError extends boolean = false>(options?: Options<GetDeviceListData, ThrowOnError>) => (options?.client ?? client).get<GetDeviceListResponses, GetDeviceListErrors, ThrowOnError>({ url: '/api/v1/public/user/devices', ...options });
 
 /**
  * Query User Info
  */
-export const queryUserInfo = <ThrowOnError extends boolean = false>(options?: Options<QueryUserInfoData, ThrowOnError>) => (options?.client ?? client).get<QueryUserInfoResponses, QueryUserInfoErrors, ThrowOnError>({ url: '/v1/public/user/info', ...options });
+export const queryUserInfo = <ThrowOnError extends boolean = false>(options?: Options<QueryUserInfoData, ThrowOnError>) => (options?.client ?? client).get<QueryUserInfoResponses, QueryUserInfoErrors, ThrowOnError>({ url: '/api/v1/public/user/info', ...options });
 
 /**
  * Get Login Log
  */
-export const getLoginLog = <ThrowOnError extends boolean = false>(options?: Options<GetLoginLogData, ThrowOnError>) => (options?.client ?? client).get<GetLoginLogResponses, GetLoginLogErrors, ThrowOnError>({ url: '/v1/public/user/login_log', ...options });
+export const getLoginLog = <ThrowOnError extends boolean = false>(options?: Options<GetLoginLogData, ThrowOnError>) => (options?.client ?? client).get<GetLoginLogResponses, GetLoginLogErrors, ThrowOnError>({ url: '/api/v1/public/user/login_log', ...options });
 
 /**
  * Update User Notify
  */
 export const updateUserNotify = <ThrowOnError extends boolean = false>(options: Options<UpdateUserNotifyData, ThrowOnError>) => (options.client ?? client).put<UpdateUserNotifyResponses, UpdateUserNotifyErrors, ThrowOnError>({
-    url: '/v1/public/user/notify',
+    url: '/api/v1/public/user/notify',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -474,13 +474,13 @@ export const updateUserNotify = <ThrowOnError extends boolean = false>(options: 
 /**
  * Get OAuth Methods
  */
-export const getOAuthMethods = <ThrowOnError extends boolean = false>(options?: Options<GetOAuthMethodsData, ThrowOnError>) => (options?.client ?? client).get<GetOAuthMethodsResponses, GetOAuthMethodsErrors, ThrowOnError>({ url: '/v1/public/user/oauth_methods', ...options });
+export const getOAuthMethods = <ThrowOnError extends boolean = false>(options?: Options<GetOAuthMethodsData, ThrowOnError>) => (options?.client ?? client).get<GetOAuthMethodsResponses, GetOAuthMethodsErrors, ThrowOnError>({ url: '/api/v1/public/user/oauth_methods', ...options });
 
 /**
  * Update User Password
  */
 export const updateUserPassword = <ThrowOnError extends boolean = false>(options: Options<UpdateUserPasswordData, ThrowOnError>) => (options.client ?? client).put<UpdateUserPasswordResponses, UpdateUserPasswordErrors, ThrowOnError>({
-    url: '/v1/public/user/password',
+    url: '/api/v1/public/user/password',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -492,7 +492,7 @@ export const updateUserPassword = <ThrowOnError extends boolean = false>(options
  * Update User Rules
  */
 export const updateUserRules = <ThrowOnError extends boolean = false>(options: Options<UpdateUserRulesData, ThrowOnError>) => (options.client ?? client).put<UpdateUserRulesResponses, UpdateUserRulesErrors, ThrowOnError>({
-    url: '/v1/public/user/rules',
+    url: '/api/v1/public/user/rules',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -503,18 +503,18 @@ export const updateUserRules = <ThrowOnError extends boolean = false>(options: O
 /**
  * Query User Subscribe
  */
-export const queryUserSubscribe = <ThrowOnError extends boolean = false>(options?: Options<QueryUserSubscribeData, ThrowOnError>) => (options?.client ?? client).get<QueryUserSubscribeResponses, QueryUserSubscribeErrors, ThrowOnError>({ url: '/v1/public/user/subscribe', ...options });
+export const queryUserSubscribe = <ThrowOnError extends boolean = false>(options?: Options<QueryUserSubscribeData, ThrowOnError>) => (options?.client ?? client).get<QueryUserSubscribeResponses, QueryUserSubscribeErrors, ThrowOnError>({ url: '/api/v1/public/user/subscribe', ...options });
 
 /**
  * Get Subscribe Log
  */
-export const getSubscribeLog = <ThrowOnError extends boolean = false>(options?: Options<GetSubscribeLogData, ThrowOnError>) => (options?.client ?? client).get<GetSubscribeLogResponses, GetSubscribeLogErrors, ThrowOnError>({ url: '/v1/public/user/subscribe_log', ...options });
+export const getSubscribeLog = <ThrowOnError extends boolean = false>(options?: Options<GetSubscribeLogData, ThrowOnError>) => (options?.client ?? client).get<GetSubscribeLogResponses, GetSubscribeLogErrors, ThrowOnError>({ url: '/api/v1/public/user/subscribe_log', ...options });
 
 /**
  * Update User Subscribe Note
  */
 export const updateUserSubscribeNote = <ThrowOnError extends boolean = false>(options: Options<UpdateUserSubscribeNoteData, ThrowOnError>) => (options.client ?? client).put<UpdateUserSubscribeNoteResponses, UpdateUserSubscribeNoteErrors, ThrowOnError>({
-    url: '/v1/public/user/subscribe_note',
+    url: '/api/v1/public/user/subscribe_note',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -526,7 +526,7 @@ export const updateUserSubscribeNote = <ThrowOnError extends boolean = false>(op
  * Reset User Subscribe Token
  */
 export const resetUserSubscribeToken = <ThrowOnError extends boolean = false>(options: Options<ResetUserSubscribeTokenData, ThrowOnError>) => (options.client ?? client).put<ResetUserSubscribeTokenResponses, ResetUserSubscribeTokenErrors, ThrowOnError>({
-    url: '/v1/public/user/subscribe_token',
+    url: '/api/v1/public/user/subscribe_token',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -538,7 +538,7 @@ export const resetUserSubscribeToken = <ThrowOnError extends boolean = false>(op
  * Unbind Device
  */
 export const unbindDevice = <ThrowOnError extends boolean = false>(options: Options<UnbindDeviceData, ThrowOnError>) => (options.client ?? client).put<UnbindDeviceResponses, UnbindDeviceErrors, ThrowOnError>({
-    url: '/v1/public/user/unbind_device',
+    url: '/api/v1/public/user/unbind_device',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -550,7 +550,7 @@ export const unbindDevice = <ThrowOnError extends boolean = false>(options: Opti
  * Unbind OAuth
  */
 export const unbindOAuth = <ThrowOnError extends boolean = false>(options: Options<UnbindOAuthData, ThrowOnError>) => (options.client ?? client).post<UnbindOAuthResponses, UnbindOAuthErrors, ThrowOnError>({
-    url: '/v1/public/user/unbind_oauth',
+    url: '/api/v1/public/user/unbind_oauth',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -561,13 +561,13 @@ export const unbindOAuth = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Unbind Telegram
  */
-export const unbindTelegram = <ThrowOnError extends boolean = false>(options?: Options<UnbindTelegramData, ThrowOnError>) => (options?.client ?? client).post<UnbindTelegramResponses, UnbindTelegramErrors, ThrowOnError>({ url: '/v1/public/user/unbind_telegram', ...options });
+export const unbindTelegram = <ThrowOnError extends boolean = false>(options?: Options<UnbindTelegramData, ThrowOnError>) => (options?.client ?? client).post<UnbindTelegramResponses, UnbindTelegramErrors, ThrowOnError>({ url: '/api/v1/public/user/unbind_telegram', ...options });
 
 /**
  * Unsubscribe
  */
 export const unsubscribe = <ThrowOnError extends boolean = false>(options: Options<UnsubscribeData, ThrowOnError>) => (options.client ?? client).post<UnsubscribeResponses, UnsubscribeErrors, ThrowOnError>({
-    url: '/v1/public/user/unsubscribe',
+    url: '/api/v1/public/user/unsubscribe',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -579,7 +579,7 @@ export const unsubscribe = <ThrowOnError extends boolean = false>(options: Optio
  * Pre Unsubscribe
  */
 export const preUnsubscribe = <ThrowOnError extends boolean = false>(options: Options<PreUnsubscribeData, ThrowOnError>) => (options.client ?? client).post<PreUnsubscribeResponses, PreUnsubscribeErrors, ThrowOnError>({
-    url: '/v1/public/user/unsubscribe/pre',
+    url: '/api/v1/public/user/unsubscribe/pre',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -591,7 +591,7 @@ export const preUnsubscribe = <ThrowOnError extends boolean = false>(options: Op
  * Verify Email
  */
 export const verifyEmail = <ThrowOnError extends boolean = false>(options: Options<VerifyEmailData, ThrowOnError>) => (options.client ?? client).post<VerifyEmailResponses, VerifyEmailErrors, ThrowOnError>({
-    url: '/v1/public/user/verify_email',
+    url: '/api/v1/public/user/verify_email',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -602,4 +602,4 @@ export const verifyEmail = <ThrowOnError extends boolean = false>(options: Optio
 /**
  * Query Withdrawal Log
  */
-export const queryWithdrawalLog = <ThrowOnError extends boolean = false>(options?: Options<QueryWithdrawalLogData, ThrowOnError>) => (options?.client ?? client).get<QueryWithdrawalLogResponses, QueryWithdrawalLogErrors, ThrowOnError>({ url: '/v1/public/user/withdrawal_log', ...options });
+export const queryWithdrawalLog = <ThrowOnError extends boolean = false>(options?: Options<QueryWithdrawalLogData, ThrowOnError>) => (options?.client ?? client).get<QueryWithdrawalLogResponses, QueryWithdrawalLogErrors, ThrowOnError>({ url: '/api/v1/public/user/withdrawal_log', ...options });

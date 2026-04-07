@@ -37,8 +37,9 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 	adminConfig.Servers = []*huma.Server{{URL: "/api/v1/admin"}}
 	adminConfig.Components.SecuritySchemes = securitySchemes()
 	apis.Admin = humagin.NewWithGroup(router, adminGroup, adminConfig)
+	configureHumaAPI(apis.Admin, compatibilityEnabled(serverCtx, specOnly))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createAds",
 		Method:      http.MethodPost,
 		Path:        "/ads",
@@ -47,7 +48,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAds.CreateAdsHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateAds",
 		Method:      http.MethodPut,
 		Path:        "/ads",
@@ -56,7 +57,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAds.UpdateAdsHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteAds",
 		Method:      http.MethodDelete,
 		Path:        "/ads",
@@ -65,7 +66,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAds.DeleteAdsHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAdsDetail",
 		Method:      http.MethodGet,
 		Path:        "/ads/detail",
@@ -74,7 +75,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAds.GetAdsDetailHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAdsList",
 		Method:      http.MethodGet,
 		Path:        "/ads/list",
@@ -83,7 +84,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAds.GetAdsListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createAnnouncement",
 		Method:      http.MethodPost,
 		Path:        "/announcement",
@@ -92,7 +93,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAnnouncement.CreateAnnouncementHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateAnnouncement",
 		Method:      http.MethodPut,
 		Path:        "/announcement",
@@ -101,7 +102,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAnnouncement.UpdateAnnouncementHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteAnnouncement",
 		Method:      http.MethodDelete,
 		Path:        "/announcement",
@@ -110,7 +111,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAnnouncement.DeleteAnnouncementHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAnnouncement",
 		Method:      http.MethodGet,
 		Path:        "/announcement/detail",
@@ -119,7 +120,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAnnouncement.GetAnnouncementHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAnnouncementList",
 		Method:      http.MethodGet,
 		Path:        "/announcement/list",
@@ -128,7 +129,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAnnouncement.GetAnnouncementListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createSubscribeApplication",
 		Method:      http.MethodPost,
 		Path:        "/application",
@@ -137,7 +138,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminApplication.CreateSubscribeApplicationHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "previewSubscribeTemplate",
 		Method:      http.MethodGet,
 		Path:        "/application/preview",
@@ -146,7 +147,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminApplication.PreviewSubscribeTemplateHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateSubscribeApplication",
 		Method:      http.MethodPut,
 		Path:        "/application/subscribe_application",
@@ -155,7 +156,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminApplication.UpdateSubscribeApplicationHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteSubscribeApplication",
 		Method:      http.MethodDelete,
 		Path:        "/application/subscribe_application",
@@ -164,7 +165,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminApplication.DeleteSubscribeApplicationHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSubscribeApplicationList",
 		Method:      http.MethodGet,
 		Path:        "/application/subscribe_application_list",
@@ -173,7 +174,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminApplication.GetSubscribeApplicationListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAuthMethodConfig",
 		Method:      http.MethodGet,
 		Path:        "/auth-method/config",
@@ -182,7 +183,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAuthMethod.GetAuthMethodConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateAuthMethodConfig",
 		Method:      http.MethodPut,
 		Path:        "/auth-method/config",
@@ -191,7 +192,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAuthMethod.UpdateAuthMethodConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getEmailPlatform",
 		Method:      http.MethodGet,
 		Path:        "/auth-method/email_platform",
@@ -200,7 +201,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAuthMethod.GetEmailPlatformHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getAuthMethodList",
 		Method:      http.MethodGet,
 		Path:        "/auth-method/list",
@@ -209,7 +210,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAuthMethod.GetAuthMethodListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSmsPlatform",
 		Method:      http.MethodGet,
 		Path:        "/auth-method/sms_platform",
@@ -218,7 +219,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAuthMethod.GetSmsPlatformHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "testEmailSend",
 		Method:      http.MethodPost,
 		Path:        "/auth-method/test_email_send",
@@ -227,7 +228,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAuthMethod.TestEmailSendHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "testSmsSend",
 		Method:      http.MethodPost,
 		Path:        "/auth-method/test_sms_send",
@@ -236,7 +237,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminAuthMethod.TestSmsSendHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryRevenueStatistics",
 		Method:      http.MethodGet,
 		Path:        "/console/revenue",
@@ -245,7 +246,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminConsole.QueryRevenueStatisticsHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryServerTotalData",
 		Method:      http.MethodGet,
 		Path:        "/console/server",
@@ -254,7 +255,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminConsole.QueryServerTotalDataHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryTicketWaitReply",
 		Method:      http.MethodGet,
 		Path:        "/console/ticket",
@@ -263,7 +264,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminConsole.QueryTicketWaitReplyHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryUserStatistics",
 		Method:      http.MethodGet,
 		Path:        "/console/user",
@@ -272,7 +273,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminConsole.QueryUserStatisticsHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createCoupon",
 		Method:      http.MethodPost,
 		Path:        "/coupon",
@@ -281,7 +282,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminCoupon.CreateCouponHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateCoupon",
 		Method:      http.MethodPut,
 		Path:        "/coupon",
@@ -290,7 +291,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminCoupon.UpdateCouponHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteCoupon",
 		Method:      http.MethodDelete,
 		Path:        "/coupon",
@@ -299,7 +300,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminCoupon.DeleteCouponHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "batchDeleteCoupon",
 		Method:      http.MethodDelete,
 		Path:        "/coupon/batch",
@@ -308,7 +309,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminCoupon.BatchDeleteCouponHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getCouponList",
 		Method:      http.MethodGet,
 		Path:        "/coupon/list",
@@ -317,7 +318,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminCoupon.GetCouponListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createDocument",
 		Method:      http.MethodPost,
 		Path:        "/document",
@@ -326,7 +327,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminDocument.CreateDocumentHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateDocument",
 		Method:      http.MethodPut,
 		Path:        "/document",
@@ -335,7 +336,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminDocument.UpdateDocumentHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteDocument",
 		Method:      http.MethodDelete,
 		Path:        "/document",
@@ -344,7 +345,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminDocument.DeleteDocumentHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "batchDeleteDocument",
 		Method:      http.MethodDelete,
 		Path:        "/document/batch",
@@ -353,7 +354,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminDocument.BatchDeleteDocumentHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getDocumentDetail",
 		Method:      http.MethodGet,
 		Path:        "/document/detail",
@@ -362,7 +363,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminDocument.GetDocumentDetailHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getDocumentList",
 		Method:      http.MethodGet,
 		Path:        "/document/list",
@@ -371,7 +372,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminDocument.GetDocumentListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterBalanceLog",
 		Method:      http.MethodGet,
 		Path:        "/log/balance/list",
@@ -380,7 +381,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterBalanceLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterCommissionLog",
 		Method:      http.MethodGet,
 		Path:        "/log/commission/list",
@@ -389,7 +390,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterCommissionLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterEmailLog",
 		Method:      http.MethodGet,
 		Path:        "/log/email/list",
@@ -398,7 +399,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterEmailLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterGiftLog",
 		Method:      http.MethodGet,
 		Path:        "/log/gift/list",
@@ -407,7 +408,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterGiftLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterLoginLog",
 		Method:      http.MethodGet,
 		Path:        "/log/login/list",
@@ -416,7 +417,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterLoginLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getMessageLogList",
 		Method:      http.MethodGet,
 		Path:        "/log/message/list",
@@ -425,7 +426,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.GetMessageLogListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterMobileLog",
 		Method:      http.MethodGet,
 		Path:        "/log/mobile/list",
@@ -434,7 +435,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterMobileLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterRegisterLog",
 		Method:      http.MethodGet,
 		Path:        "/log/register/list",
@@ -443,7 +444,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterRegisterLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterServerTrafficLog",
 		Method:      http.MethodGet,
 		Path:        "/log/server/traffic/list",
@@ -452,7 +453,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterServerTrafficLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getLogSetting",
 		Method:      http.MethodGet,
 		Path:        "/log/setting",
@@ -461,7 +462,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.GetLogSettingHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateLogSetting",
 		Method:      http.MethodPost,
 		Path:        "/log/setting",
@@ -470,7 +471,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.UpdateLogSettingHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterSubscribeLog",
 		Method:      http.MethodGet,
 		Path:        "/log/subscribe/list",
@@ -479,7 +480,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterSubscribeLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterResetSubscribeLog",
 		Method:      http.MethodGet,
 		Path:        "/log/subscribe/reset/list",
@@ -488,7 +489,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterResetSubscribeLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterUserSubscribeTrafficLog",
 		Method:      http.MethodGet,
 		Path:        "/log/subscribe/traffic/list",
@@ -497,7 +498,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterUserSubscribeTrafficLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterTrafficLogDetails",
 		Method:      http.MethodGet,
 		Path:        "/log/traffic/details",
@@ -506,7 +507,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminLog.FilterTrafficLogDetailsHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getBatchSendEmailTaskList",
 		Method:      http.MethodGet,
 		Path:        "/marketing/email/batch/list",
@@ -515,7 +516,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminMarketing.GetBatchSendEmailTaskListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getPreSendEmailCount",
 		Method:      http.MethodPost,
 		Path:        "/marketing/email/batch/pre-send-count",
@@ -524,7 +525,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminMarketing.GetPreSendEmailCountHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createBatchSendEmailTask",
 		Method:      http.MethodPost,
 		Path:        "/marketing/email/batch/send",
@@ -533,7 +534,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminMarketing.CreateBatchSendEmailTaskHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getBatchSendEmailTaskStatus",
 		Method:      http.MethodPost,
 		Path:        "/marketing/email/batch/status",
@@ -542,7 +543,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminMarketing.GetBatchSendEmailTaskStatusHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "stopBatchSendEmailTask",
 		Method:      http.MethodPost,
 		Path:        "/marketing/email/batch/stop",
@@ -551,7 +552,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminMarketing.StopBatchSendEmailTaskHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createQuotaTask",
 		Method:      http.MethodPost,
 		Path:        "/marketing/quota/create",
@@ -560,7 +561,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminMarketing.CreateQuotaTaskHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryQuotaTaskList",
 		Method:      http.MethodGet,
 		Path:        "/marketing/quota/list",
@@ -569,7 +570,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminMarketing.QueryQuotaTaskListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryQuotaTaskPreCount",
 		Method:      http.MethodPost,
 		Path:        "/marketing/quota/pre-count",
@@ -578,7 +579,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminMarketing.QueryQuotaTaskPreCountHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createOrder",
 		Method:      http.MethodPost,
 		Path:        "/order",
@@ -587,7 +588,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminOrder.CreateOrderHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getOrderList",
 		Method:      http.MethodGet,
 		Path:        "/order/list",
@@ -596,7 +597,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminOrder.GetOrderListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateOrderStatus",
 		Method:      http.MethodPut,
 		Path:        "/order/status",
@@ -605,7 +606,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminOrder.UpdateOrderStatusHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createPaymentMethod",
 		Method:      http.MethodPost,
 		Path:        "/payment",
@@ -614,7 +615,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminPayment.CreatePaymentMethodHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updatePaymentMethod",
 		Method:      http.MethodPut,
 		Path:        "/payment",
@@ -623,7 +624,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminPayment.UpdatePaymentMethodHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deletePaymentMethod",
 		Method:      http.MethodDelete,
 		Path:        "/payment",
@@ -632,7 +633,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminPayment.DeletePaymentMethodHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getPaymentMethodList",
 		Method:      http.MethodGet,
 		Path:        "/payment/list",
@@ -641,7 +642,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminPayment.GetPaymentMethodListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getPaymentPlatform",
 		Method:      http.MethodGet,
 		Path:        "/payment/platform",
@@ -650,7 +651,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminPayment.GetPaymentPlatformHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createServer",
 		Method:      http.MethodPost,
 		Path:        "/server/create",
@@ -659,7 +660,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.CreateServerHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteServer",
 		Method:      http.MethodPost,
 		Path:        "/server/delete",
@@ -668,7 +669,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.DeleteServerHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterServerList",
 		Method:      http.MethodGet,
 		Path:        "/server/list",
@@ -677,7 +678,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.FilterServerListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createNode",
 		Method:      http.MethodPost,
 		Path:        "/server/node/create",
@@ -686,7 +687,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.CreateNodeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteNode",
 		Method:      http.MethodPost,
 		Path:        "/server/node/delete",
@@ -695,7 +696,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.DeleteNodeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "filterNodeList",
 		Method:      http.MethodGet,
 		Path:        "/server/node/list",
@@ -704,7 +705,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.FilterNodeListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "resetSortWithNode",
 		Method:      http.MethodPost,
 		Path:        "/server/node/sort",
@@ -713,7 +714,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.ResetSortWithNodeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "toggleNodeStatus",
 		Method:      http.MethodPost,
 		Path:        "/server/node/status/toggle",
@@ -722,7 +723,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.ToggleNodeStatusHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryNodeTag",
 		Method:      http.MethodGet,
 		Path:        "/server/node/tags",
@@ -731,7 +732,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.QueryNodeTagHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateNode",
 		Method:      http.MethodPost,
 		Path:        "/server/node/update",
@@ -740,7 +741,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.UpdateNodeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getServerProtocols",
 		Method:      http.MethodGet,
 		Path:        "/server/protocols",
@@ -749,7 +750,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.GetServerProtocolsHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "resetSortWithServer",
 		Method:      http.MethodPost,
 		Path:        "/server/server/sort",
@@ -758,7 +759,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.ResetSortWithServerHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateServer",
 		Method:      http.MethodPost,
 		Path:        "/server/update",
@@ -767,7 +768,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminServer.UpdateServerHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createSubscribe",
 		Method:      http.MethodPost,
 		Path:        "/subscribe",
@@ -776,7 +777,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.CreateSubscribeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateSubscribe",
 		Method:      http.MethodPut,
 		Path:        "/subscribe",
@@ -785,7 +786,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.UpdateSubscribeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteSubscribe",
 		Method:      http.MethodDelete,
 		Path:        "/subscribe",
@@ -794,7 +795,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.DeleteSubscribeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "batchDeleteSubscribe",
 		Method:      http.MethodDelete,
 		Path:        "/subscribe/batch",
@@ -803,7 +804,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.BatchDeleteSubscribeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSubscribeDetails",
 		Method:      http.MethodGet,
 		Path:        "/subscribe/details",
@@ -812,7 +813,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.GetSubscribeDetailsHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createSubscribeGroup",
 		Method:      http.MethodPost,
 		Path:        "/subscribe/group",
@@ -821,7 +822,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.CreateSubscribeGroupHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateSubscribeGroup",
 		Method:      http.MethodPut,
 		Path:        "/subscribe/group",
@@ -830,7 +831,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.UpdateSubscribeGroupHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteSubscribeGroup",
 		Method:      http.MethodDelete,
 		Path:        "/subscribe/group",
@@ -839,7 +840,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.DeleteSubscribeGroupHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "batchDeleteSubscribeGroup",
 		Method:      http.MethodDelete,
 		Path:        "/subscribe/group/batch",
@@ -848,7 +849,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.BatchDeleteSubscribeGroupHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSubscribeGroupList",
 		Method:      http.MethodGet,
 		Path:        "/subscribe/group/list",
@@ -857,7 +858,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.GetSubscribeGroupListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSubscribeList",
 		Method:      http.MethodGet,
 		Path:        "/subscribe/list",
@@ -866,7 +867,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.GetSubscribeListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "resetAllSubscribeToken",
 		Method:      http.MethodPost,
 		Path:        "/subscribe/reset_all_token",
@@ -875,7 +876,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.ResetAllSubscribeTokenHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "subscribeSort",
 		Method:      http.MethodPost,
 		Path:        "/subscribe/sort",
@@ -884,7 +885,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSubscribe.SubscribeSortHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getCurrencyConfig",
 		Method:      http.MethodGet,
 		Path:        "/system/currency_config",
@@ -893,7 +894,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetCurrencyConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateCurrencyConfig",
 		Method:      http.MethodPut,
 		Path:        "/system/currency_config",
@@ -902,7 +903,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.UpdateCurrencyConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getNodeMultiplier",
 		Method:      http.MethodGet,
 		Path:        "/system/get_node_multiplier",
@@ -911,7 +912,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetNodeMultiplierHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getInviteConfig",
 		Method:      http.MethodGet,
 		Path:        "/system/invite_config",
@@ -920,7 +921,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetInviteConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateInviteConfig",
 		Method:      http.MethodPut,
 		Path:        "/system/invite_config",
@@ -929,7 +930,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.UpdateInviteConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getModuleConfig",
 		Method:      http.MethodGet,
 		Path:        "/system/module",
@@ -938,7 +939,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetModuleConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getNodeConfig",
 		Method:      http.MethodGet,
 		Path:        "/system/node_config",
@@ -947,7 +948,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetNodeConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateNodeConfig",
 		Method:      http.MethodPut,
 		Path:        "/system/node_config",
@@ -956,7 +957,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.UpdateNodeConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "preViewNodeMultiplier",
 		Method:      http.MethodGet,
 		Path:        "/system/node_multiplier/preview",
@@ -965,7 +966,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.PreViewNodeMultiplierHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getPrivacyPolicyConfig",
 		Method:      http.MethodGet,
 		Path:        "/system/privacy",
@@ -974,7 +975,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetPrivacyPolicyConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updatePrivacyPolicyConfig",
 		Method:      http.MethodPut,
 		Path:        "/system/privacy",
@@ -983,7 +984,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.UpdatePrivacyPolicyConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getRegisterConfig",
 		Method:      http.MethodGet,
 		Path:        "/system/register_config",
@@ -992,7 +993,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetRegisterConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateRegisterConfig",
 		Method:      http.MethodPut,
 		Path:        "/system/register_config",
@@ -1001,7 +1002,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.UpdateRegisterConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "setNodeMultiplier",
 		Method:      http.MethodPost,
 		Path:        "/system/set_node_multiplier",
@@ -1010,7 +1011,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.SetNodeMultiplierHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "settingTelegramBot",
 		Method:      http.MethodPost,
 		Path:        "/system/setting_telegram_bot",
@@ -1019,7 +1020,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.SettingTelegramBotHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSiteConfig",
 		Method:      http.MethodGet,
 		Path:        "/system/site_config",
@@ -1028,7 +1029,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetSiteConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateSiteConfig",
 		Method:      http.MethodPut,
 		Path:        "/system/site_config",
@@ -1037,7 +1038,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.UpdateSiteConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSubscribeConfig",
 		Method:      http.MethodGet,
 		Path:        "/system/subscribe_config",
@@ -1046,7 +1047,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetSubscribeConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateSubscribeConfig",
 		Method:      http.MethodPut,
 		Path:        "/system/subscribe_config",
@@ -1055,7 +1056,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.UpdateSubscribeConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getTosConfig",
 		Method:      http.MethodGet,
 		Path:        "/system/tos_config",
@@ -1064,7 +1065,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetTosConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateTosConfig",
 		Method:      http.MethodPut,
 		Path:        "/system/tos_config",
@@ -1073,7 +1074,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.UpdateTosConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getVerifyCodeConfig",
 		Method:      http.MethodGet,
 		Path:        "/system/verify_code_config",
@@ -1082,7 +1083,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetVerifyCodeConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateVerifyCodeConfig",
 		Method:      http.MethodPut,
 		Path:        "/system/verify_code_config",
@@ -1091,7 +1092,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.UpdateVerifyCodeConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getVerifyConfig",
 		Method:      http.MethodGet,
 		Path:        "/system/verify_config",
@@ -1100,7 +1101,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.GetVerifyConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateVerifyConfig",
 		Method:      http.MethodPut,
 		Path:        "/system/verify_config",
@@ -1109,7 +1110,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminSystem.UpdateVerifyConfigHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateTicketStatus",
 		Method:      http.MethodPut,
 		Path:        "/ticket",
@@ -1118,7 +1119,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminTicket.UpdateTicketStatusHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getTicket",
 		Method:      http.MethodGet,
 		Path:        "/ticket/detail",
@@ -1127,7 +1128,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminTicket.GetTicketHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createTicketFollow",
 		Method:      http.MethodPost,
 		Path:        "/ticket/follow",
@@ -1136,7 +1137,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminTicket.CreateTicketFollowHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getTicketList",
 		Method:      http.MethodGet,
 		Path:        "/ticket/list",
@@ -1145,7 +1146,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminTicket.GetTicketListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "queryIPLocation",
 		Method:      http.MethodGet,
 		Path:        "/tool/ip/location",
@@ -1154,7 +1155,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminTool.QueryIPLocationHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getSystemLog",
 		Method:      http.MethodGet,
 		Path:        "/tool/log",
@@ -1163,7 +1164,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminTool.GetSystemLogHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "restartSystem",
 		Method:      http.MethodGet,
 		Path:        "/tool/restart",
@@ -1172,7 +1173,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminTool.RestartSystemHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getVersion",
 		Method:      http.MethodGet,
 		Path:        "/tool/version",
@@ -1181,7 +1182,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminTool.GetVersionHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteUser",
 		Method:      http.MethodDelete,
 		Path:        "/user",
@@ -1190,7 +1191,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.DeleteUserHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createUser",
 		Method:      http.MethodPost,
 		Path:        "/user",
@@ -1199,7 +1200,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.CreateUserHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createUserAuthMethod",
 		Method:      http.MethodPost,
 		Path:        "/user/auth_method",
@@ -1208,7 +1209,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.CreateUserAuthMethodHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteUserAuthMethod",
 		Method:      http.MethodDelete,
 		Path:        "/user/auth_method",
@@ -1217,7 +1218,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.DeleteUserAuthMethodHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateUserAuthMethod",
 		Method:      http.MethodPut,
 		Path:        "/user/auth_method",
@@ -1226,7 +1227,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.UpdateUserAuthMethodHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserAuthMethod",
 		Method:      http.MethodGet,
 		Path:        "/user/auth_method",
@@ -1235,7 +1236,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.GetUserAuthMethodHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateUserBasicInfo",
 		Method:      http.MethodPut,
 		Path:        "/user/basic",
@@ -1244,7 +1245,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.UpdateUserBasicInfoHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "batchDeleteUser",
 		Method:      http.MethodDelete,
 		Path:        "/user/batch",
@@ -1253,7 +1254,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.BatchDeleteUserHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "currentUser",
 		Method:      http.MethodGet,
 		Path:        "/user/current",
@@ -1262,7 +1263,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.CurrentUserHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserDetail",
 		Method:      http.MethodGet,
 		Path:        "/user/detail",
@@ -1271,7 +1272,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.GetUserDetailHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateUserDevice",
 		Method:      http.MethodPut,
 		Path:        "/user/device",
@@ -1280,7 +1281,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.UpdateUserDeviceHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteUserDevice",
 		Method:      http.MethodDelete,
 		Path:        "/user/device",
@@ -1289,7 +1290,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.DeleteUserDeviceHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "kickOfflineByUserDevice",
 		Method:      http.MethodPut,
 		Path:        "/user/device/kick_offline",
@@ -1298,7 +1299,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.KickOfflineByUserDeviceHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserList",
 		Method:      http.MethodGet,
 		Path:        "/user/list",
@@ -1307,7 +1308,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.GetUserListHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserLoginLogs",
 		Method:      http.MethodGet,
 		Path:        "/user/login/logs",
@@ -1316,7 +1317,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.GetUserLoginLogsHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateUserNotifySetting",
 		Method:      http.MethodPut,
 		Path:        "/user/notify",
@@ -1325,7 +1326,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.UpdateUserNotifySettingHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribe",
 		Method:      http.MethodGet,
 		Path:        "/user/subscribe",
@@ -1334,7 +1335,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.GetUserSubscribeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createUserSubscribe",
 		Method:      http.MethodPost,
 		Path:        "/user/subscribe",
@@ -1343,7 +1344,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.CreateUserSubscribeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "updateUserSubscribe",
 		Method:      http.MethodPut,
 		Path:        "/user/subscribe",
@@ -1352,7 +1353,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.UpdateUserSubscribeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "deleteUserSubscribe",
 		Method:      http.MethodDelete,
 		Path:        "/user/subscribe",
@@ -1361,7 +1362,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.DeleteUserSubscribeHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribeById",
 		Method:      http.MethodGet,
 		Path:        "/user/subscribe/detail",
@@ -1370,7 +1371,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.GetUserSubscribeByIdHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribeDevices",
 		Method:      http.MethodGet,
 		Path:        "/user/subscribe/device",
@@ -1379,7 +1380,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.GetUserSubscribeDevicesHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribeLogs",
 		Method:      http.MethodGet,
 		Path:        "/user/subscribe/logs",
@@ -1388,7 +1389,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.GetUserSubscribeLogsHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribeResetTrafficLogs",
 		Method:      http.MethodGet,
 		Path:        "/user/subscribe/reset/logs",
@@ -1397,7 +1398,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.GetUserSubscribeResetTrafficLogsHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "resetUserSubscribeToken",
 		Method:      http.MethodPost,
 		Path:        "/user/subscribe/reset/token",
@@ -1406,7 +1407,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.ResetUserSubscribeTokenHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "resetUserSubscribeTraffic",
 		Method:      http.MethodPost,
 		Path:        "/user/subscribe/reset/traffic",
@@ -1415,7 +1416,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.ResetUserSubscribeTrafficHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "toggleUserSubscribeStatus",
 		Method:      http.MethodPost,
 		Path:        "/user/subscribe/toggle",
@@ -1424,7 +1425,7 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 		Security:    bearerSecurity,
 	}, adminUser.ToggleUserSubscribeStatusHandler(serverCtx))
 
-	huma.Register(apis.Admin, huma.Operation{
+	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "getUserSubscribeTrafficLogs",
 		Method:      http.MethodGet,
 		Path:        "/user/subscribe/traffic_logs",

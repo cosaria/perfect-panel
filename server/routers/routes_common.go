@@ -19,8 +19,9 @@ func registerCommonRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	commonConfig := apiConfig("Perfect Panel Common API", "1.0.0")
 	commonConfig.Servers = []*huma.Server{{URL: "/api/v1/common"}}
 	apis.Common = humagin.NewWithGroup(router, commonGroup, commonConfig)
+	configureHumaAPI(apis.Common, compatibilityEnabled(serverCtx, specOnly))
 
-	huma.Register(apis.Common, huma.Operation{
+	registerOperation(apis.Common, huma.Operation{
 		OperationID: "getAds",
 		Method:      http.MethodGet,
 		Path:        "/ads",
@@ -28,7 +29,7 @@ func registerCommonRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"common"},
 	}, common.GetAdsHandler(serverCtx))
 
-	huma.Register(apis.Common, huma.Operation{
+	registerOperation(apis.Common, huma.Operation{
 		OperationID: "checkVerificationCode",
 		Method:      http.MethodPost,
 		Path:        "/check_verification_code",
@@ -36,7 +37,7 @@ func registerCommonRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"common"},
 	}, common.CheckVerificationCodeHandler(serverCtx))
 
-	huma.Register(apis.Common, huma.Operation{
+	registerOperation(apis.Common, huma.Operation{
 		OperationID: "getClient",
 		Method:      http.MethodGet,
 		Path:        "/client",
@@ -44,7 +45,7 @@ func registerCommonRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"common"},
 	}, common.GetClientHandler(serverCtx))
 
-	huma.Register(apis.Common, huma.Operation{
+	registerOperation(apis.Common, huma.Operation{
 		OperationID: "heartbeat",
 		Method:      http.MethodGet,
 		Path:        "/heartbeat",
@@ -52,7 +53,7 @@ func registerCommonRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"common"},
 	}, common.HeartbeatHandler(serverCtx))
 
-	huma.Register(apis.Common, huma.Operation{
+	registerOperation(apis.Common, huma.Operation{
 		OperationID: "sendEmailCode",
 		Method:      http.MethodPost,
 		Path:        "/send_code",
@@ -60,7 +61,7 @@ func registerCommonRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"common"},
 	}, common.SendEmailCodeHandler(serverCtx))
 
-	huma.Register(apis.Common, huma.Operation{
+	registerOperation(apis.Common, huma.Operation{
 		OperationID: "sendSmsCode",
 		Method:      http.MethodPost,
 		Path:        "/send_sms_code",
@@ -68,7 +69,7 @@ func registerCommonRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"common"},
 	}, common.SendSmsCodeHandler(serverCtx))
 
-	huma.Register(apis.Common, huma.Operation{
+	registerOperation(apis.Common, huma.Operation{
 		OperationID: "getGlobalConfig",
 		Method:      http.MethodGet,
 		Path:        "/site/config",
@@ -76,7 +77,7 @@ func registerCommonRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"common"},
 	}, common.GetGlobalConfigHandler(serverCtx))
 
-	huma.Register(apis.Common, huma.Operation{
+	registerOperation(apis.Common, huma.Operation{
 		OperationID: "getPrivacyPolicy",
 		Method:      http.MethodGet,
 		Path:        "/site/privacy",
@@ -84,7 +85,7 @@ func registerCommonRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"common"},
 	}, common.GetPrivacyPolicyHandler(serverCtx))
 
-	huma.Register(apis.Common, huma.Operation{
+	registerOperation(apis.Common, huma.Operation{
 		OperationID: "getStat",
 		Method:      http.MethodGet,
 		Path:        "/site/stat",
@@ -92,7 +93,7 @@ func registerCommonRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 		Tags:        []string{"common"},
 	}, common.GetStatHandler(serverCtx))
 
-	huma.Register(apis.Common, huma.Operation{
+	registerOperation(apis.Common, huma.Operation{
 		OperationID: "getTos",
 		Method:      http.MethodGet,
 		Path:        "/site/tos",
