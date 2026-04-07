@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"gorm.io/gorm"
 )
 

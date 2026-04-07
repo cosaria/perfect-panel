@@ -5,17 +5,17 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
-	"github.com/perfect-panel/server/pkg/constant"
 
 	"gorm.io/gorm"
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/models/order"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/tool"
 	queue "github.com/perfect-panel/server/queue/types"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
@@ -40,7 +40,7 @@ func NewRenewalLogic(ctx context.Context, svcCtx *svc.ServiceContext) *RenewalLo
 // Renewal processes subscription renewal orders including discount calculation,
 // coupon validation, gift amount deduction, fee calculation, and order creation
 func (l *RenewalLogic) Renewal(req *types.RenewalOrderRequest) (resp *types.RenewalOrderResponse, err error) {
-	u, ok := l.ctx.Value(constant.CtxKeyUser).(*user.User)
+	u, ok := l.ctx.Value(config.CtxKeyUser).(*user.User)
 	if !ok {
 		logger.Error("current user is not found in context")
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")

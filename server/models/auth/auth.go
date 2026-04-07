@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/perfect-panel/server/pkg/email"
+	"github.com/perfect-panel/server/modules/notify/email"
 )
 
 type Auth struct {

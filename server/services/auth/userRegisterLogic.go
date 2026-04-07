@@ -9,12 +9,11 @@ import (
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/jwt"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/uuidx"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/auth/jwt"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/modules/util/uuidx"
 	"github.com/perfect-panel/server/services/common"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
@@ -62,7 +61,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 
 	// if the email verification is enabled, the verification code is required
 	if email.EnableVerify {
-		cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeCacheKey, constant.Register, req.Email)
+		cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeCacheKey, config.Register, req.Email)
 		value, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
 		if err != nil {
 			l.Errorw("Redis Error", logger.Field("error", err.Error()), logger.Field("cacheKey", cacheKey))
@@ -141,8 +140,8 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 			// Don't fail register if device binding fails, just log the error
 		}
 	}
-	if l.ctx.Value(constant.LoginType) != nil {
-		req.LoginType = l.ctx.Value(constant.LoginType).(string)
+	if l.ctx.Value(config.LoginType) != nil {
+		req.LoginType = l.ctx.Value(config.LoginType).(string)
 	}
 	// Generate session id
 	sessionId := uuidx.NewUUID().String()

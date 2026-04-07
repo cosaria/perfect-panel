@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/models/log"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/sms"
+	"github.com/perfect-panel/server/modules/notify/sms"
+	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/queue/types"
 	"github.com/perfect-panel/server/svc"
 )
@@ -47,7 +47,7 @@ func (l *SendSmsLogic) ProcessTask(ctx context.Context, task *asynq.Task) error 
 	createSms := &log.Message{
 		Platform: l.svcCtx.Config.Mobile.Platform,
 		To:       fmt.Sprintf("+%s%s", payload.TelephoneArea, payload.Telephone),
-		Subject:  constant.ParseVerifyType(payload.Type).String(),
+		Subject:  config.ParseVerifyType(payload.Type).String(),
 		Content: map[string]interface{}{
 			"content": client.GetSendCodeContent(payload.Content),
 		},
@@ -56,7 +56,7 @@ func (l *SendSmsLogic) ProcessTask(ctx context.Context, task *asynq.Task) error 
 
 	if err != nil {
 		logger.WithContext(ctx).Error("[SendSmsLogic] Send sms failed", logger.Field("error", err.Error()), logger.Field("payload", payload))
-		if l.svcCtx.Config.Model != constant.DevMode {
+		if l.svcCtx.Config.Model != config.DevMode {
 			createSms.Status = 2
 		} else {
 			return nil

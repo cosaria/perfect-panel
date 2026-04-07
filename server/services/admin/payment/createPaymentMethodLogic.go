@@ -5,16 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/perfect-panel/server/pkg/payment/stripe"
+	"github.com/perfect-panel/server/modules/payment/stripe"
 	"gorm.io/gorm"
 
-	"github.com/perfect-panel/server/pkg/random"
+	"github.com/perfect-panel/server/modules/util/random"
 
 	paymentModel "github.com/perfect-panel/server/models/payment"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/payment"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/payment"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"

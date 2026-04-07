@@ -6,9 +6,8 @@ import (
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
@@ -31,7 +30,7 @@ func NewUnbindDeviceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unbi
 }
 
 func (l *UnbindDeviceLogic) UnbindDevice(req *types.UnbindDeviceRequest) error {
-	userInfo := l.ctx.Value(constant.CtxKeyUser).(*user.User)
+	userInfo := l.ctx.Value(config.CtxKeyUser).(*user.User)
 	device, err := l.svcCtx.UserModel.FindOneDevice(l.ctx, req.Id)
 	if err != nil {
 		return errors.Wrapf(xerr.NewErrCode(xerr.DeviceNotExist), "find device")
@@ -64,7 +63,7 @@ func (l *UnbindDeviceLogic) UnbindDevice(req *types.UnbindDeviceRequest) error {
 		if err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "delete device online record err: %v", err)
 		}
-		sessionId := l.ctx.Value(constant.CtxKeySessionID)
+		sessionId := l.ctx.Value(config.CtxKeySessionID)
 		sessionIdCacheKey := fmt.Sprintf("%v:%v", config.SessionIdKey, sessionId)
 		l.svcCtx.Redis.Del(l.ctx, sessionIdCacheKey)
 		return nil

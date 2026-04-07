@@ -11,8 +11,8 @@ import (
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/task"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/svc"
 	"gorm.io/gorm"
 )

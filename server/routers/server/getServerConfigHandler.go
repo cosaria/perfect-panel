@@ -2,8 +2,8 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/perfect-panel/server/pkg/result"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/routers/response"
 	"github.com/perfect-panel/server/services/node"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
@@ -18,7 +18,7 @@ func GetServerConfigHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 		_ = c.ShouldBindQuery(&req.ServerCommon)
 		validateErr := svcCtx.Validate(&req)
 		if validateErr != nil {
-			result.ParamErrorResult(c, validateErr)
+			response.ParamErrorResult(c, validateErr)
 			return
 		}
 

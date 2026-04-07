@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/util/tool"
 	task "github.com/perfect-panel/server/queue/types"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"

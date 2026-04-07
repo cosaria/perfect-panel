@@ -9,11 +9,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/services/report"
 
-	"github.com/perfect-panel/server/pkg/proc"
-	"github.com/perfect-panel/server/pkg/trace"
+	"github.com/perfect-panel/server/modules/infra/proc"
+	"github.com/perfect-panel/server/modules/infra/trace"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"

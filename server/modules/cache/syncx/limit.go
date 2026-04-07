@@ -3,7 +3,7 @@ package syncx
 import (
 	"errors"
 
-	"github.com/perfect-panel/server/pkg/lang"
+	"github.com/perfect-panel/server/modules/util/lang"
 )
 
 // ErrLimitReturn indicates that the more than borrowed elements were returned.

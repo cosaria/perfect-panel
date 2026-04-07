@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/pkg/errors"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )

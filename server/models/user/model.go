@@ -7,7 +7,7 @@ import (
 
 	"github.com/perfect-panel/server/models/order"
 	"github.com/perfect-panel/server/models/subscribe"
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"

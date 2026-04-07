@@ -6,7 +6,7 @@ import (
 
 	"github.com/perfect-panel/server/models/client"
 	"github.com/perfect-panel/server/models/node"
-	"github.com/perfect-panel/server/pkg/device"
+	"github.com/perfect-panel/server/modules/verify/device"
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/ads"
@@ -22,9 +22,8 @@ import (
 	"github.com/perfect-panel/server/models/ticket"
 	"github.com/perfect-panel/server/models/traffic"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/limit"
-	"github.com/perfect-panel/server/pkg/nodeMultiplier"
-	"github.com/perfect-panel/server/pkg/orm"
+	"github.com/perfect-panel/server/modules/infra/limit"
+	"github.com/perfect-panel/server/modules/infra/orm"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/hibiken/asynq"
@@ -60,7 +59,7 @@ type ServiceContext struct {
 
 	Restart               func() error
 	TelegramBot           *tgbotapi.BotAPI
-	NodeMultiplierManager *nodeMultiplier.Manager
+	NodeMultiplierManager *node.Manager
 	AuthLimiter           *limit.PeriodLimit
 	DeviceManager         *device.DeviceManager
 }

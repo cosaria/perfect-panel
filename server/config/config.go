@@ -3,8 +3,8 @@ package config
 import (
 	"encoding/json"
 
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/orm"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/orm"
 )
 
 type Config struct {

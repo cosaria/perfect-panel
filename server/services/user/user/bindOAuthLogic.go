@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"github.com/perfect-panel/server/models/auth"
-	"github.com/perfect-panel/server/pkg/oauth/google"
-	"github.com/perfect-panel/server/pkg/random"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/auth/oauth/google"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/random"
 	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )

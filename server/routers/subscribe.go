@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/services/subscribe"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"

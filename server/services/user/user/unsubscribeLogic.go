@@ -4,16 +4,16 @@ import (
 	"context"
 	"time"
 
+	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/pkg/errors"
 
 	"github.com/perfect-panel/server/models/user"
 	"gorm.io/gorm"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
@@ -36,7 +36,7 @@ func NewUnsubscribeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Unsub
 // Unsubscribe handles the subscription cancellation process with proper refund distribution
 // It prioritizes refunding to gift amount for balance-paid orders, then to regular balance
 func (l *UnsubscribeLogic) Unsubscribe(req *types.UnsubscribeRequest) error {
-	u, ok := l.ctx.Value(constant.CtxKeyUser).(*user.User)
+	u, ok := l.ctx.Value(config.CtxKeyUser).(*user.User)
 	if !ok {
 		logger.Error("current user is not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")

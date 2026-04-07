@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/auth"
-	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/services/telegram"
 	"github.com/perfect-panel/server/svc"
 )

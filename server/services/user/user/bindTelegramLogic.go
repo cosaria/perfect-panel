@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )

@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/services/report"
 	"gorm.io/driver/mysql"
 
@@ -17,9 +17,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/migrate"
-	"github.com/perfect-panel/server/pkg/conf"
-	"github.com/perfect-panel/server/pkg/orm"
-	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/modules/infra/conf"
+	"github.com/perfect-panel/server/modules/infra/orm"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 	"gorm.io/gorm"

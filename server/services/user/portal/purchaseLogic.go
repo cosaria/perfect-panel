@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/order"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/payment"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/payment"
+	"github.com/perfect-panel/server/modules/util/tool"
 	queue "github.com/perfect-panel/server/queue/types"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
@@ -141,7 +141,7 @@ func (l *PurchaseLogic) Purchase(req *types.PortalPurchaseRequest) (resp *types.
 	// save order
 	err = l.svcCtx.DB.Transaction(func(tx *gorm.DB) error {
 		// save guest order and user information
-		tempOrder := constant.TemporaryOrderInfo{
+		tempOrder := config.TemporaryOrderInfo{
 			OrderNo:    orderInfo.OrderNo,
 			Identifier: req.Identifier,
 			AuthType:   req.AuthType,
@@ -150,7 +150,7 @@ func (l *PurchaseLogic) Purchase(req *types.PortalPurchaseRequest) (resp *types.
 		}
 		content, _ := tempOrder.Marshal()
 
-		if _, err = l.svcCtx.Redis.Set(l.ctx, fmt.Sprintf(constant.TempOrderCacheKey, orderInfo.OrderNo), string(content), CloseOrderTimeMinutes*time.Minute).Result(); err != nil {
+		if _, err = l.svcCtx.Redis.Set(l.ctx, fmt.Sprintf(config.TempOrderCacheKey, orderInfo.OrderNo), string(content), CloseOrderTimeMinutes*time.Minute).Result(); err != nil {
 			l.Errorw("[Purchase] Redis set error", logger.Field("error", err.Error()), logger.Field("order_no", orderInfo.OrderNo))
 			return err
 		}

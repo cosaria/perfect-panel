@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/perfect-panel/server/pkg/timex"
+	"github.com/perfect-panel/server/modules/util/timex"
 )
 
 const defaultRefreshInterval = time.Second

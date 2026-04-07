@@ -7,13 +7,13 @@ import (
 
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/payment/stripe"
+	"github.com/perfect-panel/server/modules/payment/stripe"
 	"gorm.io/gorm"
 
 	"github.com/perfect-panel/server/models/order"
 	"github.com/perfect-panel/server/models/payment"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/payment/alipay"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/payment/alipay"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )

@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/google/uuid"
@@ -19,8 +19,8 @@ import (
 	"github.com/perfect-panel/server/models/order"
 	"github.com/perfect-panel/server/models/subscribe"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/uuidx"
+	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/modules/util/uuidx"
 	"github.com/perfect-panel/server/queue/types"
 	"github.com/perfect-panel/server/services/telegram"
 	"github.com/perfect-panel/server/svc"
@@ -264,8 +264,8 @@ func (l *ActivateOrderLogic) createGuestUser(ctx context.Context, orderInfo *ord
 }
 
 // getTempOrderInfo retrieves temporary order information from Redis cache
-func (l *ActivateOrderLogic) getTempOrderInfo(ctx context.Context, orderNo string) (*constant.TemporaryOrderInfo, error) {
-	cacheKey := fmt.Sprintf(constant.TempOrderCacheKey, orderNo)
+func (l *ActivateOrderLogic) getTempOrderInfo(ctx context.Context, orderNo string) (*config.TemporaryOrderInfo, error) {
+	cacheKey := fmt.Sprintf(config.TempOrderCacheKey, orderNo)
 	data, err := l.svc.Redis.Get(ctx, cacheKey).Result()
 	if err != nil {
 		logger.WithContext(ctx).Error("Get temp order cache failed",
@@ -275,7 +275,7 @@ func (l *ActivateOrderLogic) getTempOrderInfo(ctx context.Context, orderNo strin
 		return nil, err
 	}
 
-	var tempOrder constant.TemporaryOrderInfo
+	var tempOrder config.TemporaryOrderInfo
 	if err = tempOrder.Unmarshal([]byte(data)); err != nil {
 		logger.WithContext(ctx).Error("Unmarshal temp order cache failed",
 			logger.Field("error", err.Error()),

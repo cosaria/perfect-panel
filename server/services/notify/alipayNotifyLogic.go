@@ -6,15 +6,15 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/perfect-panel/server/pkg/constant"
+	"github.com/perfect-panel/server/config"
 
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/pkg/errors"
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/models/payment"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/payment/alipay"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/payment/alipay"
 	"github.com/perfect-panel/server/queue/types"
 	"github.com/perfect-panel/server/svc"
 )
@@ -35,7 +35,7 @@ func NewAlipayNotifyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Alip
 }
 
 func (l *AlipayNotifyLogic) AlipayNotify(r *http.Request) error {
-	data, ok := l.ctx.Value(constant.CtxKeyPayment).(*payment.Payment)
+	data, ok := l.ctx.Value(config.CtxKeyPayment).(*payment.Payment)
 	if !ok {
 		return fmt.Errorf("payment config not found")
 	}

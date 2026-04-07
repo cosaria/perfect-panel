@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/perfect-panel/server/models/subscribe"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )

@@ -8,12 +8,11 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/limit"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/phone"
-	"github.com/perfect-panel/server/pkg/random"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/limit"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/notify/phone"
+	"github.com/perfect-panel/server/modules/util/random"
 	queue "github.com/perfect-panel/server/queue/types"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
@@ -47,9 +46,9 @@ func (l *SendSmsCodeLogic) SendSmsCode(req *types.SendSmsCodeRequest) (resp *typ
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TelephoneError), "Invalid phone number")
 	}
 
-	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeTelephoneCacheKey, constant.ParseVerifyType(req.Type), phoneNumber)
+	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeTelephoneCacheKey, config.ParseVerifyType(req.Type), phoneNumber)
 	// Check if the limit is exceeded of current request
-	limiter := limit.NewPeriodLimit(60, 1, l.svcCtx.Redis, fmt.Sprintf("%s:%s:%s", config.SendIntervalKeyPrefix, "mobile", constant.ParseVerifyType(req.Type)))
+	limiter := limit.NewPeriodLimit(60, 1, l.svcCtx.Redis, fmt.Sprintf("%s:%s:%s", config.SendIntervalKeyPrefix, "mobile", config.ParseVerifyType(req.Type)))
 	permit, err := limiter.Take(phoneNumber)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Failed to take limit")
@@ -58,7 +57,7 @@ func (l *SendSmsCodeLogic) SendSmsCode(req *types.SendSmsCodeRequest) (resp *typ
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TooManyRequests), "send sms too many requests")
 	}
 	// Check if the limit is exceeded of the today
-	permit, err = l.svcCtx.AuthLimiter.Take(fmt.Sprintf("%s:%s:%s", "mobile", constant.ParseVerifyType(req.Type), phoneNumber))
+	permit, err = l.svcCtx.AuthLimiter.Take(fmt.Sprintf("%s:%s:%s", "mobile", config.ParseVerifyType(req.Type), phoneNumber))
 	if err != nil {
 		return nil, err
 	}
@@ -69,9 +68,9 @@ func (l *SendSmsCodeLogic) SendSmsCode(req *types.SendSmsCodeRequest) (resp *typ
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindUserAuthMethodByOpenID error")
 	}
-	if constant.ParseVerifyType(req.Type) == constant.Register && m.Id > 0 {
+	if config.ParseVerifyType(req.Type) == config.Register && m.Id > 0 {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.UserExist), "mobile already bind")
-	} else if constant.ParseVerifyType(req.Type) == constant.Security && m.Id == 0 {
+	} else if config.ParseVerifyType(req.Type) == config.Security && m.Id == 0 {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.UserNotExist), "mobile not bind")
 	}
 
@@ -111,7 +110,7 @@ func (l *SendSmsCodeLogic) SendSmsCode(req *types.SendSmsCodeRequest) (resp *typ
 		return nil, errors.Wrap(xerr.NewErrCode(xerr.ERROR), "Failed to enqueue task")
 	}
 	l.Infow("[SendSmsCode]: Enqueue Success", logger.Field("taskID", taskInfo.ID), logger.Field("payload", string(payloadValue)))
-	if l.svcCtx.Config.Model == constant.DevMode {
+	if l.svcCtx.Config.Model == config.DevMode {
 		return &types.SendCodeResponse{
 			Code:   taskPayload.Content,
 			Status: true,

@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/perfect-panel/server/models/node"
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 )
 
 type Adapter struct {

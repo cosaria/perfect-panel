@@ -8,14 +8,13 @@ import (
 
 	"github.com/perfect-panel/server/models/order"
 
-	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/modules/util/tool"
 
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/jwt"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/uuidx"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/auth/jwt"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/uuidx"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
@@ -78,14 +77,14 @@ func (l *QueryPurchaseOrderLogic) QueryPurchaseOrder(req *types.QueryPurchaseOrd
 
 // handleTemporaryOrder processes temporary order-related operations
 func (l *QueryPurchaseOrderLogic) handleTemporaryOrder(orderInfo *order.Order, req *types.QueryPurchaseOrderRequest) (string, error) {
-	cacheKey := fmt.Sprintf(constant.TempOrderCacheKey, orderInfo.OrderNo)
+	cacheKey := fmt.Sprintf(config.TempOrderCacheKey, orderInfo.OrderNo)
 	cacheValue, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
 	if err != nil {
 		l.Errorw("Get TempOrderCacheKey Error", logger.Field("cacheKey", cacheKey), logger.Field("error", err.Error()))
 		return "", errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Get TempOrderCacheKey Error: %v", err.Error())
 	}
 
-	var tempOrder constant.TemporaryOrderInfo
+	var tempOrder config.TemporaryOrderInfo
 	if err := json.Unmarshal([]byte(cacheValue), &tempOrder); err != nil {
 		l.Errorw("JSON Unmarshal Error", logger.Field("error", err.Error()), logger.Field("cacheValue", cacheValue))
 		return "", errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "JSON Unmarshal Error: %v", err.Error())

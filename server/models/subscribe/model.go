@@ -3,7 +3,7 @@ package subscribe
 import (
 	"context"
 
-	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )

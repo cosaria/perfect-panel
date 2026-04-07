@@ -7,7 +7,7 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/traffic"
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/svc"
 )
 

@@ -7,9 +7,8 @@ import (
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
@@ -36,7 +35,7 @@ type CacheKeyPayload struct {
 }
 
 func (l *VerifyEmailLogic) VerifyEmail(req *types.VerifyEmailRequest) error {
-	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeCacheKey, constant.Security, req.Email)
+	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeCacheKey, config.Security, req.Email)
 	value, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
 	if err != nil {
 		l.Errorw("Redis Error", logger.Field("error", err.Error()), logger.Field("cacheKey", cacheKey))
@@ -54,7 +53,7 @@ func (l *VerifyEmailLogic) VerifyEmail(req *types.VerifyEmailRequest) error {
 	}
 	l.svcCtx.Redis.Del(l.ctx, cacheKey)
 
-	u, ok := l.ctx.Value(constant.CtxKeyUser).(*user.User)
+	u, ok := l.ctx.Value(config.CtxKeyUser).(*user.User)
 	if !ok {
 		logger.Error("current user is not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/perfect-panel/server/pkg/result"
+	"github.com/perfect-panel/server/routers/response"
 	"github.com/perfect-panel/server/services/auth/oauth"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
@@ -23,7 +23,7 @@ func AppleLoginCallbackHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) 
 		l := oauth.NewAppleLoginCallbackLogic(c.Request.Context(), svcCtx)
 		err := l.AppleLoginCallback(&req, c.Request, c.Writer)
 		if err != nil {
-			result.HttpResult(c, nil, err)
+			response.HttpResult(c, nil, err)
 		}
 	}
 }

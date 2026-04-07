@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/exchangeRate"
+	"github.com/perfect-panel/server/modules/payment/exchangeRate"
 	"github.com/perfect-panel/server/services/report"
 
-	paymentPlatform "github.com/perfect-panel/server/pkg/payment"
+	paymentPlatform "github.com/perfect-panel/server/modules/payment"
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/models/user"
@@ -20,11 +20,11 @@ import (
 
 	"github.com/perfect-panel/server/models/order"
 	"github.com/perfect-panel/server/models/payment"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/payment/alipay"
-	"github.com/perfect-panel/server/pkg/payment/epay"
-	"github.com/perfect-panel/server/pkg/payment/stripe"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/payment/alipay"
+	"github.com/perfect-panel/server/modules/payment/epay"
+	"github.com/perfect-panel/server/modules/payment/stripe"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
@@ -164,7 +164,7 @@ func (l *PurchaseCheckoutLogic) alipayF2fPayment(pay *payment.Payment, info *ord
 	if pay.Domain != "" {
 		notifyUrl = pay.Domain + "/api/v1/notify/" + pay.Platform + "/" + pay.Token
 	} else {
-		host, ok := l.ctx.Value(constant.CtxKeyRequestHost).(string)
+		host, ok := l.ctx.Value(config.CtxKeyRequestHost).(string)
 		if !ok {
 			host = l.svcCtx.Config.Host
 		}
@@ -261,11 +261,11 @@ func (l *PurchaseCheckoutLogic) stripePayment(config string, info *order.Order, 
 
 // epayPayment processes EPay payment by generating a payment URL for redirect
 // It handles currency conversion and creates a payment URL for external payment processing
-func (l *PurchaseCheckoutLogic) epayPayment(config *payment.Payment, info *order.Order, returnUrl string) (string, error) {
+func (l *PurchaseCheckoutLogic) epayPayment(paymentConfig *payment.Payment, info *order.Order, returnUrl string) (string, error) {
 	var err error
 	// Parse EPay configuration from payment settings
 	epayConfig := &payment.EPayConfig{}
-	if err := epayConfig.Unmarshal([]byte(config.Config)); err != nil {
+	if err := epayConfig.Unmarshal([]byte(paymentConfig.Config)); err != nil {
 		l.Errorw("[PurchaseCheckout] Unmarshal EPay config error", logger.Field("error", err.Error()))
 		return "", errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Unmarshal error: %s", err.Error())
 	}
@@ -288,14 +288,14 @@ func (l *PurchaseCheckoutLogic) epayPayment(config *payment.Payment, info *order
 
 	// Build notification URL for payment status callbacks
 	notifyUrl := ""
-	if config.Domain != "" {
-		notifyUrl = config.Domain
+	if paymentConfig.Domain != "" {
+		notifyUrl = paymentConfig.Domain
 		if isGatewayMod {
 			notifyUrl += "/api/"
 		}
-		notifyUrl = notifyUrl + "/api/v1/notify/" + config.Platform + "/" + config.Token
+		notifyUrl = notifyUrl + "/api/v1/notify/" + paymentConfig.Platform + "/" + paymentConfig.Token
 	} else {
-		host, ok := l.ctx.Value(constant.CtxKeyRequestHost).(string)
+		host, ok := l.ctx.Value(config.CtxKeyRequestHost).(string)
 		if !ok {
 			host = l.svcCtx.Config.Host
 		}
@@ -303,7 +303,7 @@ func (l *PurchaseCheckoutLogic) epayPayment(config *payment.Payment, info *order
 		if isGatewayMod {
 			notifyUrl += "/api"
 		}
-		notifyUrl = notifyUrl + "/api/v1/notify/" + config.Platform + "/" + config.Token
+		notifyUrl = notifyUrl + "/api/v1/notify/" + paymentConfig.Platform + "/" + paymentConfig.Token
 	}
 
 	// Create payment URL for user redirection
@@ -320,11 +320,11 @@ func (l *PurchaseCheckoutLogic) epayPayment(config *payment.Payment, info *order
 
 // CryptoSaaSPayment processes CryptoSaaSPayment payment by generating a payment URL for redirect
 // It handles currency conversion and creates a payment URL for external payment processing
-func (l *PurchaseCheckoutLogic) CryptoSaaSPayment(config *payment.Payment, info *order.Order, returnUrl string) (string, error) {
+func (l *PurchaseCheckoutLogic) CryptoSaaSPayment(paymentConfig *payment.Payment, info *order.Order, returnUrl string) (string, error) {
 	var err error
 	// Parse EPay configuration from payment settings
 	epayConfig := &payment.CryptoSaaSConfig{}
-	if err := epayConfig.Unmarshal([]byte(config.Config)); err != nil {
+	if err := epayConfig.Unmarshal([]byte(paymentConfig.Config)); err != nil {
 		l.Errorw("[PurchaseCheckout] Unmarshal EPay config error", logger.Field("error", err.Error()))
 		return "", errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Unmarshal error: %s", err.Error())
 	}
@@ -348,14 +348,14 @@ func (l *PurchaseCheckoutLogic) CryptoSaaSPayment(config *payment.Payment, info 
 
 	// Build notification URL for payment status callbacks
 	notifyUrl := ""
-	if config.Domain != "" {
-		notifyUrl = config.Domain
+	if paymentConfig.Domain != "" {
+		notifyUrl = paymentConfig.Domain
 		if isGatewayMod {
 			notifyUrl += "/api/"
 		}
-		notifyUrl = notifyUrl + "/api/v1/notify/" + config.Platform + "/" + config.Token
+		notifyUrl = notifyUrl + "/api/v1/notify/" + paymentConfig.Platform + "/" + paymentConfig.Token
 	} else {
-		host, ok := l.ctx.Value(constant.CtxKeyRequestHost).(string)
+		host, ok := l.ctx.Value(config.CtxKeyRequestHost).(string)
 		if !ok {
 			host = l.svcCtx.Config.Host
 		}
@@ -364,7 +364,7 @@ func (l *PurchaseCheckoutLogic) CryptoSaaSPayment(config *payment.Payment, info 
 		if isGatewayMod {
 			notifyUrl += "/api"
 		}
-		notifyUrl = notifyUrl + "/api/v1/notify/" + config.Platform + "/" + config.Token
+		notifyUrl = notifyUrl + "/api/v1/notify/" + paymentConfig.Platform + "/" + paymentConfig.Token
 	}
 	// Create payment URL for user redirection
 	url := client.CreatePayUrl(epay.Order{

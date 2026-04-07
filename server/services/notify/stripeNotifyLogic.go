@@ -6,15 +6,15 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/perfect-panel/server/pkg/constant"
+	"github.com/perfect-panel/server/config"
 
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/pkg/errors"
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/models/payment"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/payment/stripe"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/payment/stripe"
 	"github.com/perfect-panel/server/queue/types"
 	"github.com/perfect-panel/server/svc"
 )
@@ -43,7 +43,7 @@ func (l *StripeNotifyLogic) StripeNotify(r *http.Request, w http.ResponseWriter)
 		return err
 	}
 	signature := r.Header.Get("Stripe-Signature")
-	stripeConfig, ok := l.ctx.Value(constant.CtxKeyPayment).(*payment.Payment)
+	stripeConfig, ok := l.ctx.Value(config.CtxKeyPayment).(*payment.Payment)
 	if !ok {
 		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "payment config not found")
 	}

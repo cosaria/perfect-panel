@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 	queue "github.com/perfect-panel/server/queue/types"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"

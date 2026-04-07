@@ -7,9 +7,9 @@ import (
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/initialize"
 	"github.com/perfect-panel/server/models/system"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 

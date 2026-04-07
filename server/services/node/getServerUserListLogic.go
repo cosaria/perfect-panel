@@ -10,10 +10,10 @@ import (
 	"github.com/perfect-panel/server/models/subscribe"
 	"github.com/redis/go-redis/v9"
 
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/uuidx"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/modules/util/uuidx"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )

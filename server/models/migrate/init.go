@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/uuidx"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/modules/util/uuidx"
 	"gorm.io/gorm"
 )
 

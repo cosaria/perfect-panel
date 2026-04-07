@@ -4,17 +4,17 @@ import (
 	"encoding/json"
 	"net/url"
 
-	"github.com/perfect-panel/server/pkg/constant"
+	"github.com/perfect-panel/server/config"
 
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/pkg/errors"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/models/payment"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/payment/epay"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/payment/epay"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 
@@ -39,7 +39,7 @@ func NewEPayNotifyLogic(ctx *gin.Context, svcCtx *svc.ServiceContext) *EPayNotif
 func (l *EPayNotifyLogic) EPayNotify(req *types.EPayNotifyRequest) error {
 
 	// Find payment config
-	data, ok := l.ctx.Request.Context().Value(constant.CtxKeyPayment).(*payment.Payment)
+	data, ok := l.ctx.Request.Context().Value(config.CtxKeyPayment).(*payment.Payment)
 	if !ok {
 		l.Logger.Error("[EPayNotify] Payment not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "payment config not found")

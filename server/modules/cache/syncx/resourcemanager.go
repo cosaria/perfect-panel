@@ -4,7 +4,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/perfect-panel/server/pkg/errorx"
+	"github.com/perfect-panel/server/modules/infra/errorx"
 )
 
 // A ResourceManager is a manager that used to manage resources.

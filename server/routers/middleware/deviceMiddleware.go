@@ -11,10 +11,10 @@ import (
 	"net/http"
 	"strings"
 
-	pkgaes "github.com/perfect-panel/server/pkg/aes"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/result"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/config"
+	pkgaes "github.com/perfect-panel/server/modules/crypto/aes"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/routers/response"
 	"github.com/perfect-panel/server/svc"
 	"github.com/pkg/errors"
 
@@ -35,18 +35,18 @@ func DeviceMiddleware(srvCtx *svc.ServiceContext) func(c *gin.Context) {
 		}
 
 		if srvCtx.Config.Device.SecuritySecret == "" {
-			result.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretIsEmpty), "Secret is empty"))
+			response.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.SecretIsEmpty), "Secret is empty"))
 			c.Abort()
 			return
 		}
 
 		ctx := c.Request.Context()
-		if ctx.Value(constant.CtxKeyUser) == nil && c.GetHeader("Login-Type") != "" {
-			ctx = context.WithValue(ctx, constant.LoginType, c.GetHeader("Login-Type"))
+		if ctx.Value(config.CtxKeyUser) == nil && c.GetHeader("Login-Type") != "" {
+			ctx = context.WithValue(ctx, config.LoginType, c.GetHeader("Login-Type"))
 			c.Request = c.Request.WithContext(ctx)
 		}
 
-		loginType, ok := ctx.Value(constant.LoginType).(string)
+		loginType, ok := ctx.Value(config.LoginType).(string)
 		if !ok || loginType != "device" {
 			c.Next()
 			return
@@ -54,7 +54,7 @@ func DeviceMiddleware(srvCtx *svc.ServiceContext) func(c *gin.Context) {
 
 		rw := NewResponseWriter(c, srvCtx)
 		if !rw.Decrypt() {
-			result.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidCiphertext), "Invalid ciphertext"))
+			response.HttpResult(c, nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidCiphertext), "Invalid ciphertext"))
 			c.Abort()
 			return
 		}

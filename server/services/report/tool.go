@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/pkg/errors"
 )
 

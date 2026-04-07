@@ -3,13 +3,13 @@ package ticket
 import (
 	"context"
 
-	"github.com/perfect-panel/server/pkg/constant"
+	"github.com/perfect-panel/server/config"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
@@ -31,7 +31,7 @@ func NewGetUserTicketListLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *GetUserTicketListLogic) GetUserTicketList(req *types.GetUserTicketListRequest) (resp *types.GetUserTicketListResponse, err error) {
-	u, ok := l.ctx.Value(constant.CtxKeyUser).(*user.User)
+	u, ok := l.ctx.Value(config.CtxKeyUser).(*user.User)
 	if !ok {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}

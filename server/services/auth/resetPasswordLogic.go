@@ -8,14 +8,13 @@ import (
 
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/jwt"
-	"github.com/perfect-panel/server/pkg/uuidx"
+	"github.com/perfect-panel/server/modules/auth/jwt"
+	"github.com/perfect-panel/server/modules/util/uuidx"
 
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
@@ -68,7 +67,7 @@ func (l *ResetPasswordLogic) ResetPassword(req *types.ResetPasswordRequest) (res
 		}
 	}()
 
-	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeCacheKey, constant.Security, req.Email)
+	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeCacheKey, config.Security, req.Email)
 	// Check the verification code
 	if value, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result(); err != nil {
 		l.Errorw("Verification code error", logger.Field("cacheKey", cacheKey), logger.Field("error", err.Error()))
@@ -121,8 +120,8 @@ func (l *ResetPasswordLogic) ResetPassword(req *types.ResetPasswordRequest) (res
 			// Don't fail register if device binding fails, just log the error
 		}
 	}
-	if l.ctx.Value(constant.LoginType) != nil {
-		req.LoginType = l.ctx.Value(constant.LoginType).(string)
+	if l.ctx.Value(config.LoginType) != nil {
+		req.LoginType = l.ctx.Value(config.LoginType).(string)
 	}
 	// Generate session id
 	sessionId := uuidx.NewUUID().String()

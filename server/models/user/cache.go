@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 )
 
 type CacheKeyGenerator interface {

@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/perfect-panel/server/models/migrate"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/orm"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/orm"
 	"github.com/perfect-panel/server/svc"
 )
 

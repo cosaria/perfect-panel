@@ -3,12 +3,12 @@ package initialize
 import (
 	"context"
 	"encoding/json"
-	"github.com/perfect-panel/server/pkg/logger"
 
 	"github.com/perfect-panel/server/config"
+	"github.com/perfect-panel/server/models/node"
 	"github.com/perfect-panel/server/models/system"
-	"github.com/perfect-panel/server/pkg/nodeMultiplier"
-	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/svc"
 )
 
@@ -72,9 +72,9 @@ func Node(ctx *svc.ServiceContext) {
 		logger.Error("Get Node Multiplier Config Error: ", logger.Field("error", err.Error()))
 		return
 	}
-	var periods []nodeMultiplier.TimePeriod
+	var periods []node.TimePeriod
 	if err := json.Unmarshal([]byte(nodeMultiplierData.Value), &periods); err != nil {
 		logger.Error("Unmarshal Node Multiplier Config Error: ", logger.Field("error", err.Error()), logger.Field("value", nodeMultiplierData.Value))
 	}
-	ctx.NodeMultiplierManager = nodeMultiplier.NewNodeMultiplierManager(periods)
+	ctx.NodeMultiplierManager = node.NewNodeMultiplierManager(periods)
 }

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/perfect-panel/server/pkg/constant"
+	"github.com/perfect-panel/server/config"
 
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/otel/attribute"
@@ -14,7 +14,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	oteltrace "go.opentelemetry.io/otel/trace"
 
-	"github.com/perfect-panel/server/pkg/trace"
+	"github.com/perfect-panel/server/modules/infra/trace"
 	"github.com/perfect-panel/server/svc"
 )
 
@@ -79,7 +79,7 @@ func TraceMiddleware(_ *svc.ServiceContext) func(ctx *gin.Context) {
 			semconv.HTTPRouteKey.String(c.FullPath()),
 		)
 		// context with request host
-		ctx = context.WithValue(ctx, constant.CtxKeyRequestHost, c.Request.Host)
+		ctx = context.WithValue(ctx, config.CtxKeyRequestHost, c.Request.Host)
 		// restructure context
 		c.Request = c.Request.WithContext(ctx)
 

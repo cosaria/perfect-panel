@@ -7,13 +7,12 @@ import (
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/jwt"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/phone"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/uuidx"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/auth/jwt"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/notify/phone"
+	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/modules/util/uuidx"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
@@ -48,7 +47,7 @@ func (l *TelephoneResetPasswordLogic) TelephoneResetPassword(req *types.Telephon
 	}
 
 	// if the email verification is enabled, the verification code is required
-	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeTelephoneCacheKey, constant.Security, phoneNumber)
+	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeTelephoneCacheKey, config.Security, phoneNumber)
 	value, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
 	if err != nil {
 		l.Errorw("Redis Error", logger.Field("error", err.Error()), logger.Field("cacheKey", cacheKey))
@@ -96,8 +95,8 @@ func (l *TelephoneResetPasswordLogic) TelephoneResetPassword(req *types.Telephon
 			// Don't fail register if device binding fails, just log the error
 		}
 	}
-	if l.ctx.Value(constant.LoginType) != nil {
-		req.LoginType = l.ctx.Value(constant.LoginType).(string)
+	if l.ctx.Value(config.LoginType) != nil {
+		req.LoginType = l.ctx.Value(config.LoginType).(string)
 	}
 	// Generate session id
 	sessionId := uuidx.NewUUID().String()

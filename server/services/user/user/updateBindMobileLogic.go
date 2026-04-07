@@ -7,13 +7,12 @@ import (
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/phone"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/notify/phone"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 )
@@ -34,7 +33,7 @@ func NewUpdateBindMobileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *UpdateBindMobileLogic) UpdateBindMobile(req *types.UpdateBindMobileRequest) error {
-	u, ok := l.ctx.Value(constant.CtxKeyUser).(*user.User)
+	u, ok := l.ctx.Value(config.CtxKeyUser).(*user.User)
 	if !ok {
 		logger.Error("current user is not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
@@ -44,7 +43,7 @@ func (l *UpdateBindMobileLogic) UpdateBindMobile(req *types.UpdateBindMobileRequ
 	if err != nil {
 		return errors.Wrapf(xerr.NewErrCode(xerr.TelephoneError), "Invalid phone number")
 	}
-	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeTelephoneCacheKey, constant.Register, phoneNumber)
+	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeTelephoneCacheKey, config.Register, phoneNumber)
 	code, err := l.svcCtx.Redis.Get(l.ctx, cacheKey).Result()
 	if err != nil {
 		l.Errorw("Redis Error", logger.Field("error", err.Error()), logger.Field("cacheKey", cacheKey))

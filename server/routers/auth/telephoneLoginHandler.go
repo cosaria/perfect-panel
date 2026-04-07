@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/perfect-panel/server/pkg/turnstile"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/verify/turnstile"
 	"github.com/perfect-panel/server/services/auth"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"

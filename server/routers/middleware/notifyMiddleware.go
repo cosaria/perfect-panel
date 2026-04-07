@@ -3,7 +3,7 @@ package middleware
 import (
 	"context"
 
-	"github.com/perfect-panel/server/pkg/constant"
+	serverconfig "github.com/perfect-panel/server/config"
 
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/svc"
@@ -24,14 +24,14 @@ func NotifyMiddleware(svc *svc.ServiceContext) func(c *gin.Context) {
 			c.Abort()
 			return
 		}
-		config, err := svc.PaymentModel.FindOneByPaymentToken(ctx, params.Token)
+		paymentConfig, err := svc.PaymentModel.FindOneByPaymentToken(ctx, params.Token)
 		if err != nil {
 			c.JSON(400, gin.H{"error": err.Error()})
 			c.Abort()
 			return
 		}
-		ctx = context.WithValue(ctx, constant.CtxKeyPlatform, config.Platform)
-		ctx = context.WithValue(ctx, constant.CtxKeyPayment, config)
+		ctx = context.WithValue(ctx, serverconfig.CtxKeyPlatform, paymentConfig.Platform)
+		ctx = context.WithValue(ctx, serverconfig.CtxKeyPayment, paymentConfig)
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}

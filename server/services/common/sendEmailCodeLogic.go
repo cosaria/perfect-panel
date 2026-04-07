@@ -8,14 +8,13 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/limit"
-	"github.com/perfect-panel/server/pkg/random"
+	"github.com/perfect-panel/server/modules/infra/limit"
+	"github.com/perfect-panel/server/modules/util/random"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
 	queue "github.com/perfect-panel/server/queue/types"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
@@ -54,9 +53,9 @@ func NewSendEmailCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sen
 
 func (l *SendEmailCodeLogic) SendEmailCode(req *types.SendCodeRequest) (resp *types.SendCodeResponse, err error) {
 	// Check if there is Redis in the code
-	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeCacheKey, constant.ParseVerifyType(req.Type), req.Email)
+	cacheKey := fmt.Sprintf("%s:%s:%s", config.AuthCodeCacheKey, config.ParseVerifyType(req.Type), req.Email)
 	// Check if the limit is exceeded of current request
-	limiter := limit.NewPeriodLimit(60, 1, l.svcCtx.Redis, fmt.Sprintf("%s:%s:%s", config.SendIntervalKeyPrefix, "email", constant.ParseVerifyType(req.Type)))
+	limiter := limit.NewPeriodLimit(60, 1, l.svcCtx.Redis, fmt.Sprintf("%s:%s:%s", config.SendIntervalKeyPrefix, "email", config.ParseVerifyType(req.Type)))
 	permit, err := limiter.Take(req.Email)
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Failed to take limit")
@@ -65,7 +64,7 @@ func (l *SendEmailCodeLogic) SendEmailCode(req *types.SendCodeRequest) (resp *ty
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.TooManyRequests), "send email too many requests")
 	}
 	// Check if the limit is exceeded of today
-	permit, err = l.svcCtx.AuthLimiter.Take(fmt.Sprintf("%s:%s:%s", "email", constant.ParseVerifyType(req.Type), req.Email))
+	permit, err = l.svcCtx.AuthLimiter.Take(fmt.Sprintf("%s:%s:%s", "email", config.ParseVerifyType(req.Type), req.Email))
 	if err != nil {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Failed to take limit")
 	}
@@ -76,9 +75,9 @@ func (l *SendEmailCodeLogic) SendEmailCode(req *types.SendCodeRequest) (resp *ty
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindUserAuthMethodByOpenID error")
 	}
-	if constant.ParseVerifyType(req.Type) == constant.Register && m.Id > 0 {
+	if config.ParseVerifyType(req.Type) == config.Register && m.Id > 0 {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.UserExist), "mobile already bind")
-	} else if constant.ParseVerifyType(req.Type) == constant.Security && m.Id == 0 {
+	} else if config.ParseVerifyType(req.Type) == config.Security && m.Id == 0 {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.UserNotExist), "mobile not bind")
 	}
 
@@ -123,7 +122,7 @@ func (l *SendEmailCodeLogic) SendEmailCode(req *types.SendCodeRequest) (resp *ty
 		return nil, errors.Wrap(xerr.NewErrCode(xerr.ERROR), "Failed to enqueue task")
 	}
 	l.Infow("[SendEmailCode]: Enqueue Success", logger.Field("taskID", taskInfo.ID), logger.Field("payload", string(payloadBuy)))
-	if l.svcCtx.Config.Model == constant.DevMode {
+	if l.svcCtx.Config.Model == config.DevMode {
 		return &types.SendCodeResponse{
 			Code:   payload.Code,
 			Status: true,

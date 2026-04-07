@@ -3,8 +3,8 @@ package syncx
 import (
 	"time"
 
-	"github.com/perfect-panel/server/pkg/lang"
-	"github.com/perfect-panel/server/pkg/timex"
+	"github.com/perfect-panel/server/modules/util/lang"
+	"github.com/perfect-panel/server/modules/util/timex"
 )
 
 // A Cond is used to wait for conditions.

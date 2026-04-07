@@ -5,17 +5,17 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/log"
-	"github.com/perfect-panel/server/pkg/constant"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/infra/xerr"
 
 	"gorm.io/gorm"
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/models/order"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/util/tool"
 	queue "github.com/perfect-panel/server/queue/types"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
@@ -38,7 +38,7 @@ func NewResetTrafficLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Rese
 }
 
 func (l *ResetTrafficLogic) ResetTraffic(req *types.ResetTrafficOrderRequest) (resp *types.ResetTrafficOrderResponse, err error) {
-	u, ok := l.ctx.Value(constant.CtxKeyUser).(*user.User)
+	u, ok := l.ctx.Value(config.CtxKeyUser).(*user.User)
 	if !ok {
 		logger.Error("current user is not found in context")
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")

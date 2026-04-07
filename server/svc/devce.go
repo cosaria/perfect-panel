@@ -9,8 +9,8 @@ import (
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/user"
 
-	"github.com/perfect-panel/server/pkg/device"
-	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/verify/device"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )

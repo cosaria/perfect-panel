@@ -5,15 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/perfect-panel/server/pkg/constant"
+	"github.com/perfect-panel/server/config"
 
 	"github.com/perfect-panel/server/models/auth"
 	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/pkg/logger"
-	"github.com/perfect-panel/server/pkg/oauth/apple"
-	"github.com/perfect-panel/server/pkg/oauth/google"
-	"github.com/perfect-panel/server/pkg/tool"
-	"github.com/perfect-panel/server/pkg/xerr"
+	"github.com/perfect-panel/server/modules/auth/oauth/apple"
+	"github.com/perfect-panel/server/modules/auth/oauth/google"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
@@ -41,7 +41,7 @@ type googleRequest struct {
 }
 
 func (l *BindOAuthCallbackLogic) BindOAuthCallback(req *types.BindOAuthCallbackRequest) error {
-	u, ok := l.ctx.Value(constant.CtxKeyUser).(*user.User)
+	u, ok := l.ctx.Value(config.CtxKeyUser).(*user.User)
 	if !ok {
 		logger.Error("current user is not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
@@ -71,7 +71,7 @@ func (l *BindOAuthCallbackLogic) BindOAuthCallback(req *types.BindOAuthCallbackR
 	return nil
 }
 func (l *BindOAuthCallbackLogic) google(req *types.BindOAuthCallbackRequest) error {
-	u, ok := l.ctx.Value(constant.CtxKeyUser).(*user.User)
+	u, ok := l.ctx.Value(config.CtxKeyUser).(*user.User)
 	if !ok {
 		logger.Error("current user is not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
@@ -195,7 +195,7 @@ func (l *BindOAuthCallbackLogic) apple(req *types.BindOAuthCallbackRequest) erro
 		return errors.Wrapf(xerr.NewErrCode(xerr.UserExist), "apple user already exists")
 	}
 	// query user info
-	u, ok := l.ctx.Value(constant.CtxKeyUser).(*user.User)
+	u, ok := l.ctx.Value(config.CtxKeyUser).(*user.User)
 	if !ok {
 		logger.Error("current user is not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
