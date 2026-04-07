@@ -1,6 +1,6 @@
 package sms
 
-import "github.com/perfect-panel/server/internal/types"
+import "github.com/perfect-panel/server/types"
 
 type Platform int
 

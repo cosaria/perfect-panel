@@ -6,13 +6,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/perfect-panel/server/internal/model/node"
+	"github.com/perfect-panel/server/models/node"
 	"github.com/perfect-panel/server/pkg/logger"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/internal/model/traffic"
-	"github.com/perfect-panel/server/internal/svc"
+	"github.com/perfect-panel/server/models/traffic"
 	"github.com/perfect-panel/server/queue/types"
+	"github.com/perfect-panel/server/svc"
 )
 
 //goland:noinspection GoNameStartsWithPackageName

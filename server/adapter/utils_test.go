@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/perfect-panel/server/internal/model/node"
+	"github.com/perfect-panel/server/models/node"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -23,39 +23,39 @@ func TestAdapterProxy(t *testing.T) {
 	for _, proxy := range proxies {
 		t.Logf("[测试] 适配节点 %s 成功: %+v", proxy.Name, proxy)
 	}
-	
+
 	if _, err := adapter.Client(); err != nil {
 		t.Fatalf("failed to build adapter client: %v", err)
 	}
-	
+
 	if len(adapter.Servers) != len(nodes) {
 		t.Fatalf("adapter server count mismatch: got %d want %d", len(adapter.Servers), len(nodes))
 	}
-	
+
 	if adapter.UserInfo.Password == "" {
 		t.Fatal("adapter user info was not applied")
 	}
-	
+
 	if adapter.OutputFormat == "" {
 		t.Fatal("adapter output format should not be empty")
 	}
-	
+
 	if adapter.ClientTemplate == "" {
 		t.Fatal("adapter client template should not be empty")
 	}
-	
+
 	if adapter.Type != "" {
 		t.Fatalf("unexpected adapter type: %q", adapter.Type)
 	}
-	
+
 	if adapter.Params != nil {
 		t.Fatalf("unexpected adapter params: %+v", adapter.Params)
 	}
-	
+
 	if adapter.SiteName != "" {
 		t.Fatalf("unexpected adapter site name: %q", adapter.SiteName)
 	}
-	
+
 	if adapter.SubscribeName != "" {
 		t.Fatalf("unexpected adapter subscribe name: %q", adapter.SubscribeName)
 	}

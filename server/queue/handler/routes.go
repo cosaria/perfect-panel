@@ -2,13 +2,13 @@ package handler
 
 import (
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/internal/svc"
 	orderLogic "github.com/perfect-panel/server/queue/logic/order"
 	smslogic "github.com/perfect-panel/server/queue/logic/sms"
 	"github.com/perfect-panel/server/queue/logic/subscription"
 	"github.com/perfect-panel/server/queue/logic/task"
 	"github.com/perfect-panel/server/queue/logic/traffic"
 	"github.com/perfect-panel/server/queue/types"
+	"github.com/perfect-panel/server/svc"
 
 	emailLogic "github.com/perfect-panel/server/queue/logic/email"
 )

@@ -9,11 +9,11 @@ import (
 	"github.com/perfect-panel/server/pkg/logger"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/internal/model/log"
-	"github.com/perfect-panel/server/internal/svc"
+	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/pkg/constant"
 	"github.com/perfect-panel/server/pkg/sms"
 	"github.com/perfect-panel/server/queue/types"
+	"github.com/perfect-panel/server/svc"
 )
 
 type SmsSendCount struct {

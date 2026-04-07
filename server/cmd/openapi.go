@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
-	"github.com/perfect-panel/server/internal/handler"
+	"github.com/perfect-panel/server/routers"
 	"github.com/spf13/cobra"
 )
 

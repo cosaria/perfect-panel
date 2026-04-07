@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/perfect-panel/server/internal/trace"
+	"github.com/perfect-panel/server/modules/infra/trace"
 
 	"github.com/perfect-panel/server/pkg/timex"
 )

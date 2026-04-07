@@ -42,7 +42,7 @@ make dev APP=user       # 同时启动 server + user 前端
 cd server
 go test ./...                         # 全部测试
 go test -race ./...                   # 带竞态检测
-go test ./internal/logic/admin/...    # 单个包测试
+go test ./services/admin/...          # 单个包测试
 go test -run TestFoo ./pkg/tool/...   # 单个测试函数
 golangci-lint run                     # lint
 go vet ./...                          # 静态分析
@@ -66,21 +66,21 @@ bun run openapi                       # 从远端 Swagger JSON 重新生成 API 
 
 Monorepo 包含两个独立子项目，不共享运行时，通过根 Makefile 统一开发入口。
 
-### Server — Go / Gin / goctl 生成
+### Server — Go / Gin / huma v2
 
-基于 **go-zero `.api` 规范 + goctl 代码生成**的分层架构：
+当前 server 已进入目录重构后的骨架阶段：
 
-1. **API 规范** (`server/apis/*.api`, `server/ppanel.api`) — 定义路由、请求/响应类型
-2. **生成层**（`DO NOT EDIT`）：
-   - `internal/handler/routes.go` — 路由注册
-   - `internal/handler/{domain}/` — 每个 handler 一个文件（thin wrapper）
-   - `internal/types/types.go` — 全部请求/响应结构体
-3. **业务层** (`internal/logic/{admin,auth,public,server,subscribe,telegram}/`) — 所有业务逻辑写这里
-4. **数据层** (`internal/model/{user,subscribe,order,node,...}/`) — GORM v2 模型，内建 Redis 缓存
-5. **依赖注入** (`internal/svc/ServiceContext`) — 所有 model、config、redis、asynq client 的持有者
+1. **路由层** (`server/routers/`) — huma/Gin 路由注册与 HTTP 入口
+   - `routers/routes.go` — 当前总路由注册入口
+   - `routers/{admin,auth,public,server,...}/` — 现阶段仍保留按域拆分的 handler wrapper
+   - `routers/middleware/` — HTTP 中间件
+2. **业务层** (`server/services/{admin,auth,user,node,common,...}/`) — 业务逻辑
+3. **数据层** (`server/models/{user,subscribe,order,node,...}/`) — GORM v2 模型，内建 Redis 缓存
+4. **类型层** (`server/types/`) — 请求/响应结构体，当前仍保留集中定义
+5. **依赖注入** (`server/svc/ServiceContext`) — model、config、redis、asynq client 的持有者
 
 关键约定：
-- **handler 和 types 是生成代码，不要手动编辑**。修改 API 需改 `.api` 文件后重新生成
+- 这轮重构后，旧 `internal/{handler,logic,model,svc,config,types}` 路径已提升到 `routers/services/models/svc/config/types`
 - 所有 HTTP 响应均为 200，错误通过 JSON body 中 `{code, msg}` 表达（`pkg/result/`）
 - 错误码体系在 `pkg/xerr/` — 10xxx DB、20xxx 用户、30xxx 节点、40xxx 鉴权
 - 异步任务使用 **Asynq**（Redis DB 5），包括邮件发送、订单关闭、流量统计等

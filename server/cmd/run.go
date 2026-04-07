@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/perfect-panel/server/pkg/constant"
-
 	"log"
 	"os"
 	"os/signal"
@@ -14,10 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
+	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/initialize"
-	"github.com/perfect-panel/server/internal"
-	"github.com/perfect-panel/server/internal/config"
-	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/pkg/conf"
 	"github.com/perfect-panel/server/pkg/logger"
 	"github.com/perfect-panel/server/pkg/orm"
@@ -25,6 +21,7 @@ import (
 	"github.com/perfect-panel/server/pkg/tool"
 	"github.com/perfect-panel/server/queue"
 	"github.com/perfect-panel/server/scheduler"
+	"github.com/perfect-panel/server/svc"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -41,7 +38,7 @@ var startCmd = &cobra.Command{
 	Use:   "run",
 	Short: "start PPanel",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("[PPanel version] v" + fmt.Sprintf("%s(%s)", constant.Version, constant.BuildTime))
+		fmt.Println("[PPanel version] v" + fmt.Sprintf("%s(%s)", config.Version, config.BuildTime))
 		run()
 	},
 }
@@ -92,7 +89,7 @@ func getServers() *service.Group {
 	// init service context
 	ctx := svc.NewServiceContext(c)
 	services := service.NewServiceGroup()
-	services.Add(internal.NewService(ctx))
+	services.Add(NewService(ctx))
 	services.Add(queue.NewService(ctx))
 	services.Add(scheduler.NewService(ctx))
 	return services

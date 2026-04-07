@@ -3,10 +3,10 @@ package initialize
 import (
 	"context"
 
-	"github.com/perfect-panel/server/internal/config"
-	"github.com/perfect-panel/server/internal/svc"
+	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/pkg/logger"
 	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/svc"
 )
 
 func Invite(ctx *svc.ServiceContext) {

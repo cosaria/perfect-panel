@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"github.com/perfect-panel/server/internal/svc"
+	"github.com/perfect-panel/server/svc"
 )
 
 func StartInitSystemConfig(svc *svc.ServiceContext) {

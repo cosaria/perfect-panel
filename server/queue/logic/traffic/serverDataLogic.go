@@ -8,9 +8,9 @@ import (
 	"github.com/perfect-panel/server/pkg/logger"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/internal/config"
-	"github.com/perfect-panel/server/internal/svc"
-	"github.com/perfect-panel/server/internal/types"
+	"github.com/perfect-panel/server/config"
+	"github.com/perfect-panel/server/svc"
+	"github.com/perfect-panel/server/types"
 )
 
 type ServerDataLogic struct {

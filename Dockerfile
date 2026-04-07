@@ -27,7 +27,7 @@ COPY --from=web-builder /app/apps/user/out ./web/user-dist
 
 RUN BUILD_TIME=$(date -u +"%Y-%m-%d %H:%M:%S") && \
     go build -tags embed \
-      -ldflags="-s -w -X 'github.com/perfect-panel/server/pkg/constant.Version=${VERSION}' -X 'github.com/perfect-panel/server/pkg/constant.BuildTime=${BUILD_TIME}'" \
+      -ldflags="-s -w -X 'github.com/perfect-panel/server/config.Version=${VERSION}' -X 'github.com/perfect-panel/server/config.BuildTime=${BUILD_TIME}'" \
       -o /app/ppanel ppanel.go
 
 # Stage 3: Minimal runtime

@@ -35,6 +35,25 @@ To ensure the quality of the codebase and maintainability of the project, please
 
 - **Small Commits**: Avoid submitting excessive changes in a single PR; break it into smaller logical units.
 
+## 5. Directory Mapping During Server Refactor
+
+When reading older issues, docs, or commit history, use this mapping:
+
+| Old Path | New Path |
+| --- | --- |
+| `internal/handler` | `routers` |
+| `internal/middleware` | `routers/middleware` |
+| `internal/logic` | `services` |
+| `internal/logic/public` | `services/user` |
+| `internal/logic/server` | `services/node` |
+| `internal/model` | `models` |
+| `internal/svc` | `svc` |
+| `internal/config` | `config` |
+| `internal/types` | `types` |
+| `internal/report` | `services/report` |
+| `internal/trace` | `modules/infra/trace` |
+| `initialize/migrate` | `models/migrate` |
+
 ---
 
 Thank you for your contribution!

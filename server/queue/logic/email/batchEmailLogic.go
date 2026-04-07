@@ -5,10 +5,10 @@ import (
 	"strconv"
 
 	"github.com/hibiken/asynq"
-	taskModel "github.com/perfect-panel/server/internal/model/task"
-	"github.com/perfect-panel/server/internal/svc"
+	taskModel "github.com/perfect-panel/server/models/task"
 	"github.com/perfect-panel/server/pkg/email"
 	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/svc"
 )
 
 type BatchEmailLogic struct {

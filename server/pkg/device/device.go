@@ -356,7 +356,7 @@ func (dm *DeviceManager) Shutdown(ctx context.Context) {
 		devices := val.([]*Device)
 
 		for _, d := range devices {
-				closeDeviceConn(d.Conn, uid, d.DeviceID, "shutdown")
+			closeDeviceConn(d.Conn, uid, d.DeviceID, "shutdown")
 			zap.S().Infof("✅ Closed device %s (User %d)", d.DeviceID, uid)
 		}
 		dm.userDevices.Delete(uid)

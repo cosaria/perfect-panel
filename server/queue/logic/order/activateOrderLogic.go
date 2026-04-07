@@ -9,21 +9,21 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/perfect-panel/server/internal/model/log"
+	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/pkg/constant"
 	"github.com/perfect-panel/server/pkg/logger"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/google/uuid"
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/internal/logic/telegram"
-	"github.com/perfect-panel/server/internal/model/order"
-	"github.com/perfect-panel/server/internal/model/subscribe"
-	"github.com/perfect-panel/server/internal/model/user"
-	"github.com/perfect-panel/server/internal/svc"
+	"github.com/perfect-panel/server/models/order"
+	"github.com/perfect-panel/server/models/subscribe"
+	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/pkg/tool"
 	"github.com/perfect-panel/server/pkg/uuidx"
 	"github.com/perfect-panel/server/queue/types"
+	"github.com/perfect-panel/server/services/telegram"
+	"github.com/perfect-panel/server/svc"
 	"gorm.io/gorm"
 )
 

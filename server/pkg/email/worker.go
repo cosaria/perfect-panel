@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/perfect-panel/server/internal/model/task"
+	"github.com/perfect-panel/server/models/task"
 	"github.com/perfect-panel/server/pkg/logger"
 	"github.com/perfect-panel/server/pkg/tool"
 	"gorm.io/gorm"

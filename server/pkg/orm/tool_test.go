@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/perfect-panel/server/internal/model/task"
+	"github.com/perfect-panel/server/models/task"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

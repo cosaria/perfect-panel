@@ -7,10 +7,10 @@ import (
 	"github.com/perfect-panel/server/pkg/logger"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/internal/logic/public/order"
-	"github.com/perfect-panel/server/internal/svc"
-	internal "github.com/perfect-panel/server/internal/types"
 	"github.com/perfect-panel/server/queue/types"
+	"github.com/perfect-panel/server/services/user/order"
+	"github.com/perfect-panel/server/svc"
+	internal "github.com/perfect-panel/server/types"
 )
 
 type DeferCloseOrderLogic struct {

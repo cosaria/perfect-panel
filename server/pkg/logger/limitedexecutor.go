@@ -4,7 +4,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/perfect-panel/server/pkg/syncx"
+	"github.com/perfect-panel/server/modules/cache/syncx"
 	"github.com/perfect-panel/server/pkg/timex"
 )
 

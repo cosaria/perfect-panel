@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/internal/svc"
 	"github.com/perfect-panel/server/pkg/exchangeRate"
 	"github.com/perfect-panel/server/pkg/logger"
 	"github.com/perfect-panel/server/pkg/tool"
+	"github.com/perfect-panel/server/svc"
 )
 
 type RateLogic struct {

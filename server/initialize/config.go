@@ -9,14 +9,14 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/perfect-panel/server/internal/report"
 	"github.com/perfect-panel/server/pkg/logger"
+	"github.com/perfect-panel/server/services/report"
 	"gorm.io/driver/mysql"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/perfect-panel/server/initialize/migrate"
-	"github.com/perfect-panel/server/internal/config"
+	"github.com/perfect-panel/server/config"
+	"github.com/perfect-panel/server/models/migrate"
 	"github.com/perfect-panel/server/pkg/conf"
 	"github.com/perfect-panel/server/pkg/orm"
 	"github.com/perfect-panel/server/pkg/tool"

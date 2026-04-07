@@ -3,10 +3,10 @@ package tool
 import (
 	"testing"
 
-	"github.com/perfect-panel/server/pkg/constant"
+	"github.com/perfect-panel/server/config"
 )
 
 func TestExtractVersionNumber(t *testing.T) {
-	versionNumber := ExtractVersionNumber(constant.Version)
+	versionNumber := ExtractVersionNumber(config.Version)
 	t.Log(versionNumber)
 }

@@ -10,8 +10,8 @@ import (
 	"github.com/perfect-panel/server/pkg/logger"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/internal/model/user"
-	"github.com/perfect-panel/server/internal/svc"
+	"github.com/perfect-panel/server/models/user"
+	"github.com/perfect-panel/server/svc"
 	"gorm.io/gorm"
 )
 

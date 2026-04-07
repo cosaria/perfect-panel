@@ -191,7 +191,7 @@ func TestRotateLoggerClose(t *testing.T) {
 		filename, err := fs.TempFilenameWithText("foo")
 		assert.Nil(t, err)
 		if len(filename) > 0 {
-				defer func() { _ = os.Remove(filename) }()
+			defer func() { _ = os.Remove(filename) }()
 		}
 		logger, err := NewLogger(filename, new(DailyRotateRule), false)
 		assert.Nil(t, err)

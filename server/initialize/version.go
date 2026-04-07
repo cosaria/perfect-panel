@@ -4,13 +4,13 @@ import (
 	"errors"
 	"time"
 
-	"github.com/perfect-panel/server/internal/model/user"
+	"github.com/perfect-panel/server/models/user"
 	"gorm.io/gorm"
 
-	"github.com/perfect-panel/server/initialize/migrate"
-	"github.com/perfect-panel/server/internal/svc"
+	"github.com/perfect-panel/server/models/migrate"
 	"github.com/perfect-panel/server/pkg/logger"
 	"github.com/perfect-panel/server/pkg/orm"
+	"github.com/perfect-panel/server/svc"
 )
 
 func Migrate(ctx *svc.ServiceContext) {
