@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/perfect-panel/server/internal/report"
 	paymentPlatform "github.com/perfect-panel/server/pkg/payment"
 
 	"github.com/perfect-panel/server/internal/model/payment"
@@ -45,30 +44,16 @@ func (l *GetPaymentMethodListLogic) GetPaymentMethodList(req *types.GetPaymentMe
 		List:  make([]types.PaymentMethodDetail, len(list)),
 	}
 
-	// gateway mod
-
-	isGatewayMod := report.IsGatewayMode()
-
 	for i, v := range list {
 		config := make(map[string]interface{})
 		_ = json.Unmarshal([]byte(v.Config), &config)
 		notifyUrl := ""
 
 		if paymentPlatform.ParsePlatform(v.Platform) != paymentPlatform.Balance {
-			notifyUrl = v.Domain
 			if v.Domain != "" {
-				// if is gateway mod, use gateway domain
-				if isGatewayMod {
-					notifyUrl += "/api/"
-				}
-				notifyUrl += "/v1/notify/" + v.Platform + "/" + v.Token
+				notifyUrl = v.Domain + "/api/v1/notify/" + v.Platform + "/" + v.Token
 			} else {
-				notifyUrl += "https://" + l.svcCtx.Config.Host
-				if isGatewayMod {
-					notifyUrl += "/api/v1/notify/" + v.Platform + "/" + v.Token
-				} else {
-					notifyUrl += "/v1/notify/" + v.Platform + "/" + v.Token
-				}
+				notifyUrl = "https://" + l.svcCtx.Config.Host + "/api/v1/notify/" + v.Platform + "/" + v.Token
 			}
 		}
 		resp.List[i] = types.PaymentMethodDetail{

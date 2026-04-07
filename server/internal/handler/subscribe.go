@@ -95,7 +95,7 @@ func SubscribeHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {
 func RegisterSubscribeHandlers(router *gin.Engine, serverCtx *svc.ServiceContext) {
 	path := serverCtx.Config.Subscribe.SubscribePath
 	if path == "" {
-		path = "/v1/subscribe/config"
+		path = "/api/v1/subscribe/config"
 	}
 	router.GET(path, SubscribeHandler(serverCtx))
 }

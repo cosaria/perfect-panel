@@ -11,7 +11,7 @@ import (
 )
 
 func RegisterTelegramHandlers(router *gin.Engine, serverCtx *svc.ServiceContext) {
-	router.POST("/v1/telegram/webhook", TelegramHandler(serverCtx))
+	router.POST("/api/v1/telegram/webhook", TelegramHandler(serverCtx))
 }
 
 func TelegramHandler(svcCtx *svc.ServiceContext) func(c *gin.Context) {

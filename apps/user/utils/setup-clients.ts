@@ -39,7 +39,7 @@ function setupClient(client: typeof userClient, serverPrefix: string) {
   });
 }
 
-// user-api 用绝对路径（/v1/auth/*, /v1/public/*），baseUrl 为 API 根
-setupClient(userClient, "");
-// common-api 的路径相对于 /v1/common
-setupClient(commonClient, "/v1/common");
+// user-api 用绝对路径（/api/v1/auth/*, /api/v1/public/*），baseUrl 为 API 根
+setupClient(userClient, "/api");
+// common-api 的路径相对于 /api/v1/common
+setupClient(commonClient, "/api/v1/common");

@@ -34,6 +34,7 @@ type Config struct {
 		Email    string `yaml:"Email" default:"admin@ppanel.dev"`
 		Password string `yaml:"Password" default:"password"`
 	} `yaml:"Administrator"`
+	AdminPath string `yaml:"AdminPath" default:"/admin"`
 }
 
 type RedisConfig struct {
@@ -57,7 +58,7 @@ type Verify struct {
 
 type SubscribeConfig struct {
 	SingleModel     bool   `yaml:"SingleModel" default:"false"`
-	SubscribePath   string `yaml:"SubscribePath" default:"/v1/subscribe/config"`
+	SubscribePath   string `yaml:"SubscribePath" default:"/api/v1/subscribe/config"`
 	SubscribeDomain string `yaml:"SubscribeDomain" default:""`
 	PanDomain       bool   `yaml:"PanDomain" default:"false"`
 	UserAgentLimit  bool   `yaml:"UserAgentLimit" default:"false"`

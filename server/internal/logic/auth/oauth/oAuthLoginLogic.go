@@ -106,7 +106,7 @@ func (l *OAuthLoginLogic) apple(req *types.OAthLoginRequest) (string, error) {
 	if err != nil {
 		l.Errorw("error save state code to redis: %v", logger.Field("code", code), logger.Field("error", err.Error()))
 	}
-	return fmt.Sprintf(uri, cfg.ClientId, fmt.Sprintf("%s/v1/auth/oauth/callback/apple", cfg.RedirectURL), code), nil
+	return fmt.Sprintf(uri, cfg.ClientId, fmt.Sprintf("%s/api/v1/auth/oauth/callback/apple", cfg.RedirectURL), code), nil
 }
 func (l *OAuthLoginLogic) github() (string, error) {
 	return "", nil

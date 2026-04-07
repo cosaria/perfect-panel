@@ -20,12 +20,16 @@ var (
 	userSub       fs.FS
 )
 
-// RegisterStaticRoutes sets up /admin/* SPA handler and user /* catch-all if embed is enabled.
+// RegisterStaticRoutes sets up admin SPA handler at adminPath and user /* catch-all if embed is enabled.
+// adminPath must start with "/" (e.g. "/admin", "/manage", "/secret-panel").
 // adminEnvVars and userEnvVars are injected into respective index.html as window.__ENV at startup.
-func RegisterStaticRoutes(r *gin.Engine, adminEnvVars, userEnvVars map[string]string) error {
+func RegisterStaticRoutes(r *gin.Engine, adminPath string, adminEnvVars, userEnvVars map[string]string) error {
 	if !embedEnabled {
 		return nil
 	}
+
+	// Normalize adminPath: ensure leading slash, no trailing slash
+	adminPath = "/" + strings.Trim(adminPath, "/")
 
 	adminEnvJSON, err := json.Marshal(adminEnvVars)
 	if err != nil {
@@ -37,7 +41,7 @@ func RegisterStaticRoutes(r *gin.Engine, adminEnvVars, userEnvVars map[string]st
 		return fmt.Errorf("marshal user env vars: %w", err)
 	}
 
-	// --- Admin frontend at /admin ---
+	// --- Admin frontend at {adminPath} ---
 	adminSub, err = fs.Sub(adminFS, "admin-dist")
 	if err != nil {
 		return fmt.Errorf("admin-dist sub fs: %w", err)
@@ -48,16 +52,24 @@ func RegisterStaticRoutes(r *gin.Engine, adminEnvVars, userEnvVars map[string]st
 		return fmt.Errorf("read admin index.html: %w", err)
 	}
 
-	adminIndexHTML = bytes.Replace(adminRaw,
+	// Inject window.__ENV
+	adminHTML := bytes.Replace(adminRaw,
 		[]byte("</head>"),
 		[]byte(fmt.Sprintf("<script>window.__ENV=%s</script></head>", adminEnvJSON)),
 		1,
 	)
 
-	adminFileServer := http.StripPrefix("/admin", http.FileServer(http.FS(adminSub)))
+	// Rewrite basePath if adminPath differs from the build-time "/admin"
+	if adminPath != "/admin" {
+		adminHTML = bytes.ReplaceAll(adminHTML, []byte(`"/admin/`), []byte(`"`+adminPath+`/`))
+		adminHTML = bytes.ReplaceAll(adminHTML, []byte(`"/admin"`), []byte(`"`+adminPath+`"`))
+	}
+	adminIndexHTML = adminHTML
 
-	r.GET("/admin", serveAdminIndex)
-	r.GET("/admin/*filepath", func(c *gin.Context) {
+	adminFileServer := http.StripPrefix(adminPath, http.FileServer(http.FS(adminSub)))
+
+	r.GET(adminPath, serveAdminIndex)
+	r.GET(adminPath+"/*filepath", func(c *gin.Context) {
 		filepath := c.Param("filepath")
 		clean := path.Clean(strings.TrimPrefix(filepath, "/"))
 
@@ -108,7 +120,7 @@ func RegisterStaticRoutes(r *gin.Engine, adminEnvVars, userEnvVars map[string]st
 		reqPath := c.Request.URL.Path
 
 		// API paths should never fall through to the SPA — return proper JSON 404
-		if strings.HasPrefix(reqPath, "/v1/") {
+		if strings.HasPrefix(reqPath, "/api/") {
 			c.JSON(http.StatusNotFound, gin.H{"code": 404, "msg": "not found"})
 			return
 		}

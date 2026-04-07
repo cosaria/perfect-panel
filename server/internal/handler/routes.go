@@ -135,12 +135,12 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 	apis := &APIs{}
 
 	// ===== Admin API =====
-	adminGroup := router.Group("/v1/admin")
+	adminGroup := router.Group("/api/v1/admin")
 	if !specOnly {
 		adminGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
 	adminConfig := apiConfig("Perfect Panel Admin API", "1.0.0")
-	adminConfig.Servers = []*huma.Server{{URL: "/v1/admin"}}
+	adminConfig.Servers = []*huma.Server{{URL: "/api/v1/admin"}}
 	adminConfig.Components.SecuritySchemes = securitySchemes()
 	apis.Admin = humagin.NewWithGroup(router, adminGroup, adminConfig)
 
@@ -1540,12 +1540,12 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 	}, adminUser.GetUserSubscribeTrafficLogsHandler(serverCtx))
 
 	// ===== Common API =====
-	commonGroup := router.Group("/v1/common")
+	commonGroup := router.Group("/api/v1/common")
 	if !specOnly {
 		commonGroup.Use(middleware.DeviceMiddleware(serverCtx))
 	}
 	commonConfig := apiConfig("Perfect Panel Common API", "1.0.0")
-	commonConfig.Servers = []*huma.Server{{URL: "/v1/common"}}
+	commonConfig.Servers = []*huma.Server{{URL: "/api/v1/common"}}
 	apis.Common = humagin.NewWithGroup(router, commonGroup, commonConfig)
 
 	huma.Register(apis.Common, huma.Operation{
@@ -1634,12 +1634,12 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 	// Sub-API specs are merged into one via APIs.UserOpenAPI().
 
 	// Auth routes
-	authGroup := router.Group("/v1/auth")
+	authGroup := router.Group("/api/v1/auth")
 	if !specOnly {
 		authGroup.Use(middleware.DeviceMiddleware(serverCtx))
 	}
 	authConfig := apiConfig("Auth API", "1.0.0")
-	authConfig.Servers = []*huma.Server{{URL: "/v1/auth"}}
+	authConfig.Servers = []*huma.Server{{URL: "/api/v1/auth"}}
 	authAPI := humagin.NewWithGroup(router, authGroup, authConfig)
 
 	huma.Register(authAPI, huma.Operation{
@@ -1715,9 +1715,9 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 	}, auth.TelephoneResetPasswordHandler(serverCtx))
 
 	// Auth OAuth routes (no middleware)
-	authOauthGroup := router.Group("/v1/auth/oauth")
+	authOauthGroup := router.Group("/api/v1/auth/oauth")
 	authOauthConfig := apiConfig("Auth OAuth API", "1.0.0")
-	authOauthConfig.Servers = []*huma.Server{{URL: "/v1/auth/oauth"}}
+	authOauthConfig.Servers = []*huma.Server{{URL: "/api/v1/auth/oauth"}}
 	authOauthAPI := humagin.NewWithGroup(router, authOauthGroup, authOauthConfig)
 
 	// AppleLoginCallback is registered as a raw Gin handler because the logic
@@ -1741,12 +1741,12 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 		Tags:        []string{"oauth"},
 	}, authOauth.OAuthLoginGetTokenHandler(serverCtx))
 
-	publicAnnouncementGroup := router.Group("/v1/public/announcement")
+	publicAnnouncementGroup := router.Group("/api/v1/public/announcement")
 	if !specOnly {
 		publicAnnouncementGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
 	publicAnnouncementConfig := apiConfig("Public Announcement API", "1.0.0")
-	publicAnnouncementConfig.Servers = []*huma.Server{{URL: "/v1/public/announcement"}}
+	publicAnnouncementConfig.Servers = []*huma.Server{{URL: "/api/v1/public/announcement"}}
 	publicAnnouncementConfig.Components.SecuritySchemes = securitySchemes()
 	publicAnnouncementAPI := humagin.NewWithGroup(router, publicAnnouncementGroup, publicAnnouncementConfig)
 
@@ -1759,12 +1759,12 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 		Security:    bearerSecurity,
 	}, publicAnnouncement.QueryAnnouncementHandler(serverCtx))
 
-	publicDocumentGroup := router.Group("/v1/public/document")
+	publicDocumentGroup := router.Group("/api/v1/public/document")
 	if !specOnly {
 		publicDocumentGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
 	publicDocumentConfig := apiConfig("Public Document API", "1.0.0")
-	publicDocumentConfig.Servers = []*huma.Server{{URL: "/v1/public/document"}}
+	publicDocumentConfig.Servers = []*huma.Server{{URL: "/api/v1/public/document"}}
 	publicDocumentConfig.Components.SecuritySchemes = securitySchemes()
 	publicDocumentAPI := humagin.NewWithGroup(router, publicDocumentGroup, publicDocumentConfig)
 
@@ -1786,12 +1786,12 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 		Security:    bearerSecurity,
 	}, publicDocument.QueryDocumentListHandler(serverCtx))
 
-	publicOrderGroup := router.Group("/v1/public/order")
+	publicOrderGroup := router.Group("/api/v1/public/order")
 	if !specOnly {
 		publicOrderGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
 	publicOrderConfig := apiConfig("Public Order API", "1.0.0")
-	publicOrderConfig.Servers = []*huma.Server{{URL: "/v1/public/order"}}
+	publicOrderConfig.Servers = []*huma.Server{{URL: "/api/v1/public/order"}}
 	publicOrderConfig.Components.SecuritySchemes = securitySchemes()
 	publicOrderAPI := humagin.NewWithGroup(router, publicOrderGroup, publicOrderConfig)
 
@@ -1867,12 +1867,12 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 		Security:    bearerSecurity,
 	}, publicOrder.ResetTrafficHandler(serverCtx))
 
-	publicPaymentGroup := router.Group("/v1/public/payment")
+	publicPaymentGroup := router.Group("/api/v1/public/payment")
 	if !specOnly {
 		publicPaymentGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
 	publicPaymentConfig := apiConfig("Public Payment API", "1.0.0")
-	publicPaymentConfig.Servers = []*huma.Server{{URL: "/v1/public/payment"}}
+	publicPaymentConfig.Servers = []*huma.Server{{URL: "/api/v1/public/payment"}}
 	publicPaymentConfig.Components.SecuritySchemes = securitySchemes()
 	publicPaymentAPI := humagin.NewWithGroup(router, publicPaymentGroup, publicPaymentConfig)
 
@@ -1885,12 +1885,12 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 		Security:    bearerSecurity,
 	}, publicPayment.GetAvailablePaymentMethodsHandler(serverCtx))
 
-	publicSubscribeGroup := router.Group("/v1/public/subscribe")
+	publicSubscribeGroup := router.Group("/api/v1/public/subscribe")
 	if !specOnly {
 		publicSubscribeGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
 	publicSubscribeConfig := apiConfig("Public Subscribe API", "1.0.0")
-	publicSubscribeConfig.Servers = []*huma.Server{{URL: "/v1/public/subscribe"}}
+	publicSubscribeConfig.Servers = []*huma.Server{{URL: "/api/v1/public/subscribe"}}
 	publicSubscribeConfig.Components.SecuritySchemes = securitySchemes()
 	publicSubscribeAPI := humagin.NewWithGroup(router, publicSubscribeGroup, publicSubscribeConfig)
 
@@ -1912,12 +1912,12 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 		Security:    bearerSecurity,
 	}, publicSubscribe.QueryUserSubscribeNodeListHandler(serverCtx))
 
-	publicTicketGroup := router.Group("/v1/public/ticket")
+	publicTicketGroup := router.Group("/api/v1/public/ticket")
 	if !specOnly {
 		publicTicketGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
 	publicTicketConfig := apiConfig("Public Ticket API", "1.0.0")
-	publicTicketConfig.Servers = []*huma.Server{{URL: "/v1/public/ticket"}}
+	publicTicketConfig.Servers = []*huma.Server{{URL: "/api/v1/public/ticket"}}
 	publicTicketConfig.Components.SecuritySchemes = securitySchemes()
 	publicTicketAPI := humagin.NewWithGroup(router, publicTicketGroup, publicTicketConfig)
 
@@ -1966,12 +1966,12 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 		Security:    bearerSecurity,
 	}, publicTicket.GetUserTicketListHandler(serverCtx))
 
-	publicUserGroup := router.Group("/v1/public/user")
+	publicUserGroup := router.Group("/api/v1/public/user")
 	if !specOnly {
 		publicUserGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
 	publicUserConfig := apiConfig("Public User API", "1.0.0")
-	publicUserConfig.Servers = []*huma.Server{{URL: "/v1/public/user"}}
+	publicUserConfig.Servers = []*huma.Server{{URL: "/api/v1/public/user"}}
 	publicUserConfig.Components.SecuritySchemes = securitySchemes()
 	publicUserAPI := humagin.NewWithGroup(router, publicUserGroup, publicUserConfig)
 
@@ -2228,12 +2228,12 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 	}, publicUser.QueryWithdrawalLogHandler(serverCtx))
 
 	// Portal routes (DeviceMiddleware only)
-	portalGroup := router.Group("/v1/public/portal")
+	portalGroup := router.Group("/api/v1/public/portal")
 	if !specOnly {
 		portalGroup.Use(middleware.DeviceMiddleware(serverCtx))
 	}
 	portalConfig := apiConfig("Portal API", "1.0.0")
-	portalConfig.Servers = []*huma.Server{{URL: "/v1/public/portal"}}
+	portalConfig.Servers = []*huma.Server{{URL: "/api/v1/public/portal"}}
 	portalAPI := humagin.NewWithGroup(router, portalGroup, portalConfig)
 
 	huma.Register(portalAPI, huma.Operation{
@@ -2286,7 +2286,7 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 
 	// ===== Server routes (raw Gin, no OpenAPI) =====
 	if !specOnly {
-		v1_serverGroup := router.Group("/v1/server")
+		v1_serverGroup := router.Group("/api/v1/server")
 		v1_serverGroup.Use(middleware.ServerMiddleware(serverCtx))
 
 		v1_serverGroup.GET("/config", server.GetServerConfigHandler(serverCtx))
@@ -2295,7 +2295,7 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 		v1_serverGroup.POST("/status", server.ServerPushStatusHandler(serverCtx))
 		v1_serverGroup.GET("/user", server.GetServerUserListHandler(serverCtx))
 
-		v2_serverGroup := router.Group("/v2/server")
+		v2_serverGroup := router.Group("/api/v2/server")
 		v2_serverGroup.GET("/:server_id", server.QueryServerProtocolConfigHandler(serverCtx))
 	}
 

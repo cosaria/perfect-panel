@@ -25,7 +25,7 @@ func setupTestRouter() *gin.Engine {
 		"NEXT_PUBLIC_SITE_URL":         "http://localhost:8080",
 		"NEXT_PUBLIC_DEFAULT_LANGUAGE": "en-US",
 	}
-	if err := RegisterStaticRoutes(r, adminEnvVars, userEnvVars); err != nil {
+	if err := RegisterStaticRoutes(r, "/admin", adminEnvVars, userEnvVars); err != nil {
 		panic(err)
 	}
 	return r
@@ -263,17 +263,17 @@ func TestUserCacheHeaders(t *testing.T) {
 func TestAPIPathsReturnJSON404(t *testing.T) {
 	r := setupTestRouter()
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest("GET", "/v1/nonexistent", nil)
+	req := httptest.NewRequest("GET", "/api/v1/nonexistent", nil)
 	r.ServeHTTP(w, req)
 
 	if w.Code != http.StatusNotFound {
-		t.Fatalf("GET /v1/nonexistent: expected 404, got %d", w.Code)
+		t.Fatalf("GET /api/v1/nonexistent: expected 404, got %d", w.Code)
 	}
 	if ct := w.Header().Get("Content-Type"); !strings.Contains(ct, "application/json") {
-		t.Fatalf("GET /v1/nonexistent: expected JSON, got %s", ct)
+		t.Fatalf("GET /api/v1/nonexistent: expected JSON, got %s", ct)
 	}
 	if strings.Contains(w.Body.String(), "window.__ENV") {
-		t.Fatal("GET /v1/nonexistent: API path should NOT return SPA HTML")
+		t.Fatal("GET /api/v1/nonexistent: API path should NOT return SPA HTML")
 	}
 }
 

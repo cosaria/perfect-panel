@@ -40,7 +40,7 @@ function setupClient(client: typeof adminClient, serverPrefix: string) {
   });
 }
 
-setupClient(adminClient, "/v1/admin");
-setupClient(commonClient, "/v1/common");
-// user-api 用绝对路径（/v1/auth/*），baseUrl 为 API 根
-setupClient(userClient, "");
+setupClient(adminClient, "/api/v1/admin");
+setupClient(commonClient, "/api/v1/common");
+// user-api 用绝对路径（/api/v1/auth/*），baseUrl 为 API 根
+setupClient(userClient, "/api");

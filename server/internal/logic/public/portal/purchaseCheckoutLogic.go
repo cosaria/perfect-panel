@@ -162,13 +162,13 @@ func (l *PurchaseCheckoutLogic) alipayF2fPayment(pay *payment.Payment, info *ord
 	// Build notification URL for payment status callbacks
 	notifyUrl := ""
 	if pay.Domain != "" {
-		notifyUrl = pay.Domain + "/v1/notify/" + pay.Platform + "/" + pay.Token
+		notifyUrl = pay.Domain + "/api/v1/notify/" + pay.Platform + "/" + pay.Token
 	} else {
 		host, ok := l.ctx.Value(constant.CtxKeyRequestHost).(string)
 		if !ok {
 			host = l.svcCtx.Config.Host
 		}
-		notifyUrl = "https://" + host + "/v1/notify/" + pay.Platform + "/" + pay.Token
+		notifyUrl = "https://" + host + "/api/v1/notify/" + pay.Platform + "/" + pay.Token
 	}
 
 	// Initialize Alipay client with configuration
@@ -293,7 +293,7 @@ func (l *PurchaseCheckoutLogic) epayPayment(config *payment.Payment, info *order
 		if isGatewayMod {
 			notifyUrl += "/api/"
 		}
-		notifyUrl = notifyUrl + "/v1/notify/" + config.Platform + "/" + config.Token
+		notifyUrl = notifyUrl + "/api/v1/notify/" + config.Platform + "/" + config.Token
 	} else {
 		host, ok := l.ctx.Value(constant.CtxKeyRequestHost).(string)
 		if !ok {
@@ -303,7 +303,7 @@ func (l *PurchaseCheckoutLogic) epayPayment(config *payment.Payment, info *order
 		if isGatewayMod {
 			notifyUrl += "/api"
 		}
-		notifyUrl = notifyUrl + "/v1/notify/" + config.Platform + "/" + config.Token
+		notifyUrl = notifyUrl + "/api/v1/notify/" + config.Platform + "/" + config.Token
 	}
 
 	// Create payment URL for user redirection
@@ -353,7 +353,7 @@ func (l *PurchaseCheckoutLogic) CryptoSaaSPayment(config *payment.Payment, info 
 		if isGatewayMod {
 			notifyUrl += "/api/"
 		}
-		notifyUrl = notifyUrl + "/v1/notify/" + config.Platform + "/" + config.Token
+		notifyUrl = notifyUrl + "/api/v1/notify/" + config.Platform + "/" + config.Token
 	} else {
 		host, ok := l.ctx.Value(constant.CtxKeyRequestHost).(string)
 		if !ok {
@@ -364,7 +364,7 @@ func (l *PurchaseCheckoutLogic) CryptoSaaSPayment(config *payment.Payment, info 
 		if isGatewayMod {
 			notifyUrl += "/api"
 		}
-		notifyUrl = notifyUrl + "/v1/notify/" + config.Platform + "/" + config.Token
+		notifyUrl = notifyUrl + "/api/v1/notify/" + config.Platform + "/" + config.Token
 	}
 	// Create payment URL for user redirection
 	url := client.CreatePayUrl(epay.Order{

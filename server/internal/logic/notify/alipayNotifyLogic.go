@@ -49,7 +49,7 @@ func (l *AlipayNotifyLogic) AlipayNotify(r *http.Request) error {
 		PrivateKey:  config.PrivateKey,
 		PublicKey:   config.PublicKey,
 		InvoiceName: config.InvoiceName,
-		NotifyURL:   data.Domain + "/v1/payment/alipay/notify",
+		NotifyURL:   data.Domain + "/api/v1/payment/alipay/notify",
 	})
 	notify, err := client.DecodeNotification(r.Form)
 	if err != nil {

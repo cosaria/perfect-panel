@@ -55,7 +55,7 @@ func Telegram(svc *svc.ServiceContext) {
 			}
 		}()
 	} else {
-		wh, err := tgbotapi.NewWebhook(fmt.Sprintf("%s/v1/telegram/webhook?secret=%s", tgConfig.WebHookDomain, tool.Md5Encode(tgConfig.BotToken, false)))
+		wh, err := tgbotapi.NewWebhook(fmt.Sprintf("%s/api/v1/telegram/webhook?secret=%s", tgConfig.WebHookDomain, tool.Md5Encode(tgConfig.BotToken, false)))
 		if err != nil {
 			logger.Errorf("[Init Telegram Config] New Webhook Error: %s", err.Error())
 			return
