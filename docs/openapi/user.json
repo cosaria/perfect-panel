@@ -488,7 +488,18 @@
         "required": ["token"],
         "type": "object"
       },
-      "OAthLoginRequest": {
+      "OAuthLoginGetTokenRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "callback": {},
+          "method": {
+            "type": "string"
+          }
+        },
+        "required": ["method", "callback"],
+        "type": "object"
+      },
+      "OAuthLoginRequest": {
         "additionalProperties": false,
         "properties": {
           "method": {
@@ -499,17 +510,6 @@
           }
         },
         "required": ["method", "redirect"],
-        "type": "object"
-      },
-      "OAuthLoginGetTokenRequest": {
-        "additionalProperties": false,
-        "properties": {
-          "callback": {},
-          "method": {
-            "type": "string"
-          }
-        },
-        "required": ["method", "callback"],
         "type": "object"
       },
       "OAuthLoginResponse": {
@@ -2485,6 +2485,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "Check user is exist",
         "tags": ["auth"]
       }
@@ -2594,6 +2595,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "Check user telephone is exist",
         "tags": ["auth"]
       }
@@ -2732,6 +2734,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "User login",
         "tags": ["auth"]
       }
@@ -2852,6 +2855,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "Device Login",
         "tags": ["auth"]
       }
@@ -2990,6 +2994,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "User Telephone login",
         "tags": ["auth"]
       }
@@ -3001,7 +3006,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OAthLoginRequest"
+                "$ref": "#/components/schemas/OAuthLoginRequest"
               }
             }
           },
@@ -3099,6 +3104,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "OAuth login",
         "tags": ["oauth"]
       }
@@ -3228,6 +3234,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "OAuth login get token",
         "tags": ["oauth"]
       }
@@ -3366,6 +3373,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "User register",
         "tags": ["auth"]
       }
@@ -3504,6 +3512,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "User Telephone register",
         "tags": ["auth"]
       }
@@ -3642,6 +3651,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "Reset password",
         "tags": ["auth"]
       }
@@ -3780,6 +3790,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "Reset password",
         "tags": ["auth"]
       }
@@ -5221,6 +5232,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "Purchase Checkout",
         "tags": ["portal"]
       }
@@ -5346,6 +5358,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "Query Purchase Order",
         "tags": ["portal"]
       }
@@ -5435,6 +5448,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "Get available payment methods",
         "tags": ["portal"]
       }
@@ -5544,6 +5558,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "Pre Purchase Order",
         "tags": ["portal"]
       }
@@ -5653,6 +5668,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "Purchase subscription",
         "tags": ["portal"]
       }
@@ -5762,6 +5778,7 @@
             "description": "Bad Gateway"
           }
         },
+        "security": [],
         "summary": "Get Subscription",
         "tags": ["portal"]
       }
@@ -9513,5 +9530,47 @@
         "tags": ["user"]
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "description": "Authentication, registration, and credential recovery APIs.",
+      "name": "auth"
+    },
+    {
+      "description": "OAuth provider bootstrap and callback token exchange APIs.",
+      "name": "oauth"
+    },
+    {
+      "description": "Announcement and notice publishing APIs.",
+      "name": "announcement"
+    },
+    {
+      "description": "Document and knowledge-base content APIs.",
+      "name": "document"
+    },
+    {
+      "description": "Order placement, lookup, and lifecycle APIs.",
+      "name": "order"
+    },
+    {
+      "description": "Payment method discovery and payment configuration APIs.",
+      "name": "payment"
+    },
+    {
+      "description": "Subscription catalog and entitlement APIs.",
+      "name": "subscribe"
+    },
+    {
+      "description": "Ticketing and support workflow APIs.",
+      "name": "ticket"
+    },
+    {
+      "description": "Authenticated user profile, device, and account APIs.",
+      "name": "user"
+    },
+    {
+      "description": "Portal checkout and guest purchase workflow APIs.",
+      "name": "portal"
+    }
+  ]
 }

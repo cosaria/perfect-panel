@@ -6,8 +6,8 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-gonic/gin"
-	common "github.com/perfect-panel/server/services/common"
 	"github.com/perfect-panel/server/routers/middleware"
+	common "github.com/perfect-panel/server/services/common"
 	"github.com/perfect-panel/server/svc"
 )
 
@@ -16,8 +16,7 @@ func registerCommonRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	if !specOnly {
 		commonGroup.Use(middleware.DeviceMiddleware(serverCtx))
 	}
-	commonConfig := apiConfig("Perfect Panel Common API", "1.0.0")
-	commonConfig.Servers = []*huma.Server{{URL: "/api/v1/common"}}
+	commonConfig := governedAPIConfig("Perfect Panel Common API", "1.0.0", "/api/v1/common", "common")
 	apis.Common = humagin.NewWithGroup(router, commonGroup, commonConfig)
 	configureHumaAPI(apis.Common, compatibilityEnabled(serverCtx, specOnly))
 

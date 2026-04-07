@@ -516,7 +516,7 @@ type DeleteUserAuthMethodRequest struct {
 	AuthType string `json:"auth_type"`
 }
 
-type DeleteUserDeivceRequest struct {
+type DeleteUserDeviceRequest struct {
 	Id int64 `json:"id"`
 }
 
@@ -1286,7 +1286,7 @@ type NodeRelay struct {
 	Prefix string `json:"prefix"`
 }
 
-type OAthLoginRequest struct {
+type OAuthLoginRequest struct {
 	Method   string `json:"method" validate:"required"` // google, facebook, apple, telegram, github etc.
 	Redirect string `json:"redirect"`
 }

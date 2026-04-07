@@ -1255,7 +1255,7 @@
         "required": ["user_id", "auth_type"],
         "type": "object"
       },
-      "DeleteUserDeivceRequest": {
+      "DeleteUserDeviceRequest": {
         "additionalProperties": false,
         "properties": {
           "id": {
@@ -20835,7 +20835,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DeleteUserDeivceRequest"
+                "$ref": "#/components/schemas/DeleteUserDeviceRequest"
               }
             }
           },
@@ -22966,6 +22966,72 @@
   "servers": [
     {
       "url": "/api/v1/admin"
+    }
+  ],
+  "tags": [
+    {
+      "description": "Admin advertising placement and promotion management.",
+      "name": "ads"
+    },
+    {
+      "description": "Announcement and notice publishing APIs.",
+      "name": "announcement"
+    },
+    {
+      "description": "Subscription application and template management APIs.",
+      "name": "application"
+    },
+    {
+      "description": "Authentication provider and verification method configuration APIs.",
+      "name": "auth-method"
+    },
+    {
+      "description": "Admin console and dashboard aggregate statistics APIs.",
+      "name": "console"
+    },
+    {
+      "description": "Coupon creation, lookup, and lifecycle management APIs.",
+      "name": "coupon"
+    },
+    {
+      "description": "Document and knowledge-base content APIs.",
+      "name": "document"
+    },
+    {
+      "description": "Operational and audit log query APIs.",
+      "name": "log"
+    },
+    {
+      "description": "Marketing automation and outbound campaign task APIs.",
+      "name": "marketing"
+    },
+    {
+      "description": "Order placement, lookup, and lifecycle APIs.",
+      "name": "order"
+    },
+    {
+      "description": "Payment method discovery and payment configuration APIs.",
+      "name": "payment"
+    },
+    {
+      "description": "Subscription catalog and entitlement APIs.",
+      "name": "subscribe"
+    },
+    {
+      "description": "System configuration and runtime control APIs.",
+      "name": "system"
+    },
+    {
+      "description": "Ticketing and support workflow APIs.",
+      "name": "ticket"
+    },
+    {
+      "description": "Operational utility and admin tooling APIs.",
+      "name": "tool"
+    },
+    {
+      "description": "Authenticated user profile, device, and account APIs.",
+      "name": "user"
     }
   ]
 }

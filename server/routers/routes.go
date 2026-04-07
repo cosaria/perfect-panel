@@ -49,6 +49,18 @@ func (a *APIs) UserOpenAPI() (map[string]interface{}, error) {
 				},
 			},
 		},
+		"tags": governedSpecTags(
+			"auth",
+			"oauth",
+			"announcement",
+			"document",
+			"order",
+			"payment",
+			"subscribe",
+			"ticket",
+			"user",
+			"portal",
+		),
 	}
 
 	paths := merged["paths"].(map[string]interface{})

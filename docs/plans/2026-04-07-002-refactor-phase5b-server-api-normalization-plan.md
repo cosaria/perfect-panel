@@ -1,7 +1,7 @@
 ---
 title: refactor: Phase 5B server API normalization and OpenAPI governance
 type: refactor
-status: active
+status: completed
 date: 2026-04-07
 origin: docs/plans/2026-04-07-001-refactor-phase5-error-response-migration-plan.md
 ---
@@ -14,7 +14,34 @@ Phase 5B upgrades the server API from "exportable OpenAPI plus basic lint" to a 
 
 This phase is intentionally separate from Phase 5. Phase 5 defines the runtime error contract for first-party APIs. Phase 5B defines how documented server APIs should be described, linted, versioned, and consumed through OpenAPI, Redocly, and `@hey-api/openapi-ts`.
 
-This plan does not implement the work. It defines scope, policy, sequencing, and review gates so the API normalization effort can be executed without silently changing business behavior.
+This document began as the pre-implementation plan. As of `2026-04-07`, the normalization work described here has been implemented and verified. The original unit breakdown remains below, but the document now doubles as the implementation record for the shipped governance layer.
+
+## Implementation Status
+
+Implemented on `2026-04-07` on branch `feat/monorepo-baseline`.
+
+Delivered surfaces:
+
+- Shared OpenAPI conventions in `server/routers/openapi_conventions.go` with documented top-level tags, shared security scheme wiring, and explicit per-operation security declarations.
+- Governed Huma API configs across `server/routers/routes_admin.go`, `server/routers/routes_auth.go`, `server/routers/routes_common.go`, and `server/routers/routes_public.go`.
+- Merged `user` spec tag metadata in `server/routers/routes.go`.
+- Public schema naming cleanup for `OAuthLoginRequest` and `DeleteUserDeviceRequest` in `server/types/types.go` plus dependent service call sites.
+- Human-readable governance policy in `docs/api-governance.md`.
+- Repository gate in `.github/workflows/openapi-governance.yml`.
+- Stronger Redocly enforcement in `redocly.yaml`.
+
+Verification completed:
+
+- `cd server && go build ./...`
+- `cd server && go test ./... -count=1`
+- `cd server && go vet ./...`
+- `bun run openapi`
+
+Implementation notes:
+
+- The first hardening pass promoted `security-defined`, `operation-4xx-response`, `tag-description`, and `operation-summary` to enforced rules.
+- Unauthenticated Huma operations now emit explicit `security: []` in OpenAPI so lint can distinguish public APIs from forgotten metadata.
+- Generated artifacts under `docs/openapi/`, `apps/admin/services/`, and `apps/user/services/` were refreshed through the root pipeline instead of hand-edited.
 
 ## Problem Frame
 

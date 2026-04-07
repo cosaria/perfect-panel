@@ -18,7 +18,7 @@ import (
 )
 
 type OAuthLoginInput struct {
-	Body types.OAthLoginRequest
+	Body types.OAuthLoginRequest
 }
 
 type OAuthLoginOutput struct {
@@ -51,7 +51,7 @@ func NewOAuthLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OAuthL
 	}
 }
 
-func (l *OAuthLoginLogic) OAuthLogin(req *types.OAthLoginRequest) (resp *types.OAuthLoginResponse, err error) {
+func (l *OAuthLoginLogic) OAuthLogin(req *types.OAuthLoginRequest) (resp *types.OAuthLoginResponse, err error) {
 	var uri string
 	switch req.Method {
 	case "google":
@@ -75,7 +75,7 @@ func (l *OAuthLoginLogic) OAuthLogin(req *types.OAthLoginRequest) (resp *types.O
 	}, nil
 }
 
-func (l *OAuthLoginLogic) google(req *types.OAthLoginRequest) (string, error) {
+func (l *OAuthLoginLogic) google(req *types.OAuthLoginRequest) (string, error) {
 	authMethod, err := l.svcCtx.AuthModel.FindOneByMethod(l.ctx, "google")
 	if err != nil {
 		return "", err
@@ -105,7 +105,7 @@ func (l *OAuthLoginLogic) google(req *types.OAthLoginRequest) (string, error) {
 func (l *OAuthLoginLogic) facebook() (string, error) {
 	return "", nil
 }
-func (l *OAuthLoginLogic) apple(req *types.OAthLoginRequest) (string, error) {
+func (l *OAuthLoginLogic) apple(req *types.OAuthLoginRequest) (string, error) {
 	authMethod, err := l.svcCtx.AuthModel.FindOneByMethod(l.ctx, "apple")
 	if err != nil {
 		return "", err
@@ -129,7 +129,7 @@ func (l *OAuthLoginLogic) apple(req *types.OAthLoginRequest) (string, error) {
 func (l *OAuthLoginLogic) github() (string, error) {
 	return "", nil
 }
-func (l *OAuthLoginLogic) telegram(req *types.OAthLoginRequest) (string, error) {
+func (l *OAuthLoginLogic) telegram(req *types.OAuthLoginRequest) (string, error) {
 	authMethod, err := l.svcCtx.AuthModel.FindOneByMethod(l.ctx, "telegram")
 	if err != nil {
 		return "", err

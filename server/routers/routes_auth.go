@@ -6,9 +6,9 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-gonic/gin"
+	"github.com/perfect-panel/server/routers/middleware"
 	auth "github.com/perfect-panel/server/services/auth"
 	authOauth "github.com/perfect-panel/server/services/auth/oauth"
-	"github.com/perfect-panel/server/routers/middleware"
 	"github.com/perfect-panel/server/svc"
 )
 
@@ -17,8 +17,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 	if !specOnly {
 		authGroup.Use(middleware.DeviceMiddleware(serverCtx))
 	}
-	authConfig := apiConfig("Auth API", "1.0.0")
-	authConfig.Servers = []*huma.Server{{URL: "/api/v1/auth"}}
+	authConfig := governedAPIConfig("Auth API", "1.0.0", "/api/v1/auth", "auth")
 	authAPI := humagin.NewWithGroup(router, authGroup, authConfig)
 	configureHumaAPI(authAPI, compatibilityEnabled(serverCtx, specOnly))
 
@@ -95,8 +94,7 @@ func registerAuthRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, specO
 	}, auth.TelephoneResetPasswordHandler(serverCtx))
 
 	authOauthGroup := router.Group("/api/v1/auth/oauth")
-	authOauthConfig := apiConfig("Auth OAuth API", "1.0.0")
-	authOauthConfig.Servers = []*huma.Server{{URL: "/api/v1/auth/oauth"}}
+	authOauthConfig := governedAPIConfig("Auth OAuth API", "1.0.0", "/api/v1/auth/oauth", "oauth")
 	authOauthAPI := humagin.NewWithGroup(router, authOauthGroup, authOauthConfig)
 	configureHumaAPI(authOauthAPI, compatibilityEnabled(serverCtx, specOnly))
 

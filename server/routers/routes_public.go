@@ -23,9 +23,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	if !specOnly {
 		publicAnnouncementGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
-	publicAnnouncementConfig := apiConfig("Public Announcement API", "1.0.0")
-	publicAnnouncementConfig.Servers = []*huma.Server{{URL: "/api/v1/public/announcement"}}
-	publicAnnouncementConfig.Components.SecuritySchemes = securitySchemes()
+	publicAnnouncementConfig := governedAPIConfig("Public Announcement API", "1.0.0", "/api/v1/public/announcement", "announcement")
 	publicAnnouncementAPI := humagin.NewWithGroup(router, publicAnnouncementGroup, publicAnnouncementConfig)
 	configureHumaAPI(publicAnnouncementAPI, compatibilityEnabled(serverCtx, specOnly))
 
@@ -42,9 +40,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	if !specOnly {
 		publicDocumentGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
-	publicDocumentConfig := apiConfig("Public Document API", "1.0.0")
-	publicDocumentConfig.Servers = []*huma.Server{{URL: "/api/v1/public/document"}}
-	publicDocumentConfig.Components.SecuritySchemes = securitySchemes()
+	publicDocumentConfig := governedAPIConfig("Public Document API", "1.0.0", "/api/v1/public/document", "document")
 	publicDocumentAPI := humagin.NewWithGroup(router, publicDocumentGroup, publicDocumentConfig)
 	configureHumaAPI(publicDocumentAPI, compatibilityEnabled(serverCtx, specOnly))
 
@@ -70,9 +66,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	if !specOnly {
 		publicOrderGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
-	publicOrderConfig := apiConfig("Public Order API", "1.0.0")
-	publicOrderConfig.Servers = []*huma.Server{{URL: "/api/v1/public/order"}}
-	publicOrderConfig.Components.SecuritySchemes = securitySchemes()
+	publicOrderConfig := governedAPIConfig("Public Order API", "1.0.0", "/api/v1/public/order", "order")
 	publicOrderAPI := humagin.NewWithGroup(router, publicOrderGroup, publicOrderConfig)
 	configureHumaAPI(publicOrderAPI, compatibilityEnabled(serverCtx, specOnly))
 
@@ -152,9 +146,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	if !specOnly {
 		publicPaymentGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
-	publicPaymentConfig := apiConfig("Public Payment API", "1.0.0")
-	publicPaymentConfig.Servers = []*huma.Server{{URL: "/api/v1/public/payment"}}
-	publicPaymentConfig.Components.SecuritySchemes = securitySchemes()
+	publicPaymentConfig := governedAPIConfig("Public Payment API", "1.0.0", "/api/v1/public/payment", "payment")
 	publicPaymentAPI := humagin.NewWithGroup(router, publicPaymentGroup, publicPaymentConfig)
 	configureHumaAPI(publicPaymentAPI, compatibilityEnabled(serverCtx, specOnly))
 
@@ -171,9 +163,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	if !specOnly {
 		publicSubscribeGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
-	publicSubscribeConfig := apiConfig("Public Subscribe API", "1.0.0")
-	publicSubscribeConfig.Servers = []*huma.Server{{URL: "/api/v1/public/subscribe"}}
-	publicSubscribeConfig.Components.SecuritySchemes = securitySchemes()
+	publicSubscribeConfig := governedAPIConfig("Public Subscribe API", "1.0.0", "/api/v1/public/subscribe", "subscribe")
 	publicSubscribeAPI := humagin.NewWithGroup(router, publicSubscribeGroup, publicSubscribeConfig)
 	configureHumaAPI(publicSubscribeAPI, compatibilityEnabled(serverCtx, specOnly))
 
@@ -199,9 +189,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	if !specOnly {
 		publicTicketGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
-	publicTicketConfig := apiConfig("Public Ticket API", "1.0.0")
-	publicTicketConfig.Servers = []*huma.Server{{URL: "/api/v1/public/ticket"}}
-	publicTicketConfig.Components.SecuritySchemes = securitySchemes()
+	publicTicketConfig := governedAPIConfig("Public Ticket API", "1.0.0", "/api/v1/public/ticket", "ticket")
 	publicTicketAPI := humagin.NewWithGroup(router, publicTicketGroup, publicTicketConfig)
 	configureHumaAPI(publicTicketAPI, compatibilityEnabled(serverCtx, specOnly))
 
@@ -254,9 +242,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	if !specOnly {
 		publicUserGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
-	publicUserConfig := apiConfig("Public User API", "1.0.0")
-	publicUserConfig.Servers = []*huma.Server{{URL: "/api/v1/public/user"}}
-	publicUserConfig.Components.SecuritySchemes = securitySchemes()
+	publicUserConfig := governedAPIConfig("Public User API", "1.0.0", "/api/v1/public/user", "user")
 	publicUserAPI := humagin.NewWithGroup(router, publicUserGroup, publicUserConfig)
 	configureHumaAPI(publicUserAPI, compatibilityEnabled(serverCtx, specOnly))
 
@@ -516,8 +502,7 @@ func registerPublicRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spe
 	if !specOnly {
 		portalGroup.Use(middleware.DeviceMiddleware(serverCtx))
 	}
-	portalConfig := apiConfig("Portal API", "1.0.0")
-	portalConfig.Servers = []*huma.Server{{URL: "/api/v1/public/portal"}}
+	portalConfig := governedAPIConfig("Portal API", "1.0.0", "/api/v1/public/portal", "portal")
 	portalAPI := humagin.NewWithGroup(router, portalGroup, portalConfig)
 	configureHumaAPI(portalAPI, compatibilityEnabled(serverCtx, specOnly))
 

@@ -171,14 +171,14 @@ export type LoginResponse = {
     token: string;
 };
 
-export type OAthLoginRequest = {
-    method: string;
-    redirect: string;
-};
-
 export type OAuthLoginGetTokenRequest = {
     callback: unknown;
     method: string;
+};
+
+export type OAuthLoginRequest = {
+    method: string;
+    redirect: string;
 };
 
 export type OAuthLoginResponse = {
@@ -1013,7 +1013,7 @@ export type TelephoneLoginResponses = {
 export type TelephoneLoginResponse = TelephoneLoginResponses[keyof TelephoneLoginResponses];
 
 export type OAuthLoginData = {
-    body: OAthLoginRequest;
+    body: OAuthLoginRequest;
     path?: never;
     query?: never;
     url: '/api/v1/auth/oauth/login';

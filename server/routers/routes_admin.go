@@ -6,6 +6,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-gonic/gin"
+	"github.com/perfect-panel/server/routers/middleware"
 	adminAds "github.com/perfect-panel/server/services/admin/ads"
 	adminAnnouncement "github.com/perfect-panel/server/services/admin/announcement"
 	adminApplication "github.com/perfect-panel/server/services/admin/application"
@@ -23,7 +24,6 @@ import (
 	adminTicket "github.com/perfect-panel/server/services/admin/ticket"
 	adminTool "github.com/perfect-panel/server/services/admin/tool"
 	adminUser "github.com/perfect-panel/server/services/admin/user"
-	"github.com/perfect-panel/server/routers/middleware"
 	"github.com/perfect-panel/server/svc"
 )
 
@@ -33,9 +33,27 @@ func registerAdminRoutes(router *gin.Engine, serverCtx *svc.ServiceContext, spec
 	if !specOnly {
 		adminGroup.Use(middleware.AuthMiddleware(serverCtx))
 	}
-	adminConfig := apiConfig("Perfect Panel Admin API", "1.0.0")
-	adminConfig.Servers = []*huma.Server{{URL: "/api/v1/admin"}}
-	adminConfig.Components.SecuritySchemes = securitySchemes()
+	adminConfig := governedAPIConfig(
+		"Perfect Panel Admin API",
+		"1.0.0",
+		"/api/v1/admin",
+		"ads",
+		"announcement",
+		"application",
+		"auth-method",
+		"console",
+		"coupon",
+		"document",
+		"log",
+		"marketing",
+		"order",
+		"payment",
+		"subscribe",
+		"system",
+		"ticket",
+		"tool",
+		"user",
+	)
 	apis.Admin = humagin.NewWithGroup(router, adminGroup, adminConfig)
 	configureHumaAPI(apis.Admin, compatibilityEnabled(serverCtx, specOnly))
 

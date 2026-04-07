@@ -348,7 +348,7 @@ export type DeleteUserAuthMethodRequest = {
     user_id: number;
 };
 
-export type DeleteUserDeivceRequest = {
+export type DeleteUserDeviceRequest = {
     id: number;
 };
 
@@ -8869,7 +8869,7 @@ export type GetUserDetailResponses = {
 export type GetUserDetailResponse = GetUserDetailResponses[keyof GetUserDetailResponses];
 
 export type DeleteUserDeviceData = {
-    body: DeleteUserDeivceRequest;
+    body: DeleteUserDeviceRequest;
     path?: never;
     query?: never;
     url: '/user/device';

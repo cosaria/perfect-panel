@@ -37,6 +37,9 @@ func registerOperation[I, O any](api huma.API, op huma.Operation, handler func(c
 	if len(op.Errors) == 0 {
 		op.Errors = append([]int(nil), defaultOperationErrors...)
 	}
+	if op.Security == nil {
+		op.Security = []map[string][]string{}
+	}
 
 	huma.Register(api, op, func(ctx context.Context, input *I) (*O, error) {
 		output, err := handler(ctx, input)

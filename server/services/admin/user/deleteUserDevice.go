@@ -10,7 +10,7 @@ import (
 )
 
 type DeleteUserDeviceInput struct {
-	Body types.DeleteUserDeivceRequest
+	Body types.DeleteUserDeviceRequest
 }
 
 func DeleteUserDeviceHandler(svcCtx *svc.ServiceContext) func(context.Context, *DeleteUserDeviceInput) (*struct{}, error) {
@@ -38,7 +38,7 @@ func NewDeleteUserDeviceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
-func (l *DeleteUserDeviceLogic) DeleteUserDevice(req *types.DeleteUserDeivceRequest) error {
+func (l *DeleteUserDeviceLogic) DeleteUserDevice(req *types.DeleteUserDeviceRequest) error {
 	err := l.svcCtx.UserModel.DeleteDevice(l.ctx, req.Id)
 	if err != nil {
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "delete user error: %v", err.Error())
