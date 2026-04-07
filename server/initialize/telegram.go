@@ -20,21 +20,22 @@ func Telegram(deps Deps) {
 		logger.Errorf("[Init Telegram Config] Get Telegram Config Error: %s", err.Error())
 		return
 	}
-	var tg config.Telegram
-
 	tgConfig := new(auth.TelegramAuthConfig)
 	if err = tgConfig.Unmarshal(method.Config); err != nil {
 		logger.Errorf("[Init Telegram Config] Unmarshal Telegram Config Error: %s", err.Error())
 		return
 	}
+	tg := runtimeTelegramConfig(tgConfig)
 
 	if tgConfig.BotToken == "" {
+		clearTelegramRuntime(deps)
 		logger.Debug("[Init Telegram Config] Telegram Token is empty")
 		return
 	}
 
 	bot, err := tgbotapi.NewBotAPI(tg.BotToken)
 	if err != nil {
+		clearTelegramRuntime(deps)
 		logger.Error("[Init Telegram Config] New Bot API Error: ", logger.Field("error", err.Error()))
 		return
 	}
@@ -45,6 +46,7 @@ func Telegram(deps Deps) {
 		updateConfig := tgbotapi.NewUpdate(0)
 		updateConfig.Timeout = 60
 		updates := bot.GetUpdatesChan(updateConfig)
+		replaceTelegramPoller(deps, bot.StopReceivingUpdates)
 		go func() {
 			deps := telegram.Deps{
 				AuthModel:   deps.AuthModel,
@@ -52,7 +54,7 @@ func Telegram(deps Deps) {
 				UserModel:   deps.UserModel,
 				Redis:       deps.Redis,
 				DB:          deps.DB,
-				TelegramBot: bot,
+				TelegramBot: func() *tgbotapi.BotAPI { return bot },
 				Config:      deps.Config,
 			}
 			for update := range updates {
@@ -64,13 +66,16 @@ func Telegram(deps Deps) {
 			}
 		}()
 	} else {
+		replaceTelegramPoller(deps, nil)
 		wh, err := tgbotapi.NewWebhook(fmt.Sprintf("%s/api/v1/telegram/webhook?secret=%s", tgConfig.WebHookDomain, tool.Md5Encode(tgConfig.BotToken, false)))
 		if err != nil {
+			clearTelegramRuntime(deps)
 			logger.Errorf("[Init Telegram Config] New Webhook Error: %s", err.Error())
 			return
 		}
 		_, err = bot.Request(wh)
 		if err != nil {
+			clearTelegramRuntime(deps)
 			logger.Errorf("[Init Telegram Config] Request Webhook Error: %s", err.Error())
 			return
 		}
@@ -78,18 +83,48 @@ func Telegram(deps Deps) {
 
 	user, err := bot.GetMe()
 	if err != nil {
+		clearTelegramRuntime(deps)
 		logger.Error("[Init Telegram Config] Get Bot Info Error: ", logger.Field("error", err.Error()))
 		return
 	}
+	tg.BotID = user.ID
+	tg.BotName = user.UserName
+	syncTelegramRuntime(deps, tg, bot)
+
+	logger.Info("[Init Telegram Config] Webhook set success")
+}
+
+func runtimeTelegramConfig(cfg *auth.TelegramAuthConfig) config.Telegram {
+	if cfg == nil {
+		return config.Telegram{}
+	}
+	return config.Telegram{
+		Enable:        cfg.BotToken != "",
+		BotToken:      cfg.BotToken,
+		EnableNotify:  cfg.EnableNotify,
+		WebHookDomain: cfg.WebHookDomain,
+	}
+}
+
+func syncTelegramRuntime(deps Deps, tg config.Telegram, bot *tgbotapi.BotAPI) {
 	if deps.Config != nil {
-		deps.Config.Telegram.BotID = user.ID
-		deps.Config.Telegram.BotName = user.UserName
-		deps.Config.Telegram.EnableNotify = tg.EnableNotify
-		deps.Config.Telegram.WebHookDomain = tg.WebHookDomain
+		deps.Config.Telegram = tg
 	}
 	if deps.SetTelegramBot != nil {
 		deps.SetTelegramBot(bot)
 	}
+}
 
-	logger.Info("[Init Telegram Config] Webhook set success")
+func replaceTelegramPoller(deps Deps, stop func()) {
+	if deps.SwapTelegramPoller == nil {
+		return
+	}
+	if previous := deps.SwapTelegramPoller(stop); previous != nil {
+		previous()
+	}
+}
+
+func clearTelegramRuntime(deps Deps) {
+	replaceTelegramPoller(deps, nil)
+	syncTelegramRuntime(deps, config.Telegram{}, nil)
 }

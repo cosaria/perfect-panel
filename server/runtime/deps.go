@@ -3,7 +3,6 @@ package runtime
 import (
 	"net"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/hibiken/asynq"
 	"github.com/oschwald/geoip2-golang"
 	"github.com/perfect-panel/server/config"
@@ -33,11 +32,11 @@ type GeoIPCityReader interface {
 }
 
 type Deps struct {
-	DB           *gorm.DB
-	Redis        *redis.Client
-	Config       *config.Config
-	Queue        *asynq.Client
-	ExchangeRate float64
+	DB     *gorm.DB
+	Redis  *redis.Client
+	Config *config.Config
+	Queue  *asynq.Client
+	Live   *LiveState
 
 	AuthModel         auth.Model
 	AdsModel          ads.Model
@@ -55,10 +54,7 @@ type Deps struct {
 	TrafficLogModel   traffic.Model
 	AnnouncementModel announcement.Model
 
-	Restart               func() error
-	TelegramBot           *tgbotapi.BotAPI
-	NodeMultiplierManager *node.Manager
-	AuthLimiter           *limit.PeriodLimit
-	DeviceManager         *device.DeviceManager
-	GeoIPDB               GeoIPCityReader
+	AuthLimiter   *limit.PeriodLimit
+	DeviceManager *device.DeviceManager
+	GeoIPDB       GeoIPCityReader
 }

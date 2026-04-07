@@ -401,8 +401,10 @@ func (l *PurchaseCheckoutLogic) queryExchangeRate(to string, src int64) (amount 
 		return amount, nil
 	}
 
-	if l.deps.ExchangeRate != 0 && to == "CNY" {
-		amount = amount * l.deps.ExchangeRate
+	currentUnit := l.deps.Config.Currency.Unit
+	snapshot := l.deps.CurrentExchangeRateSnapshot()
+	if snapshot.Rate != 0 && snapshot.From == currentUnit && snapshot.To == to {
+		amount = amount * snapshot.Rate
 		return amount, nil
 	}
 
@@ -411,13 +413,21 @@ func (l *PurchaseCheckoutLogic) queryExchangeRate(to string, src int64) (amount 
 		return amount, nil
 	}
 
+	version := l.deps.PrepareExchangeRateCache(currentUnit, to)
+
 	// Convert currency if system currency differs from target currency
-	result, err := exchangeRate.GetExchangeRete(l.deps.Config.Currency.Unit, to, l.deps.Config.Currency.AccessKey, 1)
+	result, err := exchangeRate.GetExchangeRete(currentUnit, to, l.deps.Config.Currency.AccessKey, 1)
 	if err != nil {
 		l.Logger.Error("[PurchaseCheckout] QueryExchangeRate error", logger.Field("error", err.Error()))
 		return 0, err
 	}
-	l.deps.ExchangeRate = result
+	if !l.deps.StoreExchangeRateCache(version, currentUnit, to, result) {
+		l.Logger.Debug("[PurchaseCheckout] Skip stale exchange rate cache write",
+			logger.Field("currency", currentUnit),
+			logger.Field("target", to),
+			logger.Field("version", version),
+		)
+	}
 	return result * amount, nil
 }
 

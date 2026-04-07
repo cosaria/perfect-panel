@@ -80,6 +80,9 @@ func (l *TelegramLogic) TelegramLogic(req *tgbotapi.Update) {
 }
 
 func (l *TelegramLogic) sendMessage(bot *tgbotapi.BotAPI, message string, userId int64) error {
+	if bot == nil {
+		return nil
+	}
 	msg := tgbotapi.NewMessage(userId, message)
 	msg.ParseMode = "Markdown"
 	_, err := bot.Send(msg)
@@ -95,8 +98,9 @@ func (l *TelegramLogic) bind(userId int64, token string) error {
 }
 
 func (l *TelegramLogic) start(req *tgbotapi.Update) error {
+	bot := l.deps.CurrentTelegramBot()
 	if req.Message.CommandArguments() == "" {
-		return l.sendMessage(l.deps.TelegramBot, "Please bind account!", req.Message.Chat.ID)
+		return l.sendMessage(bot, "Please bind account!", req.Message.Chat.ID)
 	} else {
 		sessionId := req.Message.CommandArguments()
 		// get session id from redis
@@ -104,22 +108,22 @@ func (l *TelegramLogic) start(req *tgbotapi.Update) error {
 		value, err := l.deps.Redis.Get(context.Background(), sessionIdCacheKey).Result()
 		if err != nil && !errors.Is(err, redis.Nil) {
 			l.Errorw("TelegramLogic start Redis Get Error: ", logger.Field("error", err.Error()), logger.Field("session", sessionId))
-			return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+			return l.sendMessage(bot, "Bind failed!", req.Message.Chat.ID)
 		}
 		if value == "" {
 			l.Errorw("TelegramLogic start Redis Get Error: ", logger.Field("error", "session not found"), logger.Field("session", sessionId))
-			return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+			return l.sendMessage(bot, "Bind failed!", req.Message.Chat.ID)
 		}
 		userId, err := strconv.ParseInt(value, 10, 64)
 		if err != nil {
 			l.Errorw("TelegramLogic start ParseInt Error: ", logger.Field("error", err.Error()), logger.Field("session", sessionId))
-			return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+			return l.sendMessage(bot, "Bind failed!", req.Message.Chat.ID)
 		}
 
 		method, err := l.deps.UserModel.FindUserAuthMethodByPlatform(l.ctx, userId, "telegram")
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			l.Errorw("TelegramLogic start FindUserAuthMethodByPlatform Error: ", logger.Field("error", err.Error()), logger.Field("userId", userId))
-			return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+			return l.sendMessage(bot, "Bind failed!", req.Message.Chat.ID)
 		}
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			if err := l.deps.UserModel.InsertUserAuthMethods(l.ctx, &user.AuthMethods{
@@ -131,13 +135,13 @@ func (l *TelegramLogic) start(req *tgbotapi.Update) error {
 				UpdatedAt:      time.Now(),
 			}); err != nil {
 				l.Errorw("TelegramLogic start InsertUserAuthMethod Error: ", logger.Field("error", err.Error()), logger.Field("userId", userId))
-				return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+				return l.sendMessage(bot, "Bind failed!", req.Message.Chat.ID)
 			}
 		} else {
 			method.AuthIdentifier = strconv.FormatInt(req.Message.Chat.ID, 10)
 			if err := l.deps.UserModel.InsertUserAuthMethods(l.ctx, method); err != nil {
 				l.Errorw("TelegramLogic start UpdateUserAuthMethod Error: ", logger.Field("error", err.Error()), logger.Field("userId", userId))
-				return l.sendMessage(l.deps.TelegramBot, "Bind failed!", req.Message.Chat.ID)
+				return l.sendMessage(bot, "Bind failed!", req.Message.Chat.ID)
 			}
 		}
 		// update user info to redis
@@ -155,6 +159,6 @@ func (l *TelegramLogic) start(req *tgbotapi.Update) error {
 		if err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "render template failed")
 		}
-		return l.sendMessage(l.deps.TelegramBot, text, req.Message.Chat.ID)
+		return l.sendMessage(bot, text, req.Message.Chat.ID)
 	}
 }

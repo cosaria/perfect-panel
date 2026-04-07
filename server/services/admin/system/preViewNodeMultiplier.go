@@ -40,7 +40,10 @@ func NewPreViewNodeMultiplierLogic(ctx context.Context, deps Deps) *PreViewNodeM
 
 func (l *PreViewNodeMultiplierLogic) PreViewNodeMultiplier() (resp *types.PreViewNodeMultiplierResponse, err error) {
 	now := time.Now()
-	ratio := l.deps.NodeMultiplierManager.GetMultiplier(now)
+	ratio := float32(1)
+	if manager := l.deps.CurrentNodeMultiplierManager(); manager != nil {
+		ratio = manager.GetMultiplier(now)
+	}
 	return &types.PreViewNodeMultiplierResponse{
 		Ratio:       ratio,
 		CurrentTime: now.Format("2006-01-02 15:04:05"),

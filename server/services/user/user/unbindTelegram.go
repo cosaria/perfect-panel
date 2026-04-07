@@ -81,7 +81,11 @@ func (l *UnbindTelegramLogic) UnbindTelegram() error {
 		return nil
 	}
 	msg := tgbotapi.NewMessage(userTelegramChatId, text)
-	_, err = l.deps.TelegramBot.Send(msg)
+	bot := l.deps.CurrentTelegramBot()
+	if bot == nil {
+		return nil
+	}
+	_, err = bot.Send(msg)
 	if err != nil {
 		l.Errorw("UnbindTelegramLogic Send Error", logger.Field("id", u.Id), logger.Field("error", err.Error()))
 		return nil

@@ -1,6 +1,8 @@
 package traffic
 
 import (
+	"context"
+
 	"github.com/hibiken/asynq"
 	serverconfig "github.com/perfect-panel/server/config"
 	modellog "github.com/perfect-panel/server/models/log"
@@ -20,7 +22,8 @@ type Deps struct {
 	UserModel             modeluser.Model
 	SubscribeModel        modelsubscribe.Model
 	TrafficLogModel       modeltraffic.Model
-	NodeMultiplierManager *modelnode.Manager
+	NodeMultiplierManager func() *modelnode.Manager
+	LoadNodeMultiplierManager func(context.Context) (*modelnode.Manager, error)
 	Config                *serverconfig.Config
 	LogModel              modellog.Model
 }
@@ -30,4 +33,21 @@ func (d Deps) currentConfig() serverconfig.Config {
 		return serverconfig.Config{}
 	}
 	return *d.Config
+}
+
+func (d Deps) CurrentNodeMultiplierManager() *modelnode.Manager {
+	if d.NodeMultiplierManager == nil {
+		return nil
+	}
+	return d.NodeMultiplierManager()
+}
+
+func (d Deps) ResolveNodeMultiplierManager(ctx context.Context) (*modelnode.Manager, error) {
+	if manager := d.CurrentNodeMultiplierManager(); manager != nil {
+		return manager, nil
+	}
+	if d.LoadNodeMultiplierManager == nil {
+		return nil, nil
+	}
+	return d.LoadNodeMultiplierManager(ctx)
 }

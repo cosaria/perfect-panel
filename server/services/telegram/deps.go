@@ -18,7 +18,7 @@ type Deps struct {
 	UserModel   modeluser.Model
 	Redis       *redis.Client
 	DB          *gorm.DB
-	TelegramBot *tgbotapi.BotAPI
+	TelegramBot func() *tgbotapi.BotAPI
 	Config      *config.Config
 }
 
@@ -27,4 +27,11 @@ func (d Deps) currentConfig() config.Config {
 		return config.Config{}
 	}
 	return *d.Config
+}
+
+func (d Deps) CurrentTelegramBot() *tgbotapi.BotAPI {
+	if d.TelegramBot == nil {
+		return nil
+	}
+	return d.TelegramBot()
 }

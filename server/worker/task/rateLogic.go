@@ -39,13 +39,19 @@ func (l *RateLogic) ProcessTask(ctx context.Context, _ *asynq.Task) error {
 		logger.Debugf("[RateLogic] skip exchange rate, no access key configured")
 		return nil
 	}
+	version := uint64(0)
+	if l.deps.PrepareExchangeRate != nil {
+		version = l.deps.PrepareExchangeRate(configs.CurrencyUnit, "CNY")
+	}
 	// Update exchange rates
 	result, err := exchangeRate.GetExchangeRete(configs.CurrencyUnit, "CNY", configs.AccessKey, 1)
 	if err != nil {
 		logger.Errorw("[RateLogic] GetExchangeRete error", logger.Field("error", err.Error()))
 		return err
 	}
-	if l.deps.SetExchangeRate != nil {
+	if l.deps.StoreExchangeRate != nil {
+		l.deps.StoreExchangeRate(version, configs.CurrencyUnit, "CNY", result)
+	} else if l.deps.SetExchangeRate != nil {
 		l.deps.SetExchangeRate(result)
 	}
 	logger.WithContext(ctx).Infof("[RateLogic] GetExchangeRete success, result: %+v", result)

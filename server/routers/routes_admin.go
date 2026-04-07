@@ -69,12 +69,12 @@ func registerAdminRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specO
 	adminOrderDeps := adminOrder.Deps{}
 	adminPaymentDeps := adminPayment.Deps{}
 	adminServerDeps := adminServer.Deps{}
-	adminSystemDeps := adminSystem.Deps{}
+	initDeps := initializeDepsFromRuntimeDeps(runtimeDeps)
+	adminSystemDeps := newAdminSystemDeps(runtimeDeps, initDeps)
 	adminSubscribeDeps := adminSubscribe.Deps{}
 	adminTicketDeps := adminTicket.Deps{}
-	adminToolDeps := adminTool.Deps{}
+	adminToolDeps := newAdminToolDeps(runtimeDeps)
 	adminUserDeps := adminUser.Deps{}
-	initDeps := initializeDepsFromRuntimeDeps(runtimeDeps)
 	if runtimeDeps != nil {
 		adminAdsDeps.AdsModel = runtimeDeps.AdsModel
 		adminAnnouncementDeps.AnnouncementModel = runtimeDeps.AnnouncementModel
@@ -117,40 +117,6 @@ func registerAdminRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specO
 		adminSubscribeDeps.DB = runtimeDeps.DB
 		adminSubscribeDeps.DeviceManager = runtimeDeps.DeviceManager
 		adminTicketDeps.TicketModel = runtimeDeps.TicketModel
-		adminSystemDeps.SystemModel = runtimeDeps.SystemModel
-		adminSystemDeps.Redis = runtimeDeps.Redis
-		adminSystemDeps.Config = runtimeDeps.Config
-		adminSystemDeps.NodeMultiplierManager = runtimeDeps.NodeMultiplierManager
-		adminSystemDeps.Restart = runtimeDeps.Restart
-		adminSystemDeps.ReloadVerify = func() {
-			initialize.Verify(initDeps)
-		}
-		adminSystemDeps.ReloadNode = func() {
-			initialize.Node(initDeps)
-		}
-		adminSystemDeps.ReloadCurrency = func() {
-			initialize.Currency(initDeps)
-		}
-		adminSystemDeps.ReloadInvite = func() {
-			initialize.Invite(initDeps)
-		}
-		adminSystemDeps.ReloadRegister = func() {
-			initialize.Register(initDeps)
-		}
-		adminSystemDeps.ReloadSite = func() {
-			initialize.Site(initDeps)
-		}
-		adminSystemDeps.ReloadSubscribe = func() {
-			initialize.Subscribe(initDeps)
-		}
-		adminSystemDeps.ReloadTelegram = func() {
-			initialize.Telegram(initDeps)
-		}
-		adminToolDeps.Restart = runtimeDeps.Restart
-		adminToolDeps.Config = runtimeDeps.Config
-		if runtimeDeps.GeoIPDB != nil {
-			adminToolDeps.GeoIPDB = runtimeDeps.GeoIPDB
-		}
 		adminUserDeps.UserModel = runtimeDeps.UserModel
 		adminUserDeps.SubscribeModel = runtimeDeps.SubscribeModel
 		adminUserDeps.LogModel = runtimeDeps.LogModel

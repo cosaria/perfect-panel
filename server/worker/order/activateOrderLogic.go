@@ -760,10 +760,11 @@ func (l *ActivateOrderLogic) buildAdminNotificationData(orderInfo *order.Order, 
 func (l *ActivateOrderLogic) sendUserNotifyWithTelegram(chatId int64, text string) {
 	msg := tgbotapi.NewMessage(chatId, text)
 	msg.ParseMode = "markdown"
-	if l.deps.TelegramBot == nil {
+	bot := l.deps.CurrentTelegramBot()
+	if bot == nil {
 		return
 	}
-	if _, err := l.deps.TelegramBot.Send(msg); err != nil {
+	if _, err := bot.Send(msg); err != nil {
 		logger.Error("Send telegram user message failed", logger.Field("error", err.Error()))
 	}
 }
@@ -780,10 +781,11 @@ func (l *ActivateOrderLogic) sendAdminNotifyWithTelegram(ctx context.Context, te
 		if telegramId, ok := findTelegram(admin); ok {
 			msg := tgbotapi.NewMessage(telegramId, text)
 			msg.ParseMode = "markdown"
-			if l.deps.TelegramBot == nil {
+			bot := l.deps.CurrentTelegramBot()
+			if bot == nil {
 				return
 			}
-			if _, err := l.deps.TelegramBot.Send(msg); err != nil {
+			if _, err := bot.Send(msg); err != nil {
 				logger.WithContext(ctx).Error("Send telegram admin message failed", logger.Field("error", err.Error()))
 			}
 		}

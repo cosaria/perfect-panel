@@ -7,15 +7,6 @@ import (
 )
 
 func RegisterTelegramHandlers(router *gin.Engine, runtimeDeps *appruntime.Deps) {
-	deps := servicetelegram.Deps{}
-	if runtimeDeps != nil {
-		deps.AuthModel = runtimeDeps.AuthModel
-		deps.SystemModel = runtimeDeps.SystemModel
-		deps.UserModel = runtimeDeps.UserModel
-		deps.Redis = runtimeDeps.Redis
-		deps.DB = runtimeDeps.DB
-		deps.TelegramBot = runtimeDeps.TelegramBot
-		deps.Config = runtimeDeps.Config
-	}
+	deps := newTelegramServiceDeps(runtimeDeps)
 	servicetelegram.RegisterTelegramHandlers(router, deps)
 }

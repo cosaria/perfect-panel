@@ -7,9 +7,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"sync/atomic"
 	"time"
 
 	"github.com/perfect-panel/server/modules/infra/logger"
+	appruntime "github.com/perfect-panel/server/runtime"
 	"github.com/perfect-panel/server/services/report"
 
 	"github.com/perfect-panel/server/modules/infra/proc"
@@ -26,20 +28,26 @@ import (
 )
 
 type Service struct {
-	server *http.Server
-	svc    *svc.ServiceContext
+	server     *http.Server
+	svc        *svc.ServiceContext
+	live       *appruntime.LiveState
+	restarting atomic.Bool
 }
 
-func NewService(svc *svc.ServiceContext) *Service {
+func NewService(svc *svc.ServiceContext, live *appruntime.LiveState) *Service {
+	if live == nil {
+		live = newLiveState(svc)
+	}
 	return &Service{
-		svc: svc,
+		svc:  svc,
+		live: live,
 	}
 }
 
-func initServer(svc *svc.ServiceContext) *gin.Engine {
+func initServer(svc *svc.ServiceContext, live *appruntime.LiveState) *gin.Engine {
 
 	// start init system config
-	initialize.StartInitSystemConfig(newInitializeDeps(svc))
+	initialize.StartInitSystemConfig(newInitializeDeps(svc, live))
 	// init gin server
 	r := gin.Default()
 	r.RemoteIPHeaders = []string{"X-Original-Forwarded-For", "X-Forwarded-For", "X-Real-IP"}
@@ -51,7 +59,7 @@ func initServer(svc *svc.ServiceContext) *gin.Engine {
 	}
 	r.Use(sessions.Sessions("ppanel", sessionStore))
 	// use cors middleware
-	runtimeDeps := newRuntimeDeps(svc)
+	runtimeDeps := newRuntimeDeps(svc, live)
 	r.Use(middleware.TraceMiddleware(), middleware.LoggerMiddleware(runtimeDeps), middleware.CorsMiddleware, gin.Recovery())
 
 	// register handlers
@@ -93,12 +101,20 @@ func initServer(svc *svc.ServiceContext) *gin.Engine {
 }
 
 func (m *Service) Start() {
+	m.run()
+}
+
+func (m *Service) run() {
 	if m.svc == nil {
 		panic("config file path is nil")
 	}
+	m.svc.Restart = m.Restart
+	if m.live != nil {
+		m.live.SetRestart(m.Restart)
+	}
 
 	// init service
-	r := initServer(m.svc)
+	r := initServer(m.svc, m.live)
 	// get server port
 	port := m.svc.Config.Port
 	host := m.svc.Config.Host
@@ -137,8 +153,8 @@ func (m *Service) Start() {
 	proc.AddShutdownListener(func() {
 		trace.StopAgent()
 	})
-	m.svc.Restart = m.Restart
 	logger.Infof("server start at %v", serverAddr)
+	m.restarting.Store(false)
 	if m.svc.Config.TLS.Enable {
 		if err := m.server.ListenAndServeTLS(m.svc.Config.TLS.CertFile, m.svc.Config.TLS.KeyFile); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.Errorf("server start error: %s", err.Error())
@@ -163,16 +179,22 @@ func (m *Service) Stop() {
 }
 
 func (m *Service) Restart() error {
+	if !m.restarting.CompareAndSwap(false, true) {
+		return errors.New("server restart already in progress")
+	}
 	if m.server == nil {
+		m.restarting.Store(false)
 		return errors.New("server is nil")
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := m.server.Shutdown(ctx); err != nil {
+		m.restarting.Store(false)
 		logger.Errorf("server shutdown error: %v", err.Error())
 		return err
 	}
+	m.server = nil
 	logger.Info("server shutdown")
-	go m.Start()
+	go m.run()
 	return nil
 }

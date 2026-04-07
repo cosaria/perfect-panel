@@ -30,10 +30,10 @@ func registerPublicRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, spec
 	publicDocumentDeps := publicDocument.Deps{}
 	publicOrderDeps := publicOrder.Deps{}
 	publicPaymentDeps := publicPayment.Deps{}
-	publicPortalDeps := publicPortal.Deps{}
+	publicPortalDeps := newPublicPortalDeps(runtimeDeps)
 	publicSubscribeDeps := publicSubscribe.Deps{}
 	publicTicketDeps := publicTicket.Deps{}
-	publicUserDeps := publicUser.Deps{}
+	publicUserDeps := newPublicUserDeps(runtimeDeps)
 	if runtimeDeps != nil {
 		publicAnnouncementDeps.AnnouncementModel = runtimeDeps.AnnouncementModel
 		publicDocumentDeps.DocumentModel = runtimeDeps.DocumentModel
@@ -46,31 +46,12 @@ func registerPublicRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, spec
 		publicOrderDeps.Queue = runtimeDeps.Queue
 		publicOrderDeps.Config = runtimeDeps.Config
 		publicPaymentDeps.PaymentModel = runtimeDeps.PaymentModel
-		publicPortalDeps.PaymentModel = runtimeDeps.PaymentModel
-		publicPortalDeps.SubscribeModel = runtimeDeps.SubscribeModel
-		publicPortalDeps.CouponModel = runtimeDeps.CouponModel
-		publicPortalDeps.OrderModel = runtimeDeps.OrderModel
-		publicPortalDeps.UserModel = runtimeDeps.UserModel
-		publicPortalDeps.DB = runtimeDeps.DB
-		publicPortalDeps.Redis = runtimeDeps.Redis
-		publicPortalDeps.Queue = runtimeDeps.Queue
-		publicPortalDeps.Config = runtimeDeps.Config
-		publicPortalDeps.ExchangeRate = runtimeDeps.ExchangeRate
 		publicSubscribeDeps.SubscribeModel = runtimeDeps.SubscribeModel
 		publicSubscribeDeps.UserModel = runtimeDeps.UserModel
 		publicSubscribeDeps.NodeModel = runtimeDeps.NodeModel
 		publicSubscribeDeps.DB = runtimeDeps.DB
 		publicSubscribeDeps.Config = runtimeDeps.Config
 		publicTicketDeps.TicketModel = runtimeDeps.TicketModel
-		publicUserDeps.UserModel = runtimeDeps.UserModel
-		publicUserDeps.LogModel = runtimeDeps.LogModel
-		publicUserDeps.AuthModel = runtimeDeps.AuthModel
-		publicUserDeps.OrderModel = runtimeDeps.OrderModel
-		publicUserDeps.SubscribeModel = runtimeDeps.SubscribeModel
-		publicUserDeps.Redis = runtimeDeps.Redis
-		publicUserDeps.Config = runtimeDeps.Config
-		publicUserDeps.TelegramBot = runtimeDeps.TelegramBot
-		publicUserDeps.DB = runtimeDeps.DB
 	}
 
 	registerOperation(publicAnnouncementAPI, huma.Operation{

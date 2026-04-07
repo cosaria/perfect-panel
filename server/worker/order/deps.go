@@ -24,7 +24,7 @@ type Deps struct {
 	DB             *gorm.DB
 	Queue          *asynq.Client
 	Redis          *redis.Client
-	TelegramBot    *tgbotapi.BotAPI
+	TelegramBot    func() *tgbotapi.BotAPI
 	Config         *serverconfig.Config
 }
 
@@ -33,4 +33,11 @@ func (d Deps) currentConfig() serverconfig.Config {
 		return serverconfig.Config{}
 	}
 	return *d.Config
+}
+
+func (d Deps) CurrentTelegramBot() *tgbotapi.BotAPI {
+	if d.TelegramBot == nil {
+		return nil
+	}
+	return d.TelegramBot()
 }

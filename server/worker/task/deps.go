@@ -14,6 +14,8 @@ type Deps struct {
 	SubscribeModel  modelsubscribe.Model
 	UserModel       modeluser.Model
 	SetExchangeRate func(float64)
+	PrepareExchangeRate func(string, string) uint64
+	StoreExchangeRate   func(uint64, string, string, float64) bool
 	Config          *serverconfig.Config
 }
 

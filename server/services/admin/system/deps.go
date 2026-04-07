@@ -11,7 +11,7 @@ type Deps struct {
 	SystemModel           modelsystem.Model
 	Redis                 *redis.Client
 	Config                *config.Config
-	NodeMultiplierManager *modelnode.Manager
+	NodeMultiplierManager func() *modelnode.Manager
 	Restart               func() error
 	ReloadVerify          func()
 	ReloadNode            func()
@@ -28,4 +28,11 @@ func (d Deps) currentConfig() config.Config {
 		return config.Config{}
 	}
 	return *d.Config
+}
+
+func (d Deps) CurrentNodeMultiplierManager() *modelnode.Manager {
+	if d.NodeMultiplierManager == nil {
+		return nil
+	}
+	return d.NodeMultiplierManager()
 }

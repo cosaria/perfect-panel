@@ -21,13 +21,37 @@ func initializeDepsFromRuntimeDeps(runtimeDeps *appruntime.Deps) initialize.Deps
 		SystemModel: runtimeDeps.SystemModel,
 		UserModel:   runtimeDeps.UserModel,
 		SetExchangeRate: func(rate float64) {
-			runtimeDeps.ExchangeRate = rate
+			if runtimeDeps.Live != nil {
+				runtimeDeps.Live.SetExchangeRate(rate)
+			}
+		},
+		PrepareExchangeRate: func(from, to string) uint64 {
+			if runtimeDeps.Live == nil {
+				return 0
+			}
+			return runtimeDeps.Live.PrepareExchangeRate(from, to)
+		},
+		StoreExchangeRate: func(version uint64, from, to string, rate float64) bool {
+			if runtimeDeps.Live == nil {
+				return false
+			}
+			return runtimeDeps.Live.StoreExchangeRate(version, from, to, rate)
 		},
 		SetNodeMultiplierManager: func(manager *node.Manager) {
-			runtimeDeps.NodeMultiplierManager = manager
+			if runtimeDeps.Live != nil {
+				runtimeDeps.Live.SetNodeMultiplierManager(manager)
+			}
 		},
 		SetTelegramBot: func(bot *tgbotapi.BotAPI) {
-			runtimeDeps.TelegramBot = bot
+			if runtimeDeps.Live != nil {
+				runtimeDeps.Live.SetTelegramBot(bot)
+			}
+		},
+		SwapTelegramPoller: func(next func()) func() {
+			if runtimeDeps.Live == nil {
+				return nil
+			}
+			return runtimeDeps.Live.SwapTelegramPoller(next)
 		},
 	}
 }

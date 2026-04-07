@@ -19,8 +19,11 @@ type Deps struct {
 	SystemModel              modelsystem.Model
 	UserModel                modeluser.Model
 	SetExchangeRate          func(float64)
+	PrepareExchangeRate      func(string, string) uint64
+	StoreExchangeRate        func(uint64, string, string, float64) bool
 	SetNodeMultiplierManager func(*modelnode.Manager)
 	SetTelegramBot           func(*tgbotapi.BotAPI)
+	SwapTelegramPoller       func(func()) func()
 }
 
 func (d Deps) currentConfig() config.Config {

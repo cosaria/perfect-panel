@@ -78,8 +78,15 @@ func (l *TrafficStatisticsLogic) ProcessTask(ctx context.Context, task *asynq.Ta
 
 	now := time.Now()
 	realTimeMultiplier := float32(1.0)
-	if l.deps.NodeMultiplierManager != nil {
-		realTimeMultiplier = l.deps.NodeMultiplierManager.GetMultiplier(now)
+	manager, err := l.deps.ResolveNodeMultiplierManager(ctx)
+	if err != nil {
+		logger.WithContext(ctx).Error("[TrafficStatisticsLogic] Resolve node multiplier manager failed",
+			logger.Field("error", err.Error()),
+		)
+		return err
+	}
+	if manager != nil {
+		realTimeMultiplier = manager.GetMultiplier(now)
 	}
 	cfg := l.deps.currentConfig()
 	logger.Debugf("[TrafficStatisticsLogic] Current time traffic multiplier: %.2f", realTimeMultiplier)

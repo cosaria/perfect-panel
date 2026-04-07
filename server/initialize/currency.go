@@ -23,9 +23,6 @@ func Currency(deps Deps) {
 		AccessKey      string
 	}{}
 	tool.SystemConfigSliceReflectToStruct(currency, &configs)
-	if deps.SetExchangeRate != nil {
-		deps.SetExchangeRate(0)
-	}
 	cfg := deps.currentConfig()
 	cfg.Currency = config.Currency{
 		Unit:      configs.CurrencyUnit,
@@ -34,6 +31,11 @@ func Currency(deps Deps) {
 	}
 	if deps.Config != nil {
 		deps.Config.Currency = cfg.Currency
+	}
+	if deps.PrepareExchangeRate != nil {
+		deps.PrepareExchangeRate(configs.CurrencyUnit, "CNY")
+	} else if deps.SetExchangeRate != nil {
+		deps.SetExchangeRate(0)
 	}
 	logger.Infof("[INIT] Currency configuration: %v", cfg.Currency)
 }
