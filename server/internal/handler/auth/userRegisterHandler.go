@@ -17,6 +17,7 @@ type UserRegisterInput struct {
 	Body      types.UserRegisterRequest
 	IP        string `header:"X-Original-Forwarded-For" required:"false" doc:"Client IP from proxy"`
 	UserAgent string `header:"User-Agent" required:"false" doc:"User agent string"`
+	LoginType string `header:"Login-Type" required:"false" doc:"Login type"`
 }
 
 type UserRegisterOutput struct {
@@ -27,6 +28,7 @@ func UserRegisterHandler(svcCtx *svc.ServiceContext) func(context.Context, *User
 	return func(ctx context.Context, input *UserRegisterInput) (*UserRegisterOutput, error) {
 		input.Body.IP = input.IP
 		input.Body.UserAgent = input.UserAgent
+		input.Body.LoginType = input.LoginType
 		if svcCtx.Config.Verify.RegisterVerify {
 			verifyTurns := turnstile.New(turnstile.Config{
 				Secret:  svcCtx.Config.Verify.TurnstileSecret,

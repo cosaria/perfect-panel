@@ -14,8 +14,10 @@ import (
 )
 
 type ResetPasswordInput struct {
-	Body types.ResetPasswordRequest
-	IP   string `header:"X-Original-Forwarded-For" required:"false" doc:"Client IP from proxy"`
+	Body      types.ResetPasswordRequest
+	IP        string `header:"X-Original-Forwarded-For" required:"false" doc:"Client IP from proxy"`
+	UserAgent string `header:"User-Agent" required:"false" doc:"User agent string"`
+	LoginType string `header:"Login-Type" required:"false" doc:"Login type"`
 }
 
 type ResetPasswordOutput struct {
@@ -25,6 +27,8 @@ type ResetPasswordOutput struct {
 func ResetPasswordHandler(svcCtx *svc.ServiceContext) func(context.Context, *ResetPasswordInput) (*ResetPasswordOutput, error) {
 	return func(ctx context.Context, input *ResetPasswordInput) (*ResetPasswordOutput, error) {
 		input.Body.IP = input.IP
+		input.Body.UserAgent = input.UserAgent
+		input.Body.LoginType = input.LoginType
 		if svcCtx.Config.Verify.ResetPasswordVerify {
 			verifyTurns := turnstile.New(turnstile.Config{
 				Secret:  svcCtx.Config.Verify.TurnstileSecret,

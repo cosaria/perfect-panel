@@ -1,39 +1,42 @@
+"use client";
+
 import { Card } from "@workspace/ui/components/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@workspace/ui/components/dialog";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { Markdown } from "@workspace/ui/custom-components/markdown";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 import { queryAnnouncement } from "@/services/user-api/sdk.gen";
 import type { Announcement as AnnouncementType } from "@/services/user-api/types.gen";
-import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
 import { Empty } from "../empty";
 
-export default async function Announcement({
+export default function Announcement({
   type,
   Authorization,
 }: {
   type: "popup" | "pinned";
   Authorization?: string;
 }) {
-  let data: AnnouncementType | undefined;
-  try {
-    const { data: result } = await queryAnnouncement({
+  const t = useTranslations("dashboard");
+  const [data, setData] = useState<AnnouncementType | undefined>();
+
+  useEffect(() => {
+    queryAnnouncement({
       body: {
         page: 1,
         size: 10,
         pinned: type === "pinned",
         popup: type === "popup",
       },
-      baseUrl: NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "",
       headers: Authorization ? { Authorization } : undefined,
-    });
-    data = result?.announcements?.find((item) => item[type]) ?? undefined;
-  } catch (_error) {
-    /* empty */
-  }
-  if (!data) return null;
+    })
+      .then(({ data: result }) => {
+        setData(result?.announcements?.find((item) => item[type]) ?? undefined);
+      })
+      .catch(() => {});
+  }, [type, Authorization]);
 
-  const t = await getTranslations("dashboard");
+  if (!data) return null;
 
   if (type === "popup") {
     return (

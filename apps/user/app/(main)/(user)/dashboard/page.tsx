@@ -1,11 +1,15 @@
-import { cookies } from "next/headers";
+"use client";
+
 import Announcement from "@/components/announcement";
+import { getAuthorization } from "@/utils/common";
 import Content from "./content";
 
-export default async function Page() {
+export default function Page() {
+  const auth = getAuthorization();
+
   return (
     <div className="flex min-h-[calc(100vh-64px-58px-32px-114px)] w-full flex-col gap-4 overflow-hidden">
-      <Announcement type="pinned" Authorization={(await cookies()).get("Authorization")?.value} />
+      <Announcement type="pinned" Authorization={auth} />
       <Content />
     </div>
   );

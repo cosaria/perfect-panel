@@ -22,6 +22,7 @@ import (
 	"github.com/perfect-panel/server/internal/handler"
 	"github.com/perfect-panel/server/internal/middleware"
 	"github.com/perfect-panel/server/internal/svc"
+	"github.com/perfect-panel/server/web"
 )
 
 type Service struct {
@@ -60,6 +61,24 @@ func initServer(svc *svc.ServiceContext) *gin.Engine {
 	handler.RegisterTelegramHandlers(r, svc)
 	// register notify handler
 	handler.RegisterNotifyHandlers(r, svc)
+
+	// register embedded frontends (only in production with -tags embed)
+	adminEnvVars := map[string]string{
+		"NEXT_PUBLIC_SITE_URL":              svc.Config.Site.Host,
+		"NEXT_PUBLIC_API_URL":               "", // same origin when embedded
+		"NEXT_PUBLIC_DEFAULT_USER_EMAIL":    svc.Config.Administrator.Email,
+		"NEXT_PUBLIC_DEFAULT_USER_PASSWORD": svc.Config.Administrator.Password,
+		"NEXT_PUBLIC_DEFAULT_LANGUAGE":      "en-US",
+	}
+	userEnvVars := map[string]string{
+		"NEXT_PUBLIC_SITE_URL":           svc.Config.Site.Host,
+		"NEXT_PUBLIC_API_URL":            "", // same origin when embedded
+		"NEXT_PUBLIC_DEFAULT_LANGUAGE":   "en-US",
+	}
+	if err := web.RegisterStaticRoutes(r, adminEnvVars, userEnvVars); err != nil {
+		logger.Errorw("register static routes error", logger.Field("error", err.Error()))
+	}
+
 	return r
 }
 

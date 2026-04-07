@@ -3,6 +3,7 @@
 import { Badge } from "@workspace/ui/components/badge";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
 import { OrderLink } from "@/components/order-link";
 import { ProTable } from "@/components/pro-table";
@@ -10,7 +11,7 @@ import { filterResetSubscribeLog } from "@/services/admin-api/sdk.gen";
 import type { ResetSubscribeLog } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
-export default function ResetSubscribeLogPage() {
+function ResetSubscribeLogPageContent() {
   const t = useTranslations("log");
   const sp = useSearchParams();
 
@@ -82,5 +83,13 @@ export default function ResetSubscribeLogPage() {
         return { list, total };
       }}
     />
+  );
+}
+
+export default function ResetSubscribeLogPage() {
+  return (
+    <Suspense>
+      <ResetSubscribeLogPageContent />
+    </Suspense>
   );
 }

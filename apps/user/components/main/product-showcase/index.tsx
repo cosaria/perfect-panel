@@ -1,21 +1,26 @@
-import { getLocale } from "next-intl/server";
+"use client";
+
+import { useEffect, useState } from "react";
 import { getSubscription } from "@/services/user-api/sdk.gen";
-import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
+import type { Subscribe } from "@/services/user-api/types.gen";
+import { getClientLocale } from "@/locales/client";
 import { Content } from "./content";
 
-export async function ProductShowcase() {
-  try {
-    const locale = await getLocale();
-    const { data } = await getSubscription({
+export function ProductShowcase() {
+  const [subscriptionList, setSubscriptionList] = useState<Subscribe[]>([]);
+
+  useEffect(() => {
+    const locale = getClientLocale();
+    getSubscription({
       query: { language: locale },
-      baseUrl: NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "",
-    });
-    const subscriptionList = data?.list || [];
+    })
+      .then(({ data }) => {
+        setSubscriptionList(data?.list || []);
+      })
+      .catch(() => {});
+  }, []);
 
-    if (subscriptionList.length === 0) return null;
+  if (subscriptionList.length === 0) return null;
 
-    return <Content subscriptionData={subscriptionList} />;
-  } catch (_error) {
-    return null;
-  }
+  return <Content subscriptionData={subscriptionList} />;
 }

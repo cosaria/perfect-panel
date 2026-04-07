@@ -1,7 +1,10 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
 import { Card, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 
 interface BillingProps {
   type: "dashboard" | "payment";
@@ -15,47 +18,46 @@ interface ItemType {
   href: string;
 }
 
-async function getBillingURL() {
+async function fetchBillingList(type: string): Promise<ItemType[]> {
   try {
-    const response = await fetch(
-      "https://api.github.com/repos/perfect-panel/ppanel-assets/commits",
-    );
-    const json = await response.json();
-    const version = json[0]?.sha || "latest";
-    const url = new URL("https://cdn.jsdmirror.com/gh/perfect-panel/ppanel-assets");
-    url.pathname += `@${version}/billing/index.json`;
-    return url.toString();
-  } catch (_error) {
-    return "https://cdn.jsdmirror.com/gh/perfect-panel/ppanel-assets/billing/index.json";
-  }
-}
+    let url: string;
+    try {
+      const response = await fetch(
+        "https://api.github.com/repos/perfect-panel/ppanel-assets/commits",
+      );
+      const json = await response.json();
+      const version = json[0]?.sha || "latest";
+      url = `https://cdn.jsdmirror.com/gh/perfect-panel/ppanel-assets@${version}/billing/index.json`;
+    } catch {
+      url = "https://cdn.jsdmirror.com/gh/perfect-panel/ppanel-assets/billing/index.json";
+    }
 
-export default async function Billing({ type }: BillingProps) {
-  const t = await getTranslations("common.billing");
-  let list: ItemType[] = [];
-
-  try {
-    const url = await getBillingURL();
     const response = await fetch(url, {
-      headers: {
-        Accept: "application/json",
-      },
+      headers: { Accept: "application/json" },
     });
     const data = await response.json();
     const now = Date.now();
 
-    list = Array.isArray(data[type])
+    return Array.isArray(data[type])
       ? data[type].filter((item: { expiryDate: string }) => {
           const expiryDate = Date.parse(item.expiryDate);
           return !Number.isNaN(expiryDate) && expiryDate > now;
         })
       : [];
-  } catch (error) {
-    console.log(error);
-    return null;
+  } catch {
+    return [];
   }
+}
 
-  if (!list?.length) return null;
+export default function Billing({ type }: BillingProps) {
+  const t = useTranslations("common.billing");
+  const [list, setList] = useState<ItemType[]>([]);
+
+  useEffect(() => {
+    fetchBillingList(type).then(setList);
+  }, [type]);
+
+  if (!list.length) return null;
 
   return (
     <>

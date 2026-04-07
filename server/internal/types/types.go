@@ -533,9 +533,9 @@ type DeviceAuthticateConfig struct {
 
 type DeviceLoginRequest struct {
 	Identifier string `json:"identifier" validate:"required"`
-	IP         string `header:"X-Original-Forwarded-For"`
+	IP         string `json:"IP,omitempty"`
 	UserAgent  string `json:"user_agent" validate:"required"`
-	CfToken    string `json:"cf_token,optional"`
+	CfToken    string `json:"cf_token,omitempty"`
 }
 
 type Document struct {
@@ -1804,14 +1804,14 @@ type ResetAllSubscribeTokenResponse struct {
 }
 
 type ResetPasswordRequest struct {
-	Identifier string `json:"identifier"`
+	Identifier string `json:"identifier,omitempty"`
 	Email      string `json:"email" validate:"required"`
 	Password   string `json:"password" validate:"required"`
-	Code       string `json:"code,optional"`
-	IP         string `header:"X-Original-Forwarded-For"`
-	UserAgent  string `header:"User-Agent"`
-	LoginType  string `header:"Login-Type"`
-	CfToken    string `json:"cf_token,optional"`
+	Code       string `json:"code,omitempty"`
+	IP         string `json:"IP,omitempty"`
+	UserAgent  string `json:"UserAgent,omitempty"`
+	LoginType  string `json:"LoginType,omitempty"`
+	CfToken    string `json:"cf_token,omitempty"`
 }
 
 type ResetSortRequest struct {
@@ -2164,40 +2164,40 @@ type TelephoneCheckUserResponse struct {
 }
 
 type TelephoneLoginRequest struct {
-	Identifier        string `json:"identifier"`
+	Identifier        string `json:"identifier,omitempty"`
 	Telephone         string `json:"telephone" validate:"required"`
 	TelephoneCode     string `json:"telephone_code"`
 	TelephoneAreaCode string `json:"telephone_area_code" validate:"required"`
 	Password          string `json:"password"`
-	IP                string `header:"X-Original-Forwarded-For"`
-	UserAgent         string `header:"User-Agent"`
-	LoginType         string `header:"Login-Type"`
-	CfToken           string `json:"cf_token,optional"`
+	IP                string `json:"IP,omitempty"`
+	UserAgent         string `json:"UserAgent,omitempty"`
+	LoginType         string `json:"LoginType,omitempty"`
+	CfToken           string `json:"cf_token,omitempty"`
 }
 
 type TelephoneRegisterRequest struct {
-	Identifier        string `json:"identifier"`
+	Identifier        string `json:"identifier,omitempty"`
 	Telephone         string `json:"telephone" validate:"required"`
 	TelephoneAreaCode string `json:"telephone_area_code" validate:"required"`
 	Password          string `json:"password" validate:"required"`
-	Invite            string `json:"invite,optional"`
-	Code              string `json:"code,optional"`
-	IP                string `header:"X-Original-Forwarded-For"`
-	UserAgent         string `header:"User-Agent"`
-	LoginType         string `header:"Login-Type,optional"`
-	CfToken           string `json:"cf_token,optional"`
+	Invite            string `json:"invite,omitempty"`
+	Code              string `json:"code,omitempty"`
+	IP                string `json:"IP,omitempty"`
+	UserAgent         string `json:"UserAgent,omitempty"`
+	LoginType         string `json:"LoginType,omitempty"`
+	CfToken           string `json:"cf_token,omitempty"`
 }
 
 type TelephoneResetPasswordRequest struct {
-	Identifier        string `json:"identifier"`
+	Identifier        string `json:"identifier,omitempty"`
 	Telephone         string `json:"telephone" validate:"required"`
 	TelephoneAreaCode string `json:"telephone_area_code" validate:"required"`
 	Password          string `json:"password" validate:"required"`
-	Code              string `json:"code,optional"`
-	IP                string `header:"X-Original-Forwarded-For"`
-	UserAgent         string `header:"User-Agent"`
-	LoginType         string `header:"Login-Type,optional"`
-	CfToken           string `json:"cf_token,optional"`
+	Code              string `json:"code,omitempty"`
+	IP                string `json:"IP,omitempty"`
+	UserAgent         string `json:"UserAgent,omitempty"`
+	LoginType         string `json:"LoginType,omitempty"`
+	CfToken           string `json:"cf_token,omitempty"`
 }
 
 type TestEmailSendRequest struct {
@@ -2588,25 +2588,25 @@ type UserLoginLog struct {
 }
 
 type UserLoginRequest struct {
-	Identifier string `json:"identifier"`
+	Identifier string `json:"identifier,omitempty"`
 	Email      string `json:"email" validate:"required"`
 	Password   string `json:"password" validate:"required"`
-	IP         string `header:"X-Original-Forwarded-For"`
-	UserAgent  string `header:"User-Agent"`
-	LoginType  string `header:"Login-Type"`
-	CfToken    string `json:"cf_token,optional"`
+	IP         string `json:"IP,omitempty"`
+	UserAgent  string `json:"UserAgent,omitempty"`
+	LoginType  string `json:"LoginType,omitempty"`
+	CfToken    string `json:"cf_token,omitempty"`
 }
 
 type UserRegisterRequest struct {
-	Identifier string `json:"identifier"`
+	Identifier string `json:"identifier,omitempty"`
 	Email      string `json:"email" validate:"required"`
 	Password   string `json:"password" validate:"required"`
-	Invite     string `json:"invite,optional"`
-	Code       string `json:"code,optional"`
-	IP         string `header:"X-Original-Forwarded-For"`
-	UserAgent  string `header:"User-Agent"`
-	LoginType  string `header:"Login-Type"`
-	CfToken    string `json:"cf_token,optional"`
+	Invite     string `json:"invite,omitempty"`
+	Code       string `json:"code,omitempty"`
+	IP         string `json:"IP,omitempty"`
+	UserAgent  string `json:"UserAgent,omitempty"`
+	LoginType  string `json:"LoginType,omitempty"`
+	CfToken    string `json:"cf_token,omitempty"`
 }
 
 type UserStatistics struct {

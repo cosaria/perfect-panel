@@ -1,11 +1,17 @@
+"use client";
+
 import { SidebarInset, SidebarProvider } from "@workspace/ui/components/sidebar";
-import { cookies } from "next/headers";
 import { Header } from "@/components/header";
 import { SidebarLeft } from "@/components/sidebar-left";
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+function getSidebarState(): boolean {
+  if (typeof document === "undefined") return true;
+  const match = document.cookie.match(/(?:^|;\s*)sidebar_state=([^;]+)/);
+  return match?.[1] === "true";
+}
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const defaultOpen = getSidebarState();
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <SidebarLeft />

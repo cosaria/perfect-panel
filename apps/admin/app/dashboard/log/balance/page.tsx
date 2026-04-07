@@ -3,6 +3,7 @@
 import { Badge } from "@workspace/ui/components/badge";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { UserDetail } from "@/app/dashboard/user/user-detail";
 import { Display } from "@/components/display";
 import { OrderLink } from "@/components/order-link";
@@ -11,7 +12,7 @@ import { filterBalanceLog } from "@/services/admin-api/sdk.gen";
 import type { BalanceLog } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
-export default function BalanceLogPage() {
+function BalanceLogPageContent() {
   const t = useTranslations("log");
   const sp = useSearchParams();
 
@@ -84,5 +85,13 @@ export default function BalanceLogPage() {
         return { list, total };
       }}
     />
+  );
+}
+
+export default function BalanceLogPage() {
+  return (
+    <Suspense>
+      <BalanceLogPageContent />
+    </Suspense>
   );
 }

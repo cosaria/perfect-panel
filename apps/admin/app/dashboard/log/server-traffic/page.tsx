@@ -6,12 +6,13 @@ import { formatBytes } from "@workspace/ui/utils";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { ProTable } from "@/components/pro-table";
 import { filterServerTrafficLog } from "@/services/admin-api/sdk.gen";
 import type { ServerTrafficLog } from "@/services/admin-api/types.gen";
 import { useServer } from "@/store/server";
 
-export default function ServerTrafficLogPage() {
+function ServerTrafficLogPageContent() {
   const t = useTranslations("log");
   const sp = useSearchParams();
   const { getServerName } = useServer();
@@ -86,5 +87,13 @@ export default function ServerTrafficLogPage() {
         return { list, total };
       }}
     />
+  );
+}
+
+export default function ServerTrafficLogPage() {
+  return (
+    <Suspense>
+      <ServerTrafficLogPageContent />
+    </Suspense>
   );
 }

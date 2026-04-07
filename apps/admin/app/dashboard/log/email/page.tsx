@@ -3,12 +3,13 @@
 import { Badge } from "@workspace/ui/components/badge";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { ProTable } from "@/components/pro-table";
 import { filterEmailLog } from "@/services/admin-api/sdk.gen";
 import type { MessageLog } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
-export default function EmailLogPage() {
+function EmailLogPageContent() {
   const t = useTranslations("log");
   const sp = useSearchParams();
 
@@ -83,5 +84,13 @@ export default function EmailLogPage() {
         return { list, total };
       }}
     />
+  );
+}
+
+export default function EmailLogPage() {
+  return (
+    <Suspense>
+      <EmailLogPageContent />
+    </Suspense>
   );
 }

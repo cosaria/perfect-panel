@@ -6,19 +6,16 @@ import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experime
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type React from "react";
 import { useEffect, useState } from "react";
-import useGlobalStore, { type GlobalStore } from "@/config/use-global";
+import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
+import useGlobalStore from "@/config/use-global";
+import { client as adminClient } from "@/services/admin-api/client.gen";
+import { currentUser } from "@/services/admin-api/sdk.gen";
+import { client as commonClient } from "@/services/common-api/client.gen";
+import { getGlobalConfig } from "@/services/common-api/sdk.gen";
 import { useStatsStore } from "@/store/stats";
-import { Logout } from "@/utils/common";
+import { getAuthorization, Logout } from "@/utils/common";
 
-export default function Providers({
-  children,
-  common,
-  user,
-}: {
-  children: React.ReactNode;
-  common: Partial<GlobalStore["common"]>;
-  user: GlobalStore["user"];
-}) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -34,16 +31,39 @@ export default function Providers({
   const { setCommon, setUser } = useGlobalStore();
 
   useEffect(() => {
-    if (user) {
-      setUser(user);
-    } else {
-      Logout();
-    }
-  }, [setUser, user]);
+    const baseUrl = NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "";
 
-  useEffect(() => {
-    setCommon(common);
-  }, [setCommon, common]);
+    getGlobalConfig({
+      client: commonClient,
+      baseUrl: `${baseUrl}/v1/common`,
+    })
+      .then(({ data }) => {
+        if (data) {
+          setCommon(data);
+          if (data.site?.site_name) {
+            document.title = data.site.site_name;
+          }
+        }
+      })
+      .catch(console.error);
+
+    const auth = getAuthorization();
+    if (auth) {
+      currentUser({
+        client: adminClient,
+        baseUrl: `${baseUrl}/v1/admin`,
+        headers: { Authorization: auth },
+      })
+        .then(({ data }) => {
+          if (data?.is_admin) {
+            setUser(data);
+          } else {
+            Logout();
+          }
+        })
+        .catch(() => Logout());
+    }
+  }, [setCommon, setUser]);
 
   const { stats } = useStatsStore();
 

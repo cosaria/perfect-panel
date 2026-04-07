@@ -3,7 +3,7 @@ SHELL := /bin/sh
 .PHONY: bootstrap lint test dev build format typecheck clean \
 	server-bootstrap web-bootstrap server-lint web-lint server-test \
 	server-build web-build server-format web-format web-typecheck \
-	server-clean web-clean
+	server-clean web-clean embed embed-admin embed-user build-all
 
 bootstrap: server-bootstrap web-bootstrap
 	@command -v lefthook >/dev/null 2>&1 && lefthook install || echo "Warning: lefthook not found. Install via: brew install lefthook"
@@ -59,10 +59,26 @@ typecheck: web-typecheck
 web-typecheck:
 	bun run typecheck
 
+embed-admin:
+	bun run build --filter=ppanel-admin-web
+	rm -rf server/web/admin-dist/*
+	cp -r apps/admin/out/* server/web/admin-dist/
+
+embed-user:
+	bun run build --filter=ppanel-user-web
+	rm -rf server/web/user-dist/*
+	cp -r apps/user/out/* server/web/user-dist/
+
+embed: embed-admin embed-user
+
+build-all: embed
+	cd server && go build -tags embed -ldflags="-s -w" -o bin/ppanel .
+
 clean: server-clean web-clean
 
 server-clean:
-	rm -rf server/bin/
+	rm -rf server/bin/ server/web/admin-dist/* server/web/user-dist/*
+	touch server/web/admin-dist/.gitkeep server/web/user-dist/.gitkeep
 
 web-clean:
 	rm -rf apps/*/.next apps/*/.turbo .turbo

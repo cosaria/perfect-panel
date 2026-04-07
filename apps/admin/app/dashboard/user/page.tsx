@@ -23,7 +23,7 @@ import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Display } from "@/components/display";
 import { ProTable, type ProTableActions } from "@/components/pro-table";
@@ -48,7 +48,7 @@ import { BasicInfoForm } from "./user-profile/basic-info-form";
 import { NotifySettingsForm } from "./user-profile/notify-settings-form";
 import UserSubscription from "./user-subscription";
 
-export default function Page() {
+function PageContent() {
   const t = useTranslations("user");
   const [loading, setLoading] = useState(false);
   const ref = useRef<ProTableActions>(null);
@@ -333,5 +333,13 @@ function SubscriptionSheet({ userId }: { userId: number }) {
         </div>
       </SheetContent>
     </Sheet>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <PageContent />
+    </Suspense>
   );
 }

@@ -8,7 +8,7 @@ import { Combobox } from "@workspace/ui/custom-components/combobox";
 import { cn } from "@workspace/ui/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 import { Display } from "@/components/display";
 import { ProTable, type ProTableActions } from "@/components/pro-table";
 import { getOrderList, updateOrderStatus } from "@/services/admin-api/sdk.gen";
@@ -17,7 +17,7 @@ import { useSubscribe } from "@/store/subscribe";
 import { formatDate } from "@/utils/common";
 import { UserDetail } from "../user/user-detail";
 
-export default function Page() {
+function PageContent() {
   const t = useTranslations("order");
   const sp = useSearchParams();
 
@@ -220,5 +220,13 @@ export default function Page() {
         };
       }}
     />
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <PageContent />
+    </Suspense>
   );
 }

@@ -1,33 +1,42 @@
-import { getLocale } from "next-intl/server";
+"use client";
+
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { getSubscription } from "@/services/user-api/sdk.gen";
 import type { Subscribe } from "@/services/user-api/types.gen";
-import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
+import { getClientLocale } from "@/locales/client";
 import Content from "./content";
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    id: string;
-  }>;
-}) {
-  const { id } = await searchParams;
-  const locale = await getLocale();
-  let subscriptionList: Subscribe[] = [];
-  try {
-    const { data } = await getSubscription({
+function PurchasingContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  const [subscription, setSubscription] = useState<Subscribe | undefined>();
+
+  useEffect(() => {
+    const locale = getClientLocale();
+    getSubscription({
       query: { language: locale },
-      baseUrl: NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "",
-    });
-    subscriptionList = data?.list || [];
-  } catch {
-    // silently handle SSR errors
-  }
-  const subscription = subscriptionList.find((item) => item.id === Number(id));
+    })
+      .then(({ data }) => {
+        const list = data?.list || [];
+        const found = list.find((item) => item.id === Number(id));
+        setSubscription(found);
+      })
+      .catch(() => {});
+  }, [id]);
 
   return (
     <main className="container space-y-16">
       <Content subscription={subscription} />
     </main>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <PurchasingContent />
+    </Suspense>
   );
 }

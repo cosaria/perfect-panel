@@ -1,23 +1,21 @@
 import type { NextConfig } from "next";
-import createNextIntlPlugin from "next-intl/plugin";
-
-const withNextIntl = createNextIntlPlugin("./locales/request.ts");
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@workspace/ui"],
-  output: "standalone",
+  output: "export",
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**.**.**",
-      },
-      {
-        protocol: "https",
-        hostname: "**.**",
-      },
-    ],
+    unoptimized: true,
+  },
+  webpack: (config) => {
+    if (!config.resolve) config.resolve = {};
+    config.resolve.extensionAlias = {
+      ".js": [".ts", ".tsx", ".js", ".jsx"],
+    };
+    const alias = (config.resolve.alias || {}) as Record<string, string>;
+    alias["monaco-themes/themes"] = `${process.cwd()}/../../node_modules/monaco-themes/themes`;
+    config.resolve.alias = alias;
+    return config;
   },
 };
 
-export default withNextIntl(nextConfig);
+export default nextConfig;

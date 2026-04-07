@@ -3,6 +3,7 @@
 import { formatBytes } from "@workspace/ui/utils";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
 import { ProTable } from "@/components/pro-table";
 import { filterTrafficLogDetails } from "@/services/admin-api/sdk.gen";
@@ -10,7 +11,7 @@ import type { TrafficLogDetails } from "@/services/admin-api/types.gen";
 import { useServer } from "@/store/server";
 import { formatDate } from "@/utils/common";
 
-export default function TrafficDetailsPage() {
+function TrafficDetailsPageContent() {
   const t = useTranslations("log");
   const sp = useSearchParams();
   const { getServerName } = useServer();
@@ -96,5 +97,13 @@ export default function TrafficDetailsPage() {
         return { list, total };
       }}
     />
+  );
+}
+
+export default function TrafficDetailsPage() {
+  return (
+    <Suspense>
+      <TrafficDetailsPageContent />
+    </Suspense>
   );
 }

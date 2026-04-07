@@ -18,6 +18,7 @@ type TelephoneLoginInput struct {
 	Body      types.TelephoneLoginRequest
 	IP        string `header:"X-Original-Forwarded-For" required:"false" doc:"Client IP from proxy"`
 	UserAgent string `header:"User-Agent" required:"false" doc:"User agent string"`
+	LoginType string `header:"Login-Type" required:"false" doc:"Login type"`
 }
 
 type TelephoneLoginOutput struct {
@@ -27,6 +28,8 @@ type TelephoneLoginOutput struct {
 func TelephoneLoginHandler(svcCtx *svc.ServiceContext) func(context.Context, *TelephoneLoginInput) (*TelephoneLoginOutput, error) {
 	return func(ctx context.Context, input *TelephoneLoginInput) (*TelephoneLoginOutput, error) {
 		input.Body.IP = input.IP
+		input.Body.UserAgent = input.UserAgent
+		input.Body.LoginType = input.LoginType
 		if svcCtx.Config.Verify.LoginVerify {
 			verifyTurns := turnstile.New(turnstile.Config{
 				Secret:  svcCtx.Config.Verify.TurnstileSecret,

@@ -16,11 +16,9 @@ COPY . .
 RUN BUILD_TIME=$(date -u +"%Y-%m-%d %H:%M:%S") && \
     go build -ldflags="-s -w -X 'github.com/perfect-panel/server/pkg/constant.Version=${VERSION}' -X 'github.com/perfect-panel/server/pkg/constant.BuildTime=${BUILD_TIME}'" -o /app/ppanel ppanel.go
 
-FROM scratch
+FROM alpine:3.21
 
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /usr/share/zoneinfo/Asia/Shanghai
-
+RUN apk add --no-cache ca-certificates tzdata
 ENV TZ=Asia/Shanghai
 
 WORKDIR /app

@@ -1,49 +1,69 @@
 services:
-  server:
-    container_name: ppanel-server
+  mysql:
+    image: mysql:8.0
+    container_name: ppanel-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ppanel_root_pass
+      MYSQL_DATABASE: ppanel
+      MYSQL_USER: ppanel
+      MYSQL_PASSWORD: ppanel_pass
+    ports:
+      - "13306:3306"
+    volumes:
+      - ppanel-mysql-data:/var/lib/mysql
+    networks:
+      - ppanel
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pppanel_root_pass"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    container_name: ppanel-redis
+    ports:
+      - "16379:6379"
+    volumes:
+      - ppanel-redis-data:/data
+    networks:
+      - ppanel
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ppanel:
+    container_name: ppanel
     build:
-      context: ./server
+      context: .
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
     volumes:
       - ./server/etc/ppanel.yaml:/app/etc/ppanel.yaml:ro
-    restart: unless-stopped
-
-  admin-web:
-    container_name: ppanel-admin-web
-    build:
-      context: .
-      dockerfile: docker/web.Dockerfile
-      args:
-        APP_NAME: admin
-    environment:
-      NEXT_PUBLIC_API_URL: "https://api.ppanel.dev"
-    ports:
-      - "3001:3000"
+    networks:
+      - ppanel
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
-      interval: 30s
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/v1/common/site/config"]
+      interval: 10s
       timeout: 5s
-      retries: 3
-      start_period: 10s
+      retries: 5
+      start_period: 15s
 
-  user-web:
-    container_name: ppanel-user-web
-    build:
-      context: .
-      dockerfile: docker/web.Dockerfile
-      args:
-        APP_NAME: user
-    environment:
-      NEXT_PUBLIC_API_URL: "https://api.ppanel.dev"
-    ports:
-      - "3002:3000"
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+volumes:
+  ppanel-mysql-data:
+  ppanel-redis-data:
+
+networks:
+  ppanel:
+    name: ppanel-network
+    driver: bridge

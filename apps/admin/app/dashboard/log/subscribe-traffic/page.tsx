@@ -5,12 +5,13 @@ import { formatBytes } from "@workspace/ui/utils";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
 import { ProTable } from "@/components/pro-table";
 import { filterUserSubscribeTrafficLog } from "@/services/admin-api/sdk.gen";
 import type { UserSubscribeTrafficLog } from "@/services/admin-api/types.gen";
 
-export default function SubscribeTrafficLogPage() {
+function SubscribeTrafficLogPageContent() {
   const t = useTranslations("log");
   const sp = useSearchParams();
 
@@ -95,5 +96,13 @@ export default function SubscribeTrafficLogPage() {
         return { list, total };
       }}
     />
+  );
+}
+
+export default function SubscribeTrafficLogPage() {
+  return (
+    <Suspense>
+      <SubscribeTrafficLogPageContent />
+    </Suspense>
   );
 }

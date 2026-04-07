@@ -3,6 +3,7 @@
 import { Badge } from "@workspace/ui/components/badge";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
 import { Display } from "@/components/display";
 import { OrderLink } from "@/components/order-link";
@@ -11,7 +12,7 @@ import { filterGiftLog } from "@/services/admin-api/sdk.gen";
 import type { GiftLog } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
-export default function GiftLogPage() {
+function GiftLogPageContent() {
   const t = useTranslations("log");
   const sp = useSearchParams();
 
@@ -92,5 +93,13 @@ export default function GiftLogPage() {
         return { list, total };
       }}
     />
+  );
+}
+
+export default function GiftLogPage() {
+  return (
+    <Suspense>
+      <GiftLogPageContent />
+    </Suspense>
   );
 }

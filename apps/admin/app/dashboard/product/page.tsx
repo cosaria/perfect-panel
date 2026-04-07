@@ -1,5 +1,5 @@
 import SubscribeTable from "./subscribe-table";
 
-export default async function Page() {
+export default function Page() {
   return <SubscribeTable />;
 }

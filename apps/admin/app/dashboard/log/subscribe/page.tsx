@@ -8,6 +8,7 @@ import {
 } from "@workspace/ui/components/tooltip";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
 import { IpLink } from "@/components/ip-link";
 import { ProTable } from "@/components/pro-table";
@@ -15,7 +16,7 @@ import { filterSubscribeLog } from "@/services/admin-api/sdk.gen";
 import type { SubscribeLog } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
 
-export default function SubscribeLogPage() {
+function SubscribeLogPageContent() {
   const t = useTranslations("log");
   const sp = useSearchParams();
 
@@ -96,5 +97,13 @@ export default function SubscribeLogPage() {
         return { list, total };
       }}
     />
+  );
+}
+
+export default function SubscribeLogPage() {
+  return (
+    <Suspense>
+      <SubscribeLogPageContent />
+    </Suspense>
   );
 }
