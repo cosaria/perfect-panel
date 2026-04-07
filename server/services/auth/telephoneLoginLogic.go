@@ -16,7 +16,6 @@ import (
 	"github.com/perfect-panel/server/modules/notify/phone"
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/modules/util/uuidx"
-	"github.com/perfect-panel/server/services/common"
 	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/types"
 	"github.com/pkg/errors"
@@ -112,7 +111,7 @@ func (l *TelephoneLoginLogic) TelephoneLogin(req *types.TelephoneLoginRequest, r
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.VerifyCodeError), "code error")
 		}
 
-		var payload common.CacheKeyPayload
+		var payload CacheKeyPayload
 		if err := json.Unmarshal([]byte(value), &payload); err != nil {
 			l.Errorw("[SendSmsCode]: Unmarshal Error", logger.Field("error", err.Error()), logger.Field("value", value))
 		}

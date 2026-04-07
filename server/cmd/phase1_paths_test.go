@@ -8,6 +8,14 @@ import (
 	serverconfig "github.com/perfect-panel/server/config"
 	servermigrate "github.com/perfect-panel/server/models/migrate"
 	servernode "github.com/perfect-panel/server/models/node"
+	adminads "github.com/perfect-panel/server/services/admin/ads"
+	serverauth "github.com/perfect-panel/server/services/auth"
+	servercommon "github.com/perfect-panel/server/services/common"
+	servernodehandlers "github.com/perfect-panel/server/services/node"
+	servernotify "github.com/perfect-panel/server/services/notify"
+	serversubscribe "github.com/perfect-panel/server/services/subscribe"
+	servertelegram "github.com/perfect-panel/server/services/telegram"
+	serveruserorder "github.com/perfect-panel/server/services/user/order"
 	serverauthmethod "github.com/perfect-panel/server/modules/auth/authmethod"
 	serverjwt "github.com/perfect-panel/server/modules/auth/jwt"
 	servercache "github.com/perfect-panel/server/modules/cache"
@@ -55,6 +63,14 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	multiplierManager := servernode.NewNodeMultiplierManager(multiplierPeriods)
 	successPayload := serverresponse.Success(map[string]string{"phase": "2"})
 	versionNumber := servertool.ExtractVersionNumber(serverconfig.Version)
+	createAdsHandler := adminads.CreateAdsHandler(nil)
+	checkUserHandler := serverauth.CheckUserHandler(nil)
+	getAdsHandler := servercommon.GetAdsHandler(nil)
+	closeOrderHandler := serveruserorder.CloseOrderHandler(nil)
+	serverConfigHandler := servernodehandlers.GetServerConfigHandler(nil)
+	paymentNotifyHandler := servernotify.PaymentNotifyHandler(nil)
+	subscribeHandler := serversubscribe.SubscribeHandler(nil)
+	telegramHandler := servertelegram.TelegramHandler(nil)
 	errCode := serverxerr.NewErrMsg("boom")
 	wrappedErr := servererrorx.Wrap(errors.New("inner"), "outer")
 	logField := serverlogger.Field("phase", 2)
@@ -150,6 +166,14 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 
 	if versionNumber < 0 {
 		t.Fatal("expected modules/util/tool package to expose legacy utility helpers during phase 2")
+	}
+
+	if createAdsHandler == nil || checkUserHandler == nil || getAdsHandler == nil || closeOrderHandler == nil {
+		t.Fatal("expected service packages to expose huma handler shims for phase 3 migration")
+	}
+
+	if serverConfigHandler == nil || paymentNotifyHandler == nil || subscribeHandler == nil || telegramHandler == nil {
+		t.Fatal("expected non-huma entrypoints to be exposed from services packages during phase 3 migration")
 	}
 
 	if errCode.GetErrMsg() != "boom" || wrappedErr == nil {

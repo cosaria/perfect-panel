@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/routers/middleware"
-	"github.com/perfect-panel/server/routers/notify"
+	"github.com/perfect-panel/server/services/notify"
 	"github.com/perfect-panel/server/svc"
 )
 
