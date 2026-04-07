@@ -2295,8 +2295,6 @@ func registerHandlers(router *gin.Engine, serverCtx *svc.ServiceContext, specOnl
 		v1_serverGroup.POST("/status", server.ServerPushStatusHandler(serverCtx))
 		v1_serverGroup.GET("/user", server.GetServerUserListHandler(serverCtx))
 
-		v2_serverGroup := router.Group("/api/v2/server")
-		v2_serverGroup.GET("/:server_id", server.QueryServerProtocolConfigHandler(serverCtx))
 	}
 
 	apis.userAPIs = []huma.API{

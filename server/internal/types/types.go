@@ -1661,21 +1661,6 @@ type QueryQuotaTaskStatusResponse struct {
 	Errors  string `json:"errors"`
 }
 
-type QueryServerConfigRequest struct {
-	ServerID  int64    `path:"server_id"`
-	SecretKey string   `json:"secret_key" form:"secret_key"`
-	Protocols []string `json:"protocols,omitempty" form:"protocols,omitempty"`
-}
-
-type QueryServerConfigResponse struct {
-	TrafficReportThreshold int64          `json:"traffic_report_threshold"`
-	IPStrategy             string         `json:"ip_strategy"`
-	DNS                    []NodeDNS      `json:"dns"`
-	Block                  []string       `json:"block"`
-	Outbound               []NodeOutbound `json:"outbound"`
-	Protocols              []Protocol     `json:"protocols"`
-	Total                  int64          `json:"total"`
-}
 
 type QuerySubscribeGroupListResponse struct {
 	List  []SubscribeGroup `json:"list"`
