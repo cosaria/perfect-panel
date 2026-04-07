@@ -1,0 +1,62 @@
+package coupon
+
+import (
+	"context"
+	"github.com/perfect-panel/server/models/coupon"
+	"github.com/perfect-panel/server/modules/crypto/snowflake"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/random"
+	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/svc"
+	"github.com/perfect-panel/server/types"
+	"github.com/pkg/errors"
+	"math/rand"
+	"time"
+)
+
+type CreateCouponInput struct {
+	Body types.CreateCouponRequest
+}
+
+func CreateCouponHandler(svcCtx *svc.ServiceContext) func(context.Context, *CreateCouponInput) (*struct{}, error) {
+	return func(ctx context.Context, input *CreateCouponInput) (*struct{}, error) {
+		l := NewCreateCouponLogic(ctx, svcCtx)
+		if err := l.CreateCoupon(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+}
+
+type CreateCouponLogic struct {
+	logger.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+}
+
+// Create coupon
+func NewCreateCouponLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateCouponLogic {
+	return &CreateCouponLogic{
+		Logger: logger.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+	}
+}
+
+func (l *CreateCouponLogic) CreateCoupon(req *types.CreateCouponRequest) error {
+	if req.Code == "" {
+		rand.NewSource(time.Now().UnixNano())
+		sid := snowflake.GetID()
+		req.Code = random.KeyNew(4, 2) + "-" + random.StrToDashedString(random.EncodeBase36(sid))
+	}
+	couponInfo := &coupon.Coupon{}
+	tool.DeepCopy(couponInfo, req)
+	couponInfo.Subscribe = tool.Int64SliceToString(req.Subscribe)
+	err := l.svcCtx.CouponModel.Insert(l.ctx, couponInfo)
+	if err != nil {
+		l.Errorw("[CreateCoupon] Database Error", logger.Field("error", err.Error()))
+		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "create coupon error: %v", err.Error())
+	}
+	return nil
+}

@@ -19,9 +19,8 @@ import (
 	"github.com/perfect-panel/server/modules/infra/orm"
 	"github.com/perfect-panel/server/modules/infra/service"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/queue"
-	"github.com/perfect-panel/server/scheduler"
 	"github.com/perfect-panel/server/svc"
+	"github.com/perfect-panel/server/worker"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -90,8 +89,8 @@ func getServers() *service.Group {
 	ctx := svc.NewServiceContext(c)
 	services := service.NewServiceGroup()
 	services.Add(NewService(ctx))
-	services.Add(queue.NewService(ctx))
-	services.Add(scheduler.NewService(ctx))
+	services.Add(worker.NewConsumerService(ctx))
+	services.Add(worker.NewSchedulerService(ctx))
 	return services
 }
 

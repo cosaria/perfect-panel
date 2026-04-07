@@ -1,0 +1,52 @@
+package user
+
+import (
+	"context"
+	"github.com/perfect-panel/server/config"
+	"github.com/perfect-panel/server/models/user"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/svc"
+	"github.com/perfect-panel/server/types"
+	"github.com/pkg/errors"
+)
+
+type UpdateUserPasswordInput struct {
+	Body types.UpdateUserPasswordRequest
+}
+
+func UpdateUserPasswordHandler(svcCtx *svc.ServiceContext) func(context.Context, *UpdateUserPasswordInput) (*struct{}, error) {
+	return func(ctx context.Context, input *UpdateUserPasswordInput) (*struct{}, error) {
+		l := NewUpdateUserPasswordLogic(ctx, svcCtx)
+		if err := l.UpdateUserPassword(&input.Body); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+}
+
+type UpdateUserPasswordLogic struct {
+	logger.Logger
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+}
+
+// Update User Password
+func NewUpdateUserPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateUserPasswordLogic {
+	return &UpdateUserPasswordLogic{
+		Logger: logger.WithContext(ctx),
+		ctx:    ctx,
+		svcCtx: svcCtx,
+	}
+}
+
+func (l *UpdateUserPasswordLogic) UpdateUserPassword(req *types.UpdateUserPasswordRequest) error {
+	userInfo := l.ctx.Value(config.CtxKeyUser).(*user.User)
+	//update the password
+	userInfo.Password = tool.EncodePassWord(req.Password)
+	if err := l.svcCtx.UserModel.Update(l.ctx, userInfo); err != nil {
+		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "Update user password error")
+	}
+	return nil
+}

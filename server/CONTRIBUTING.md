@@ -53,6 +53,11 @@ When reading older issues, docs, or commit history, use this mapping:
 | `internal/report` | `services/report` |
 | `internal/trace` | `modules/infra/trace` |
 | `initialize/migrate` | `models/migrate` |
+| `queue` | `worker` |
+| `scheduler` | `worker` |
+| `queue/types` | `worker/types` |
+| `pkg/result` | `routers/response` |
+| `pkg/xerr` | `modules/infra/xerr` |
 
 ---
 

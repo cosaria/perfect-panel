@@ -8,14 +8,6 @@ import (
 	serverconfig "github.com/perfect-panel/server/config"
 	servermigrate "github.com/perfect-panel/server/models/migrate"
 	servernode "github.com/perfect-panel/server/models/node"
-	adminads "github.com/perfect-panel/server/services/admin/ads"
-	serverauth "github.com/perfect-panel/server/services/auth"
-	servercommon "github.com/perfect-panel/server/services/common"
-	servernodehandlers "github.com/perfect-panel/server/services/node"
-	servernotify "github.com/perfect-panel/server/services/notify"
-	serversubscribe "github.com/perfect-panel/server/services/subscribe"
-	servertelegram "github.com/perfect-panel/server/services/telegram"
-	serveruserorder "github.com/perfect-panel/server/services/user/order"
 	serverauthmethod "github.com/perfect-panel/server/modules/auth/authmethod"
 	serverjwt "github.com/perfect-panel/server/modules/auth/jwt"
 	servercache "github.com/perfect-panel/server/modules/cache"
@@ -38,8 +30,17 @@ import (
 	servertool "github.com/perfect-panel/server/modules/util/tool"
 	serverturnstile "github.com/perfect-panel/server/modules/verify/turnstile"
 	serverresponse "github.com/perfect-panel/server/routers/response"
+	adminads "github.com/perfect-panel/server/services/admin/ads"
+	serverauth "github.com/perfect-panel/server/services/auth"
+	servercommon "github.com/perfect-panel/server/services/common"
+	servernodehandlers "github.com/perfect-panel/server/services/node"
+	servernotify "github.com/perfect-panel/server/services/notify"
+	serversubscribe "github.com/perfect-panel/server/services/subscribe"
+	servertelegram "github.com/perfect-panel/server/services/telegram"
+	serveruserorder "github.com/perfect-panel/server/services/user/order"
 	serversvc "github.com/perfect-panel/server/svc"
 	servertypes "github.com/perfect-panel/server/types"
+	serverworker "github.com/perfect-panel/server/worker"
 )
 
 func TestPhase1TopLevelPathsExist(t *testing.T) {
@@ -71,6 +72,8 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	paymentNotifyHandler := servernotify.PaymentNotifyHandler(nil)
 	subscribeHandler := serversubscribe.SubscribeHandler(nil)
 	telegramHandler := servertelegram.TelegramHandler(nil)
+	consumerServiceCtor := serverworker.NewConsumerService
+	schedulerServiceCtor := serverworker.NewSchedulerService
 	errCode := serverxerr.NewErrMsg("boom")
 	wrappedErr := servererrorx.Wrap(errors.New("inner"), "outer")
 	logField := serverlogger.Field("phase", 2)
@@ -174,6 +177,14 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 
 	if serverConfigHandler == nil || paymentNotifyHandler == nil || subscribeHandler == nil || telegramHandler == nil {
 		t.Fatal("expected non-huma entrypoints to be exposed from services packages during phase 3 migration")
+	}
+
+	if consumerServiceCtor == nil || schedulerServiceCtor == nil {
+		t.Fatal("expected worker package to expose consumer and scheduler services during phase 4 migration")
+	}
+
+	if serverworker.SchedulerResetTraffic == "" || serverworker.ForthwithSendEmail == "" || serverworker.ForthwithActivateOrder == "" {
+		t.Fatal("expected worker package to expose async task identifiers during phase 4 migration")
 	}
 
 	if errCode.GetErrMsg() != "boom" || wrappedErr == nil {

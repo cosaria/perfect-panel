@@ -481,8 +481,8 @@ pkg/ 依赖链分析发现：`threading → rescue → logger → color/lang/tim
 9. 确保 `go test ./... -count=1` 全部通过，覆盖率不低于 Phase 0 基线
 10. 对 `syncx/rules/report/` 三个待定包暂时平移（syncx → modules/cache/syncx, rules → modules/util/rules, report → services/report/），后续 Phase 再决策
 11. **文档同步**（DX 审查 CRITICAL 发现）：
-    - 更新 CLAUDE.md 的 Architecture 章节（所有旧路径引用）
-    - 更新 CLAUDE.md 的 Commands 章节（如有路径变化）
+    - 更新 AGENTS.md 的 Architecture 章节（所有旧路径引用）
+    - 更新 AGENTS.md 的 Commands 章节（如有路径变化）
     - 在 CONTRIBUTING.md 中添加旧→新目录映射表（便于搜索历史 Issue）
 - Effort: ~4-5h | Risk: Med（svc 变更影响 525 个文件） | 独立 PR
 
@@ -600,13 +600,13 @@ pkg/ 依赖链分析发现：`threading → rescue → logger → color/lang/tim
 | 审查员 | 视角 | 评分 | 核心发现 |
 |--------|------|------|----------|
 | 安全审查 | 中间件/配置/类型安全 | 5.5/10 | 密钥 query string 传输、FLUSHALL、调试 println 需迁移前修复 |
-| DX 审查 | 开发者体验/工具链 | 7/10 | CLAUDE.md 同步是 CRITICAL 遗漏；Dockerfile ldflags 硬编码 |
+| DX 审查 | 开发者体验/工具链 | 7/10 | AGENTS.md 同步是 CRITICAL 遗漏；Dockerfile ldflags 硬编码 |
 | 迁移风险 | import 范围/回滚/时间 | 6.5/10 | 时间估算偏低（9h→13-17h）；svc 525 文件变更是最高风险操作 |
 
 **第二轮采纳项**：
 1. Phase 0 加入 3 个安全修复（密钥传输 / println / FLUSHALL）
 2. Phase 1 加入 Dockerfile + Makefile ldflags 路径更新
-3. Phase 1 完成后立即同步 CLAUDE.md（CRITICAL）
+3. Phase 1 完成后立即同步 AGENTS.md（CRITICAL）
 4. `routers/api/v1/server/` 改名 `node/`（消除与项目名歧义）
 5. Phase 3b 明确合并策略（解决 thin wrapper vs 工厂函数矛盾）
 6. 时间估算修正：Phase 1 从 2h→4-5h，Phase 3 从 3h→5-7h，总计 ~15h
@@ -851,7 +851,7 @@ go test ./... -count=1
 - [ ] `go test ./...` 通过，覆盖率 ≥ Phase 0 基线
 - [ ] Dockerfile（根 + server）ldflags 路径已更新
 - [ ] server/Makefile ldflags 路径已更新
-- [ ] CLAUDE.md Architecture 章节已更新
+- [ ] AGENTS.md Architecture 章节已更新
 - [ ] CONTRIBUTING.md 已添加目录映射表
 - [ ] `goimports -w ./...` 已执行
 - [ ] 无意外的 import 残留：`grep -r "internal/" --include="*.go" | grep -v "_test.go` 应为空
@@ -884,7 +884,7 @@ go test ./... -count=1
 | Phase | 回滚方法 | 具体步骤 | 预计时间 |
 |-------|---------|---------|---------|
 | Phase 0 | `git revert` | `git revert <phase0-commit>` | 1 min |
-| Phase 1 | `git revert` + 重建 CI | `git revert <phase1-commit>` → `go build ./...` → 更新 CLAUDE.md 回旧版 | 10 min |
+| Phase 1 | `git revert` + 重建 CI | `git revert <phase1-commit>` → `go build ./...` → 更新 AGENTS.md 回旧版 | 10 min |
 | Phase 2 | `git revert` | `git revert <phase2-commit>` → `go build ./...` | 5 min |
 | Phase 3a | `git revert` | `git revert <3a-commit>` → 恢复单体 routes.go | 2 min |
 | Phase 3b | **手动恢复** | 因为是多对一合并，`git revert` 无法自动拆分文件。步骤：(1) `git checkout <pre-3b> -- internal/handler/ internal/logic/` 恢复原文件 (2) 删除 services/ 中的合并文件 (3) 恢复 routes.go 中对 handler 的引用 | 30 min |
@@ -971,14 +971,14 @@ service → proc → threading → rescue → logger → {color, lang, timex, fs
 | R4 | handler+logic 合并产生 1500+ 行文件 | Med | Med | **MED** | 强制每文件 ≤ 800 行 |
 | R5 | Phase 3b 回滚困难（多对一合并） | High | Low | **MED** | 每子域独立 commit |
 | R6 | pkg 合并引入循环依赖 | High | Low | **MED** | threading/rescue 入 infra/；Phase 2 前跑 go vet |
-| R7 | CLAUDE.md 未同步导致 AI 建议错误 | Med | High | **MED** | Phase 1 checklist 强制更新 |
+| R7 | AGENTS.md 未同步导致 AI 建议错误 | Med | High | **MED** | Phase 1 checklist 强制更新 |
 | R8 | sed 替换影响注释/字符串中的路径 | Low | Med | **LOW** | goimports 修正 + go build 验证 |
 | R9 | IDE 索引重建期间开发受阻 | Low | High | **LOW** | 在低活跃时段合并 PR |
 | R10 | 并发分支合并冲突 | Med | Low | **LOW** | 重构期间暂停功能 PR 合并 |
 
-## Appendix H: CLAUDE.md 更新草稿（Architecture 章节）
+## Appendix H: AGENTS.md 更新草稿（Architecture 章节）
 
-以下为重构完成后 CLAUDE.md 的 Architecture 章节替换内容：
+以下为重构完成后 AGENTS.md 的 Architecture 章节替换内容：
 
 ```markdown
 ### Server — Go / Gin / huma v2

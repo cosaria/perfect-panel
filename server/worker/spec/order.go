@@ -1,0 +1,14 @@
+package spec
+
+const (
+	DeferCloseOrder        = "defer:order:close"
+	ForthwithActivateOrder = "forthwith:order:activate"
+)
+
+type DeferCloseOrderPayload struct {
+	OrderNo string `json:"order_no"`
+}
+
+type ForthwithActivateOrderPayload struct {
+	OrderNo string `json:"order_no"`
+}
