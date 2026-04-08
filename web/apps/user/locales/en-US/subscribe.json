@@ -43,6 +43,7 @@
   "productDescription": "Product Description",
   "products": "Products",
   "purchaseDuration": "Purchase Duration",
+  "subscriptionNotFound": "The requested subscription could not be found.",
   "recharge": "Recharge",
   "rechargeAmount": "Recharge Amount",
   "rechargeDescription": "One-click recharge, easy to handle",

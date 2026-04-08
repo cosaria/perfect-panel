@@ -5,9 +5,24 @@ import DashboardLayout from "@/app/(main)/(user)/layout";
 import MainLayout from "@/app/(main)/layout";
 import AppShell from "./app-shell";
 
+const AffiliatePage = lazy(() => import("@/app/(main)/(user)/affiliate/page"));
+const AnnouncementPage = lazy(() => import("@/app/(main)/(user)/announcement/page"));
+const DocumentPage = lazy(() => import("@/app/(main)/(user)/document/page"));
 const HomePage = lazy(() => import("@/app/(main)/page"));
+const OrderPage = lazy(() => import("@/app/(main)/(user)/order/page"));
+const PaymentPage = lazy(() => import("@/app/(main)/(user)/payment/page"));
+const ProfilePage = lazy(() => import("@/app/(main)/(user)/profile/page"));
+const SubscribePage = lazy(() => import("@/app/(main)/(user)/subscribe/page"));
+const TicketPage = lazy(() => import("@/app/(main)/(user)/ticket/page"));
+const WalletPage = lazy(() => import("@/app/(main)/(user)/wallet/page"));
+const PrivacyPolicyPage = lazy(() => import("@/app/(main)/privacy-policy/page"));
+const PurchasingOrderPage = lazy(() => import("@/app/(main)/purchasing/order/page"));
+const PurchasingPage = lazy(() => import("@/app/(main)/purchasing/page"));
+const TosPage = lazy(() => import("@/app/(main)/tos/page"));
 const AuthPage = lazy(() => import("@/app/auth/page"));
+const BindPage = lazy(() => import("@/app/bind/[platform]/page"));
 const DashboardPage = lazy(() => import("@/app/(main)/(user)/dashboard/page"));
+const OAuthPage = lazy(() => import("@/app/oauth/[platform]/page"));
 
 function MainShell() {
   return (
@@ -64,6 +79,14 @@ export const routes = [
         element: renderLazyPage(AuthPage),
       },
       {
+        path: "bind/:platform",
+        element: renderLazyPage(BindPage),
+      },
+      {
+        path: "oauth/:platform",
+        element: renderLazyPage(OAuthPage),
+      },
+      {
         element: <MainShell />,
         children: [
           {
@@ -71,12 +94,63 @@ export const routes = [
             element: renderLazyPage(HomePage),
           },
           {
-            path: "dashboard",
+            path: "privacy-policy",
+            element: renderLazyPage(PrivacyPolicyPage),
+          },
+          {
+            path: "tos",
+            element: renderLazyPage(TosPage),
+          },
+          {
+            path: "purchasing",
+            element: renderLazyPage(PurchasingPage),
+          },
+          {
+            path: "purchasing/order",
+            element: renderLazyPage(PurchasingOrderPage),
+          },
+          {
             element: <DashboardShell />,
             children: [
               {
-                index: true,
+                path: "dashboard",
                 element: renderLazyPage(DashboardPage),
+              },
+              {
+                path: "profile",
+                element: renderLazyPage(ProfilePage),
+              },
+              {
+                path: "subscribe",
+                element: renderLazyPage(SubscribePage),
+              },
+              {
+                path: "order",
+                element: renderLazyPage(OrderPage),
+              },
+              {
+                path: "payment",
+                element: renderLazyPage(PaymentPage),
+              },
+              {
+                path: "wallet",
+                element: renderLazyPage(WalletPage),
+              },
+              {
+                path: "affiliate",
+                element: renderLazyPage(AffiliatePage),
+              },
+              {
+                path: "document",
+                element: renderLazyPage(DocumentPage),
+              },
+              {
+                path: "announcement",
+                element: renderLazyPage(AnnouncementPage),
+              },
+              {
+                path: "ticket",
+                element: renderLazyPage(TicketPage),
               },
             ],
           },

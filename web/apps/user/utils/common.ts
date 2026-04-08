@@ -2,6 +2,7 @@ import { isBrowser } from "@workspace/ui/utils";
 import { UAParser } from "ua-parser-js";
 import Cookies from "universal-cookie";
 import { locales, NEXT_PUBLIC_DEFAULT_LANGUAGE } from "@/config/constants";
+import { dispatchUserLocaleChange } from "@/src/compat/next-intl";
 
 const cookies = new Cookies(null, {
   path: "/",
@@ -9,16 +10,23 @@ const cookies = new Cookies(null, {
 });
 
 export function getLocale() {
-  const browserLocale = navigator.language?.split(",")?.[0] || "";
+  const browserLocale =
+    typeof navigator !== "undefined" ? navigator.language?.split(",")?.[0] || "" : "";
   const defaultLocale = locales.includes(browserLocale) ? browserLocale : "";
   const cookies = new Cookies(null, { path: "/" });
   const cookieLocale = cookies.get("locale") || "";
-  const locale = cookieLocale || defaultLocale || NEXT_PUBLIC_DEFAULT_LANGUAGE;
+  const storedLocale =
+    typeof window !== "undefined" ? window.localStorage?.getItem("locale") || "" : "";
+  const locale = cookieLocale || storedLocale || defaultLocale || NEXT_PUBLIC_DEFAULT_LANGUAGE;
   return locale;
 }
 
 export function setLocale(value: string) {
-  return cookies.set("locale", value);
+  cookies.set("locale", value);
+  if (typeof window !== "undefined") {
+    window.localStorage?.setItem("locale", value);
+  }
+  dispatchUserLocaleChange(value);
 }
 
 export function setAuthorization(value: string) {

@@ -1,6 +1,11 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "baseUrl": ".",
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
     "paths": {
       "@/*": ["./*"],
       "@workspace/ui/*": ["../../packages/ui/src/*"],
@@ -9,22 +14,9 @@
       "next/link": ["./src/compat/next-link.tsx"],
       "next/navigation": ["./src/compat/next-navigation.ts"]
     },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    "plugins": []
   },
   "exclude": ["node_modules"],
-  "extends": "@workspace/typescript-config/nextjs.json",
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "next-env.d.ts",
-    "next.config.mjs",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "services/**/typings.d.ts"
-  ]
+  "extends": "@workspace/typescript-config/react-library.json",
+  "include": ["src/**/*.ts", "src/**/*.tsx", "**/*.ts", "**/*.tsx", "services/**/typings.d.ts"]
 }

@@ -2,16 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Empty } from "@/components/empty";
-import { NEXT_PUBLIC_HIDDEN_TUTORIAL_DOCUMENT } from "@/config/constants";
 import { queryDocumentList } from "@/services/user-api/sdk.gen";
-import { getTutorialList } from "@/utils/tutorial";
 import { DocumentButton } from "./document-button";
-import { TutorialButton } from "./tutorial-button";
 
 export default function Page() {
-  const locale = useLocale();
   const t = useTranslations("document");
 
   const { data } = useQuery({
@@ -29,19 +25,7 @@ export default function Page() {
   });
   const { tags, list: DocumentList } = data || { tags: [], list: [] };
 
-  const { data: TutorialList } = useQuery({
-    queryKey: ["getTutorialList", locale],
-    queryFn: async () => {
-      const list = await getTutorialList();
-      return list.get(locale);
-    },
-    enabled: NEXT_PUBLIC_HIDDEN_TUTORIAL_DOCUMENT !== "true",
-  });
-
-  if (
-    (!DocumentList || DocumentList.length === 0) &&
-    (!TutorialList || TutorialList.length === 0)
-  ) {
+  if (!DocumentList || DocumentList.length === 0) {
     return <Empty border />;
   }
 
@@ -66,33 +50,6 @@ export default function Page() {
               <TabsContent value={item} key={item}>
                 <DocumentButton
                   items={DocumentList.filter((docs) => (item ? docs.tags?.includes(item) : true))}
-                />
-              </TabsContent>
-            ))}
-          </Tabs>
-        </>
-      )}
-
-      {TutorialList && TutorialList?.length > 0 && (
-        <>
-          <h2 className="flex items-center gap-1.5 font-semibold">{t("tutorial")}</h2>
-          <Tabs defaultValue={TutorialList?.[0]?.title}>
-            <TabsList className="h-full flex-wrap">
-              {TutorialList?.map((tutorial) => (
-                <TabsTrigger key={tutorial.title} value={tutorial.title}>
-                  {tutorial.title}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {TutorialList?.map((tutorial) => (
-              <TabsContent key={tutorial.title} value={tutorial.title}>
-                <TutorialButton
-                  key={tutorial.path}
-                  items={
-                    tutorial.subItems && tutorial.subItems?.length > 0
-                      ? tutorial.subItems
-                      : [tutorial]
-                  }
                 />
               </TabsContent>
             ))}

@@ -2,13 +2,16 @@
 
 import { Toaster } from "@workspace/ui/components/sonner";
 import { getLangDir } from "@workspace/ui/hooks/use-lang-dir";
-import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import Providers from "@/components/providers";
 import { getClientLocale, getMessages } from "@/locales/client";
+import { NextIntlClientProvider, useLocale } from "./compat/next-intl";
+import RouterTopLoader from "./compat/router-top-loader";
 
-function DocumentLocaleSync({ locale }: { locale: string }) {
+function DocumentLocaleSync() {
+  const locale = useLocale();
+
   useEffect(() => {
     document.documentElement.lang = locale;
     document.documentElement.dir = getLangDir(locale);
@@ -23,7 +26,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <DocumentLocaleSync locale={locale} />
+      <DocumentLocaleSync />
+      <RouterTopLoader showSpinner={false} />
       <div className="size-full min-h-[calc(100dvh-env(safe-area-inset-top))] font-sans antialiased">
         <Providers>
           <Toaster richColors closeButton />

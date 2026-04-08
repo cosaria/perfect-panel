@@ -1,4 +1,4 @@
-# All-in-one build: admin Vite SPA + user Next static export embedded in Go binary
+# All-in-one build: admin Vite SPA + user Vite SPA embedded in Go binary
 # Usage: docker build -t ppanel .
 
 # Stage 1: Build both frontends
@@ -23,7 +23,7 @@ COPY server/go.mod server/go.sum ./
 RUN go mod download
 COPY server/ .
 COPY --from=web-builder /app/web/apps/admin/dist ./web/admin-dist
-COPY --from=web-builder /app/web/apps/user/out ./web/user-dist
+COPY --from=web-builder /app/web/apps/user/dist ./web/user-dist
 
 RUN BUILD_TIME=$(date -u +"%Y-%m-%d %H:%M:%S") && \
     go build -tags embed \
@@ -37,6 +37,7 @@ ENV TZ=Asia/Shanghai
 
 WORKDIR /app
 COPY --from=builder /app/ppanel /app/ppanel
+COPY --from=builder /build/cache ./cache
 
 EXPOSE 8080
 ENTRYPOINT ["/app/ppanel"]

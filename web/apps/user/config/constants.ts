@@ -69,7 +69,3 @@ export const NEXT_PUBLIC_HOME_LOCATION_COUNT = (() => {
   if (Number.isNaN(numberValue)) return 999;
   return numberValue;
 })();
-
-export const NEXT_PUBLIC_HIDDEN_TUTORIAL_DOCUMENT =
-  getEnv("NEXT_PUBLIC_HIDDEN_TUTORIAL_DOCUMENT") ??
-  process.env.NEXT_PUBLIC_HIDDEN_TUTORIAL_DOCUMENT;

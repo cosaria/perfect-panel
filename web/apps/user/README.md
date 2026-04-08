@@ -72,19 +72,23 @@ cd web/apps/user
 bun dev
 ```
 
-Open <http://localhost:3000> with your browser to see the result.
+Open <http://localhost:3001> with your browser to see the result.
 
 ## 🚀 Deploy on Vercel
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%user.ppanel.dev&demo-title=PPanel%20User%20Web&demo-url=https%3A%2F%2Fuser.ppanel.dev%2F&from=.&project-name=ppanel-user-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%user&skippable-integrations=1)
 
-The easiest way to deploy your Next.js app is to use the
-[Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-from the creators of Next.js.
+The user app now builds as a Vite SPA and is typically published through the repo root
+`make embed-user` / `Dockerfile` pipeline, which copies `apps/user/dist` into
+`server/web/user-dist` for Go embed hosting.
 
-Check out our
-[Next.js deployment documentation](https://nextjs.org/docs/deployment)
-for more details.
+If you need a standalone static preview locally, run:
+
+```bash
+cd web/apps/user
+bun run build
+bun run preview
+```
 
 ## 🤝 Contributing
 

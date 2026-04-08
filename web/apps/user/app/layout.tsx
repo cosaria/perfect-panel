@@ -1,9 +1,8 @@
 import "@workspace/ui/globals.css";
-import type { Metadata, Viewport } from "next/types";
 import type React from "react";
 import ClientRoot from "@/components/client-root";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: {
     default: "PPanel",
     template: "%s | PPanel",
@@ -19,7 +18,7 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
 };
 
-export const viewport: Viewport = {
+export const viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
     { media: "(prefers-color-scheme: dark)", color: "#000000" },

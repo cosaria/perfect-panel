@@ -478,6 +478,17 @@ curl -I http://localhost:8080/api/v1/common/site/config
 - `docker compose up -d --build ppanel` 可以消费新的 `user dist`
 - 迁移完成后，仓库不再有活跃的 Next app 构建入口
 
+### 当前执行状态（2026-04-08）
+
+- `Unit 1-6` 已完成
+- 已验证：
+  - `bun test tests/user-build-chain.test.ts tests/user-tutorial.test.ts tests/user-routes.test.ts tests/user-locale-runtime.test.ts`
+  - `cd web && bun run lint`
+  - `cd web && bun run typecheck`
+  - `make embed-user`
+  - 浏览器烟测已覆盖：首页登录态跳转、注册后进入 `/dashboard`、SPA 跳转到 `/document`、教程列表加载、`/bind/github` 路由、`/purchasing?id=1` 空态回退
+- `docker compose build ppanel` 已尝试，但当前机器在拉取 `golang:1.25-alpine` 时遇到 Docker Hub TLS handshake timeout；这是外部镜像拉取问题，不是当前代码路径上的已知构建错误
+
 ## Deferred Follow-up
 
 本计划完成后，再决定是否需要单独建立：
@@ -488,12 +499,12 @@ curl -I http://localhost:8080/api/v1/common/site/config
 
 ## 建议执行顺序
 
-- [ ] Unit 1. 做 `user` 端兼容性 spike，验证 Vite 能托起首页、认证页和 dashboard 壳
-- [ ] Unit 2. 建立完整的 `user` 路由树
-- [ ] Unit 3. 替换 i18n 与顶部进度条壳
-- [ ] Unit 4. 收口首页登录跳转、购买、OAuth / bind 和文档教程
-- [ ] Unit 5. 改写 `user` 构建与 embed 发布链
-- [ ] Unit 6. 清理遗留 Next tooling，并完成仓库级收尾
+- [x] Unit 1. 做 `user` 端兼容性 spike，验证 Vite 能托起首页、认证页和 dashboard 壳
+- [x] Unit 2. 建立完整的 `user` 路由树
+- [x] Unit 3. 替换 i18n 与顶部进度条壳
+- [x] Unit 4. 收口首页登录跳转、购买、OAuth / bind 和文档教程
+- [x] Unit 5. 改写 `user` 构建与 embed 发布链
+- [x] Unit 6. 清理遗留 Next tooling，并完成仓库级收尾
 
 ## 建议
 

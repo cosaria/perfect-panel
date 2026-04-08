@@ -81,7 +81,7 @@ embed-admin:
 embed-user:
 	cd web && bun run build --filter=ppanel-user-web
 	rm -rf server/web/user-dist/*
-	cp -r web/apps/user/out/* server/web/user-dist/
+	cp -r web/apps/user/dist/* server/web/user-dist/
 
 embed: embed-admin embed-user
 

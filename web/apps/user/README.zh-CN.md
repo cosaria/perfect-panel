@@ -72,19 +72,23 @@ cd web/apps/user
 bun dev
 ```
 
-在浏览器中打开 <http://localhost:3000> 查看结果。
+在浏览器中打开 <http://localhost:3001> 查看结果。
 
 ## 🚀 在 Vercel 上部署
 
 [![使用 Vercel 部署](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%2Fuser.ppanel.dev&demo-title=PPanel%20User%20Web&demo-url=https%3A%2F%2Fuser.ppanel.dev%2F&from=.&project-name=ppanel-user-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%2Fuser&skippable-integrations=1)
 
-部署 Next.js 应用的最简单方式是使用
-[ Vercel 平台](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-由 Next.js 的创建者提供支持。
+用户端现在以 Vite 单页应用（SPA）构建，官方发布方式通常是走仓库根目录的
+`make embed-user` / `Dockerfile` 链路，把 `apps/user/dist` 复制到
+`server/web/user-dist`，再由 Go embed 托管。
 
-查看我们的
-[Next.js 部署文档](https://nextjs.org/docs/deployment)
-获取更多详情。
+如果你只想本地预览静态产物，可以运行：
+
+```bash
+cd web/apps/user
+bun run build
+bun run preview
+```
 
 ## 🤝 贡献
 

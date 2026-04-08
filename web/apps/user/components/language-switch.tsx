@@ -9,7 +9,6 @@ import {
 } from "@workspace/ui/components/select";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { getCountry } from "@workspace/ui/utils";
-import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { locales } from "@/config/constants";
 import { setLocale } from "@/utils/common";
@@ -22,15 +21,13 @@ const languages = {
 export default function LanguageSwitch() {
   const locale = useLocale();
   const country = getCountry(locale);
-  const router = useRouter();
 
   const handleLanguageChange = (value: string) => {
     setLocale(value);
-    router.refresh();
   };
 
   return (
-    <Select defaultValue={locale} onValueChange={handleLanguageChange}>
+    <Select value={locale} onValueChange={handleLanguageChange}>
       <SelectTrigger className="hover:bg-accent hover:text-accent-foreground w-auto border-none bg-transparent p-2 shadow-none focus:ring-0 [&>svg]:hidden">
         <SelectValue>
           <div className="flex items-center">

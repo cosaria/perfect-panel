@@ -43,6 +43,7 @@
   "productDescription": "商品描述",
   "products": "商品",
   "purchaseDuration": "购买时长",
+  "subscriptionNotFound": "未找到对应的订阅商品。",
   "recharge": "充值",
   "rechargeAmount": "充值金额",
   "rechargeDescription": "一键充值，轻松处理",

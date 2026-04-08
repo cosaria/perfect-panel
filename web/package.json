@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "clean": "rm -rf apps/admin/dist apps/admin/.turbo apps/user/.next apps/user/out apps/user/.turbo .turbo",
+    "clean": "rm -rf apps/admin/dist apps/admin/.turbo apps/user/dist apps/user/.next apps/user/out apps/user/.turbo .turbo",
     "dev:admin": "turbo run dev --filter=ppanel-admin-web",
     "dev:user": "turbo run dev --filter=ppanel-user-web",
     "format": "biome format --write .",
