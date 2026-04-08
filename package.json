@@ -19,6 +19,7 @@
     "format": "cd web && bun run format",
     "lint": "cd web && bun run lint",
     "locale": "cd web && bun run locale",
+    "repo:contracts": "make typecheck && make test && bun run openapi:lint",
     "openapi:spec": "cd server && go run . openapi -o ../docs/openapi",
     "openapi:client": "cd web && bun run openapi:client",
     "openapi:lint": "cd web && bunx redocly lint --config ../redocly.yaml ../docs/openapi/*.json",

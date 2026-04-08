@@ -1,7 +1,7 @@
 ---
 title: "refactor: Web 工作区边界回收与根级编排收束"
 type: refactor
-status: in_progress
+status: completed
 date: 2026-04-08
 origin: external design doc "admin-feat-monorepo-baseline-design-20260408-073109.md"
 ---
@@ -546,3 +546,13 @@ Conflict flags:
 
 **UNRESOLVED:** 0
 **VERDICT:** CEO + ENG CLEARED — implementation started, core verification mostly green
+
+## Closeout Note
+
+收口映射如下：
+
+- `README.md` / `AGENTS.md` 固定 support matrix 与版本真相
+- `.github/workflows/monorepo-boundary-guardrail.yml` 固定 boundary guardrail
+- `.github/workflows/repo-contracts.yml` 固定 `bun run repo:contracts`（根命令合同 + OpenAPI lint）与 `docker build -f Dockerfile .`（canonical image smoke）这两道独立 gate
+
+compatibility lane 和少量 deferred 项目前仍保留人工审计尾巴，不把它们伪装成 100% 自动化闭环。

@@ -1,4 +1,6 @@
 name: Build & Push Docker Images
+# 本 workflow 只构建 `server`、`admin-web`、`user-web` 这些 compatibility image lanes。
+# 仓库的 canonical 打包与部署入口仍是根目录的 all-in-one `Dockerfile`、`docker-compose.yml`、`make embed` 和 `make build-all`。
 
 on:
   push:

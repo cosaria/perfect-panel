@@ -81,4 +81,4 @@ server-clean:
 	touch server/web/admin-dist/.gitkeep server/web/user-dist/.gitkeep
 
 web-clean:
-	rm -rf .turbo web/apps/*/.next web/apps/*/.turbo web/.turbo
+	rm -rf web/apps/*/.next web/apps/*/.turbo web/.turbo

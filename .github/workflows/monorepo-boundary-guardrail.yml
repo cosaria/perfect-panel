@@ -1,0 +1,19 @@
+name: Monorepo Boundary Guardrail
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  check-boundary:
+    name: Check Monorepo Boundary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run boundary check
+        run: bash .github/scripts/check-monorepo-boundary.sh

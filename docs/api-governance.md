@@ -1,6 +1,7 @@
 # OpenAPI Governance
 
 This document defines the contract-governance policy for the documented server APIs exported from [`server/cmd/openapi.go`](/Users/admin/Codes/ProxyCode/perfect-panel/server/cmd/openapi.go).
+本文件仅定义 OpenAPI 契约治理范围，不覆盖其他文档或交付流程。
 
 ## Governed Surfaces
 

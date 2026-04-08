@@ -2,15 +2,17 @@
 
 <div align="center">
 
-[![License](https://img.shields.io/github/license/perfect-panel/server)](LICENSE)
-[![Go Version](https://img.shields.io/badge/Go-1.21%2B-blue)](https://go.dev/)
+[![License](https://img.shields.io/github/license/cosaria/perfect-panel)](LICENSE)
+[![Go Version](https://img.shields.io/badge/Go-1.25%2B-blue)](https://go.dev/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/perfect-panel/server)](https://goreportcard.com/report/github.com/perfect-panel/server)
-[![Docker](https://img.shields.io/badge/Docker-Available-blue)](Dockerfile)
-[![CI/CD](https://img.shields.io/github/actions/workflow/status/perfect-panel/server/release.yml)](.github/workflows/release.yml)
+[![Docker](https://img.shields.io/badge/Docker-Available-blue)](../Dockerfile)
+[![CI/CD](https://img.shields.io/github/actions/workflow/status/cosaria/perfect-panel/docker-build.yml)](../.github/workflows/docker-build.yml)
 
 **PPanel is a pure, professional, and perfect open-source proxy panel tool, designed for learning and practical use.**
 
-[English](README.md) | [中文](readme_zh.md) | [Report Bug](https://github.com/perfect-panel/server/issues/new) | [Request Feature](https://github.com/perfect-panel/server/issues/new)
+[English](README.md) | [中文](readme_zh.md) | [Report Bug](https://github.com/cosaria/perfect-panel/issues/new) | [Request Feature](https://github.com/cosaria/perfect-panel/issues/new)
+
+中文文档待同步，以本文件和根 `README.md` 为准。
 
 </div>
 
@@ -45,11 +47,15 @@ proxy services. Built with Go, it emphasizes performance, security, and scalabil
 - **Node Management**: Monitor and control server nodes.
 - **API Framework**: Comprehensive RESTful APIs for frontend integration.
 
+### 发布边界说明
+
+`server/` 是独立的 Go 工程，可以单独开发和构建；但在这个仓库里，默认官方发布路径由根目录编排，优先使用根 `Dockerfile`、`docker-compose.yml`、`make embed` 和 `make build-all`。`server/` 自身的 Docker 发布链保留为 compatibility path，不是新贡献者的默认入口。
+
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- **Go**: 1.21 or higher
+- **Go**: 1.25+
 - **Docker**: Optional, for containerized deployment
 - **Git**: For cloning the repository
 
@@ -57,66 +63,37 @@ proxy services. Built with Go, it emphasizes performance, security, and scalabil
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/perfect-panel/ppanel-server.git
-   cd ppanel-server
+   git clone https://github.com/cosaria/perfect-panel.git
+   cd perfect-panel/server
    ```
 
-2. **Install dependencies**:
+2. **准备配置**：
+   先准备好 MySQL 和 Redis，并复制配置模板：
+   ```bash
+   cp etc/ppanel.yaml.example etc/ppanel.yaml
+   ```
+
+   首次启动前请补全 `etc/ppanel.yaml` 中的数据库和缓存连接信息；如果环境变量已准备好，也可以通过 `PPANEL_DB` 和 `PPANEL_REDIS` 引导生成初始配置。
+
+3. **Install dependencies**:
    ```bash
    go mod download
    ```
 
-3. **Generate code**:
+4. **Build the server**:
    ```bash
-   chmod +x script/generate.sh
-   ./script/generate.sh
-   ```
-
-4. **Build the project**:
-   ```bash
-   make linux-amd64
+   go build -o bin/ppanel .
    ```
 
 5. **Run the server**:
    ```bash
-   ./ppanel-server-linux-amd64 run --config etc/ppanel.yaml
+   go run . run --config etc/ppanel.yaml
    ```
 
 ### 🐳 Docker Deployment
 
-1. **Build the Docker image**:
-   ```bash
-   docker buildx build --platform linux/amd64 -t ppanel-server:latest .
-   ```
-
-2. **Run the container**:
-   ```bash
-   docker run --rm -p 8080:8080 -v $(pwd)/etc:/app/etc ppanel-server:latest
-   ```
-
-3. **Use Docker Compose** (create `docker-compose.yml`):
-   ```yaml
-   version: '3.8'
-   services:
-     ppanel-server:
-       image: ppanel-server:latest
-       ports:
-         - "8080:8080"
-       volumes:
-         - ./etc:/app/etc
-       environment:
-         - TZ=Asia/Shanghai
-   ```
-   Run:
-   ```bash
-   docker-compose up -d
-   ```
-
-4. **Pull from Docker Hub** (after CI/CD publishes):
-   ```bash
-   docker pull ppanel/ppanel-server:latest
-   docker run --rm -p 8080:8080 ppanel/ppanel-server:latest
-   ```
+仓库默认部署入口在根目录的 `Dockerfile` 和 `docker-compose.yml`，配套构建路径是根 `make embed` / `make build-all`。
+如果需要兼容现有镜像链，可以继续使用 `server/Dockerfile`，但它只属于 compatibility path，不是新贡献者的默认入口。
 
 ## 📖 API Documentation
 
@@ -126,13 +103,13 @@ Explore the full API documentation:
 
 The documentation covers all endpoints, request/response formats, and authentication details.
 
-## 🔗 Related Projects
+## 🔗 相关模块
 
-| Project          | Description                | Link                                                  |
-|------------------|----------------------------|-------------------------------------------------------|
-| PPanel Web       | Frontend for PPanel        | [GitHub](https://github.com/perfect-panel/ppanel-web) |
-| PPanel User Web  | User interface for PPanel  | [Preview](https://user.ppanel.dev)                    |
-| PPanel Admin Web | Admin interface for PPanel | [Preview](https://admin.ppanel.dev)                   |
+| 模块 | 说明 | 链接 |
+|---|---|---|
+| Admin Web | 管理后台前端 | [目录](../web/apps/admin/) |
+| User Web | 用户面板前端 | [目录](../web/apps/user/) |
+| Shared UI | 共享组件库 | [目录](../web/packages/ui/) |
 
 ## 🌐 Official Website
 
@@ -142,64 +119,61 @@ Visit [ppanel.dev](https://ppanel.dev/) for more details.
 
 ![Architecture Diagram](./doc/image/architecture-en.png)
 
-## 📁 Directory Structure
+## 📁 核心目录
 
 ```
-.
-├── apis/             # API definition files
-├── cmd/              # Application entry point
-├── doc/              # Documentation
-├── etc/              # Configuration files (e.g., ppanel.yaml)
-├── generate/         # Code generation tools
-├── initialize/       # System initialization
-├── internal/         # Internal modules
-│   ├── config/       # Configuration parsing
-│   ├── handler/      # HTTP handlers
-│   ├── middleware/   # HTTP middleware
-│   ├── logic/        # Business logic
-│   ├── model/        # Data models
-│   ├── svc/          # Service layer
-│   └── types/        # Type definitions
-├── pkg/              # Utility code
-├── queue/            # Queue services
-├── scheduler/        # Scheduled tasks
-├── script/           # Build scripts
+server/
+├── cmd/              # CLI entry points, including run and openapi
+├── doc/              # Server docs and diagrams
+├── etc/              # 配置模板和运行时配置
+├── initialize/       # Bootstrap and setup flow
+├── models/           # GORM models, migrations, and data access
+├── modules/          # Shared infrastructure, auth, payment, and utility packages
+├── routers/          # HTTP routes and middleware wiring
+├── runtime/          # Runtime helpers and live-state support
+├── services/         # Business logic grouped by domain
+├── types/            # 请求与响应类型定义
+├── svc/              # Service context and dependency wiring
+├── worker/           # 异步任务与定时任务
+├── adapter/          # 订阅配置生成器
+├── web/              # Embedded frontend assets and static serving
+├── config/           # 配置与版本信息
+├── script/           # 辅助脚本
 ├── go.mod            # Go module definition
-├── Makefile          # Build automation
-└── Dockerfile        # Docker configuration
+├── go.sum            # Go dependency lockfile
+├── Makefile          # Server-local build helpers
+└── Dockerfile        # Compatibility Docker image
 ```
 
 ## 💻 Development
 
-### Format API Files
-```bash
-goctl api format --dir apis/user.api
-```
+### 当前工作流
 
-### Add a New API
-
-1. Create a new API file in `apis/`.
-2. Import it in `apis/ppanel.api`.
-3. Regenerate code:
+1. 运行测试：
    ```bash
-   ./script/generate.sh
+   go test ./...
    ```
 
-### Build for Multiple Platforms
+2. 导出 OpenAPI 契约：
+   ```bash
+   go run . openapi -o ../docs/openapi
+   ```
 
-Use the `Makefile` to build for various platforms (e.g., Linux, Windows, macOS):
+3. 格式化代码：
+   ```bash
+   go fmt ./...
+   goimports -w .
+   ```
 
-```bash
-make all  # Builds linux-amd64, darwin-amd64, windows-amd64
-make linux-arm64  # Build for specific platform
-```
+4. 本地启动：
+   ```bash
+   go run . run --config etc/ppanel.yaml
+   ```
 
-Supported platforms include:
-
-- Linux: `386`, `amd64`, `arm64`, `armv5-v7`, `mips`, `riscv64`, `loong64`, etc.
-- Windows: `386`, `amd64`, `arm64`, `armv7`
-- macOS: `amd64`, `arm64`
-- FreeBSD: `amd64`, `arm64`
+5. 生成本地可执行文件：
+   ```bash
+   go build -o bin/ppanel .
+   ```
 
 ## 🤝 Contributing
 

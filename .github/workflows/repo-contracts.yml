@@ -1,0 +1,36 @@
+name: Repo Contracts
+# 这条 workflow 负责 root command contract + canonical image smoke。
+# `openapi-governance.yml` 仍然是专门的 OpenAPI 治理 lane。
+# 这里保留 `repo:contracts` 中的 `openapi:lint`，是为了把根命令合同作为一个整体 gate，而不是替代 `openapi-governance`。
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  repo-contracts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.0
+
+      - name: Install web dependencies
+        run: cd web && bun install --frozen-lockfile
+
+      - name: Run repo contracts
+        run: bun run repo:contracts
+
+      - name: Build canonical image
+        run: docker build -f Dockerfile .
