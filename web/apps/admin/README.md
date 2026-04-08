@@ -40,7 +40,7 @@ English
 #### TOC
 
 - [⌨️ Local Development](#️-local-development)
-- [🚀 Deploy on Vercel](#-deploy-on-vercel)
+- [📦 Build and Embed](#-build-and-embed)
 - [🤝 Contributing](#-contributing)
 - [📝 License](#-license)
 
@@ -50,41 +50,43 @@ English
 
 ## ⌨️ Local Development
 
-You can use Github Codespaces for online development:
+This admin app now runs as a Vite-powered SPA inside the monorepo.
 
-[![][codespaces-shield]][codespaces-link]
-
-You can use Gitpod for online development:
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)][gitpod-link]
-
-or clone it for local development:
+Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/perfect-panel/ppanel-web.git
-cd ppanel-web
+git clone https://github.com/cosaria/perfect-panel.git
+cd perfect-panel
 
-# Install dependencies
-bun install
+# Install repo dependencies
+make bootstrap
 
-# Run the development server
+# Run the admin frontend only
 cd web/apps/admin
-bun dev
+bun run dev
 ```
 
 Open <http://localhost:3000> with your browser to see the result.
 
-## 🚀 Deploy on Vercel
+If you want the Go server and admin frontend together, use the repo root command:
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%2Fadmin.ppanel.dev&demo-title=PPanel%20Admin%20Web&demo-url=https%3A%2F%2Fadmin.ppanel.dev%2F&from=.&project-name=ppanel-admin-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%2Fadmin&skippable-integrations=1)
+```bash
+make dev APP=admin
+```
 
-The easiest way to deploy your Next.js app is to use the
-[Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-from the creators of Next.js.
+## 📦 Build and Embed
 
-Check out our
-[Next.js deployment documentation](https://nextjs.org/docs/deployment)
-for more details.
+The canonical release path embeds the admin static build into the Go server:
+
+```bash
+# Build admin to apps/admin/dist and copy it into server/web/admin-dist
+make embed-admin
+
+# Build the final Go binary with embedded frontends
+make build-all
+```
+
+For container builds, the repo root `Dockerfile` is the source of truth.
 
 ## 🤝 Contributing
 
@@ -112,8 +114,6 @@ This project is [GNU](../../LICENSE) licensed.
 <!-- LINK GROUP -->
 
 [back-to-top]: https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square
-[codespaces-link]: https://codespaces.new/perfect-panel/ppanel-web
-[codespaces-shield]: https://github.com/codespaces/badge.svg
 [contributors-contrib]: https://contrib.rocks/image?repo=perfect-panel/ppanel-web
 [contributors-url]: https://github.com/perfect-panel/ppanel-web/graphs/contributors
 [github-action-release-link]: https://github.com/perfect-panel/ppanel-web/actions/workflows/release.yml
@@ -134,7 +134,6 @@ This project is [GNU](../../LICENSE) licensed.
 [github-releasedate-shield]: https://img.shields.io/github/release-date/perfect-panel/ppanel-web?labelColor=black&style=flat-square
 [github-stars-link]: https://github.com/perfect-panel/ppanel-web/network/stargazers
 [github-stars-shield]: https://img.shields.io/github/stars/perfect-panel/ppanel-web?color=ffcb47&labelColor=black&style=flat-square
-[gitpod-link]: https://gitpod.io/#https://github.com/perfect-panel/ppanel-web
 [issues-link]: https://github.com/perfect-panel/ppanel-web/issues/new/choose
 [pr-welcome-link]: https://github.com/perfect-panel/ppanel-web/pulls
 [pr-welcome-shield]: https://img.shields.io/badge/🤯_pr_welcome-%E2%86%92-ffcb47?labelColor=black&style=for-the-badge

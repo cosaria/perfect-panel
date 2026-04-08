@@ -6,8 +6,8 @@ import {
   type MonacoEditorProps,
 } from "@workspace/ui/custom-components/editor/monaco-editor";
 import type * as monaco from "monaco-editor";
-import DraculaTheme from "monaco-themes/themes/Dracula.json" with { type: "json" };
 import { useCallback, useEffect, useRef } from "react";
+import DraculaTheme from "./dracula-theme.js";
 
 type SchemaType = "string" | "number" | "boolean" | "object" | "array" | "null";
 

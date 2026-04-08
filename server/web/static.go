@@ -77,7 +77,7 @@ func RegisterStaticRoutes(r *gin.Engine, adminPath string, adminEnvVars, userEnv
 		resolution := resolveEmbeddedRoute(filepath, adminSub)
 		switch resolution.kind {
 		case routeStaticAsset:
-			if strings.HasPrefix(resolution.filePath, "_next/static/") {
+			if shouldUseImmutableAssetCache(resolution.filePath) {
 				c.Header("Cache-Control", "public, max-age=31536000, immutable")
 			}
 			adminFileServer.ServeHTTP(c.Writer, c.Request)
@@ -130,7 +130,7 @@ func RegisterStaticRoutes(r *gin.Engine, adminPath string, adminEnvVars, userEnv
 			c.JSON(http.StatusNotFound, gin.H{"code": 404, "msg": "not found"})
 			return
 		case routeStaticAsset:
-			if strings.HasPrefix(resolution.filePath, "_next/static/") {
+			if shouldUseImmutableAssetCache(resolution.filePath) {
 				c.Header("Cache-Control", "public, max-age=31536000, immutable")
 			}
 			userFileServer.ServeHTTP(c.Writer, c.Request)
@@ -235,6 +235,38 @@ func rewriteAdminHTMLBasePath(raw []byte, adminPath string) []byte {
 	rewritten = bytes.ReplaceAll(rewritten, []byte(`src="/admin/`), []byte(`src="`+adminPath+`/`))
 	rewritten = bytes.ReplaceAll(rewritten, []byte(`src="/admin"`), []byte(`src="`+adminPath+`"`))
 	return rewritten
+}
+
+func shouldUseImmutableAssetCache(filePath string) bool {
+	if strings.HasPrefix(filePath, "_next/static/") || strings.HasPrefix(filePath, "assets/") {
+		return true
+	}
+
+	base := path.Base(filePath)
+	ext := path.Ext(base)
+	if ext == "" || ext == ".html" {
+		return false
+	}
+
+	name := strings.TrimSuffix(base, ext)
+	hashSep := strings.LastIndex(name, "-")
+	if hashSep == -1 || hashSep == len(name)-1 {
+		return false
+	}
+
+	hash := name[hashSep+1:]
+	if len(hash) < 8 {
+		return false
+	}
+
+	for _, ch := range hash {
+		if (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_' {
+			continue
+		}
+		return false
+	}
+
+	return true
 }
 
 func legacyAdminRedirectTarget(reqPath, adminPath string) (string, bool) {

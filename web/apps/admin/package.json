@@ -3,13 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build --webpack",
+    "build": "vite build",
     "check-types": "tsc --noEmit",
-    "dev": "next dev --turbopack",
+    "dev": "vite",
     "lint": "biome check .",
     "locale": "lobe-i18n --with-md",
     "openapi": "openapi-ts -f openapi-ts.config.ts && openapi-ts -f openapi-ts-common.config.ts && openapi-ts -f openapi-ts-user.config.ts",
-    "start": "next start"
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "start": "bun run preview"
   },
   "dependencies": {
     "@lottiefiles/dotlottie-react": "^0.15.1",
@@ -25,23 +26,25 @@
     "nanoid": "^5.1.5",
     "next": "16.2.2",
     "next-intl": "^4.8.4",
-
     "next-themes": "^0.4.6",
     "nextjs-toploader": "^3.8.16",
     "radash": "^12.1.1",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
+    "react-router-dom": "^7.14.0",
     "react-turnstile": "^1.1.4",
     "universal-cookie": "^8.0.1",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.3.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/rtl-detect": "^1.0.3",
     "@workspace/typescript-config": "workspace:*",
+    "vite": "^7.1.10",
     "typescript": "^5.9.2"
   },
   "i18n": {

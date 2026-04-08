@@ -7,16 +7,26 @@ const allMessages: Record<string, Record<string, unknown>> = {
   "zh-CN": zhMessages,
 };
 
+function isSupportedLocale(locale?: string | null): locale is string {
+  return Boolean(locale && locales.includes(locale));
+}
+
 export function getClientLocale(): string {
   if (typeof document !== "undefined") {
     const match = document.cookie.match(/(?:^|;\s*)locale=([^;]+)/);
-    if (match?.[1] && locales.includes(match[1])) {
+    if (isSupportedLocale(match?.[1])) {
       return match[1];
+    }
+  }
+  if (typeof window !== "undefined") {
+    const storedLocale = window.localStorage?.getItem("locale");
+    if (isSupportedLocale(storedLocale)) {
+      return storedLocale;
     }
   }
   if (typeof navigator !== "undefined") {
     const browserLang = navigator.language?.split(",")?.[0] || "";
-    if (locales.includes(browserLang)) {
+    if (isSupportedLocale(browserLang)) {
       return browserLang;
     }
   }

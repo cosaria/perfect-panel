@@ -2,6 +2,7 @@ import { isBrowser } from "@workspace/ui/utils";
 import { intlFormat } from "date-fns";
 import Cookies from "universal-cookie";
 import { locales, NEXT_PUBLIC_ADMIN_PATH, NEXT_PUBLIC_DEFAULT_LANGUAGE } from "@/config/constants";
+import { dispatchAdminLocaleChange } from "@/src/compat/next-intl";
 import { toAdminPath } from "./admin-path";
 
 const cookies = new Cookies(null, {
@@ -10,16 +11,23 @@ const cookies = new Cookies(null, {
 });
 
 export function getLocale() {
-  const browserLocale = navigator.language?.split(",")?.[0] || "";
+  const browserLocale =
+    typeof navigator !== "undefined" ? navigator.language?.split(",")?.[0] || "" : "";
   const defaultLocale = locales.includes(browserLocale) ? browserLocale : "";
   const cookies = new Cookies(null, { path: "/" });
   const cookieLocale = cookies.get("locale") || "";
-  const locale = cookieLocale || defaultLocale || NEXT_PUBLIC_DEFAULT_LANGUAGE;
+  const storedLocale =
+    typeof window !== "undefined" ? window.localStorage?.getItem("locale") || "" : "";
+  const locale = cookieLocale || storedLocale || defaultLocale || NEXT_PUBLIC_DEFAULT_LANGUAGE;
   return locale;
 }
 
 export function setLocale(value: string) {
-  return cookies.set("locale", value);
+  cookies.set("locale", value);
+  if (typeof window !== "undefined") {
+    window.localStorage?.setItem("locale", value);
+  }
+  dispatchAdminLocaleChange(value);
 }
 
 export function setAuthorization(value: string) {

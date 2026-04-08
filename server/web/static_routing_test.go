@@ -110,3 +110,23 @@ func TestRewriteAdminHTMLBasePathUsesRuntimeAdminPath(t *testing.T) {
 		t.Fatalf("expected rewritten _next asset path, got %q", string(got))
 	}
 }
+
+func TestShouldUseImmutableAssetCache(t *testing.T) {
+	testCases := []struct {
+		path string
+		want bool
+	}{
+		{path: "_next/static/chunks/app.js", want: true},
+		{path: "assets/index-BqUBe2a_.js", want: true},
+		{path: "assets/index-qFa1SYuY.css", want: true},
+		{path: "favicon-BqUBe2a_.ico", want: true},
+		{path: "images/logo.png", want: false},
+		{path: "dashboard/index.html", want: false},
+	}
+
+	for _, tc := range testCases {
+		if got := shouldUseImmutableAssetCache(tc.path); got != tc.want {
+			t.Fatalf("path %q: expected %v, got %v", tc.path, tc.want, got)
+		}
+	}
+}

@@ -5,8 +5,8 @@ import { Button } from "@workspace/ui/components/button";
 import { cn } from "@workspace/ui/lib/utils";
 import { useSize } from "ahooks";
 import { EyeIcon, EyeOff, FullscreenIcon, MinimizeIcon } from "lucide-react";
-import DraculaTheme from "monaco-themes/themes/Dracula.json" with { type: "json" };
 import { useEffect, useRef, useState } from "react";
+import DraculaTheme from "./dracula-theme.js";
 
 export interface MonacoEditorProps {
   value?: string;

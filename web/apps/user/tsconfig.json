@@ -3,7 +3,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@workspace/ui/*": ["../../packages/ui/src/*"]
+      "@workspace/ui/*": ["../../packages/ui/src/*"],
+      "next/image": ["./src/compat/next-image.tsx"],
+      "next/legacy/image": ["./src/compat/next-image.tsx"],
+      "next/link": ["./src/compat/next-link.tsx"],
+      "next/navigation": ["./src/compat/next-navigation.ts"]
     },
     "plugins": [
       {
@@ -14,6 +18,8 @@
   "exclude": ["node_modules"],
   "extends": "@workspace/typescript-config/nextjs.json",
   "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "next-env.d.ts",
     "next.config.mjs",
     "**/*.ts",

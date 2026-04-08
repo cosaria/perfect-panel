@@ -1,4 +1,4 @@
-import { createTranslator } from "next-intl";
+import { createTranslator } from "@/src/compat/next-intl";
 import { getLocale } from "@/utils/common";
 
 export async function getTranslations(namespace: string) {

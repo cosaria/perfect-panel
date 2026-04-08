@@ -1,4 +1,4 @@
-# All-in-one build: admin + user frontends embedded in Go binary
+# All-in-one build: admin Vite SPA + user Next static export embedded in Go binary
 # Usage: docker build -t ppanel .
 
 # Stage 1: Build both frontends
@@ -9,8 +9,7 @@ COPY web/packages/ ./web/packages/
 COPY web/apps/admin/ ./web/apps/admin/
 COPY web/apps/user/ ./web/apps/user/
 WORKDIR /app/web
-# frozen-lockfile skipped: workspace symlink bug between macOS/Linux lockfiles
-RUN bun install
+RUN bun install --frozen-lockfile
 RUN bun run build --filter=ppanel-admin-web --filter=ppanel-user-web
 
 # Stage 2: Build Go binary with embedded frontends
@@ -23,7 +22,7 @@ WORKDIR /build
 COPY server/go.mod server/go.sum ./
 RUN go mod download
 COPY server/ .
-COPY --from=web-builder /app/web/apps/admin/out ./web/admin-dist
+COPY --from=web-builder /app/web/apps/admin/dist ./web/admin-dist
 COPY --from=web-builder /app/web/apps/user/out ./web/user-dist
 
 RUN BUILD_TIME=$(date -u +"%Y-%m-%d %H:%M:%S") && \

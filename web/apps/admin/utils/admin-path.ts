@@ -1,5 +1,9 @@
 import { NEXT_PUBLIC_ADMIN_PATH } from "@/config/constants";
 
+function hasPathPrefix(pathname: string, prefix: string) {
+  return pathname === prefix || pathname.startsWith(`${prefix}/`);
+}
+
 export function normalizeAdminPath(value?: string) {
   const trimmed = value?.trim() ?? "";
   if (!trimmed || trimmed === "/") {
@@ -12,7 +16,7 @@ export function normalizeAdminPath(value?: string) {
 
 export function stripAdminPath(pathname: string, adminPath: string = NEXT_PUBLIC_ADMIN_PATH) {
   const normalizedAdminPath = normalizeAdminPath(adminPath);
-  if (!pathname.startsWith(normalizedAdminPath)) {
+  if (!hasPathPrefix(pathname, normalizedAdminPath)) {
     return pathname || "/";
   }
 

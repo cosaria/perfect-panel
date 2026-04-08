@@ -2,7 +2,6 @@
 
 import "@/utils/setup-clients";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
 import { usePathname } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type React from "react";
@@ -86,9 +85,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
-      <QueryClientProvider client={queryClient}>
-        <ReactQueryStreamedHydration>{children}</ReactQueryStreamedHydration>
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </NextThemesProvider>
   );
 }

@@ -40,7 +40,7 @@
 #### 目录
 
 - [⌨️ 本地开发](#️-本地开发)
-- [🚀 在 Vercel 上部署](#-在-vercel-上部署)
+- [📦 构建与嵌入](#-构建与嵌入)
 - [🤝 贡献](#-贡献)
 - [📝 许可证](#-许可证)
 
@@ -50,41 +50,43 @@
 
 ## ⌨️ 本地开发
 
-您可以使用 Github Codespaces 进行在线开发：
+管理端现在以 `Vite` 单页应用（SPA）的形式运行在 monorepo 中。
 
-[![][codespaces-shield]][codespaces-link]
-
-您可以使用 Gitpod 进行在线开发：
-
-[![在 Gitpod 中打开](https://gitpod.io/button/open-in-gitpod.svg)][gitpod-link]
-
-或者克隆项目进行本地开发：
+先克隆仓库并安装依赖：
 
 ```bash
-git clone https://github.com/perfect-panel/ppanel-web.git
-cd ppanel-web
+git clone https://github.com/cosaria/perfect-panel.git
+cd perfect-panel
 
-# 安装依赖
-bun install
+# 安装仓库依赖
+make bootstrap
 
-# 运行开发服务器
+# 仅启动管理端前端
 cd web/apps/admin
-bun dev
+bun run dev
 ```
 
 在浏览器中打开 <http://localhost:3000> 查看结果。
 
-## 🚀 在 Vercel 上部署
+如果需要同时启动 Go 服务和管理端前端，使用仓库根命令：
 
-[![使用 Vercel 部署](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%2Fadmin.ppanel.dev&demo-title=PPanel%20Admin%20Web&demo-url=https%3A%2F%2Fadmin.ppanel.dev%2F&from=.&project-name=ppanel-admin-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%2Fadmin&skippable-integrations=1)
+```bash
+make dev APP=admin
+```
 
-部署 Next.js 应用的最简单方式是使用
-[ Vercel 平台](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-由 Next.js 的创建者提供支持。
+## 📦 构建与嵌入
 
-查看我们的
-[Next.js 部署文档](https://nextjs.org/docs/deployment)
-获取更多详情。
+官方发布链会把管理端静态资源嵌入 Go 服务：
+
+```bash
+# 构建 admin 到 apps/admin/dist，并复制到 server/web/admin-dist
+make embed-admin
+
+# 构建带嵌入前端的最终 Go 二进制
+make build-all
+```
+
+容器构建以仓库根 `Dockerfile` 为准。
 
 ## 🤝 贡献
 
@@ -112,8 +114,6 @@ bun dev
 <!-- LINK GROUP -->
 
 [back-to-top]: https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square
-[codespaces-link]: https://codespaces.new/perfect-panel/ppanel-web
-[codespaces-shield]: https://github.com/codespaces/badge.svg
 [contributors-contrib]: https://contrib.rocks/image?repo=perfect-panel/ppanel-web
 [contributors-url]: https://github.com/perfect-panel/ppanel-web/graphs/contributors
 [github-action-release-link]: https://github.com/perfect-panel/ppanel-web/actions/workflows/release.yml
@@ -134,7 +134,6 @@ bun dev
 [github-releasedate-shield]: https://img.shields.io/github/release-date/perfect-panel/ppanel-web?labelColor=black&style=flat-square
 [github-stars-link]: https://github.com/perfect-panel/ppanel-web/network/stargazers
 [github-stars-shield]: https://img.shields.io/github/stars/perfect-panel/ppanel-web?color=ffcb47&labelColor=black&style=flat-square
-[gitpod-link]: https://gitpod.io/#https://github.com/perfect-panel/ppanel-web
 [issues-link]: https://github.com/perfect-panel/ppanel-web/issues/new/choose
 [pr-welcome-link]: https://github.com/perfect-panel/ppanel-web/pulls
 [pr-welcome-shield]: https://img.shields.io/badge/🤯_pr_welcome-%E2%86%92-ffcb47?labelColor=black&style=for-the-badge

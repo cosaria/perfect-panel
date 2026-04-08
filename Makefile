@@ -76,7 +76,7 @@ web-typecheck:
 embed-admin:
 	cd web && bun run build --filter=ppanel-admin-web
 	rm -rf server/web/admin-dist/*
-	cp -r web/apps/admin/out/* server/web/admin-dist/
+	cp -r web/apps/admin/dist/* server/web/admin-dist/
 
 embed-user:
 	cd web && bun run build --filter=ppanel-user-web
