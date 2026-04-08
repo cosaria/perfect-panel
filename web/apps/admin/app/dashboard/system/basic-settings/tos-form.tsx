@@ -37,7 +37,7 @@ const tosSchema = z.object({
 
 type TosFormData = z.infer<typeof tosSchema>;
 
-export default function TosConfig() {
+export default function TosConfigForm() {
   const t = useTranslations("system");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);

@@ -63,19 +63,19 @@ func (l *TelegramLogic) TelegramLogic(req *tgbotapi.Update) {
 		switch req.Message.Command() {
 		case "traffic":
 			if err := l.traffic(req.Message.Chat.ID); err != nil {
-				l.Logger.Error("[TelegramLogic] Traffic Error: ", logger.Field("error", err.Error()), logger.Field("command", req.Message.Command()), logger.Field("chat_id", req.Message.Chat.ID))
+				l.Error("[TelegramLogic] Traffic Error: ", logger.Field("error", err.Error()), logger.Field("command", req.Message.Command()), logger.Field("chat_id", req.Message.Chat.ID))
 			}
 		case "bind":
 			if err := l.bind(req.Message.Chat.ID, req.Message.CommandArguments()); err != nil {
-				l.Logger.Error("[TelegramLogic] Bind Error: ", logger.Field("error", err.Error()), logger.Field("command", req.Message.Command()), logger.Field("chat_id", req.Message.Chat.ID))
+				l.Error("[TelegramLogic] Bind Error: ", logger.Field("error", err.Error()), logger.Field("command", req.Message.Command()), logger.Field("chat_id", req.Message.Chat.ID))
 			}
 		case "start":
 			if err := l.start(req); err != nil {
-				l.Logger.Error("[TelegramLogic] Start Error: ", logger.Field("error", err.Error()), logger.Field("command", req.Message.Command()), logger.Field("chat_id", req.Message.Chat.ID), logger.Field("text", req.Message.Text))
+				l.Error("[TelegramLogic] Start Error: ", logger.Field("error", err.Error()), logger.Field("command", req.Message.Command()), logger.Field("chat_id", req.Message.Chat.ID), logger.Field("text", req.Message.Text))
 			}
 		}
 	} else {
-		l.Logger.Error("[TelegramLogic] Message is empty")
+		l.Error("[TelegramLogic] Message is empty")
 	}
 }
 

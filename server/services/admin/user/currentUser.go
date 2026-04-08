@@ -50,7 +50,7 @@ func (l *CurrentUserLogic) CurrentUser() (*types.User, error) {
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}
 
-	l.Logger.Info("current user", zap.Field{Key: "userId", Type: zapcore.Int64Type, Integer: u.Id})
+	l.Info("current user", zap.Field{Key: "userId", Type: zapcore.Int64Type, Integer: u.Id})
 	tool.DeepCopy(resp, u)
 	return resp, nil
 }

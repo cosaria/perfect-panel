@@ -3,10 +3,10 @@
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { formatBytes } from "@workspace/ui/utils";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Suspense } from "react";
+import { AdminLink } from "@/components/admin-link";
 import { ProTable } from "@/components/pro-table";
 import { filterServerTrafficLog } from "@/services/admin-api/sdk.gen";
 import type { ServerTrafficLog } from "@/services/admin-api/types.gen";
@@ -30,11 +30,11 @@ function ServerTrafficLogPageContent() {
       actions={{
         render: (row) => [
           <Button key="detail" asChild>
-            <Link
+            <AdminLink
               href={`/dashboard/log/traffic-details?date=${row.date}&server_id=${row.server_id}`}
             >
               {t("detail")}
-            </Link>
+            </AdminLink>
           </Button>,
         ],
       }}

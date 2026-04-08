@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/perfect-panel/server/config"
-	modelsystem "github.com/perfect-panel/server/models/system"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
@@ -53,13 +52,15 @@ func (l *UpdateSubscribeConfigLogic) UpdateSubscribeConfig(req *types.SubscribeC
 			fieldName := t.Field(i).Name
 			// Get the field value to string
 			fieldValue := tool.ConvertValueToString(v.Field(i))
-			// Update the site config
-			err = db.Model(&modelsystem.System{}).Where("`category` = 'subscribe' and `key` = ?", fieldName).Update("value", fieldValue).Error
+			err = l.deps.UpdateSystemConfigField(l.ctx, db, "subscribe", fieldName, fieldValue)
 			if err != nil {
 				break
 			}
 		}
-		return l.deps.Redis.Del(l.ctx, config.SubscribeConfigKey, config.GlobalConfigKey).Err()
+		if err != nil {
+			return err
+		}
+		return l.deps.DeleteConfigCache(l.ctx, config.SubscribeConfigKey, config.GlobalConfigKey)
 	})
 
 	if err != nil {
@@ -80,8 +81,9 @@ func (l *UpdateSubscribeConfigLogic) UpdateSubscribeConfig(req *types.SubscribeC
 		return nil
 	}
 
-	if l.deps.ReloadSubscribe != nil {
-		l.deps.ReloadSubscribe()
+	if err := l.deps.ReloadSubscribeConfig(); err != nil {
+		l.Errorw("[UpdateSubscribeConfigLogic] reload subscribe config error: ", logger.Field("error", err.Error()))
+		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "reload subscribe config error: %v", err)
 	}
 	return nil
 }

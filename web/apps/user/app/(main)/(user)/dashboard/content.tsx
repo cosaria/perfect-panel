@@ -38,8 +38,8 @@ import ResetTraffic from "@/components/subscribe/reset-traffic";
 import Unsubscribe from "@/components/subscribe/unsubscribe";
 import useGlobalStore from "@/config/use-global";
 import { getClient, getStat } from "@/services/common-api/sdk.gen";
-import { queryUserSubscribe, resetUserSubscribeToken } from "@/services/user-api/sdk.gen";
 import type { DownloadLink } from "@/services/common-api/types.gen";
+import { queryUserSubscribe, resetUserSubscribeToken } from "@/services/user-api/sdk.gen";
 import { getPlatform } from "@/utils/common";
 import Subscribe from "../subscribe/page";
 

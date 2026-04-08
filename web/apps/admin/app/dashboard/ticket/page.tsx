@@ -40,9 +40,12 @@ export default function Page() {
   const { data: ticket, refetch: refetchTicket } = useQuery({
     queryKey: ["getTicket", ticketId],
     queryFn: async () => {
+      if (ticketId === null) {
+        throw new Error("ticketId is required");
+      }
       const { data } = await getTicket({
         query: {
-          id: ticketId!,
+          id: ticketId,
         },
       });
       return data as Ticket;
@@ -231,10 +234,10 @@ export default function Page() {
                 className="flex w-full flex-row items-center gap-2"
                 onSubmit={async (event) => {
                   event.preventDefault();
-                  if (message) {
+                  if (message && ticketId !== null) {
                     await createTicketFollow({
                       body: {
-                        ticket_id: ticketId!,
+                        ticket_id: ticketId,
                         from: "System",
                         type: 1,
                         content: message,
@@ -296,9 +299,12 @@ export default function Page() {
                                 const reader = new FileReader();
                                 reader.readAsDataURL(blob);
                                 reader.onloadend = async () => {
+                                  if (ticketId === null) {
+                                    return;
+                                  }
                                   await createTicketFollow({
                                     body: {
-                                      ticket_id: ticketId!,
+                                      ticket_id: ticketId,
                                       from: "System",
                                       type: 2,
                                       content: reader.result as string,

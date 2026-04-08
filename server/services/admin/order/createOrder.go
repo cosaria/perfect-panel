@@ -42,7 +42,7 @@ func NewCreateOrderLogic(ctx context.Context, deps Deps) *CreateOrderLogic {
 func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderRequest) error {
 	paymentMethod, err := l.deps.PaymentModel.FindOne(l.ctx, req.PaymentId)
 	if err != nil {
-		l.Logger.Error("[CreateOrder] PaymentMethod Not Found", logger.Field("error", err.Error()))
+		l.Error("[CreateOrder] PaymentMethod Not Found", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.PaymentMethodNotFound), "PaymentMethod not found: %v", err.Error())
 	}
 
@@ -64,7 +64,7 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderRequest) error {
 		SubscribeId:    req.SubscribeId,
 	})
 	if err != nil {
-		l.Logger.Error("[CreateOrder] Database Error", logger.Field("error", err.Error()))
+		l.Error("[CreateOrder] Database Error", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "Insert error: %v", err.Error())
 	}
 	return nil

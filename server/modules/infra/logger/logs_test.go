@@ -767,7 +767,7 @@ func BenchmarkCopyByteSlice(b *testing.B) {
 		buf = make([]byte, len(s))
 		copy(buf, s)
 	}
-	_, _ = fmt.Fprint(io.Discard, buf)
+	_, _ = fmt.Fprint(io.Discard, string(buf))
 }
 
 func BenchmarkCopyOnWriteByteSlice(b *testing.B) {
@@ -776,7 +776,7 @@ func BenchmarkCopyOnWriteByteSlice(b *testing.B) {
 		size := len(s)
 		buf = s[:size:size]
 	}
-	_, _ = fmt.Fprint(io.Discard, buf)
+	_, _ = fmt.Fprint(io.Discard, string(buf))
 }
 
 func BenchmarkCacheByteSlice(b *testing.B) {

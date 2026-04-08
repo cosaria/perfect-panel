@@ -8,10 +8,10 @@ import {
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
 import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
+import { AdminLink } from "@/components/admin-link";
 import { Display } from "@/components/display";
 import { ProTable, type ProTableActions } from "@/components/pro-table";
 import useGlobalStore from "@/config/use-global";
@@ -202,28 +202,32 @@ function RowMoreActions({ userId, subId }: { userId: number; subId: number }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
-            <Link href={`/dashboard/log/subscribe?user_id=${userId}&user_subscribe_id=${subId}`}>
+            <AdminLink
+              href={`/dashboard/log/subscribe?user_id=${userId}&user_subscribe_id=${subId}`}
+            >
               {t("subscriptionLogs")}
-            </Link>
+            </AdminLink>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link
+            <AdminLink
               href={`/dashboard/log/reset-subscribe?user_id=${userId}&user_subscribe_id=${subId}`}
             >
               {t("resetLogs")}
-            </Link>
+            </AdminLink>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link
+            <AdminLink
               href={`/dashboard/log/subscribe-traffic?user_id=${userId}&user_subscribe_id=${subId}`}
             >
               {t("trafficStats")}
-            </Link>
+            </AdminLink>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href={`/dashboard/log/traffic-details?user_id=${userId}&subscribe_id=${subId}`}>
+            <AdminLink
+              href={`/dashboard/log/traffic-details?user_id=${userId}&subscribe_id=${subId}`}
+            >
               {t("trafficDetails")}
-            </Link>
+            </AdminLink>
           </DropdownMenuItem>
           <DropdownMenuItem
             onSelect={(e) => {

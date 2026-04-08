@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/perfect-panel/server/config"
-	modelsystem "github.com/perfect-panel/server/models/system"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
@@ -54,8 +53,7 @@ func (l *UpdateCurrencyConfigLogic) UpdateCurrencyConfig(req *types.CurrencyConf
 			fieldName := t.Field(i).Name
 			// Get the field value to string
 			fieldValue := tool.ConvertValueToString(v.Field(i))
-			// Update the invite config
-			err = db.Model(&modelsystem.System{}).Where("`category` = 'currency' and `key` = ?", fieldName).Update("value", fieldValue).Error
+			err = l.deps.UpdateSystemConfigField(l.ctx, db, "currency", fieldName, fieldValue)
 			if err != nil {
 				break
 			}
@@ -64,14 +62,15 @@ func (l *UpdateCurrencyConfigLogic) UpdateCurrencyConfig(req *types.CurrencyConf
 			return err
 		}
 		// clear cache
-		return l.deps.Redis.Del(l.ctx, config.CurrencyConfigKey, config.GlobalConfigKey).Err()
+		return l.deps.DeleteConfigCache(l.ctx, config.CurrencyConfigKey, config.GlobalConfigKey)
 	})
-	if l.deps.ReloadCurrency != nil {
-		l.deps.ReloadCurrency()
-	}
 	if err != nil {
 		l.Errorw("[UpdateCurrencyConfig] update currency config error", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update invite config error: %v", err)
+	}
+	if err := l.deps.ReloadCurrencyConfig(); err != nil {
+		l.Errorw("[UpdateCurrencyConfig] reload currency config error", logger.Field("error", err.Error()))
+		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "reload currency config error: %v", err)
 	}
 	return nil
 }

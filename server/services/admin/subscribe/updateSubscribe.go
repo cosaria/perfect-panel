@@ -45,7 +45,7 @@ func (l *UpdateSubscribeLogic) UpdateSubscribe(req *types.UpdateSubscribeRequest
 	// Query the database to get the subscribe information
 	_, err := l.deps.SubscribeModel.FindOne(l.ctx, req.Id)
 	if err != nil {
-		l.Logger.Error("[UpdateSubscribe] Database query error", logger.Field("error", err.Error()), logger.Field("subscribe_id", req.Id))
+		l.Error("[UpdateSubscribe] Database query error", logger.Field("error", err.Error()), logger.Field("subscribe_id", req.Id))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get subscribe error: %v", err.Error())
 	}
 	discount := ""
@@ -80,7 +80,7 @@ func (l *UpdateSubscribeLogic) UpdateSubscribe(req *types.UpdateSubscribeRequest
 	}
 	err = l.deps.SubscribeModel.Update(l.ctx, sub)
 	if err != nil {
-		l.Logger.Error("[UpdateSubscribe] update subscribe failed", logger.Field("error", err.Error()), logger.Field("subscribe", sub))
+		l.Error("[UpdateSubscribe] update subscribe failed", logger.Field("error", err.Error()), logger.Field("subscribe", sub))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update subscribe error: %v", err.Error())
 	}
 	if l.deps.DeviceManager != nil {

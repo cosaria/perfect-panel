@@ -47,7 +47,7 @@ func (l *BatchDeleteSubscribeLogic) BatchDeleteSubscribe(req *types.BatchDeleteS
 			var count int64
 			// Validate whether the subscription ID belongs to an active user subscription.
 			if err := tx.Model(&user.Subscribe{}).Where("subscribe_id = ? AND status = 1", id).Count(&count).Find(&user.Subscribe{}).Error; err != nil {
-				l.Logger.Error("[BatchDeleteSubscribe] Query Subscribe Error: ", logger.Field("error", err.Error()))
+				l.Error("[BatchDeleteSubscribe] Query Subscribe Error: ", logger.Field("error", err.Error()))
 				return err
 			}
 			if count > 0 {
@@ -63,7 +63,7 @@ func (l *BatchDeleteSubscribeLogic) BatchDeleteSubscribe(req *types.BatchDeleteS
 		if errors.Is(err, errorIsExistActiveUser) {
 			return errors.Wrapf(xerr.NewErrCode(xerr.SubscribeIsUsedError), "subscription ID belongs to an active user subscription")
 		}
-		l.Logger.Error("[BatchDeleteSubscribe] Transaction Error: ", logger.Field("error", err.Error()))
+		l.Error("[BatchDeleteSubscribe] Transaction Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "delete subscribe failed: %v", err.Error())
 	}
 	return nil

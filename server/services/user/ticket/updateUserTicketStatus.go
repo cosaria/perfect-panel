@@ -2,7 +2,9 @@ package ticket
 
 import (
 	"context"
+
 	"github.com/perfect-panel/server/config"
+	"github.com/perfect-panel/server/models/ticket"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
@@ -45,6 +47,10 @@ func (l *UpdateUserTicketStatusLogic) UpdateUserTicketStatus(req *types.UpdateUs
 		logger.Error("current user is not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}
+	if req.Id <= 0 || req.Status == nil || *req.Status != ticket.Closed {
+		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidParams), "invalid ticket status update request")
+	}
+
 	err := l.deps.TicketModel.UpdateTicketStatus(l.ctx, req.Id, u.Id, *req.Status)
 	if err != nil {
 		l.Errorw("[UpdateUserTicketStatusLogic] Database Error", logger.Field("error", err.Error()))

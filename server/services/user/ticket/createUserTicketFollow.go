@@ -2,6 +2,8 @@ package ticket
 
 import (
 	"context"
+	"strings"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/ticket"
 	"github.com/perfect-panel/server/models/user"
@@ -46,6 +48,12 @@ func (l *CreateUserTicketFollowLogic) CreateUserTicketFollow(req *types.CreateUs
 		logger.Error("current user is not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}
+
+	content := strings.TrimSpace(req.Content)
+	if req.TicketId <= 0 || content == "" || (req.Type != 1 && req.Type != 2) {
+		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidParams), "invalid ticket follow request")
+	}
+
 	// query ticket
 	t, err := l.deps.TicketModel.FindOne(l.ctx, req.TicketId)
 	if err != nil {
@@ -60,9 +68,9 @@ func (l *CreateUserTicketFollowLogic) CreateUserTicketFollow(req *types.CreateUs
 	// insert follow
 	err = l.deps.TicketModel.InsertTicketFollow(l.ctx, &ticket.Follow{
 		TicketId: req.TicketId,
-		From:     req.From,
+		From:     "User",
 		Type:     req.Type,
-		Content:  req.Content,
+		Content:  content,
 	})
 	if err != nil {
 		l.Errorw("[CreateUserTicketFollow] Database insert error", logger.Field("error", err.Error()), logger.Field("request", req))

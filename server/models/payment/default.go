@@ -83,12 +83,10 @@ func (m *defaultPaymentModel) FindOne(ctx context.Context, id int64) (*Payment, 
 	err := m.QueryCtx(ctx, &resp, PaymentIdKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Payment{}).Where("`id` = ?", id).First(&resp).Error
 	})
-	switch {
-	case err == nil:
-		return &resp, nil
-	default:
+	if err != nil {
 		return nil, err
 	}
+	return &resp, nil
 }
 
 func (m *defaultPaymentModel) Update(ctx context.Context, data *Payment, tx ...*gorm.DB) error {

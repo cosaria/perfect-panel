@@ -63,7 +63,7 @@ export default function Page() {
       </Card>
       <ProList<BalanceLog, Record<string, unknown>>
         action={ref}
-        request={async (pagination, filter) => {
+        request={async (_pagination, _filter) => {
           const { data: response } = await queryUserBalanceLog();
           return {
             list: response?.list || [],

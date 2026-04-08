@@ -1,5 +1,5 @@
 import { Button } from "@workspace/ui/components/button";
-import Link from "next/link";
+import { AdminLink } from "./admin-link";
 
 interface OrderLinkProps {
   orderId?: string | number;
@@ -11,7 +11,7 @@ export function OrderLink({ orderId, className }: OrderLinkProps) {
 
   return (
     <Button variant="link" className={`p-0 ${className || ""}`} asChild>
-      <Link href={`/dashboard/order?search=${orderId}`}>{orderId}</Link>
+      <AdminLink href={`/dashboard/order?search=${orderId}`}>{orderId}</AdminLink>
     </Button>
   );
 }

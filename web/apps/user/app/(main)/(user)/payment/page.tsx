@@ -24,7 +24,7 @@ import StripePayment from "@/components/payment/stripe";
 import { SubscribeBilling } from "@/components/subscribe/billing";
 import { SubscribeDetail } from "@/components/subscribe/detail";
 import useGlobalStore from "@/config/use-global";
-import { queryOrderDetail, purchaseCheckout } from "@/services/user-api/sdk.gen";
+import { purchaseCheckout, queryOrderDetail } from "@/services/user-api/sdk.gen";
 import type { OrderDetail } from "@/services/user-api/types.gen";
 
 export default function Page() {

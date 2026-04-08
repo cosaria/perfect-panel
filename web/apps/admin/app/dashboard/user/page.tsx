@@ -20,11 +20,11 @@ import {
 import { Switch } from "@workspace/ui/components/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Suspense, useRef, useState } from "react";
 import { toast } from "sonner";
+import { AdminLink } from "@/components/admin-link";
 import { Display } from "@/components/display";
 import { ProTable, type ProTableActions } from "@/components/pro-table";
 import {
@@ -242,21 +242,29 @@ function PageContent() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link href={`/dashboard/order?user_id=${row.id}`}>{t("orderList")}</Link>
+                  <AdminLink href={`/dashboard/order?user_id=${row.id}`}>
+                    {t("orderList")}
+                  </AdminLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href={`/dashboard/log/login?user_id=${row.id}`}>{t("loginLogs")}</Link>
+                  <AdminLink href={`/dashboard/log/login?user_id=${row.id}`}>
+                    {t("loginLogs")}
+                  </AdminLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href={`/dashboard/log/balance?user_id=${row.id}`}>{t("balanceLogs")}</Link>
+                  <AdminLink href={`/dashboard/log/balance?user_id=${row.id}`}>
+                    {t("balanceLogs")}
+                  </AdminLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href={`/dashboard/log/commission?user_id=${row.id}`}>
+                  <AdminLink href={`/dashboard/log/commission?user_id=${row.id}`}>
                     {t("commissionLogs")}
-                  </Link>
+                  </AdminLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href={`/dashboard/log/gift?user_id=${row.id}`}>{t("giftLogs")}</Link>
+                  <AdminLink href={`/dashboard/log/gift?user_id=${row.id}`}>
+                    {t("giftLogs")}
+                  </AdminLink>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>,

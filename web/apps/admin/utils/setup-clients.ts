@@ -1,15 +1,15 @@
-import { isBrowser } from "@workspace/ui/utils";
+import { buildApiBaseUrl, isBrowser } from "@workspace/ui/utils";
 import { toast } from "sonner";
+import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
 import { client as adminClient } from "@/services/admin-api/client.gen";
 import { client as commonClient } from "@/services/common-api/client.gen";
 import { client as userClient } from "@/services/user-api/client.gen";
-import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
 import { getAuthorization, Logout } from "./common";
 
-const baseUrl = NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "";
-
 function setupClient(client: typeof adminClient, serverPrefix: string) {
-  client.setConfig({ baseUrl: `${baseUrl}${serverPrefix}` });
+  client.setConfig({
+    baseUrl: buildApiBaseUrl(NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL, serverPrefix),
+  });
 
   client.interceptors.request.use((request) => {
     const token = getAuthorization();
@@ -42,5 +42,5 @@ function setupClient(client: typeof adminClient, serverPrefix: string) {
 
 setupClient(adminClient, "/api/v1/admin");
 setupClient(commonClient, "/api/v1/common");
-// user-api 用绝对路径（/api/v1/auth/*），baseUrl 为 API 根
-setupClient(userClient, "/api");
+// user-api 已携带绝对路径（/api/v1/auth/*），baseUrl 保持站点根
+setupClient(userClient, "");

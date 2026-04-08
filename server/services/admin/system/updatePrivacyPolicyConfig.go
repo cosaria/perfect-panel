@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/perfect-panel/server/config"
-	modelsystem "github.com/perfect-panel/server/models/system"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
@@ -54,13 +53,15 @@ func (l *UpdatePrivacyPolicyConfigLogic) UpdatePrivacyPolicyConfig(req *types.Pr
 			fieldName := t.Field(i).Name
 			// Get the field value to string
 			fieldValue := tool.ConvertValueToString(v.Field(i))
-			// Update the tos config
-			err = db.Model(&modelsystem.System{}).Where("`category` = 'tos' and `key` = ?", fieldName).Update("value", fieldValue).Error
+			err = l.deps.UpdateSystemConfigField(l.ctx, db, "tos", fieldName, fieldValue)
 			if err != nil {
 				break
 			}
 		}
-		return l.deps.Redis.Del(l.ctx, config.TosConfigKey).Err()
+		if err != nil {
+			return err
+		}
+		return l.deps.DeleteConfigCache(l.ctx, config.TosConfigKey)
 	})
 	if err != nil {
 		l.Errorw("[UpdateTosConfigLogic] update tos config error: ", logger.Field("error", err.Error()))

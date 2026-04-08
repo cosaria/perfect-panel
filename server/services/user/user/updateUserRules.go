@@ -50,13 +50,13 @@ func (l *UpdateUserRulesLogic) UpdateUserRules(req *types.UpdateUserRulesRequest
 	if len(req.Rules) > 0 {
 		bytes, err := json.Marshal(req.Rules)
 		if err != nil {
-			l.Logger.Errorf("UpdateUserRulesLogic json marshal rules error: %v", err)
+			l.Errorf("UpdateUserRulesLogic json marshal rules error: %v", err)
 			return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "json marshal rules failed: %v", err.Error())
 		}
 		u.Rules = string(bytes)
 		err = l.deps.UserModel.Update(l.ctx, u)
 		if err != nil {
-			l.Logger.Errorf("UpdateUserRulesLogic UpdateUserRules error: %v", err)
+			l.Errorf("UpdateUserRulesLogic UpdateUserRules error: %v", err)
 			return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update user rules failed: %v", err.Error())
 		}
 	}

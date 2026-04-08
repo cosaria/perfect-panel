@@ -78,12 +78,10 @@ func (m *defaultTicketModel) FindOne(ctx context.Context, id int64) (*Ticket, er
 
 		return conn.Model(&Ticket{}).Where("`id` = ?", id).First(&resp).Error
 	})
-	switch {
-	case err == nil:
-		return &resp, nil
-	default:
+	if err != nil {
 		return nil, err
 	}
+	return &resp, nil
 }
 
 func (m *defaultTicketModel) Update(ctx context.Context, data *Ticket) error {

@@ -45,7 +45,7 @@ func (l *UpdateUserDeviceLogic) UpdateUserDevice(req *types.UserDevice) error {
 	device.Enabled = req.Enabled
 	err = l.deps.UserModel.UpdateDevice(l.ctx, device)
 	if err != nil {
-		l.Logger.Error("[UpdateUserDeviceLogic] Update Device Error:", logger.Field("err", err.Error()))
+		l.Error("[UpdateUserDeviceLogic] Update Device Error:", logger.Field("err", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update Device error: %v", err.Error())
 	}
 	return nil

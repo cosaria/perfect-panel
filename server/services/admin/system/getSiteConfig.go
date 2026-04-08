@@ -44,7 +44,7 @@ func (l *GetSiteConfigLogic) GetSiteConfig() (resp *types.SiteConfig, err error)
 	// get site config from db
 	siteConfigs, err := l.deps.SystemModel.GetSiteConfig(l.ctx)
 	if err != nil {
-		l.Logger.Error("[GetSiteConfig] Database query error", logger.Field("error", err.Error()))
+		l.Error("[GetSiteConfig] Database query error", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get site config failed: %v", err.Error())
 	}
 	// reflect to response

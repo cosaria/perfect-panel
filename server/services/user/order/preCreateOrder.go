@@ -92,6 +92,9 @@ func (l *PreCreateOrderLogic) PreCreateOrder(req *types.PurchaseOrderRequest) (r
 		if couponInfo.Count > 0 && couponInfo.Count <= couponInfo.UsedCount {
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.CouponAlreadyUsed), "coupon used")
 		}
+		if l.deps.DB == nil {
+			return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "order db is nil")
+		}
 		var count int64
 		err = l.deps.DB.Transaction(func(tx *gorm.DB) error {
 			return tx.Model(&order.Order{}).Where("user_id = ? and coupon = ?", u.Id, req.Coupon).Count(&count).Error

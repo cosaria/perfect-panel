@@ -44,7 +44,7 @@ func (l *CreateSubscribeGroupLogic) CreateSubscribeGroup(req *types.CreateSubscr
 		Description: req.Description,
 	}).Error
 	if err != nil {
-		l.Logger.Error("[CreateSubscribeGroupLogic] create subscribe group failed: ", logger.Field("error", err.Error()))
+		l.Error("[CreateSubscribeGroupLogic] create subscribe group failed: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "create subscribe group failed: %v", err.Error())
 	}
 	return nil

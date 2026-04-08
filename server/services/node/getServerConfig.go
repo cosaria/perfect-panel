@@ -29,7 +29,7 @@ func GetServerConfigHandler(deps Deps) func(c *gin.Context) {
 		l := NewGetServerConfigLogic(c, deps)
 		resp, err := l.GetServerConfig(&req)
 		if err != nil {
-			if errors.Is(err, xerr.StatusNotModified) {
+			if errors.Is(err, xerr.ErrStatusNotModified) {
 				c.Status(http.StatusNotModified)
 				return
 			}
@@ -64,7 +64,7 @@ func (l *GetServerConfigLogic) GetServerConfig(req *types.GetServerConfigRequest
 			//  Check If-None-Match header
 			match := l.ctx.GetHeader("If-None-Match")
 			if match == etag {
-				return nil, xerr.StatusNotModified
+				return nil, xerr.ErrStatusNotModified
 			}
 			l.ctx.Header("ETag", etag)
 			resp = &types.GetServerConfigResponse{}
@@ -122,7 +122,7 @@ func (l *GetServerConfigLogic) GetServerConfig(req *types.GetServerConfigRequest
 	//  Check If-None-Match header
 	match := l.ctx.GetHeader("If-None-Match")
 	if match == etag {
-		return nil, xerr.StatusNotModified
+		return nil, xerr.ErrStatusNotModified
 	}
 
 	return resp, nil

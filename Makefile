@@ -1,23 +1,37 @@
 SHELL := /bin/sh
 
-.PHONY: bootstrap lint test dev build format typecheck clean \
-	server-bootstrap web-bootstrap server-lint web-lint server-test \
+ROOT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+TOOLS_BIN := $(ROOT_DIR)/.tools/bin
+GOLANGCI_LINT := $(TOOLS_BIN)/golangci-lint
+GOIMPORTS := $(TOOLS_BIN)/goimports
+INSTALL_GO_TOOLS := $(ROOT_DIR)/.github/scripts/install-go-tools.sh
+BUN_INSTALL_FLAGS ?=
+
+.PHONY: bootstrap tools lint test dev build format typecheck clean \
+	ensure-go-tools server-bootstrap web-bootstrap server-lint web-lint server-test \
 	server-build web-build server-format web-format web-typecheck \
 	server-clean web-clean embed embed-admin embed-user build-all
 
-bootstrap: server-bootstrap web-bootstrap
+bootstrap: tools server-bootstrap web-bootstrap
 	@command -v lefthook >/dev/null 2>&1 && lefthook install || echo "Warning: lefthook not found. Install via: brew install lefthook"
+
+tools:
+	sh "$(INSTALL_GO_TOOLS)"
+
+ensure-go-tools:
+	@test -x "$(GOLANGCI_LINT)" || { echo "Missing $(GOLANGCI_LINT). Run 'make tools' from the repo root."; exit 1; }
+	@test -x "$(GOIMPORTS)" || { echo "Missing $(GOIMPORTS). Run 'make tools' from the repo root."; exit 1; }
 
 server-bootstrap:
 	cd server && go mod download
 
 web-bootstrap:
-	cd web && CI=true bun install
+	cd web && CI=true bun install $(BUN_INSTALL_FLAGS)
 
 lint: server-lint web-lint
 
-server-lint:
-	cd server && golangci-lint run && go vet ./...
+server-lint: ensure-go-tools
+	cd server && "$(GOLANGCI_LINT)" run && go vet ./...
 
 web-lint:
 	cd web && bun run lint
@@ -48,8 +62,8 @@ web-build:
 
 format: server-format web-format
 
-server-format:
-	cd server && go fmt ./... && goimports -w .
+server-format: ensure-go-tools
+	cd server && go fmt ./... && "$(GOIMPORTS)" -w .
 
 web-format:
 	cd web && bun run format

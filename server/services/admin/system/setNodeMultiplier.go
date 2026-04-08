@@ -42,11 +42,11 @@ func NewSetNodeMultiplierLogic(ctx context.Context, deps Deps) *SetNodeMultiplie
 func (l *SetNodeMultiplierLogic) SetNodeMultiplier(req *types.SetNodeMultiplierRequest) error {
 	data, err := json.Marshal(req.Periods)
 	if err != nil {
-		l.Logger.Error("Marshal Node Multiplier Config Error: ", logger.Field("error", err.Error()))
+		l.Error("Marshal Node Multiplier Config Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Marshal Node Multiplier Config Error: %s", err.Error())
 	}
 	if err = l.deps.SystemModel.UpdateNodeMultiplierConfig(l.ctx, string(data)); err != nil {
-		l.Logger.Error("Update Node Multiplier Config Error: ", logger.Field("error", err.Error()))
+		l.Error("Update Node Multiplier Config Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Update Node Multiplier Config Error: %s", err.Error())
 	}
 	if l.deps.ReloadNode != nil {

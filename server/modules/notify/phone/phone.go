@@ -93,18 +93,8 @@ func maskDigits(number string, countryCode string) string {
 	for i, r := range runes {
 		if r >= '0' && r <= '9' {
 			digitIndex++
-			if countryCode == "+1" { // 美国号码格式：+1 (512) ***-1278
-				if digitIndex > 3 && digitIndex <= digitCount-4 { // 只替换中间部分
-					runes[i] = '*'
-				}
-			} else if countryCode == "+86" { // 中国号码格式：+86 138 **** 5678
-				if digitIndex > 3 && digitIndex <= digitCount-4 {
-					runes[i] = '*'
-				}
-			} else { // 其他国家号码，采用类似规则
-				if digitIndex > 3 && digitIndex <= digitCount-4 {
-					runes[i] = '*'
-				}
+			if digitIndex > 3 && digitIndex <= digitCount-4 {
+				runes[i] = '*'
 			}
 		}
 	}

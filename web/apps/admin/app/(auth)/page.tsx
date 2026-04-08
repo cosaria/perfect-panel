@@ -3,13 +3,13 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import LoginLottie from "@workspace/ui/lotties/login.json";
 import Image from "next/legacy/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
+import { AdminLink } from "@/components/admin-link";
 import LanguageSwitch from "@/components/language-switch";
 import ThemeSwitch from "@/components/theme-switch";
 import useGlobalStore from "@/config/use-global";
+import { toAdminPath } from "@/utils/admin-path";
 import EmailAuthForm from "./email/auth-form";
 
 export default function Page() {
@@ -17,19 +17,18 @@ export default function Page() {
   const { common, user } = useGlobalStore();
   const { site } = common;
 
-  const router = useRouter();
   useEffect(() => {
     if (user) {
-      router.replace("/dashboard");
+      window.location.replace(toAdminPath("/dashboard"));
     }
-  }, [router, user]);
+  }, [user]);
 
   return (
     <main className="bg-muted/50 flex h-full min-h-screen items-center">
       <div className="flex size-full flex-auto flex-col justify-center lg:flex-row">
         <div className="flex lg:w-1/2 lg:flex-auto">
           <div className="flex w-full flex-col items-center justify-center px-5 py-4 md:px-14 lg:py-14">
-            <Link className="mb-0 flex flex-col items-center lg:mb-12" href="/">
+            <AdminLink className="mb-0 flex flex-col items-center lg:mb-12" href="/">
               <Image
                 src={site.site_logo || "/favicon.svg"}
                 height={48}
@@ -38,7 +37,7 @@ export default function Page() {
                 unoptimized
               />
               <span className="text-2xl font-semibold">{site.site_name}</span>
-            </Link>
+            </AdminLink>
             <DotLottieReact
               className="mx-auto hidden w-full lg:block"
               data={LoginLottie}

@@ -54,7 +54,7 @@ func (l *GetSubscribeListLogic) GetSubscribeList(req *types.GetSubscribeListRequ
 		Search:   req.Search,
 	})
 	if err != nil {
-		l.Logger.Error("[GetSubscribeListLogic] get subscribe list failed: ", logger.Field("error", err.Error()))
+		l.Error("[GetSubscribeListLogic] get subscribe list failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get subscribe list failed: %v", err.Error())
 	}
 	var (
@@ -68,7 +68,7 @@ func (l *GetSubscribeListLogic) GetSubscribeList(req *types.GetSubscribeListRequ
 		if item.Discount != "" {
 			err = json.Unmarshal([]byte(item.Discount), &sub.Discount)
 			if err != nil {
-				l.Logger.Error("[GetSubscribeListLogic] JSON unmarshal failed: ", logger.Field("error", err.Error()), logger.Field("discount", item.Discount))
+				l.Error("[GetSubscribeListLogic] JSON unmarshal failed: ", logger.Field("error", err.Error()), logger.Field("discount", item.Discount))
 			}
 		}
 		sub.Nodes = tool.StringToInt64Slice(item.Nodes)
@@ -78,7 +78,7 @@ func (l *GetSubscribeListLogic) GetSubscribeList(req *types.GetSubscribeListRequ
 
 	subscribeMaps, err := l.deps.UserModel.QueryActiveSubscriptions(l.ctx, subscribeIdList...)
 	if err != nil {
-		l.Logger.Error("[GetSubscribeListLogic] get user subscribe failed: ", logger.Field("error", err.Error()))
+		l.Error("[GetSubscribeListLogic] get user subscribe failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get user subscribe failed: %v", err.Error())
 	}
 

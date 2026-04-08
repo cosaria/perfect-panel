@@ -14,7 +14,7 @@ type CodeError struct {
 	errMsg  string
 }
 
-var StatusNotModified = errors.New("304 Not Modified")
+var ErrStatusNotModified = errors.New("304 Not Modified")
 
 // GetErrCode returns the error code displayed to the front end
 func (e *CodeError) GetErrCode() uint32 {

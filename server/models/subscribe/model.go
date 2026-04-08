@@ -64,7 +64,7 @@ func (m *customSubscribeModel) ClearCache(ctx context.Context, ids ...int64) err
 		}
 		cacheKeys = append(cacheKeys, m.getCacheKeys(data)...)
 	}
-	return m.CachedConn.DelCacheCtx(ctx, cacheKeys...)
+	return m.DelCacheCtx(ctx, cacheKeys...)
 }
 
 // FilterList Filter Subscribe List

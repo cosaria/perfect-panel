@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getClientLocale } from "@/locales/client";
 import { getSubscription } from "@/services/user-api/sdk.gen";
 import type { Subscribe } from "@/services/user-api/types.gen";
-import { getClientLocale } from "@/locales/client";
 import { Content } from "./content";
 
 export function ProductShowcase() {

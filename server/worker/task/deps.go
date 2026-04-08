@@ -9,19 +9,12 @@ import (
 )
 
 type Deps struct {
-	DB              *gorm.DB
-	SystemModel     modelsystem.Model
-	SubscribeModel  modelsubscribe.Model
-	UserModel       modeluser.Model
-	SetExchangeRate func(float64)
+	DB                  *gorm.DB
+	SystemModel         modelsystem.Model
+	SubscribeModel      modelsubscribe.Model
+	UserModel           modeluser.Model
+	SetExchangeRate     func(float64)
 	PrepareExchangeRate func(string, string) uint64
 	StoreExchangeRate   func(uint64, string, string, float64) bool
-	Config          *serverconfig.Config
-}
-
-func (d Deps) currentConfig() serverconfig.Config {
-	if d.Config == nil {
-		return serverconfig.Config{}
-	}
-	return *d.Config
+	Config              *serverconfig.Config
 }

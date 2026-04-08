@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/perfect-panel/server/config"
-	modelsystem "github.com/perfect-panel/server/models/system"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/types"
@@ -53,7 +52,7 @@ func (l *UpdateSiteConfigLogic) UpdateSiteConfig(req *types.SiteConfig) error {
 			fieldName := t.Field(i).Name
 			// Get the field value
 			fieldValue := v.Field(i)
-			err = db.Model(&modelsystem.System{}).Where("`category` = 'site' and `key` = ?", fieldName).Update("value", fieldValue.String()).Error
+			err = l.deps.UpdateSiteConfigField(l.ctx, db, fieldName, fieldValue.String())
 			if err != nil {
 				break
 			}
@@ -62,14 +61,15 @@ func (l *UpdateSiteConfigLogic) UpdateSiteConfig(req *types.SiteConfig) error {
 			return err
 		}
 
-		return l.deps.Redis.Del(l.ctx, config.SiteConfigKey, config.GlobalConfigKey).Err()
+		return l.deps.DeleteConfigCache(l.ctx, config.SiteConfigKey, config.GlobalConfigKey)
 	})
 	if err != nil {
-		l.Logger.Error("[UpdateSiteConfig] update site config error", logger.Field("error", err.Error()))
+		l.Error("[UpdateSiteConfig] update site config error", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update site config error: %v", err.Error())
 	}
-	if l.deps.ReloadSite != nil {
-		l.deps.ReloadSite()
+	if err := l.deps.ReloadSiteConfig(); err != nil {
+		l.Error("[UpdateSiteConfig] reload site config error", logger.Field("error", err.Error()))
+		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "reload site config error: %v", err.Error())
 	}
 	return nil
 }

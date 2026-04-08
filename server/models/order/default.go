@@ -84,12 +84,10 @@ func (m *defaultOrderModel) FindOne(ctx context.Context, id int64) (*Order, erro
 	err := m.QueryCtx(ctx, &resp, OrderIdKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Order{}).Where("`id` = ?", id).First(&resp).Error
 	})
-	switch {
-	case err == nil:
-		return &resp, nil
-	default:
+	if err != nil {
 		return nil, err
 	}
+	return &resp, nil
 }
 
 func (m *defaultOrderModel) FindOneByOrderNo(ctx context.Context, orderNo string) (*Order, error) {
@@ -98,12 +96,10 @@ func (m *defaultOrderModel) FindOneByOrderNo(ctx context.Context, orderNo string
 	err := m.QueryCtx(ctx, &resp, OrderNoKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Order{}).Where("`order_no` = ?", orderNo).First(&resp).Error
 	})
-	switch {
-	case err == nil:
-		return &resp, nil
-	default:
+	if err != nil {
 		return nil, err
 	}
+	return &resp, nil
 }
 
 func (m *defaultOrderModel) Update(ctx context.Context, data *Order, tx ...*gorm.DB) error {

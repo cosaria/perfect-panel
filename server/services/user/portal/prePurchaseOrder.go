@@ -86,7 +86,7 @@ func (l *PrePurchaseOrderLogic) PrePurchaseOrder(req *types.PrePurchaseOrderRequ
 	if req.Payment != 0 {
 		payment, err := l.deps.PaymentModel.FindOne(l.ctx, req.Payment)
 		if err != nil {
-			l.Logger.Error("[PreCreateOrder] Database query error", logger.Field("error", err.Error()), logger.Field("payment", req.Payment))
+			l.Error("[PreCreateOrder] Database query error", logger.Field("error", err.Error()), logger.Field("payment", req.Payment))
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find payment method error: %v", err.Error())
 		}
 		// Calculate the handling fee

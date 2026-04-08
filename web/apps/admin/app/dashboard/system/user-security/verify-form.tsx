@@ -42,7 +42,7 @@ const verifySchema = z.object({
 
 type VerifyFormData = z.infer<typeof verifySchema>;
 
-export default function VerifyConfig() {
+export default function VerifyConfigForm() {
   const t = useTranslations("system.verify");
   const systemT = useTranslations("system");
   const [open, setOpen] = useState(false);

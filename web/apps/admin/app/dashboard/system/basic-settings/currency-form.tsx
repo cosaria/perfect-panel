@@ -42,7 +42,7 @@ const currencySchema = z.object({
 
 type CurrencyFormData = z.infer<typeof currencySchema>;
 
-export default function CurrencyConfig() {
+export default function CurrencyConfigForm() {
   const t = useTranslations("system");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);

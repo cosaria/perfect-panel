@@ -24,6 +24,8 @@ export const NEXT_PUBLIC_DEFAULT_LANGUAGE =
 export const NEXT_PUBLIC_SITE_URL =
   getEnv("NEXT_PUBLIC_SITE_URL") ?? process.env.NEXT_PUBLIC_SITE_URL;
 export const NEXT_PUBLIC_API_URL = getEnv("NEXT_PUBLIC_API_URL") ?? process.env.NEXT_PUBLIC_API_URL;
+export const NEXT_PUBLIC_ADMIN_PATH =
+  getEnv("NEXT_PUBLIC_ADMIN_PATH") ?? process.env.NEXT_PUBLIC_ADMIN_PATH ?? "/admin";
 
 export const NEXT_PUBLIC_DEFAULT_USER_EMAIL =
   getEnv("NEXT_PUBLIC_DEFAULT_USER_EMAIL") ?? process.env.NEXT_PUBLIC_DEFAULT_USER_EMAIL;

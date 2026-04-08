@@ -1,8 +1,8 @@
 import { extractDomain } from "@workspace/ui/utils";
 import { create } from "zustand";
 import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
-import { queryUserInfo } from "@/services/user-api/sdk.gen";
 import type { GetGlobalConfigResponse } from "@/services/common-api/types.gen";
+import { queryUserInfo } from "@/services/user-api/sdk.gen";
 import type { User } from "@/services/user-api/types.gen";
 
 export interface GlobalStore {

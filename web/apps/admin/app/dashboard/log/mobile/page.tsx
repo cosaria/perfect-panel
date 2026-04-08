@@ -8,6 +8,7 @@ import { ProTable } from "@/components/pro-table";
 import { filterMobileLog } from "@/services/admin-api/sdk.gen";
 import type { MessageLog } from "@/services/admin-api/types.gen";
 import { formatDate } from "@/utils/common";
+
 function MobileLogPageContent() {
   const t = useTranslations("log");
   const sp = useSearchParams();

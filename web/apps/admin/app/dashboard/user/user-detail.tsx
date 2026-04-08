@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@workspace/ui/components/hover-card";
 import { formatBytes } from "@workspace/ui/utils";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { AdminLink } from "@/components/admin-link";
 import { Display } from "@/components/display";
 import { getUserDetail, getUserSubscribeById } from "@/services/admin-api/sdk.gen";
 import { formatDate } from "@/utils/common";
@@ -154,7 +154,7 @@ export function UserDetail({ id }: { id: number }) {
     <HoverCard>
       <HoverCardTrigger asChild>
         <Button variant="link" className="p-0" asChild>
-          <Link href={`/dashboard/user?user_id=${id}`}>{identifier || t("loading")}</Link>
+          <AdminLink href={`/dashboard/user?user_id=${id}`}>{identifier || t("loading")}</AdminLink>
         </Button>
       </HoverCardTrigger>
       <HoverCardContent>

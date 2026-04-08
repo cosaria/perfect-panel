@@ -20,7 +20,7 @@
 - Go 1.25+
 - Node.js 20+
 - Bun 1.3.0+
-- golangci-lint
+- lefthook（可选，用于本地 git hooks）
 
 ## Quick Start
 
@@ -32,6 +32,8 @@ make lint
 make test
 bun run openapi
 ```
+
+`make bootstrap` 会安装 repo-local Go 工具（`golangci-lint`、`goimports`）到 `.tools/bin/`，再下载 `server` 依赖、安装 `web` 依赖，并在本机存在 `lefthook` 时自动安装 hooks。若只想补齐 Go 工具链，可单独执行 `make tools`。
 
 本地联调时，显式选择一个前端应用：
 
@@ -47,7 +49,8 @@ make dev APP=user
 
 ## Root Command Contract
 
-- `make bootstrap`: 下载 server 依赖并安装 web 依赖
+- `make bootstrap`: 安装 repo-local Go 工具、下载 server 依赖并安装 web 依赖
+- `make tools`: 安装 repo-local Go 工具到 `.tools/bin/`
 - `make lint`: 运行 server 的 `golangci-lint` 和 `go vet`，再运行 web 的 `bun run lint`
 - `make test`: 运行 `cd server && go test ./...`
 - `make format`: 运行 server 的 `go fmt` / `goimports`，再运行 web 的 `bun run format`
@@ -78,6 +81,7 @@ make dev APP=user
 
 当前根级 workflow：
 
+- `.github/workflows/lint.yml`
 - `.github/workflows/openapi-governance.yml`
 - `.github/workflows/docker-build.yml`
 - `.github/workflows/monorepo-boundary-guardrail.yml`

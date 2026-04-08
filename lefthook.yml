@@ -11,11 +11,11 @@ pre-commit:
     server-imports:
       root: "server/"
       glob: "*.go"
-      run: goimports -w .
+      run: test -x ../.tools/bin/goimports || { echo "缺少 repo-local goimports，请先在仓库根目录执行 make tools"; exit 1; }; ../.tools/bin/goimports -w .
     server-lint:
       root: "server/"
       glob: "*.go"
-      run: golangci-lint run
+      run: test -x ../.tools/bin/golangci-lint || { echo "缺少 repo-local golangci-lint，请先在仓库根目录执行 make tools"; exit 1; }; ../.tools/bin/golangci-lint run
     server-vet:
       root: "server/"
       glob: "*.go"

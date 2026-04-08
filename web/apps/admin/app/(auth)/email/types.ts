@@ -1,7 +1,7 @@
 import type {
+  ResetPasswordRequest,
   UserLoginRequest,
   UserRegisterRequest,
-  ResetPasswordRequest,
 } from "@/services/user-api/types.gen";
 
 export type AuthView = "register" | "reset" | "login";

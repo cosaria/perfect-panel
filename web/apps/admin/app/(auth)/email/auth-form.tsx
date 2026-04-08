@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -10,9 +9,9 @@ import {
 } from "@/config/constants";
 import { resetPassword, userLogin, userRegister } from "@/services/user-api/sdk.gen";
 import type {
+  ResetPasswordRequest,
   UserLoginRequest,
   UserRegisterRequest,
-  ResetPasswordRequest,
 } from "@/services/user-api/types.gen";
 import { getRedirectUrl, setAuthorization } from "@/utils/common";
 import LoginForm from "./login-form";
@@ -22,7 +21,6 @@ import type { AuthView, EmailAuthValues } from "./types";
 
 export default function EmailAuthForm() {
   const t = useTranslations("auth");
-  const router = useRouter();
   const [type, setType] = useState<AuthView>("login");
   const [loading, startTransition] = useTransition();
   const [initialValues, setInitialValues] = useState<EmailAuthValues | undefined>({
@@ -34,8 +32,7 @@ export default function EmailAuthForm() {
     const onLogin = async (token?: string) => {
       if (!token) return;
       setAuthorization(token);
-      router.replace(getRedirectUrl());
-      router.refresh();
+      window.location.replace(getRedirectUrl());
     };
     startTransition(async () => {
       try {

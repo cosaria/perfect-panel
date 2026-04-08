@@ -43,13 +43,13 @@ func NewGetNodeMultiplierLogic(ctx context.Context, deps Deps) *GetNodeMultiplie
 func (l *GetNodeMultiplierLogic) GetNodeMultiplier() (resp *types.GetNodeMultiplierResponse, err error) {
 	data, err := l.deps.SystemModel.FindNodeMultiplierConfig(l.ctx)
 	if err != nil {
-		l.Logger.Error("Get Node Multiplier Config Error: ", logger.Field("error", err.Error()))
+		l.Error("Get Node Multiplier Config Error: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "Get Node Multiplier Config Error: %s", err.Error())
 	}
 	var periods []types.TimePeriod
 	if data.Value != "" {
 		if err := json.Unmarshal([]byte(data.Value), &periods); err != nil {
-			l.Logger.Error("Unmarshal Node Multiplier Config Error: ", logger.Field("error", err.Error()), logger.Field("value", data.Value))
+			l.Error("Unmarshal Node Multiplier Config Error: ", logger.Field("error", err.Error()), logger.Field("value", data.Value))
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Unmarshal Node Multiplier Config Error: %s", err.Error())
 		}
 	}

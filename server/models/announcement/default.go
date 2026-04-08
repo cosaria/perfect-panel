@@ -77,12 +77,10 @@ func (m *defaultAnnouncementModel) FindOne(ctx context.Context, id int64) (*Anno
 	err := m.QueryCtx(ctx, &resp, AnnouncementIdKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Announcement{}).Where("`id` = ?", id).First(&resp).Error
 	})
-	switch {
-	case err == nil:
-		return &resp, nil
-	default:
+	if err != nil {
 		return nil, err
 	}
+	return &resp, nil
 }
 
 func (m *defaultAnnouncementModel) Update(ctx context.Context, data *Announcement) error {

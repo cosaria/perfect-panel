@@ -45,7 +45,7 @@ func (l *QuerySubscribeGroupListLogic) QuerySubscribeGroupList() (resp *types.Qu
 	var total int64
 	err = l.deps.DB.Model(&subscribe.Group{}).Count(&total).Find(&list).Error
 	if err != nil {
-		l.Logger.Error("[QuerySubscribeGroupListLogic] get subscribe group list failed: ", logger.Field("error", err.Error()))
+		l.Error("[QuerySubscribeGroupListLogic] get subscribe group list failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get subscribe group list failed: %v", err.Error())
 	}
 	groupList := make([]types.SubscribeGroup, 0)

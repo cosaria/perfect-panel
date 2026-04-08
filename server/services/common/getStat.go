@@ -60,7 +60,7 @@ func (l *GetStatLogic) GetStat() (resp *types.GetStatResponse, err error) {
 	var u int64
 	err = l.deps.DB.Model(&user.User{}).Where("enable = 1").Count(&u).Error
 	if err != nil {
-		l.Logger.Error("[GetStatLogic] get user count failed: ", logger.Field("error", err.Error()))
+		l.Error("[GetStatLogic] get user count failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get user count failed: %v", err.Error())
 	}
 	if u > 100 {
@@ -73,13 +73,13 @@ func (l *GetStatLogic) GetStat() (resp *types.GetStatResponse, err error) {
 	var n int64
 	err = l.deps.DB.Model(&node.Node{}).Where("enabled = 1").Count(&n).Error
 	if err != nil {
-		l.Logger.Error("[GetStatLogic] get server count failed: ", logger.Field("error", err.Error()))
+		l.Error("[GetStatLogic] get server count failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get server count failed: %v", err.Error())
 	}
 	var nodeaddr []string
 	err = l.deps.DB.Model(&node.Server{}).Pluck("address", &nodeaddr).Error
 	if err != nil {
-		l.Logger.Error("[GetStatLogic] get server_addr failed: ", logger.Field("error", err.Error()))
+		l.Error("[GetStatLogic] get server_addr failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get server_addr failed: %v", err.Error())
 	}
 	type apireq struct {
@@ -127,7 +127,7 @@ func (l *GetStatLogic) GetStat() (resp *types.GetStatResponse, err error) {
 	var protocol []string
 	err = l.deps.DB.Model(&node.Node{}).Where("enabled = true").Pluck("protocol", &protocol).Error
 	if err != nil {
-		l.Logger.Error("[GetStatLogic] get protocol failed: ", logger.Field("error", err.Error()))
+		l.Error("[GetStatLogic] get protocol failed: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "get protocol failed: %v", err.Error())
 	}
 

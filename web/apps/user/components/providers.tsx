@@ -7,12 +7,12 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type React from "react";
 import { useEffect, useState } from "react";
 import useGlobalStore from "@/config/use-global";
-import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
-import { getGlobalConfig } from "@/services/common-api/sdk.gen";
 import { client as commonClient } from "@/services/common-api/client.gen";
+import { getGlobalConfig } from "@/services/common-api/sdk.gen";
 import { queryUserInfo } from "@/services/user-api/sdk.gen";
 import { getAuthorization, Logout } from "@/utils/common";
 import Loading from "./loading";
+import { TrustedCustomHtml } from "./trusted-custom-html";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -32,13 +32,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const [customHtml, setCustomHtml] = useState("");
 
   useEffect(() => {
-    const baseUrl = NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "";
-
     const init = async () => {
       try {
         const { data: config } = await getGlobalConfig({
           client: commonClient,
-          baseUrl: `${baseUrl}/v1/common`,
         });
         if (config) {
           setCommon(config);
@@ -54,7 +51,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         if (auth) {
           try {
             const { data: user } = await queryUserInfo({
-              baseUrl: baseUrl,
               headers: { Authorization: auth },
             });
             if (user) {
@@ -92,7 +88,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           {children}
         </ReactQueryStreamedHydration>
       </QueryClientProvider>
-      {customHtml && <div id="custom_html" dangerouslySetInnerHTML={{ __html: customHtml }} />}
+      {customHtml && <TrustedCustomHtml html={customHtml} />}
     </NextThemesProvider>
   );
 }

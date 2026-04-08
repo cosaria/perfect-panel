@@ -46,7 +46,7 @@ func (l *KickOfflineByUserDeviceLogic) KickOfflineByUserDevice(req *types.KickOf
 	device.Online = false
 	err = l.deps.UserModel.UpdateDevice(l.ctx, device)
 	if err != nil {
-		l.Logger.Error("[KickOfflineByUserDeviceLogic] Update Device Error:", logger.Field("err", err.Error()))
+		l.Error("[KickOfflineByUserDeviceLogic] Update Device Error:", logger.Field("err", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update Device error: %v", err.Error())
 	}
 

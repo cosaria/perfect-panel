@@ -46,7 +46,7 @@ func (l *DeleteSubscribeLogic) DeleteSubscribe(req *types.DeleteSubscribeRequest
 		return db.Model(&user.Subscribe{}).Where("subscribe_id = ? AND `status` = ?", req.Id, 1).Count(&total).Find(&user.Subscribe{}).Error
 	})
 	if err != nil {
-		l.Logger.Error("[DeleteSubscribeLogic] check subscribe failed: ", logger.Field("error", err.Error()))
+		l.Error("[DeleteSubscribeLogic] check subscribe failed: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "check subscribe failed: %v", err.Error())
 	}
 	if total != 0 {
@@ -55,7 +55,7 @@ func (l *DeleteSubscribeLogic) DeleteSubscribe(req *types.DeleteSubscribeRequest
 
 	err = l.deps.SubscribeModel.Delete(l.ctx, req.Id)
 	if err != nil {
-		l.Logger.Error("[DeleteSubscribeLogic] delete subscribe failed: ", logger.Field("error", err.Error()))
+		l.Error("[DeleteSubscribeLogic] delete subscribe failed: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "delete subscribe failed: %v", err.Error())
 	}
 	return nil

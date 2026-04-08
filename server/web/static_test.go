@@ -58,9 +58,6 @@ func TestAdminIndexServesHTML(t *testing.T) {
 func TestAdminSPAFallback(t *testing.T) {
 	r := setupTestRouter()
 	paths := []string{
-		"/admin/dashboard",
-		"/admin/dashboard/users",
-		"/admin/dashboard/log/balance",
 		"/admin/nonexistent-page",
 	}
 	for _, p := range paths {
@@ -74,6 +71,31 @@ func TestAdminSPAFallback(t *testing.T) {
 		}
 		if !strings.Contains(w.Body.String(), "window.__ENV") {
 			t.Errorf("GET %s: SPA fallback did not return index.html", p)
+		}
+	}
+}
+
+func TestAdminRouteHTMLPagesServeExportedContent(t *testing.T) {
+	r := setupTestRouter()
+	paths := []string{
+		"/admin/dashboard",
+		"/admin/dashboard.html",
+	}
+
+	for _, p := range paths {
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest("GET", p, nil)
+		r.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Fatalf("GET %s: expected 200, got %d", p, w.Code)
+		}
+		body := w.Body.String()
+		if !strings.Contains(body, "window.__ENV") {
+			t.Fatalf("GET %s: expected route HTML with window.__ENV", p)
+		}
+		if strings.Contains(body, "Please enter your account information to log in.") {
+			t.Fatalf("GET %s: should not return auth index.html", p)
 		}
 	}
 }
@@ -122,21 +144,6 @@ func TestAdminNextStaticAssetsCached(t *testing.T) {
 	r.ServeHTTP(w, req)
 	// File doesn't exist -> SPA fallback, that's OK
 	// But if _next/static files exist, they should be cached
-}
-
-func TestAdminHTMLPagesGetSPAFallback(t *testing.T) {
-	r := setupTestRouter()
-	// .html pages should NOT be served directly (they lack window.__ENV)
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest("GET", "/admin/dashboard.html", nil)
-	r.ServeHTTP(w, req)
-
-	if w.Code != http.StatusOK {
-		t.Fatalf("GET /admin/dashboard.html: expected 200, got %d", w.Code)
-	}
-	if !strings.Contains(w.Body.String(), "window.__ENV") {
-		t.Fatal("GET /admin/dashboard.html: should return SPA index.html with window.__ENV")
-	}
 }
 
 func TestAdminEnvVarsContent(t *testing.T) {

@@ -41,29 +41,29 @@ func (l *EPayNotifyLogic) EPayNotify(req *types.EPayNotifyRequest) error {
 	// Find payment config
 	data, ok := l.ctx.Request.Context().Value(config.CtxKeyPayment).(*payment.Payment)
 	if !ok {
-		l.Logger.Error("[EPayNotify] Payment not found in context")
+		l.Error("[EPayNotify] Payment not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "payment config not found")
 	}
 	l.Infof("[EPayNotify] Payment config: %+v", data)
 
 	var config payment.EPayConfig
 	if err := json.Unmarshal([]byte(data.Config), &config); err != nil {
-		l.Logger.Errorw("[EPayNotify] Unmarshal config failed", logger.Field("error", err.Error()))
+		l.Errorw("[EPayNotify] Unmarshal config failed", logger.Field("error", err.Error()))
 		return err
 	}
 	// Verify sign
 	client := epay.NewClient(config.Pid, config.Url, config.Key, config.Type)
 	if !client.VerifySign(urlParamsToMap(l.ctx.Request.URL.RawQuery)) && !l.deps.debugEnabled() {
-		l.Logger.Error("[EPayNotify] Verify sign failed")
+		l.Error("[EPayNotify] Verify sign failed")
 		return markInvalidNotification(stderrors.New("verify sign failed"))
 	}
 	if req.TradeStatus != "TRADE_SUCCESS" {
-		l.Logger.Error("[EPayNotify] Trade status is not success", logger.Field("orderNo", req.OutTradeNo), logger.Field("tradeStatus", req.TradeStatus))
+		l.Error("[EPayNotify] Trade status is not success", logger.Field("orderNo", req.OutTradeNo), logger.Field("tradeStatus", req.TradeStatus))
 		return nil
 	}
 	orderInfo, err := l.deps.OrderModel.FindOneByOrderNo(l.ctx, req.OutTradeNo)
 	if err != nil {
-		l.Logger.Error("[EPayNotify] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", req.OutTradeNo))
+		l.Error("[EPayNotify] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", req.OutTradeNo))
 		return errors.Wrapf(xerr.NewErrCode(xerr.OrderNotExist), "order not exist: %v", req.OutTradeNo)
 	}
 	if orderInfo.Status == 5 {
@@ -72,7 +72,7 @@ func (l *EPayNotifyLogic) EPayNotify(req *types.EPayNotifyRequest) error {
 	// Update order status
 	err = l.deps.OrderModel.UpdateOrderStatus(l.ctx, req.OutTradeNo, 2)
 	if err != nil {
-		l.Logger.Error("[EPayNotify] Update order status failed", logger.Field("error", err.Error()), logger.Field("orderNo", req.OutTradeNo))
+		l.Error("[EPayNotify] Update order status failed", logger.Field("error", err.Error()), logger.Field("orderNo", req.OutTradeNo))
 		return err
 	}
 	// Create activate order task
@@ -81,16 +81,16 @@ func (l *EPayNotifyLogic) EPayNotify(req *types.EPayNotifyRequest) error {
 	}
 	bytes, err := json.Marshal(&payload)
 	if err != nil {
-		l.Logger.Error("[EPayNotify] Marshal payload failed", logger.Field("error", err.Error()))
+		l.Error("[EPayNotify] Marshal payload failed", logger.Field("error", err.Error()))
 		return err
 	}
 	task := asynq.NewTask(queueType.ForthwithActivateOrder, bytes)
 	taskInfo, err := l.deps.Queue.EnqueueContext(l.ctx, task)
 	if err != nil {
-		l.Logger.Error("[EPayNotify] Enqueue task failed", logger.Field("error", err.Error()))
+		l.Error("[EPayNotify] Enqueue task failed", logger.Field("error", err.Error()))
 		return err
 	}
-	l.Logger.Info("[EPayNotify] Enqueue task success", logger.Field("taskInfo", taskInfo))
+	l.Info("[EPayNotify] Enqueue task success", logger.Field("taskInfo", taskInfo))
 	return nil
 }
 

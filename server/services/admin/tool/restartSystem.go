@@ -32,7 +32,7 @@ func NewRestartSystemLogic(ctx context.Context, deps Deps) *RestartSystemLogic {
 }
 
 func (l *RestartSystemLogic) RestartSystem() error {
-	l.Logger.Info("[RestartSystem]", logger.Field("info", "Restarting system"))
+	l.Info("[RestartSystem]", logger.Field("info", "Restarting system"))
 	go func() {
 		if l.deps.Restart == nil {
 			return
@@ -41,7 +41,7 @@ func (l *RestartSystemLogic) RestartSystem() error {
 		if err != nil {
 			l.Errorw("[RestartSystem]", logger.Field("error", err.Error()))
 		}
-		l.Logger.Info("[RestartSystem]", logger.Field("info", "System restarted"))
+		l.Info("[RestartSystem]", logger.Field("info", "System restarted"))
 	}()
 	return nil
 }

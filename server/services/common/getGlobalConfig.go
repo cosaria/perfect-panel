@@ -48,12 +48,12 @@ func (l *GetGlobalConfigLogic) GetGlobalConfig() (resp *types.GetGlobalConfigRes
 
 	currencyCfg, err := l.deps.SystemModel.GetCurrencyConfig(l.ctx)
 	if err != nil {
-		l.Logger.Error("[GetGlobalConfigLogic] GetCurrencyConfig error: ", logger.Field("error", err.Error()))
+		l.Error("[GetGlobalConfigLogic] GetCurrencyConfig error: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "GetCurrencyConfig error: %v", err.Error())
 	}
 	verifyCodeCfg, err := l.deps.SystemModel.GetVerifyCodeConfig(l.ctx)
 	if err != nil {
-		l.Logger.Error("[GetGlobalConfigLogic] GetVerifyCodeConfig error: ", logger.Field("error", err.Error()))
+		l.Error("[GetGlobalConfigLogic] GetVerifyCodeConfig error: ", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "GetVerifyCodeConfig error: %v", err.Error())
 	}
 
@@ -82,7 +82,7 @@ func (l *GetGlobalConfigLogic) GetGlobalConfig() (resp *types.GetGlobalConfigRes
 	// auth methods
 	authMethods, err := l.deps.AuthModel.FindAll(l.ctx)
 	if err != nil {
-		l.Logger.Error("[GetGlobalConfigLogic] FindAll error: ", logger.Field("error", err.Error()))
+		l.Error("[GetGlobalConfigLogic] FindAll error: ", logger.Field("error", err.Error()))
 	}
 
 	for _, method := range authMethods {
@@ -98,7 +98,7 @@ func (l *GetGlobalConfigLogic) GetGlobalConfig() (resp *types.GetGlobalConfigRes
 
 	webAds, err := l.deps.SystemModel.FindOneByKey(l.ctx, "WebAD")
 	if err != nil {
-		l.Logger.Error("[GetGlobalConfigLogic] FindOneByKey error: ", logger.Field("error", err.Error()), logger.Field("key", "WebAD"))
+		l.Error("[GetGlobalConfigLogic] FindOneByKey error: ", logger.Field("error", err.Error()), logger.Field("key", "WebAD"))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "FindOneByKey error: %v", err.Error())
 	}
 	// web ads config

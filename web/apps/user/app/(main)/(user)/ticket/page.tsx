@@ -47,7 +47,7 @@ import {
   getUserTicketList,
   updateUserTicketStatus,
 } from "@/services/user-api/sdk.gen";
-import type { Ticket, CreateUserTicketRequest } from "@/services/user-api/types.gen";
+import type { CreateUserTicketRequest, Ticket } from "@/services/user-api/types.gen";
 
 export default function Page() {
   const t = useTranslations("ticket");

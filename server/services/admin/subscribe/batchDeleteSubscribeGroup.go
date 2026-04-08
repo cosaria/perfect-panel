@@ -41,7 +41,7 @@ func NewBatchDeleteSubscribeGroupLogic(ctx context.Context, deps Deps) *BatchDel
 func (l *BatchDeleteSubscribeGroupLogic) BatchDeleteSubscribeGroup(req *types.BatchDeleteSubscribeGroupRequest) error {
 	err := l.deps.DB.Model(&subscribe.Group{}).Where("id in ?", req.Ids).Delete(&subscribe.Group{}).Error
 	if err != nil {
-		l.Logger.Error("[BatchDeleteSubscribeGroup] Delete Database Error: ", logger.Field("error", err.Error()))
+		l.Error("[BatchDeleteSubscribeGroup] Delete Database Error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "batch delete subscribe group failed: %v", err.Error())
 	}
 	return nil

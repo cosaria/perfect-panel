@@ -40,7 +40,7 @@ const inviteSchema = z.object({
 
 type InviteFormData = z.infer<typeof inviteSchema>;
 
-export default function InviteConfig() {
+export default function InviteConfigForm() {
   const t = useTranslations("system.invite");
   const systemT = useTranslations("system");
   const [open, setOpen] = useState(false);

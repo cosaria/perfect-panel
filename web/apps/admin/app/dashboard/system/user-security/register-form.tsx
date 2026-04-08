@@ -47,7 +47,7 @@ const registerSchema = z.object({
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-export default function RegisterConfig() {
+export default function RegisterConfigForm() {
   const t = useTranslations("system.register");
   const systemT = useTranslations("system");
   const [open, setOpen] = useState(false);

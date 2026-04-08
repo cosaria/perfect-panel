@@ -37,7 +37,7 @@ const privacyPolicySchema = z.object({
 
 type PrivacyPolicyFormData = z.infer<typeof privacyPolicySchema>;
 
-export default function PrivacyPolicyConfig() {
+export default function PrivacyPolicyConfigForm() {
   const t = useTranslations("system");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);

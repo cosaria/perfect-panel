@@ -48,7 +48,7 @@ func (l *BatchDeleteUserLogic) BatchDeleteUser(req *types.BatchDeleteUserRequest
 
 	err := l.deps.UserModel.BatchDeleteUser(l.ctx, req.Ids)
 	if err != nil {
-		l.Logger.Error("[BatchDeleteUserLogic] BatchDeleteUser failed: ", logger.Field("error", err.Error()))
+		l.Error("[BatchDeleteUserLogic] BatchDeleteUser failed: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseDeletedError), "BatchDeleteUser failed: %v", err.Error())
 	}
 	return nil

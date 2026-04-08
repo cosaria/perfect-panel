@@ -17,11 +17,11 @@ import { SubscribeDetail } from "@/components/subscribe/detail";
 import DurationSelector from "@/components/subscribe/duration-selector";
 import PaymentMethods from "@/components/subscribe/payment-methods";
 import useGlobalStore from "@/config/use-global";
-import { prePurchaseOrder, portalPurchase } from "@/services/user-api/sdk.gen";
+import { portalPurchase, prePurchaseOrder } from "@/services/user-api/sdk.gen";
 import type {
-  Subscribe,
   PortalPurchaseRequest,
   PrePurchaseOrderRequest,
+  Subscribe,
 } from "@/services/user-api/types.gen";
 
 type SubscriptionDescription = {

@@ -46,7 +46,7 @@ const siteSchema = z.object({
 
 type SiteFormData = z.infer<typeof siteSchema>;
 
-export default function SiteConfig() {
+export default function SiteConfigForm() {
   const t = useTranslations("system");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);

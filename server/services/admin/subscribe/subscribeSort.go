@@ -49,7 +49,7 @@ func (l *SubscribeSortLogic) SubscribeSort(req *types.SubscribeSortRequest) erro
 	// query min sort by ids
 	minSort, err := l.deps.SubscribeModel.QuerySubscribeMinSortByIds(l.ctx, ids)
 	if err != nil {
-		l.Logger.Error("[SubscribeSortLogic] query subscribe list by ids error: ", logger.Field("error", err.Error()))
+		l.Error("[SubscribeSortLogic] query subscribe list by ids error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "query subscribe list by ids error: %v", err.Error())
 	}
 	_, subs, err := l.deps.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
@@ -58,7 +58,7 @@ func (l *SubscribeSortLogic) SubscribeSort(req *types.SubscribeSortRequest) erro
 		Ids:  ids,
 	})
 	if err != nil {
-		l.Logger.Error("[SubscribeSortLogic] query subscribe list by ids error: ", logger.Field("error", err.Error()))
+		l.Error("[SubscribeSortLogic] query subscribe list by ids error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "query subscribe list by ids error: %v", err.Error())
 	}
 	// reordering
@@ -72,9 +72,9 @@ func (l *SubscribeSortLogic) SubscribeSort(req *types.SubscribeSortRequest) erro
 		return db.Save(subs).Error
 	})
 	if err != nil {
-		l.Logger.Error("[SubscribeSortLogic] update subscribe sort error: ", logger.Field("error", err.Error()))
+		l.Error("[SubscribeSortLogic] update subscribe sort error: ", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update subscribe sort error: %v", err.Error())
 	}
-	l.Logger.Info("[UpdateSubscribeSort] Successfully updated subscribe sort")
+	l.Info("[UpdateSubscribeSort] Successfully updated subscribe sort")
 	return nil
 }

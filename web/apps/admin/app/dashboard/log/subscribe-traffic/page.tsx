@@ -2,11 +2,11 @@
 
 import { Button } from "@workspace/ui/components/button";
 import { formatBytes } from "@workspace/ui/utils";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Suspense } from "react";
 import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
+import { AdminLink } from "@/components/admin-link";
 import { ProTable } from "@/components/pro-table";
 import { filterUserSubscribeTrafficLog } from "@/services/admin-api/sdk.gen";
 import type { UserSubscribeTrafficLog } from "@/services/admin-api/types.gen";
@@ -34,11 +34,11 @@ function SubscribeTrafficLogPageContent() {
       actions={{
         render: (row) => [
           <Button key="detail" asChild>
-            <Link
+            <AdminLink
               href={`/dashboard/log/traffic-details?date=${row.date}&user_id=${row.user_id}&subscribe_id=${row.subscribe_id}`}
             >
               {t("detail")}
-            </Link>
+            </AdminLink>
           </Button>,
         ],
       }}

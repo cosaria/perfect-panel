@@ -43,8 +43,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import type { SubscribeDiscount } from "@/services/admin-api/types.gen";
 import useGlobalStore from "@/config/use-global";
+import type { SubscribeDiscount } from "@/services/admin-api/types.gen";
 import { useNode } from "@/store/node";
 
 interface SubscribeFormProps<T> {

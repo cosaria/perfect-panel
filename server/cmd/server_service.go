@@ -72,7 +72,13 @@ func initServer(svc *svc.ServiceContext, live *appruntime.LiveState) *gin.Engine
 	handler.RegisterNotifyHandlers(r, runtimeDeps)
 
 	// register embedded frontends (only in production with -tags embed)
+	adminPath := svc.Config.AdminPath
+	if adminPath == "" {
+		adminPath = "/admin"
+	}
+
 	adminEnvVars := map[string]string{
+		"NEXT_PUBLIC_ADMIN_PATH":           adminPath,
 		"NEXT_PUBLIC_SITE_URL":              svc.Config.Site.Host,
 		"NEXT_PUBLIC_API_URL":               "", // same origin when embedded
 		"NEXT_PUBLIC_DEFAULT_USER_EMAIL":    svc.Config.Administrator.Email,
@@ -88,10 +94,6 @@ func initServer(svc *svc.ServiceContext, live *appruntime.LiveState) *gin.Engine
 	if svc.Config.Debug {
 		userEnvVars["NEXT_PUBLIC_DEFAULT_USER_EMAIL"] = svc.Config.Administrator.Email
 		userEnvVars["NEXT_PUBLIC_DEFAULT_USER_PASSWORD"] = svc.Config.Administrator.Password
-	}
-	adminPath := svc.Config.AdminPath
-	if adminPath == "" {
-		adminPath = "/admin"
 	}
 	if err := web.RegisterStaticRoutes(r, adminPath, adminEnvVars, userEnvVars); err != nil {
 		logger.Errorw("register static routes error", logger.Field("error", err.Error()))

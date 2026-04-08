@@ -14,11 +14,11 @@ import { Separator } from "@workspace/ui/components/separator";
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { formatBytes } from "@workspace/ui/utils";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts";
 import { UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
+import { AdminLink } from "@/components/admin-link";
 import { queryServerTotalData, queryTicketWaitReply } from "@/services/admin-api/sdk.gen";
 import { Empty } from "../empty";
 import { RevenueStatisticsCard } from "./revenue-statistics-card";
@@ -130,7 +130,7 @@ export default function Statistics() {
             iconBg: "bg-red-100 dark:bg-red-900/30",
           },
         ].map((item) => (
-          <Link
+          <AdminLink
             href={item.href || "#"}
             key={item.href || item.title}
             className={!item.href ? "pointer-events-none" : ""}
@@ -151,7 +151,7 @@ export default function Statistics() {
                 </div>
               </CardContent>
             </Card>
-          </Link>
+          </AdminLink>
         ))}
         <SystemVersionCard />
       </div>

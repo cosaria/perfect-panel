@@ -92,6 +92,10 @@ func (l *QueryPurchaseOrderLogic) QueryPurchaseOrder(req *types.QueryPurchaseOrd
 
 // handleTemporaryOrder processes temporary order-related operations
 func (l *QueryPurchaseOrderLogic) handleTemporaryOrder(orderInfo *order.Order, req *types.QueryPurchaseOrderRequest) (string, error) {
+	if l.deps.Redis == nil {
+		return "", errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "redis client is nil")
+	}
+
 	cacheKey := fmt.Sprintf(config.TempOrderCacheKey, orderInfo.OrderNo)
 	cacheValue, err := l.deps.Redis.Get(l.ctx, cacheKey).Result()
 	if err != nil {
@@ -119,6 +123,10 @@ func (l *QueryPurchaseOrderLogic) handleTemporaryOrder(orderInfo *order.Order, r
 
 // validateUserAndEmail ensures the user and email are correct
 func (l *QueryPurchaseOrderLogic) validateUserAndEmail(orderInfo *order.Order, platform, openid string) error {
+	if l.deps.UserModel == nil {
+		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "user model is nil")
+	}
+
 	userInfo, err := l.deps.UserModel.FindOne(l.ctx, orderInfo.UserId)
 	if err != nil {
 		return wrapDatabaseError(err)
@@ -137,6 +145,10 @@ func (l *QueryPurchaseOrderLogic) validateUserAndEmail(orderInfo *order.Order, p
 
 // generateSessionToken creates a session token and stores it in Redis
 func (l *QueryPurchaseOrderLogic) generateSessionToken(userId int64) (string, error) {
+	if l.deps.Config == nil {
+		return "", errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "config is nil")
+	}
+
 	sessionId := uuidx.NewUUID().String()
 	token, err := jwt.NewJwtToken(
 		l.deps.Config.JwtAuth.AccessSecret,
@@ -148,6 +160,10 @@ func (l *QueryPurchaseOrderLogic) generateSessionToken(userId int64) (string, er
 	if err != nil {
 		l.Errorw("Token Generation Error", logger.Field("error", err.Error()))
 		return "", errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "Token generation error")
+	}
+
+	if l.deps.Redis == nil {
+		return "", errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "redis client is nil")
 	}
 
 	cacheKey := fmt.Sprintf("%v:%v", config.SessionIdKey, sessionId)

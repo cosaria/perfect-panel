@@ -40,7 +40,7 @@ func (l *AlipayNotifyLogic) AlipayNotify(r *http.Request) error {
 	}
 	var config payment.AlipayF2FConfig
 	if err := json.Unmarshal([]byte(data.Config), &config); err != nil {
-		l.Logger.Error("[AlipayNotify] Unmarshal config failed", logger.Field("error", err.Error()))
+		l.Error("[AlipayNotify] Unmarshal config failed", logger.Field("error", err.Error()))
 		return err
 	}
 	client := alipay.NewClient(alipay.Config{
@@ -52,13 +52,13 @@ func (l *AlipayNotifyLogic) AlipayNotify(r *http.Request) error {
 	})
 	notify, err := client.DecodeNotification(r.Form)
 	if err != nil {
-		l.Logger.Error("[AlipayNotify] Decode notification failed", logger.Field("error", err.Error()))
+		l.Error("[AlipayNotify] Decode notification failed", logger.Field("error", err.Error()))
 		return markInvalidNotification(err)
 	}
 	if notify.Status == alipay.Success {
 		orderInfo, err := l.deps.OrderModel.FindOneByOrderNo(l.ctx, notify.OrderNo)
 		if err != nil {
-			l.Logger.Error("[AlipayNotify] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", notify.OrderNo))
+			l.Error("[AlipayNotify] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", notify.OrderNo))
 			return errors.Wrapf(xerr.NewErrCode(xerr.OrderNotExist), "order not exist: %v", notify.OrderNo)
 		}
 
@@ -69,27 +69,27 @@ func (l *AlipayNotifyLogic) AlipayNotify(r *http.Request) error {
 		// Update order status
 		err = l.deps.OrderModel.UpdateOrderStatus(l.ctx, notify.OrderNo, 2)
 		if err != nil {
-			l.Logger.Error("[AlipayNotify] Update order status failed", logger.Field("error", err.Error()), logger.Field("orderNo", notify.OrderNo))
+			l.Error("[AlipayNotify] Update order status failed", logger.Field("error", err.Error()), logger.Field("orderNo", notify.OrderNo))
 			return err
 		}
-		l.Logger.Info("[AlipayNotify] Notify status success", logger.Field("orderNo", notify.OrderNo))
+		l.Info("[AlipayNotify] Notify status success", logger.Field("orderNo", notify.OrderNo))
 		payload := spec.ForthwithActivateOrderPayload{
 			OrderNo: notify.OrderNo,
 		}
 		bytes, err := json.Marshal(&payload)
 		if err != nil {
-			l.Logger.Error("[AlipayNotify] Marshal payload failed", logger.Field("error", err.Error()))
+			l.Error("[AlipayNotify] Marshal payload failed", logger.Field("error", err.Error()))
 			return err
 		}
 		task := asynq.NewTask(spec.ForthwithActivateOrder, bytes)
 		taskInfo, err := l.deps.Queue.EnqueueContext(l.ctx, task)
 		if err != nil {
-			l.Logger.Error("[AlipayNotify] Enqueue task failed", logger.Field("error", err.Error()))
+			l.Error("[AlipayNotify] Enqueue task failed", logger.Field("error", err.Error()))
 			return err
 		}
-		l.Logger.Info("[AlipayNotify] Enqueue task success", logger.Field("taskInfo", taskInfo))
+		l.Info("[AlipayNotify] Enqueue task success", logger.Field("taskInfo", taskInfo))
 	} else {
-		l.Logger.Error("[AlipayNotify] Notify status failed", logger.Field("status", string(notify.Status)))
+		l.Error("[AlipayNotify] Notify status failed", logger.Field("status", string(notify.Status)))
 	}
 	return nil
 }

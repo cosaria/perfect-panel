@@ -81,12 +81,10 @@ func (m *defaultCouponModel) FindOne(ctx context.Context, id int64) (*Coupon, er
 	err := m.QueryCtx(ctx, &resp, CouponIdKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Coupon{}).Where("`id` = ?", id).First(&resp).Error
 	})
-	switch {
-	case err == nil:
-		return &resp, nil
-	default:
+	if err != nil {
 		return nil, err
 	}
+	return &resp, nil
 }
 
 func (m *defaultCouponModel) FindOneByCode(ctx context.Context, code string) (*Coupon, error) {
@@ -95,12 +93,10 @@ func (m *defaultCouponModel) FindOneByCode(ctx context.Context, code string) (*C
 	err := m.QueryCtx(ctx, &resp, CouponCodeKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Coupon{}).Where("`code` = ?", code).First(&resp).Error
 	})
-	switch {
-	case err == nil:
-		return &resp, nil
-	default:
+	if err != nil {
 		return nil, err
 	}
+	return &resp, nil
 }
 
 func (m *defaultCouponModel) Update(ctx context.Context, data *Coupon) error {

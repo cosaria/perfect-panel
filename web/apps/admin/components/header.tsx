@@ -13,6 +13,8 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Fragment, useMemo } from "react";
 import { findNavByUrl } from "@/config/navs";
+import { stripAdminPath } from "@/utils/admin-path";
+import { AdminLink } from "./admin-link";
 import LanguageSwitch from "./language-switch";
 import ThemeSwitch from "./theme-switch";
 import TimezoneSwitch from "./timezone-switch";
@@ -21,7 +23,7 @@ import { UserNav } from "./user-nav";
 export function Header() {
   const t = useTranslations("menu");
   const pathname = usePathname();
-  const items = useMemo(() => findNavByUrl(pathname), [pathname]);
+  const items = useMemo(() => findNavByUrl(stripAdminPath(pathname)), [pathname]);
   return (
     <header className="bg-background sticky top-0 z-50 flex h-14 shrink-0 items-center gap-2">
       <div className="flex flex-1 items-center gap-2 px-3">
@@ -34,8 +36,10 @@ export function Header() {
                 <Fragment key={item?.title}>
                   {index !== items.length - 1 && (
                     <BreadcrumbItem>
-                      <BreadcrumbLink href={"url" in item ? item.url : "/dashboard"}>
-                        {t(item?.title)}
+                      <BreadcrumbLink asChild>
+                        <AdminLink href={"url" in item ? item.url : "/dashboard"}>
+                          {t(item?.title)}
+                        </AdminLink>
                       </BreadcrumbLink>
                     </BreadcrumbItem>
                   )}

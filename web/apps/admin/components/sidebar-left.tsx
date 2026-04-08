@@ -14,12 +14,13 @@ import {
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { cn } from "@workspace/ui/lib/utils";
 import Image from "next/legacy/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ComponentProps, useCallback, useEffect, useState } from "react";
 import { navs } from "@/config/navs";
 import useGlobalStore from "@/config/use-global";
+import { stripAdminPath } from "@/utils/admin-path";
+import { AdminLink } from "./admin-link";
 
 type Nav = (typeof navs)[number];
 type NavWithItems = Extract<Nav, { items: readonly unknown[] }>;
@@ -70,7 +71,7 @@ export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>) {
 
   const isActiveUrl = useCallback(
     (url: string) => {
-      const path = normalize(pathname);
+      const path = normalize(stripAdminPath(pathname));
       const target = normalize(url);
       if (target === "/dashboard") return path === target;
       if (path === target) return true;
@@ -108,7 +109,9 @@ export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>) {
         aria-label={t(nav.title)}
       >
         {hasUrl(nav) ? (
-          <Link href={nav.url}>{icon ? <Icon icon={icon} className="size-4" /> : null}</Link>
+          <AdminLink href={nav.url}>
+            {icon ? <Icon icon={icon} className="size-4" /> : null}
+          </AdminLink>
         ) : icon ? (
           <Icon icon={icon} className="size-4" />
         ) : null}
@@ -138,7 +141,7 @@ export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>) {
           <ul className="p-1">
             {nav.items.map((item: NavItem) => (
               <li key={item.title}>
-                <Link
+                <AdminLink
                   href={item.url}
                   className={[
                     "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm",
@@ -149,7 +152,7 @@ export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>) {
                 >
                   {item.icon && <Icon icon={item.icon} className="size-4" />}
                   <span className="truncate">{t(item.title)}</span>
-                </Link>
+                </AdminLink>
               </li>
             ))}
           </ul>
@@ -164,7 +167,7 @@ export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="sm" asChild className="h-10">
-              <Link href="/">
+              <AdminLink href="/">
                 <div className="flex aspect-square size-6 items-center justify-center rounded-lg">
                   <Image
                     src={site.site_logo || "/favicon.svg"}
@@ -179,7 +182,7 @@ export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>) {
                   <span className="truncate text-xs font-semibold">{site.site_name}</span>
                   <span className="truncate text-xs opacity-70">{site.site_desc}</span>
                 </div>
-              </Link>
+              </AdminLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -235,10 +238,10 @@ export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>) {
                                   tooltip={t(item.title)}
                                   isActive={isActiveUrl(item.url)}
                                 >
-                                  <Link href={item.url}>
+                                  <AdminLink href={item.url}>
                                     {item.icon && <Icon icon={item.icon} className="size-4" />}
                                     <span className="text-sm">{t(item.title)}</span>
-                                  </Link>
+                                  </AdminLink>
                                 </SidebarMenuButton>
                               </SidebarMenuItem>
                             ))}
@@ -261,10 +264,10 @@ export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>) {
                             tooltip={t(nav.title)}
                             isActive={isActiveUrl(nav.url)}
                           >
-                            <Link href={nav.url}>
+                            <AdminLink href={nav.url}>
                               {icon ? <Icon icon={icon} className="size-4" /> : null}
                               <span className="text-sm">{t(nav.title)}</span>
-                            </Link>
+                            </AdminLink>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
                       </SidebarMenu>

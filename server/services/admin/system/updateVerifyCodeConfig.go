@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/perfect-panel/server/config"
-	modelsystem "github.com/perfect-panel/server/models/system"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
@@ -54,14 +53,15 @@ func (l *UpdateVerifyCodeConfigLogic) UpdateVerifyCodeConfig(req *types.VerifyCo
 			fieldName := t.Field(i).Name
 			// Get the field value to string
 			fieldValue := tool.ConvertValueToString(v.Field(i))
-			// Update the site config
-			err = db.Model(&modelsystem.System{}).Where("`category` = 'verify_code' and `key` = ?", fieldName).Update("value", fieldValue).Error
+			err = l.deps.UpdateSystemConfigField(l.ctx, db, "verify_code", fieldName, fieldValue)
 			if err != nil {
 				break
 			}
 		}
-		err = l.deps.Redis.Del(l.ctx, config.VerifyCodeConfigKey).Err()
-		return err
+		if err != nil {
+			return err
+		}
+		return l.deps.DeleteConfigCache(l.ctx, config.VerifyCodeConfigKey, config.GlobalConfigKey)
 	})
 	if err != nil {
 		l.Errorw("[UpdateRegisterConfig] update verify code config error", logger.Field("error", err.Error()))

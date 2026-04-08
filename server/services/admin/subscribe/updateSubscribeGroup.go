@@ -45,7 +45,7 @@ func (l *UpdateSubscribeGroupLogic) UpdateSubscribeGroup(req *types.UpdateSubscr
 		Description: req.Description,
 	}).Error
 	if err != nil {
-		l.Logger.Error("[UpdateSubscribeGroup] update subscribe group failed", logger.Field("error", err.Error()))
+		l.Error("[UpdateSubscribeGroup] update subscribe group failed", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update subscribe group failed: %v", err.Error())
 	}
 	return nil

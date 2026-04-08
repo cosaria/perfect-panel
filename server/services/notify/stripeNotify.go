@@ -63,7 +63,7 @@ func (l *StripeNotifyLogic) StripeNotify(r *http.Request, w http.ResponseWriter)
 	}
 	orderInfo, err := l.deps.OrderModel.FindOneByOrderNo(l.ctx, notify.OrderNo)
 	if err != nil {
-		l.Logger.Error("[StripeNotify] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", notify.OrderNo))
+		l.Error("[StripeNotify] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", notify.OrderNo))
 		return errors.Wrapf(xerr.NewErrCode(xerr.OrderNotExist), "order not exist: %v", notify.OrderNo)
 	}
 	if notify.EventType == "payment_intent.succeeded" {

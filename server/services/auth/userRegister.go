@@ -189,7 +189,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 		jwt.WithOption("LoginType", req.LoginType),
 	)
 	if err != nil {
-		l.Logger.Error("[UserLogin] token generate error", logger.Field("error", err.Error()))
+		l.Error("[UserLogin] token generate error", logger.Field("error", err.Error()))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "token generate error: %v", err.Error())
 	}
 	// Set session id

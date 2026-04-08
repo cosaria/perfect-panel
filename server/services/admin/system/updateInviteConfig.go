@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/perfect-panel/server/config"
-	modelsystem "github.com/perfect-panel/server/models/system"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
@@ -53,8 +52,7 @@ func (l *UpdateInviteConfigLogic) UpdateInviteConfig(req *types.InviteConfig) er
 			fieldName := t.Field(i).Name
 			// Get the field value to string
 			fieldValue := tool.ConvertValueToString(v.Field(i))
-			// Update the invite config
-			err = db.Model(&modelsystem.System{}).Where("`category` = 'invite' and `key` = ?", fieldName).Update("value", fieldValue).Error
+			err = l.deps.UpdateSystemConfigField(l.ctx, db, "invite", fieldName, fieldValue)
 			if err != nil {
 				break
 			}
@@ -63,14 +61,15 @@ func (l *UpdateInviteConfigLogic) UpdateInviteConfig(req *types.InviteConfig) er
 			return err
 		}
 		// clear cache
-		return l.deps.Redis.Del(l.ctx, config.InviteConfigKey, config.GlobalConfigKey).Err()
+		return l.deps.DeleteConfigCache(l.ctx, config.InviteConfigKey, config.GlobalConfigKey)
 	})
 	if err != nil {
 		l.Errorw("[UpdateInviteConfig] update invite config error", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update invite config error: %v", err)
 	}
-	if l.deps.ReloadInvite != nil {
-		l.deps.ReloadInvite()
+	if err := l.deps.ReloadInviteConfig(); err != nil {
+		l.Errorw("[UpdateInviteConfig] reload invite config error", logger.Field("error", err.Error()))
+		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "reload invite config error: %v", err)
 	}
 	return nil
 }

@@ -2,6 +2,8 @@ package ticket
 
 import (
 	"context"
+	"strings"
+
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/models/ticket"
 	"github.com/perfect-panel/server/models/user"
@@ -46,9 +48,16 @@ func (l *CreateUserTicketLogic) CreateUserTicket(req *types.CreateUserTicketRequ
 		logger.Error("current user is not found in context")
 		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidAccess), "Invalid Access")
 	}
+
+	title := strings.TrimSpace(req.Title)
+	description := strings.TrimSpace(req.Description)
+	if title == "" || description == "" {
+		return errors.Wrapf(xerr.NewErrCode(xerr.InvalidParams), "title and description are required")
+	}
+
 	err := l.deps.TicketModel.Insert(l.ctx, &ticket.Ticket{
-		Title:       req.Title,
-		Description: req.Description,
+		Title:       title,
+		Description: description,
 		UserId:      u.Id,
 		Status:      ticket.Pending,
 	})

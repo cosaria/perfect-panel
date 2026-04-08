@@ -27,6 +27,7 @@ coverage
 
 # Go
 /server/bin/
+.tools/
 
 # OS
 .DS_Store

@@ -67,20 +67,20 @@ func (l *PurchaseCheckoutLogic) PurchaseCheckout(req *types.CheckoutOrderRequest
 	// Validate and retrieve order information
 	orderInfo, err := l.deps.OrderModel.FindOneByOrderNo(l.ctx, req.OrderNo)
 	if err != nil {
-		l.Logger.Error("[PurchaseCheckout] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", req.OrderNo))
+		l.Error("[PurchaseCheckout] Find order failed", logger.Field("error", err.Error()), logger.Field("orderNo", req.OrderNo))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.OrderNotExist), "order not exist: %v", req.OrderNo)
 	}
 
 	// Verify order is in pending payment status (status = 1)
 	if orderInfo.Status != 1 {
-		l.Logger.Error("[PurchaseCheckout] Order status error", logger.Field("status", orderInfo.Status))
+		l.Error("[PurchaseCheckout] Order status error", logger.Field("status", orderInfo.Status))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.OrderStatusError), "order status error: %v", orderInfo.Status)
 	}
 
 	// Retrieve payment method configuration
 	paymentConfig, err := l.deps.PaymentModel.FindOne(l.ctx, orderInfo.PaymentId)
 	if err != nil {
-		l.Logger.Error("[PurchaseCheckout] Database query error", logger.Field("error", err.Error()), logger.Field("payment", orderInfo.Method))
+		l.Error("[PurchaseCheckout] Database query error", logger.Field("error", err.Error()), logger.Field("payment", orderInfo.Method))
 		return nil, errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "find payment method error: %v", err.Error())
 	}
 	// Route to appropriate payment handler based on payment platform
@@ -89,7 +89,7 @@ func (l *PurchaseCheckoutLogic) PurchaseCheckout(req *types.CheckoutOrderRequest
 		// Process EPay payment - generates payment URL for redirect
 		url, err := l.epayPayment(paymentConfig, orderInfo, req.ReturnUrl)
 		if err != nil {
-			l.Logger.Error("[PurchaseCheckout] epay error", logger.Field("error", err.Error()))
+			l.Error("[PurchaseCheckout] epay error", logger.Field("error", err.Error()))
 			return nil, errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "epayPayment error: %v", err.Error())
 		}
 		resp = &types.CheckoutOrderResponse{
@@ -288,7 +288,7 @@ func (l *PurchaseCheckoutLogic) epayPayment(paymentConfig *payment.Payment, info
 		// Convert order amount to CNY using current exchange rate
 		amount, err = l.queryExchangeRate("CNY", info.Amount)
 		if err != nil {
-			l.Logger.Error("[PurchaseCheckout] queryExchangeRate error", logger.Field("error", err.Error()))
+			l.Error("[PurchaseCheckout] queryExchangeRate error", logger.Field("error", err.Error()))
 			return "", err
 		}
 	} else {
@@ -418,11 +418,11 @@ func (l *PurchaseCheckoutLogic) queryExchangeRate(to string, src int64) (amount 
 	// Convert currency if system currency differs from target currency
 	result, err := exchangeRate.GetExchangeRete(currentUnit, to, l.deps.Config.Currency.AccessKey, 1)
 	if err != nil {
-		l.Logger.Error("[PurchaseCheckout] QueryExchangeRate error", logger.Field("error", err.Error()))
+		l.Error("[PurchaseCheckout] QueryExchangeRate error", logger.Field("error", err.Error()))
 		return 0, err
 	}
 	if !l.deps.StoreExchangeRateCache(version, currentUnit, to, result) {
-		l.Logger.Debug("[PurchaseCheckout] Skip stale exchange rate cache write",
+		l.Debug("[PurchaseCheckout] Skip stale exchange rate cache write",
 			logger.Field("currency", currentUnit),
 			logger.Field("target", to),
 			logger.Field("version", version),
@@ -438,7 +438,7 @@ func (l *PurchaseCheckoutLogic) balancePayment(u *user.User, o *order.Order) err
 	var err error
 	if o.Amount == 0 {
 		// No payment required for zero-amount orders
-		l.Logger.Info(
+		l.Info(
 			"[PurchaseCheckout] No payment required for zero-amount order",
 			logger.Field("orderNo", o.OrderNo),
 			logger.Field("userId", u.Id),
@@ -572,7 +572,7 @@ activation:
 		return err
 	}
 
-	l.Logger.Info("[PurchaseCheckout] Balance payment completed successfully",
+	l.Info("[PurchaseCheckout] Balance payment completed successfully",
 		logger.Field("orderNo", o.OrderNo),
 		logger.Field("userId", u.Id))
 	return nil

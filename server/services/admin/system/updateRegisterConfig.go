@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/perfect-panel/server/config"
-	modelsystem "github.com/perfect-panel/server/models/system"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
@@ -53,8 +52,7 @@ func (l *UpdateRegisterConfigLogic) UpdateRegisterConfig(req *types.RegisterConf
 			fieldName := t.Field(i).Name
 			// Get the field value to string
 			fieldValue := tool.ConvertValueToString(v.Field(i))
-			// Update the site config
-			err = db.Model(&modelsystem.System{}).Where("`category` = 'register' and `key` = ?", fieldName).Update("value", fieldValue).Error
+			err = l.deps.UpdateSystemConfigField(l.ctx, db, "register", fieldName, fieldValue)
 			if err != nil {
 				break
 			}
@@ -62,15 +60,15 @@ func (l *UpdateRegisterConfigLogic) UpdateRegisterConfig(req *types.RegisterConf
 		if err != nil {
 			return err
 		}
-		return l.deps.Redis.Del(l.ctx, config.RegisterConfigKey, config.GlobalConfigKey).Err()
+		return l.deps.DeleteConfigCache(l.ctx, config.RegisterConfigKey, config.GlobalConfigKey)
 	})
 	if err != nil {
 		l.Errorw("[UpdateRegisterConfig] update register config error", logger.Field("error", err.Error()))
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseUpdateError), "update register config error: %v", err.Error())
 	}
-	// init system config
-	if l.deps.ReloadRegister != nil {
-		l.deps.ReloadRegister()
+	if err := l.deps.ReloadRegisterConfig(); err != nil {
+		l.Errorw("[UpdateRegisterConfig] reload register config error", logger.Field("error", err.Error()))
+		return errors.Wrapf(xerr.NewErrCode(xerr.ERROR), "reload register config error: %v", err.Error())
 	}
 	return nil
 }

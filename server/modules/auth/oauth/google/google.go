@@ -37,7 +37,7 @@ func New(config *Config) *Client {
 	}
 }
 func (c *Client) GetUserInfo(token string) (_ *UserInfo, err error) {
-	client := c.Config.Client(context.Background(), &oauth2.Token{AccessToken: token})
+	client := c.Client(context.Background(), &oauth2.Token{AccessToken: token})
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
 		logger.Error("[Google OAuth 2.0] Get User Info", logger.Field("error", err.Error()))

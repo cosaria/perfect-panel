@@ -15,12 +15,10 @@ func (m *customUserModel) FindOneDevice(ctx context.Context, id int64) (*Device,
 	err := m.QueryCtx(ctx, &resp, deviceIdKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Device{}).Where("`id` = ?", id).First(&resp).Error
 	})
-	switch {
-	case err == nil:
-		return &resp, nil
-	default:
+	if err != nil {
 		return nil, err
 	}
+	return &resp, nil
 }
 
 func (m *customUserModel) FindOneDeviceByIdentifier(ctx context.Context, id string) (*Device, error) {
@@ -29,12 +27,10 @@ func (m *customUserModel) FindOneDeviceByIdentifier(ctx context.Context, id stri
 	err := m.QueryCtx(ctx, &resp, deviceIdKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Device{}).Where("`identifier` = ?", id).First(&resp).Error
 	})
-	switch {
-	case err == nil:
-		return &resp, nil
-	default:
+	if err != nil {
 		return nil, err
 	}
+	return &resp, nil
 }
 
 // QueryDevicePageList  returns a list of records that meet the conditions.

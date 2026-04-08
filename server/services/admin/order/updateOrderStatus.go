@@ -51,7 +51,7 @@ func (l *UpdateOrderStatusLogic) UpdateOrderStatus(req *types.UpdateOrderStatusR
 	if req.PaymentId != 0 {
 		paymentMethod, err := l.deps.PaymentModel.FindOne(l.ctx, req.PaymentId)
 		if err != nil {
-			l.Logger.Error("[CreateOrder] PaymentMethod Not Found", logger.Field("error", err.Error()))
+			l.Error("[CreateOrder] PaymentMethod Not Found", logger.Field("error", err.Error()))
 			return errors.Wrapf(xerr.NewErrCode(xerr.PaymentMethodNotFound), "PaymentMethod not found: %v", err.Error())
 		}
 		info.PaymentId = paymentMethod.Id

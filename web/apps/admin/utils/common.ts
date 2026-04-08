@@ -1,7 +1,8 @@
 import { isBrowser } from "@workspace/ui/utils";
 import { intlFormat } from "date-fns";
 import Cookies from "universal-cookie";
-import { locales, NEXT_PUBLIC_DEFAULT_LANGUAGE } from "@/config/constants";
+import { locales, NEXT_PUBLIC_ADMIN_PATH, NEXT_PUBLIC_DEFAULT_LANGUAGE } from "@/config/constants";
+import { toAdminPath } from "./admin-path";
 
 const cookies = new Cookies(null, {
   path: "/",
@@ -38,16 +39,16 @@ export function setRedirectUrl(value?: string) {
 }
 
 export function getRedirectUrl() {
-  return sessionStorage.getItem("redirect-url") ?? "/dashboard";
+  return toAdminPath(sessionStorage.getItem("redirect-url") ?? "/dashboard");
 }
 
 export function Logout() {
   if (!isBrowser()) return;
   cookies.remove("Authorization");
   const pathname = location.pathname;
-  if (!["", "/"].includes(pathname)) {
+  if (!["", "/", NEXT_PUBLIC_ADMIN_PATH].includes(pathname)) {
     setRedirectUrl(location.pathname);
-    location.href = `/`;
+    location.href = toAdminPath("/");
   }
 }
 

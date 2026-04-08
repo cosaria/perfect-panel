@@ -21,9 +21,9 @@ import PaymentMethods from "@/components/subscribe/payment-methods";
 import useGlobalStore from "@/config/use-global";
 import { preCreateOrder, renewal } from "@/services/user-api/sdk.gen";
 import type {
-  Subscribe,
   PurchaseOrderRequest,
   RenewalOrderRequest,
+  Subscribe,
 } from "@/services/user-api/types.gen";
 import { SubscribeBilling } from "./billing";
 import { SubscribeDetail } from "./detail";

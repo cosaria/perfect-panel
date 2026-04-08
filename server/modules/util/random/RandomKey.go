@@ -86,9 +86,10 @@ func Key(length int, keyType int) string {
 
 func KeyNew(length int, keyType int) string {
 	randomString := "0123456789"
-	if keyType == 1 {
+	switch keyType {
+	case 1:
 		randomString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"
-	} else if keyType == 2 {
+	case 2:
 		randomString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	}
 	var res []byte

@@ -116,9 +116,9 @@ func (c *Client) SearchStripeCustomer(user *User) (*stripe.Customer, error) {
 	stripe.Key = c.SecretKey
 	params := &stripe.CustomerSearchParams{}
 	if user.Email != "" {
-		params.SearchParams.Query = fmt.Sprintf("email:'%s'", user.Email)
+		params.Query = fmt.Sprintf("email:'%s'", user.Email)
 	} else {
-		params.SearchParams.Query = fmt.Sprintf("metadata['user_id']:'%d'", user.UserId)
+		params.Query = fmt.Sprintf("metadata['user_id']:'%d'", user.UserId)
 	}
 	result := customer.Search(params)
 	if result.Err() != nil {
@@ -155,7 +155,7 @@ func (c *Client) QueryOrderStatus(orderNo string) (bool, error) {
 
 // ParseNotify
 func (c *Client) ParseNotify(payload []byte, signature string) (*NotifyResult, error) {
-	event, err := webhook.ConstructEventWithOptions(payload, signature, c.Config.WebhookSecret, webhook.ConstructEventOptions{
+	event, err := webhook.ConstructEventWithOptions(payload, signature, c.WebhookSecret, webhook.ConstructEventOptions{
 		IgnoreAPIVersionMismatch: true,
 	})
 	if err != nil {

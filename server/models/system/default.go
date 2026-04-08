@@ -79,12 +79,10 @@ func (m *defaultSystemModel) FindOne(ctx context.Context, id int64) (*System, er
 	err := m.QueryCtx(ctx, &resp, SystemIdKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&System{}).Where("`id` = ?", id).First(&resp).Error
 	})
-	switch {
-	case err == nil:
-		return &resp, nil
-	default:
+	if err != nil {
 		return nil, err
 	}
+	return &resp, nil
 }
 
 func (m *defaultSystemModel) Update(ctx context.Context, data *System) error {

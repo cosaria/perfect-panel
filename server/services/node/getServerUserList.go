@@ -32,7 +32,7 @@ func GetServerUserListHandler(deps Deps) func(c *gin.Context) {
 		l := NewGetServerUserListLogic(c, deps)
 		resp, err := l.GetServerUserList(&req)
 		if err != nil {
-			if errors.Is(err, xerr.StatusNotModified) {
+			if errors.Is(err, xerr.ErrStatusNotModified) {
 				c.Status(http.StatusNotModified)
 				return
 			}
@@ -69,7 +69,7 @@ func (l *GetServerUserListLogic) GetServerUserList(req *types.GetServerUserListR
 		resp = &types.GetServerUserListResponse{}
 		//  Check If-None-Match header
 		if match := l.ctx.GetHeader("If-None-Match"); match == etag {
-			return nil, xerr.StatusNotModified
+			return nil, xerr.ErrStatusNotModified
 		}
 		l.ctx.Header("ETag", etag)
 		err = json.Unmarshal([]byte(cache), resp)
@@ -156,7 +156,7 @@ func (l *GetServerUserListLogic) GetServerUserList(req *types.GetServerUserListR
 	}
 	//  Check If-None-Match header
 	if match := l.ctx.GetHeader("If-None-Match"); match == etag {
-		return nil, xerr.StatusNotModified
+		return nil, xerr.ErrStatusNotModified
 	}
 	return resp, nil
 }

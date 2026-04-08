@@ -1,3 +1,4 @@
+export * from "@workspace/ui/utils/api-base";
 export * from "@workspace/ui/utils/countries";
 export * from "@workspace/ui/utils/formatting";
 export * from "@workspace/ui/utils/unit-conversions";

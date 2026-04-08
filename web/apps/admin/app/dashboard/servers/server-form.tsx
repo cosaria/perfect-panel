@@ -61,8 +61,7 @@ import {
 } from "./form-schema";
 
 type GeneratedFieldValueMap = Record<string, string>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ProtocolFieldPath = any; // Dynamic protocol field paths are not statically resolvable with discriminated unions
+type ProtocolFieldPath = never;
 
 function isGeneratedFieldValueMap(
   value: string | GeneratedFieldValueMap,
@@ -266,7 +265,13 @@ function DynamicField({
               <FormLabel>{t(field.label)}</FormLabel>
               <FormControl>
                 <Select
-                  value={fieldProps.value ?? field.defaultValue}
+                  value={
+                    typeof fieldProps.value === "string"
+                      ? fieldProps.value
+                      : typeof field.defaultValue === "string"
+                        ? field.defaultValue
+                        : undefined
+                  }
                   onValueChange={(v) => fieldProps.onChange(v)}
                 >
                   <FormControl>
@@ -320,7 +325,7 @@ function DynamicField({
               <FormControl>
                 <textarea
                   {...fieldProps}
-                  value={fieldProps.value ?? ""}
+                  value={typeof fieldProps.value === "string" ? fieldProps.value : ""}
                   className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   placeholder={
                     field.placeholder
