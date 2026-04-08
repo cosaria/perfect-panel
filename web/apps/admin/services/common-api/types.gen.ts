@@ -4,20 +4,6 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}/api/v1/common` | (string & {});
 };
 
-export type Ads = {
-    content: string;
-    created_at: number;
-    description: string;
-    end_time: number;
-    id: number;
-    start_time: number;
-    status: number;
-    target_url: string;
-    title: string;
-    type: string;
-    updated_at: number;
-};
-
 export type AuthConfig = {
     device: DeviceAuthticateConfig;
     email: EmailAuthticateConfig;
@@ -45,7 +31,6 @@ export type DeviceAuthticateConfig = {
     enable: boolean;
     enable_security: boolean;
     only_real_device: boolean;
-    show_ads: boolean;
 };
 
 export type DownloadLink = {
@@ -77,10 +62,6 @@ export type ErrorDetail = {
      * The value at the given location
      */
     value?: unknown;
-};
-
-export type GetAdsResponse = {
-    list: Array<Ads> | null;
 };
 
 export type GetGlobalConfigResponse = {
@@ -205,62 +186,6 @@ export type VeifyConfig = {
     enable_reset_password_verify: boolean;
     turnstile_site_key: string;
 };
-
-export type GetAdsData = {
-    body?: never;
-    path?: never;
-    query?: {
-        device?: string;
-        position?: string;
-    };
-    url: '/ads';
-};
-
-export type GetAdsErrors = {
-    /**
-     * Bad Request
-     */
-    400: Problem;
-    /**
-     * Unauthorized
-     */
-    401: Problem;
-    /**
-     * Forbidden
-     */
-    403: Problem;
-    /**
-     * Not Found
-     */
-    404: Problem;
-    /**
-     * Unprocessable Entity
-     */
-    422: Problem;
-    /**
-     * Too Many Requests
-     */
-    429: Problem;
-    /**
-     * Internal Server Error
-     */
-    500: Problem;
-    /**
-     * Bad Gateway
-     */
-    502: Problem;
-};
-
-export type GetAdsError = GetAdsErrors[keyof GetAdsErrors];
-
-export type GetAdsResponses = {
-    /**
-     * OK
-     */
-    200: GetAdsResponse;
-};
-
-export type GetAdsResponse2 = GetAdsResponses[keyof GetAdsResponses];
 
 export type CheckVerificationCodeData = {
     body: CheckVerificationCodeRequest;

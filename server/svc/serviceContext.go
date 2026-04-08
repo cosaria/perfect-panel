@@ -9,7 +9,6 @@ import (
 	"github.com/perfect-panel/server/modules/verify/device"
 
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/models/ads"
 	"github.com/perfect-panel/server/models/announcement"
 	"github.com/perfect-panel/server/models/auth"
 	"github.com/perfect-panel/server/models/coupon"
@@ -44,7 +43,6 @@ type ServiceContext struct {
 
 	//NodeCache   *cache.NodeCacheClient
 	AuthModel   auth.Model
-	AdsModel    ads.Model
 	LogModel    log.Model
 	NodeModel   node.Model
 	UserModel   user.Model
@@ -106,7 +104,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		GeoIP:        geoIP,
 		//NodeCache:   cache.NewNodeCacheClient(rds),
 		AuthLimiter: authLimiter,
-		AdsModel:    ads.NewModel(db, rds),
 		LogModel:    log.NewModel(db),
 		NodeModel:   node.NewModel(db, rds),
 		AuthModel:   auth.NewModel(db, rds),

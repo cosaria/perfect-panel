@@ -69,7 +69,6 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
       },
       device: {
         enable: false,
-        show_ads: false,
         enable_security: false,
         only_real_device: false,
       },

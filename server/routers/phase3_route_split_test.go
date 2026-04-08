@@ -47,7 +47,12 @@ func TestPhase3RouteRegistrarsComposeSpecContract(t *testing.T) {
 	}
 
 	adminPaths := apis.Admin.OpenAPI().Paths
-	if _, ok := adminPaths["/ads"]; !ok {
-		t.Fatal("expected admin routes to be present in admin spec")
+	if _, ok := adminPaths["/ads"]; ok {
+		t.Fatal("expected ads routes to be removed from admin spec")
+	}
+
+	commonPaths := apis.Common.OpenAPI().Paths
+	if _, ok := commonPaths["/ads"]; ok {
+		t.Fatal("expected ads routes to be removed from common spec")
 	}
 }

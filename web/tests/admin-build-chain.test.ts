@@ -25,7 +25,9 @@ describe("admin build chain", () => {
     };
 
     expect(makefile).toContain("cp -r web/apps/admin/dist/* server/web/admin-dist/");
-    expect(dockerfile).toContain("COPY --from=web-builder /app/web/apps/admin/dist ./web/admin-dist");
+    expect(dockerfile).toContain(
+      "COPY --from=web-builder /app/web/apps/admin/dist ./web/admin-dist",
+    );
     expect(rootWebPackageJson.scripts.clean).toContain("apps/admin/dist");
   });
 

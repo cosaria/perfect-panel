@@ -62,6 +62,9 @@ describe("admin routes", () => {
     const actualPaths = collectRoutePaths(routes);
     const expectedPaths = collectNavUrls();
 
+    expect(actualPaths.has("/dashboard/ads")).toBe(false);
+    expect(expectedPaths.has("/dashboard/ads")).toBe(false);
+
     for (const path of expectedPaths) {
       expect(actualPaths.has(path)).toBe(true);
     }

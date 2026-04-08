@@ -1,4 +1,3 @@
-import ads from "./ads.json";
 import announcement from "./announcement.json";
 import auth from "./auth.json";
 import authControl from "./auth-control.json";
@@ -22,7 +21,6 @@ import tool from "./tool.json";
 import user from "./user.json";
 
 const messages = {
-  ads,
   announcement,
   auth,
   "auth-control": authControl,

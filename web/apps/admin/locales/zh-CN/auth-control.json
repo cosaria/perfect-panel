@@ -32,9 +32,7 @@
     "enable": "启用",
     "enableDescription": "启用后，支持使用多个设备标识符，如 IMEI/IDFA/IDFV/AndroidID/Mac 地址进行登录和注册",
     "enableSecurity": "启用通信加密",
-    "enableSecurityDescription": "启用后，设备与服务器之间的通信将被加密",
-    "showAds": "显示广告",
-    "showAdsDescription": "启用后，设备上将显示广告"
+    "enableSecurityDescription": "启用后，设备与服务器之间的通信将被加密"
   },
   "deviceAuthMethods": "设备认证方式",
   "email": {

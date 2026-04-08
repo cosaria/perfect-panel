@@ -36,7 +36,6 @@ func newRuntimeDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveState) *app
 		Queue:             svcCtx.Queue,
 		Live:              live,
 		AuthModel:         svcCtx.AuthModel,
-		AdsModel:          svcCtx.AdsModel,
 		LogModel:          svcCtx.LogModel,
 		NodeModel:         svcCtx.NodeModel,
 		UserModel:         svcCtx.UserModel,

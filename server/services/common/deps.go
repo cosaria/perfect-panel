@@ -3,7 +3,6 @@ package common
 import (
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/config"
-	modelads "github.com/perfect-panel/server/models/ads"
 	modelauth "github.com/perfect-panel/server/models/auth"
 	modelclient "github.com/perfect-panel/server/models/client"
 	modelsystem "github.com/perfect-panel/server/models/system"
@@ -14,7 +13,6 @@ import (
 )
 
 type Deps struct {
-	AdsModel    modelads.Model
 	AuthModel   modelauth.Model
 	ClientModel modelclient.Model
 	SystemModel modelsystem.Model

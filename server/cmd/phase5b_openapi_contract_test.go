@@ -9,13 +9,8 @@ import (
 func TestPhase5BRepresentativeOperationsExposeGovernedMetadata(t *testing.T) {
 	specs := exportPhase5BSpecs(t)
 
-	adminCreateAds := lookupPhase5BOperation(t, specs["admin"], "/ads", "post")
-	require.Equal(t, "createAds", adminCreateAds["operationId"])
-	require.Equal(t, "Create Ads", adminCreateAds["summary"])
-	require.Contains(t, adminCreateAds, "security")
-	require.Contains(t, adminCreateAds, "responses")
-	require.Contains(t, adminCreateAds["responses"].(map[string]interface{}), "400")
-	require.Contains(t, adminCreateAds["responses"].(map[string]interface{}), "401")
+	assertPhase5BOperationMissing(t, specs["admin"], "/ads")
+	assertPhase5BOperationMissing(t, specs["common"], "/ads")
 
 	userLogin := lookupPhase5BOperation(t, specs["user"], "/api/v1/auth/login", "post")
 	require.Equal(t, "userLogin", userLogin["operationId"])
@@ -43,4 +38,14 @@ func lookupPhase5BOperation(t *testing.T, spec map[string]interface{}, path stri
 	op, ok := pathItem[method].(map[string]interface{})
 	require.True(t, ok, "expected method %s for path %s", method, path)
 	return op
+}
+
+func assertPhase5BOperationMissing(t *testing.T, spec map[string]interface{}, path string) {
+	t.Helper()
+
+	paths, ok := spec["paths"].(map[string]interface{})
+	require.True(t, ok)
+
+	_, exists := paths[path]
+	require.False(t, exists, "expected path %s to be removed from spec", path)
 }

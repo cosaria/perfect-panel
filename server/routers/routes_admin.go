@@ -9,7 +9,6 @@ import (
 	"github.com/perfect-panel/server/initialize"
 	"github.com/perfect-panel/server/routers/middleware"
 	appruntime "github.com/perfect-panel/server/runtime"
-	adminAds "github.com/perfect-panel/server/services/admin/ads"
 	adminAnnouncement "github.com/perfect-panel/server/services/admin/announcement"
 	adminApplication "github.com/perfect-panel/server/services/admin/application"
 	adminAuthMethod "github.com/perfect-panel/server/services/admin/authMethod"
@@ -38,7 +37,6 @@ func registerAdminRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specO
 		"Perfect Panel Admin API",
 		"1.0.0",
 		"/api/v1/admin",
-		"ads",
 		"announcement",
 		"application",
 		"auth-method",
@@ -57,7 +55,6 @@ func registerAdminRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specO
 	)
 	apis.Admin = humagin.NewWithGroup(router, adminGroup, adminConfig)
 	configureHumaAPI(apis.Admin, compatibilityEnabled(runtimeDeps, specOnly))
-	adminAdsDeps := adminAds.Deps{}
 	adminAnnouncementDeps := adminAnnouncement.Deps{}
 	adminApplicationDeps := adminApplication.Deps{}
 	adminAuthMethodDeps := adminAuthMethod.Deps{}
@@ -76,7 +73,6 @@ func registerAdminRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specO
 	adminToolDeps := newAdminToolDeps(runtimeDeps)
 	adminUserDeps := adminUser.Deps{}
 	if runtimeDeps != nil {
-		adminAdsDeps.AdsModel = runtimeDeps.AdsModel
 		adminAnnouncementDeps.AnnouncementModel = runtimeDeps.AnnouncementModel
 		adminApplicationDeps.ClientModel = runtimeDeps.ClientModel
 		adminApplicationDeps.NodeModel = runtimeDeps.NodeModel
@@ -124,51 +120,6 @@ func registerAdminRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specO
 		adminUserDeps.DeviceManager = runtimeDeps.DeviceManager
 		adminUserDeps.Config = runtimeDeps.Config
 	}
-
-	registerOperation(apis.Admin, huma.Operation{
-		OperationID: "createAds",
-		Method:      http.MethodPost,
-		Path:        "/ads",
-		Summary:     "Create Ads",
-		Tags:        []string{"ads"},
-		Security:    bearerSecurity,
-	}, adminAds.CreateAdsHandler(adminAdsDeps))
-
-	registerOperation(apis.Admin, huma.Operation{
-		OperationID: "updateAds",
-		Method:      http.MethodPut,
-		Path:        "/ads",
-		Summary:     "Update Ads",
-		Tags:        []string{"ads"},
-		Security:    bearerSecurity,
-	}, adminAds.UpdateAdsHandler(adminAdsDeps))
-
-	registerOperation(apis.Admin, huma.Operation{
-		OperationID: "deleteAds",
-		Method:      http.MethodDelete,
-		Path:        "/ads",
-		Summary:     "Delete Ads",
-		Tags:        []string{"ads"},
-		Security:    bearerSecurity,
-	}, adminAds.DeleteAdsHandler(adminAdsDeps))
-
-	registerOperation(apis.Admin, huma.Operation{
-		OperationID: "getAdsDetail",
-		Method:      http.MethodGet,
-		Path:        "/ads/detail",
-		Summary:     "Get Ads Detail",
-		Tags:        []string{"ads"},
-		Security:    bearerSecurity,
-	}, adminAds.GetAdsDetailHandler(adminAdsDeps))
-
-	registerOperation(apis.Admin, huma.Operation{
-		OperationID: "getAdsList",
-		Method:      http.MethodGet,
-		Path:        "/ads/list",
-		Summary:     "Get Ads List",
-		Tags:        []string{"ads"},
-		Security:    bearerSecurity,
-	}, adminAds.GetAdsListHandler(adminAdsDeps))
 
 	registerOperation(apis.Admin, huma.Operation{
 		OperationID: "createAnnouncement",

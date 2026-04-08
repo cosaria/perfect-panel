@@ -4,20 +4,6 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}/api/v1/admin` | (string & {});
 };
 
-export type Ads = {
-    content: string;
-    created_at: number;
-    description: string;
-    end_time: number;
-    id: number;
-    start_time: number;
-    status: number;
-    target_url: string;
-    title: string;
-    type: string;
-    updated_at: number;
-};
-
 export type Announcement = {
     content: string;
     created_at: number;
@@ -108,17 +94,6 @@ export type Coupon = {
     updated_at: number;
     used_count: number;
     user_limit: number;
-};
-
-export type CreateAdsRequest = {
-    content: string;
-    description: string;
-    end_time: number;
-    start_time: number;
-    status: number;
-    target_url: string;
-    title: string;
-    type: string;
 };
 
 export type CreateAnnouncementRequest = {
@@ -303,10 +278,6 @@ export type CurrencyConfig = {
     currency_unit: string;
 };
 
-export type DeleteAdsRequest = {
-    id: number;
-};
-
 export type DeleteAnnouncementRequest = {
     id: number;
 };
@@ -467,18 +438,6 @@ export type Follow = {
     id: number;
     ticket_id: number;
     type: number;
-};
-
-export type GetAdsListRequest = {
-    page: number;
-    search?: string;
-    size: number;
-    status?: number;
-};
-
-export type GetAdsListResponse = {
-    list: Array<Ads> | null;
-    total: number;
 };
 
 export type GetAnnouncementListRequest = {
@@ -1275,18 +1234,6 @@ export type TrafficLogDetails = {
     user_id: number;
 };
 
-export type UpdateAdsRequest = {
-    content: string;
-    description: string;
-    end_time: number;
-    id: number;
-    start_time: number;
-    status: number;
-    target_url: string;
-    title: string;
-    type: string;
-};
-
 export type UpdateAnnouncementRequest = {
     content: string;
     id: number;
@@ -1604,273 +1551,6 @@ export type VerifyConfig = {
 export type VersionResponse = {
     version: string;
 };
-
-export type DeleteAdsData = {
-    body: DeleteAdsRequest;
-    path?: never;
-    query?: never;
-    url: '/ads';
-};
-
-export type DeleteAdsErrors = {
-    /**
-     * Bad Request
-     */
-    400: Problem;
-    /**
-     * Unauthorized
-     */
-    401: Problem;
-    /**
-     * Forbidden
-     */
-    403: Problem;
-    /**
-     * Not Found
-     */
-    404: Problem;
-    /**
-     * Unprocessable Entity
-     */
-    422: Problem;
-    /**
-     * Too Many Requests
-     */
-    429: Problem;
-    /**
-     * Internal Server Error
-     */
-    500: Problem;
-    /**
-     * Bad Gateway
-     */
-    502: Problem;
-};
-
-export type DeleteAdsError = DeleteAdsErrors[keyof DeleteAdsErrors];
-
-export type DeleteAdsResponses = {
-    /**
-     * No Content
-     */
-    204: void;
-};
-
-export type DeleteAdsResponse = DeleteAdsResponses[keyof DeleteAdsResponses];
-
-export type CreateAdsData = {
-    body: CreateAdsRequest;
-    path?: never;
-    query?: never;
-    url: '/ads';
-};
-
-export type CreateAdsErrors = {
-    /**
-     * Bad Request
-     */
-    400: Problem;
-    /**
-     * Unauthorized
-     */
-    401: Problem;
-    /**
-     * Forbidden
-     */
-    403: Problem;
-    /**
-     * Not Found
-     */
-    404: Problem;
-    /**
-     * Unprocessable Entity
-     */
-    422: Problem;
-    /**
-     * Too Many Requests
-     */
-    429: Problem;
-    /**
-     * Internal Server Error
-     */
-    500: Problem;
-    /**
-     * Bad Gateway
-     */
-    502: Problem;
-};
-
-export type CreateAdsError = CreateAdsErrors[keyof CreateAdsErrors];
-
-export type CreateAdsResponses = {
-    /**
-     * No Content
-     */
-    204: void;
-};
-
-export type CreateAdsResponse = CreateAdsResponses[keyof CreateAdsResponses];
-
-export type UpdateAdsData = {
-    body: UpdateAdsRequest;
-    path?: never;
-    query?: never;
-    url: '/ads';
-};
-
-export type UpdateAdsErrors = {
-    /**
-     * Bad Request
-     */
-    400: Problem;
-    /**
-     * Unauthorized
-     */
-    401: Problem;
-    /**
-     * Forbidden
-     */
-    403: Problem;
-    /**
-     * Not Found
-     */
-    404: Problem;
-    /**
-     * Unprocessable Entity
-     */
-    422: Problem;
-    /**
-     * Too Many Requests
-     */
-    429: Problem;
-    /**
-     * Internal Server Error
-     */
-    500: Problem;
-    /**
-     * Bad Gateway
-     */
-    502: Problem;
-};
-
-export type UpdateAdsError = UpdateAdsErrors[keyof UpdateAdsErrors];
-
-export type UpdateAdsResponses = {
-    /**
-     * No Content
-     */
-    204: void;
-};
-
-export type UpdateAdsResponse = UpdateAdsResponses[keyof UpdateAdsResponses];
-
-export type GetAdsDetailData = {
-    body?: never;
-    path?: never;
-    query?: {
-        id?: number;
-    };
-    url: '/ads/detail';
-};
-
-export type GetAdsDetailErrors = {
-    /**
-     * Bad Request
-     */
-    400: Problem;
-    /**
-     * Unauthorized
-     */
-    401: Problem;
-    /**
-     * Forbidden
-     */
-    403: Problem;
-    /**
-     * Not Found
-     */
-    404: Problem;
-    /**
-     * Unprocessable Entity
-     */
-    422: Problem;
-    /**
-     * Too Many Requests
-     */
-    429: Problem;
-    /**
-     * Internal Server Error
-     */
-    500: Problem;
-    /**
-     * Bad Gateway
-     */
-    502: Problem;
-};
-
-export type GetAdsDetailError = GetAdsDetailErrors[keyof GetAdsDetailErrors];
-
-export type GetAdsDetailResponses = {
-    /**
-     * OK
-     */
-    200: Ads;
-};
-
-export type GetAdsDetailResponse = GetAdsDetailResponses[keyof GetAdsDetailResponses];
-
-export type GetAdsListData = {
-    body: GetAdsListRequest;
-    path?: never;
-    query?: never;
-    url: '/ads/list';
-};
-
-export type GetAdsListErrors = {
-    /**
-     * Bad Request
-     */
-    400: Problem;
-    /**
-     * Unauthorized
-     */
-    401: Problem;
-    /**
-     * Forbidden
-     */
-    403: Problem;
-    /**
-     * Not Found
-     */
-    404: Problem;
-    /**
-     * Unprocessable Entity
-     */
-    422: Problem;
-    /**
-     * Too Many Requests
-     */
-    429: Problem;
-    /**
-     * Internal Server Error
-     */
-    500: Problem;
-    /**
-     * Bad Gateway
-     */
-    502: Problem;
-};
-
-export type GetAdsListError = GetAdsListErrors[keyof GetAdsListErrors];
-
-export type GetAdsListResponses = {
-    /**
-     * OK
-     */
-    200: GetAdsListResponse;
-};
-
-export type GetAdsListResponse2 = GetAdsListResponses[keyof GetAdsListResponses];
 
 export type DeleteAnnouncementData = {
     body: DeleteAnnouncementRequest;

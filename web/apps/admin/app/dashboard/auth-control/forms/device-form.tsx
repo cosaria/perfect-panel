@@ -39,7 +39,6 @@ const deviceSchema = z.object({
   enabled: z.boolean(),
   config: z
     .object({
-      show_ads: z.boolean().optional(),
       only_real_device: z.boolean().optional(),
       enable_security: z.boolean().optional(),
       security_secret: z.string().optional(),
@@ -74,7 +73,6 @@ export default function DeviceForm() {
       method: "device",
       enabled: false,
       config: {
-        show_ads: false,
         only_real_device: false,
         enable_security: false,
         security_secret: "",
@@ -149,25 +147,6 @@ export default function DeviceForm() {
                       />
                     </FormControl>
                     <FormDescription>{t("device.enableDescription")}</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="config.show_ads"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("device.showAds")}</FormLabel>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className="float-end !mt-0"
-                      />
-                    </FormControl>
-                    <FormDescription>{t("device.showAdsDescription")}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

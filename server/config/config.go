@@ -103,7 +103,6 @@ type MobileConfig struct {
 
 type DeviceConfig struct {
 	Enable         bool   `yaml:"enable" default:"true"`
-	ShowAds        bool   `yaml:"show_ads"`
 	EnableSecurity bool   `yaml:"enable_security"`
 	OnlyRealDevice bool   `yaml:"only_real_device"`
 	SecuritySecret string `yaml:"security_secret"`

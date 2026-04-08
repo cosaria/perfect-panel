@@ -29,9 +29,7 @@ describe("admin-path", () => {
 
   test("canonicalizes legacy admin browser paths to the runtime admin path", () => {
     expect(canonicalizeAdminBrowserPath("/admin/dashboard", "/manage")).toBe("/manage/dashboard");
-    expect(canonicalizeAdminBrowserPath("/manage/dashboard", "/manage")).toBe(
-      "/manage/dashboard",
-    );
+    expect(canonicalizeAdminBrowserPath("/manage/dashboard", "/manage")).toBe("/manage/dashboard");
   });
 
   test("only strips the configured admin prefix on a real path boundary", () => {

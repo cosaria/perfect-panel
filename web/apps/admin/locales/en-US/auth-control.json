@@ -32,9 +32,7 @@
     "enable": "Enable",
     "enableDescription": "When enabled, supports login and registration using multiple device identifiers like IMEI/IDFA/IDFV/AndroidID/MAC address",
     "enableSecurity": "Enable Communication Encryption",
-    "enableSecurityDescription": "When enabled, communication between devices and servers will be encrypted",
-    "showAds": "Show Advertisements",
-    "showAdsDescription": "When enabled, advertisements will be displayed on devices"
+    "enableSecurityDescription": "When enabled, communication between devices and servers will be encrypted"
   },
   "deviceAuthMethods": "Device Authentication Methods",
   "email": {

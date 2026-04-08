@@ -30,16 +30,13 @@ import (
 	servertool "github.com/perfect-panel/server/modules/util/tool"
 	serverturnstile "github.com/perfect-panel/server/modules/verify/turnstile"
 	serverresponse "github.com/perfect-panel/server/routers/response"
-	adminads "github.com/perfect-panel/server/services/admin/ads"
 	serverauth "github.com/perfect-panel/server/services/auth"
-	servercommon "github.com/perfect-panel/server/services/common"
 	servernodehandlers "github.com/perfect-panel/server/services/node"
 	servernotify "github.com/perfect-panel/server/services/notify"
 	serversubscribe "github.com/perfect-panel/server/services/subscribe"
 	servertelegram "github.com/perfect-panel/server/services/telegram"
 	serveruserorder "github.com/perfect-panel/server/services/user/order"
 	serversvc "github.com/perfect-panel/server/svc"
-	servertypes "github.com/perfect-panel/server/types"
 	serverworker "github.com/perfect-panel/server/worker"
 )
 
@@ -48,7 +45,6 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	var tempOrder serverconfig.TemporaryOrderInfo
 	var multiplierPeriods []servernode.TimePeriod
 	var ctx serversvc.ServiceContext
-	var ads servertypes.Ads
 	var cache servercache.Cache
 	var emailErr serveremail.ErrorInfo
 	loadFn := serverconf.Load
@@ -64,9 +60,7 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	multiplierManager := servernode.NewNodeMultiplierManager(multiplierPeriods)
 	successPayload := serverresponse.Success(map[string]string{"phase": "2"})
 	versionNumber := servertool.ExtractVersionNumber(serverconfig.Version)
-	createAdsHandler := adminads.CreateAdsHandler(adminads.Deps{})
 	checkUserHandler := serverauth.CheckUserHandler(serverauth.Deps{})
-	getAdsHandler := servercommon.GetAdsHandler(servercommon.Deps{})
 	closeOrderHandler := serveruserorder.CloseOrderHandler(serveruserorder.Deps{})
 	serverConfigHandler := servernodehandlers.GetServerConfigHandler(servernodehandlers.Deps{})
 	paymentNotifyHandler := servernotify.PaymentNotifyHandler(servernotify.Deps{})
@@ -105,10 +99,6 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 
 	if ctx.Redis != nil {
 		t.Fatal("expected zero-value service context in compile smoke test")
-	}
-
-	if ads.Id != 0 {
-		t.Fatal("expected zero-value type in compile smoke test")
 	}
 
 	if !limit.TryBorrow() {
@@ -171,7 +161,7 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 		t.Fatal("expected modules/util/tool package to expose legacy utility helpers during phase 2")
 	}
 
-	if createAdsHandler == nil || checkUserHandler == nil || getAdsHandler == nil || closeOrderHandler == nil {
+	if checkUserHandler == nil || closeOrderHandler == nil {
 		t.Fatal("expected service packages to expose huma handler shims for phase 3 migration")
 	}
 

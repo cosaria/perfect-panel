@@ -5,7 +5,6 @@ import DashboardLayout from "@/app/dashboard/layout";
 import AppShell from "./app-shell";
 
 const AuthPage = lazy(() => import("@/app/(auth)/page"));
-const AdsPage = lazy(() => import("@/app/dashboard/ads/page"));
 const AnnouncementPage = lazy(() => import("@/app/dashboard/announcement/page"));
 const AuthControlPage = lazy(() => import("@/app/dashboard/auth-control/page"));
 const CouponPage = lazy(() => import("@/app/dashboard/coupon/page"));
@@ -163,10 +162,6 @@ export const routes = [
           {
             path: "user",
             element: renderLazyPage(UserPage),
-          },
-          {
-            path: "ads",
-            element: renderLazyPage(AdsPage),
           },
           {
             path: "log/login",

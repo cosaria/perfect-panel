@@ -27,7 +27,7 @@ func TestPhase5BExportedSpecsDeclareGovernedTopLevelTags(t *testing.T) {
 	specs := exportPhase5BSpecs(t)
 
 	expectedTags := map[string][]string{
-		"admin":  {"ads", "announcement", "application", "auth-method"},
+		"admin":  {"announcement", "application", "auth-method"},
 		"common": {"common"},
 		"user":   {"auth", "oauth", "order", "portal", "user"},
 	}

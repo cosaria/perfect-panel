@@ -2,7 +2,7 @@
 
 import { client } from './client.gen.js';
 import type { Client, Options as Options2, TDataShape } from './client/index.js';
-import type { CheckVerificationCodeData, CheckVerificationCodeErrors, CheckVerificationCodeResponses, GetAdsData, GetAdsErrors, GetAdsResponses, GetClientData, GetClientErrors, GetClientResponses, GetGlobalConfigData, GetGlobalConfigErrors, GetGlobalConfigResponses, GetPrivacyPolicyData, GetPrivacyPolicyErrors, GetPrivacyPolicyResponses, GetStatData, GetStatErrors, GetStatResponses, GetTosData, GetTosErrors, GetTosResponses, HeartbeatData, HeartbeatErrors, HeartbeatResponses, SendEmailCodeData, SendEmailCodeErrors, SendEmailCodeResponses, SendSmsCodeData, SendSmsCodeErrors, SendSmsCodeResponses } from './types.gen.js';
+import type { CheckVerificationCodeData, CheckVerificationCodeErrors, CheckVerificationCodeResponses, GetClientData, GetClientErrors, GetClientResponses, GetGlobalConfigData, GetGlobalConfigErrors, GetGlobalConfigResponses, GetPrivacyPolicyData, GetPrivacyPolicyErrors, GetPrivacyPolicyResponses, GetStatData, GetStatErrors, GetStatResponses, GetTosData, GetTosErrors, GetTosResponses, HeartbeatData, HeartbeatErrors, HeartbeatResponses, SendEmailCodeData, SendEmailCodeErrors, SendEmailCodeResponses, SendSmsCodeData, SendSmsCodeErrors, SendSmsCodeResponses } from './types.gen.js';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -17,11 +17,6 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
      */
     meta?: Record<string, unknown>;
 };
-
-/**
- * Get Ads
- */
-export const getAds = <ThrowOnError extends boolean = false>(options?: Options<GetAdsData, ThrowOnError>) => (options?.client ?? client).get<GetAdsResponses, GetAdsErrors, ThrowOnError>({ url: '/ads', ...options });
 
 /**
  * Check verification code

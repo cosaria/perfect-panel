@@ -176,8 +176,6 @@ Email:
 device:
   # 是否启用设备管理
   enable: true
-  # 是否展示广告
-  show_ads: false
   # 是否启用安全校验
   enable_security: false
   # 是否仅允许真实设备

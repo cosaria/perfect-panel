@@ -118,11 +118,6 @@ export const navs = [
         url: "/dashboard/payment",
         icon: "flat-color-icons:currency-exchange",
       },
-      {
-        title: "ADS Config",
-        url: "/dashboard/ads",
-        icon: "flat-color-icons:electrical-sensor",
-      },
     ],
   },
 

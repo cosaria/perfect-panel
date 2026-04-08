@@ -3,20 +3,6 @@
 
 package types
 
-type Ads struct {
-	Id          int    `json:"id"`
-	Title       string `json:"title"`
-	Type        string `json:"type"`
-	Content     string `json:"content"`
-	Description string `json:"description"`
-	TargetURL   string `json:"target_url"`
-	StartTime   int64  `json:"start_time"`
-	EndTime     int64  `json:"end_time"`
-	Status      int    `json:"status"`
-	CreatedAt   int64  `json:"created_at"`
-	UpdatedAt   int64  `json:"updated_at"`
-}
-
 type AlipayNotifyResponse struct {
 	ReturnCode string `json:"return_code"`
 }
@@ -526,7 +512,6 @@ type DeleteUserSubscribeRequest struct {
 
 type DeviceAuthticateConfig struct {
 	Enable         bool `json:"enable"`
-	ShowAds        bool `json:"show_ads"`
 	EnableSecurity bool `json:"enable_security"`
 	OnlyRealDevice bool `json:"only_real_device"`
 }
@@ -727,31 +712,6 @@ type Follow struct {
 	Type      uint8  `json:"type"`
 	Content   string `json:"content"`
 	CreatedAt int64  `json:"created_at"`
-}
-
-type GetAdsDetailRequest struct {
-	Id int64 `query:"id" json:"id"`
-}
-
-type GetAdsListRequest struct {
-	Page   int    `json:"page"`
-	Size   int    `json:"size"`
-	Status *int   `json:"status,omitempty"`
-	Search string `json:"search,omitempty"`
-}
-
-type GetAdsListResponse struct {
-	Total int64 `json:"total"`
-	List  []Ads `json:"list"`
-}
-
-type GetAdsRequest struct {
-	Device   string `query:"device" json:"device"`
-	Position string `query:"position" json:"position"`
-}
-
-type GetAdsResponse struct {
-	List []Ads `json:"list"`
 }
 
 type GetAnnouncementListRequest struct {

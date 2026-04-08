@@ -14,7 +14,6 @@ func TestPhase6LowRiskBatchNoLongerImportsServiceContext(t *testing.T) {
 		filepath.Join("..", "services", "admin", "announcement"),
 		filepath.Join("..", "services", "admin", "coupon"),
 		filepath.Join("..", "services", "admin", "document"),
-		filepath.Join("..", "services", "common", "getAds.go"),
 		filepath.Join("..", "services", "common", "getClient.go"),
 		filepath.Join("..", "services", "user", "announcement"),
 		filepath.Join("..", "services", "user", "document"),

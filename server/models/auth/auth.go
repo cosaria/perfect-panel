@@ -310,7 +310,6 @@ func (l *TwilioConfig) Unmarshal(data string) error {
 }
 
 type DeviceConfig struct {
-	ShowAds        bool   `json:"show_ads"`
 	OnlyRealDevice bool   `json:"only_real_device"`
 	EnableSecurity bool   `json:"enable_security"`
 	SecuritySecret string `json:"security_secret"`

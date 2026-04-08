@@ -6,7 +6,6 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/oschwald/geoip2-golang"
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/models/ads"
 	"github.com/perfect-panel/server/models/announcement"
 	"github.com/perfect-panel/server/models/auth"
 	"github.com/perfect-panel/server/models/client"
@@ -39,7 +38,6 @@ type Deps struct {
 	Live   *LiveState
 
 	AuthModel         auth.Model
-	AdsModel          ads.Model
 	LogModel          log.Model
 	NodeModel         node.Model
 	UserModel         user.Model

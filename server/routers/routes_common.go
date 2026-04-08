@@ -21,7 +21,6 @@ func registerCommonRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, spec
 	configureHumaAPI(apis.Common, compatibilityEnabled(runtimeDeps, specOnly))
 	commonDeps := common.Deps{}
 	if runtimeDeps != nil {
-		commonDeps.AdsModel = runtimeDeps.AdsModel
 		commonDeps.AuthModel = runtimeDeps.AuthModel
 		commonDeps.ClientModel = runtimeDeps.ClientModel
 		commonDeps.SystemModel = runtimeDeps.SystemModel
@@ -32,14 +31,6 @@ func registerCommonRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, spec
 		commonDeps.Queue = runtimeDeps.Queue
 		commonDeps.Config = runtimeDeps.Config
 	}
-
-	registerOperation(apis.Common, huma.Operation{
-		OperationID: "getAds",
-		Method:      http.MethodGet,
-		Path:        "/ads",
-		Summary:     "Get Ads",
-		Tags:        []string{"common"},
-	}, common.GetAdsHandler(commonDeps))
 
 	registerOperation(apis.Common, huma.Operation{
 		OperationID: "checkVerificationCode",
