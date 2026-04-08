@@ -6,9 +6,9 @@
     "strings": "on"
   },
   "tailwindCSS.experimental.configFile": {
-    "packages/ui/tailwind.config.ts": "packages/ui/src/**",
-    "apps/admin/tailwind.config.ts": "apps/admin/**",
-    "apps/user/tailwind.config.ts": "apps/user/**"
+    "web/packages/ui/tailwind.config.ts": "web/packages/ui/src/**",
+    "web/apps/admin/tailwind.config.ts": "web/apps/admin/**",
+    "web/apps/user/tailwind.config.ts": "web/apps/user/**"
   },
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnSave": true,

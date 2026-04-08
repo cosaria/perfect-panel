@@ -4,11 +4,12 @@
 
 # Dependencies (will be installed inside container)
 node_modules
+web/node_modules
 
 # Build outputs (will be built inside container)
-apps/*/.next
-apps/*/.turbo
-.turbo
+web/apps/*/.next
+web/apps/*/.turbo
+web/.turbo
 server/bin
 
 # IDE and editor
@@ -29,7 +30,7 @@ Thumbs.db
 # Documentation and non-essential files
 docs
 *.md
-!packages/*/README.md
+!web/packages/*/README.md
 LICENSE
 
 # Docker files (avoid recursive context)

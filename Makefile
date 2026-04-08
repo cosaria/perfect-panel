@@ -12,7 +12,7 @@ server-bootstrap:
 	cd server && go mod download
 
 web-bootstrap:
-	CI=true bun install
+	cd web && CI=true bun install
 
 lint: server-lint web-lint
 
@@ -20,7 +20,7 @@ server-lint:
 	cd server && golangci-lint run && go vet ./...
 
 web-lint:
-	bun run lint
+	cd web && bun run lint
 
 test: server-test
 
@@ -35,7 +35,7 @@ dev:
 	esac
 	@trap 'kill 0' INT TERM EXIT; \
 		(cd server && go run . run --config etc/ppanel.yaml) & \
-		(bun run dev:$(APP)) & \
+		(cd web && bun run dev:$(APP)) & \
 		wait
 
 build: server-build web-build
@@ -44,7 +44,7 @@ server-build:
 	cd server && go build -o bin/ppanel-server .
 
 web-build:
-	bun run build
+	cd web && bun run build
 
 format: server-format web-format
 
@@ -52,22 +52,22 @@ server-format:
 	cd server && go fmt ./... && goimports -w .
 
 web-format:
-	bun run format
+	cd web && bun run format
 
 typecheck: web-typecheck
 
 web-typecheck:
-	bun run typecheck
+	cd web && bun run typecheck
 
 embed-admin:
-	bun run build --filter=ppanel-admin-web
+	cd web && bun run build --filter=ppanel-admin-web
 	rm -rf server/web/admin-dist/*
-	cp -r apps/admin/out/* server/web/admin-dist/
+	cp -r web/apps/admin/out/* server/web/admin-dist/
 
 embed-user:
-	bun run build --filter=ppanel-user-web
+	cd web && bun run build --filter=ppanel-user-web
 	rm -rf server/web/user-dist/*
-	cp -r apps/user/out/* server/web/user-dist/
+	cp -r web/apps/user/out/* server/web/user-dist/
 
 embed: embed-admin embed-user
 
@@ -81,4 +81,4 @@ server-clean:
 	touch server/web/admin-dist/.gitkeep server/web/user-dist/.gitkeep
 
 web-clean:
-	rm -rf apps/*/.next apps/*/.turbo .turbo
+	rm -rf .turbo web/apps/*/.next web/apps/*/.turbo web/.turbo

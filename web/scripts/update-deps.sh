@@ -1,7 +1,7 @@
 ##!/bin/bash
 
-# Update dependencies in root directory
-echo "Updating dependencies in root directory..."
+# Update dependencies in web workspace root
+echo "Updating dependencies in web workspace root..."
 
 bun update --latest
 

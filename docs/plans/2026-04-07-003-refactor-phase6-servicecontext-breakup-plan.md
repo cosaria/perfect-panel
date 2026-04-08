@@ -1,7 +1,7 @@
 ---
 title: refactor: Phase 6 ServiceContext gradual breakup
 type: refactor
-status: active
+status: completed
 date: 2026-04-07
 origin: docs/gstack/designs/admin-feat-monorepo-baseline-design-20260407-111312.md
 ---
@@ -14,7 +14,35 @@ Phase 6 breaks `server/svc/ServiceContext` out of the service layer and demotes 
 
 This phase is intentionally separate from Phases 0-5 and Phase 5B. Those phases fixed structure, error contracts, and OpenAPI governance while deliberately preserving `ServiceContext` as a temporary compatibility shell (see origin: `docs/gstack/designs/admin-feat-monorepo-baseline-design-20260407-111312.md`).
 
-This document is an implementation plan only. It does not start the migration.
+This document started as the implementation plan and now also serves as the execution record for the completed migration.
+
+## Implementation Status
+
+Status on `2026-04-08`: completed.
+
+Phase 6 is now fully implemented. `ServiceContext` has been demoted to a composition-root shell in `server/cmd`, while `server/services`, `server/worker`, `server/routers/middleware`, and `server/initialize` now use package-local deps or narrow runtime capabilities instead of accepting the full `*svc.ServiceContext`.
+
+Final state highlights:
+
+- `server/services` production code no longer directly depends on `*svc.ServiceContext`.
+- `server/worker`, `server/routers`, and `server/initialize` no longer use `ServiceContext` as an injected downstream dependency; they translate composition-root state into explicit narrow seams.
+- Mutable runtime capabilities were split from static deps:
+  - exchange-rate cache now uses versioned `from/to` live-state boundaries
+  - telegram runtime now manages bot replacement, disable/clear behavior, and poller lifecycle explicitly
+  - worker traffic startup now resolves node multiplier state through a fallback runtime seam instead of silently defaulting forever
+- The last implementation pass also tightened seam-level coverage around:
+  - versioned portal exchange-rate writes
+  - worker node-multiplier fallback wiring
+  - telegram runtime clear/reload behavior
+
+Verification executed at completion:
+
+- `go build ./...`
+- `go test ./... -count=1`
+- `go vet ./...`
+- `go run . openapi -o <tmpdir>`
+
+All four passed in `server/`, and `openapi` exported `admin.json`, `common.json`, and `user.json`.
 
 ## Problem Frame
 
@@ -208,6 +236,8 @@ Phase 6 is complete only when all of the following are true:
 - Characterization tests exist for the migration seam and remain green.
 - `go build ./...`, `go test ./... -count=1`, `go vet ./...`, and `go run . openapi -o <tmpdir>` remain green at the end of the phase.
 
+Result on `2026-04-08`: achieved.
+
 The phase should pause and spin out a follow-up design review if any of the following becomes true:
 
 - A candidate package-local `Deps` struct needs to absorb unrelated cross-domain capabilities just to preserve current behavior.
@@ -223,7 +253,7 @@ Shared composition files such as `server/routers/routes_admin.go`, `server/route
 - Later units should not reopen already-migrated package internals unless the same package is explicitly listed again.
 - When a unit lists `server/services/common/*.go`, it means the remaining unmigrated files in that package, not files already migrated by an earlier checkpoint unit.
 
-- [ ] **Unit 1: Characterize the current dependency surface and define the migration seam**
+- [x] **Unit 1: Characterize the current dependency surface and define the migration seam**
 
 **Goal:** Add explicit characterization for the current `ServiceContext` footprint and lock the migration seam before changing constructors.
 
@@ -249,7 +279,7 @@ Shared composition files such as `server/routers/routes_admin.go`, `server/route
 **Verification:**
 - The repository has one durable test-backed statement of the migration seam.
 
-- [ ] **Unit 2: Introduce the package-local `Deps` pattern on a low-risk pilot slice**
+- [x] **Unit 2: Introduce the package-local `Deps` pattern on a low-risk pilot slice**
 
 **Goal:** Prove the migration pattern on a bounded, single-model package before applying it broadly.
 
@@ -276,7 +306,7 @@ Shared composition files such as `server/routers/routes_admin.go`, `server/route
 **Verification:**
 - One real package is fully migrated and establishes the repeatable pattern.
 
-- [ ] **Unit 3: Migrate low-risk single-slice domains in batches**
+- [x] **Unit 3: Migrate low-risk single-slice domains in batches**
 
 **Goal:** Remove `ServiceContext` from the most obviously over-injected service packages.
 
@@ -315,7 +345,7 @@ Shared composition files such as `server/routers/routes_admin.go`, `server/route
 **Verification:**
 - A meaningful share of service packages stop depending on the full composition root.
 
-- [ ] **Unit 4: Run the first mixed-dependency checkpoint on bounded verification flows**
+- [x] **Unit 4: Run the first mixed-dependency checkpoint on bounded verification flows**
 
 **Goal:** Prove the pattern on a non-trivial slice that mixes config, Redis, queue, and model access before opening the broad auth and user domains.
 
@@ -347,7 +377,7 @@ Shared composition files such as `server/routers/routes_admin.go`, `server/route
 **Verification:**
 - The migration pattern is proven on one real mixed-dependency slice, not only on single-model packages.
 
-- [ ] **Unit 5: Migrate runtime write-back seams for auth and system configuration**
+- [x] **Unit 5: Migrate runtime write-back seams for auth and system configuration**
 
 **Goal:** Separate mutable config reload behavior from static dependency injection before the broad auth and initialize cleanup begins.
 
@@ -378,7 +408,7 @@ Shared composition files such as `server/routers/routes_admin.go`, `server/route
 **Verification:**
 - Mutable runtime write-back flows stop blocking the rest of the migration with hidden `ServiceContext` coupling.
 
-- [ ] **Unit 6: Migrate medium-coupling auth, common, and user account flows**
+- [x] **Unit 6: Migrate medium-coupling auth, common, and user account flows**
 
 **Goal:** Apply the pattern to the first packages that combine models, config, Redis, and queue access.
 
@@ -413,7 +443,7 @@ Shared composition files such as `server/routers/routes_admin.go`, `server/route
 **Verification:**
 - The codebase proves the pattern survives beyond trivial single-model packages.
 
-- [ ] **Unit 7: Migrate request-path runtime seams for node, protocol surfaces, and portal flows**
+- [x] **Unit 7: Migrate request-path runtime seams for node, protocol surfaces, and portal flows**
 
 **Goal:** Remove remaining direct `ServiceContext` dependence from long-lived request-path flows that need runtime capabilities but do not own startup lifecycle.
 
@@ -448,7 +478,7 @@ Shared composition files such as `server/routers/routes_admin.go`, `server/route
 **Verification:**
 - Request-path runtime seams no longer need the full `ServiceContext`.
 
-- [ ] **Unit 8: Migrate middleware and worker startup seams**
+- [x] **Unit 8: Migrate middleware and worker startup seams**
 
 **Goal:** Remove `ServiceContext` from middleware and worker lifecycle code after the request-path runtime capabilities are already explicit.
 
@@ -479,7 +509,7 @@ Shared composition files such as `server/routers/routes_admin.go`, `server/route
 **Verification:**
 - Worker and middleware lifecycle seams no longer depend on the full `ServiceContext`.
 
-- [ ] **Unit 9: Deprecate the remaining shell and shrink `ServiceContext` to a true composition root**
+- [x] **Unit 9: Deprecate the remaining shell and shrink `ServiceContext` to a true composition root**
 
 **Goal:** Finish the migration by making `ServiceContext` a temporary edge-only shell or replacing it with a narrower runtime container if no direct consumers remain.
 

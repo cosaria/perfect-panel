@@ -4,9 +4,9 @@
 
 <img width="160" src="https://raw.githubusercontent.com/perfect-panel/ppanel-assets/refs/heads/main/logo.svg">
 
-<h1>PPanel user web</h1>
+<h1>PPanel admin web</h1>
 
-This is a PPanel user web powered by PPanel
+This is a PPanel admin web powered by PPanel
 
 English
 ·
@@ -30,7 +30,7 @@ English
 [![][github-issues-shield]][github-issues-link]
 [![][github-license-shield]][github-license-link]
 
-![](https://urlscan.io/liveshot/?width=1920&height=1080&url=https://user.ppanel.dev)
+![](https://urlscan.io/liveshot/?width=1920&height=1080&url=https://admin.ppanel.dev)
 
 </div>
 
@@ -68,7 +68,7 @@ cd ppanel-web
 bun install
 
 # Run the development server
-cd apps/user
+cd web/apps/admin
 bun dev
 ```
 
@@ -76,7 +76,7 @@ Open <http://localhost:3000> with your browser to see the result.
 
 ## 🚀 Deploy on Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%user.ppanel.dev&demo-title=PPanel%20User%20Web&demo-url=https%3A%2F%2Fuser.ppanel.dev%2F&from=.&project-name=ppanel-user-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%user&skippable-integrations=1)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=PPanel%20is%20a%20pure%2C%20professional%2C%20and%20perfect%20open-source%20proxy%20panel%20tool%2C%20designed%20to%20be%20your%20ideal%20choice%20for%20learning%20and%20practical%20use&demo-image=https%3A%2F%2Furlscan.io%2Fliveshot%2F%3Fwidth%3D1920%26height%3D1080%26url%3Dhttps%3A%2F%2Fadmin.ppanel.dev&demo-title=PPanel%20Admin%20Web&demo-url=https%3A%2F%2Fadmin.ppanel.dev%2F&from=.&project-name=ppanel-admin-web&repository-name=ppanel-web&repository-url=https%3A%2F%2Fgithub.com%2Fperfect-panel%2Fppanel-web&root-directory=apps%2Fadmin&skippable-integrations=1)
 
 The easiest way to deploy your Next.js app is to use the
 [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)

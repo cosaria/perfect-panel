@@ -21,7 +21,7 @@ These artifacts are generated from Huma-declared first-party JSON APIs and are t
 
 - Documented authenticated APIs must declare explicit bearer-token security requirements.
 - Documented first-party JSON APIs must expose explicit common `4xx` responses in OpenAPI.
-- Generated specs must remain consumable by `@hey-api/openapi-ts` for both `apps/admin` and `apps/user`.
+- Generated specs must remain consumable by `@hey-api/openapi-ts` for both `web/apps/admin` and `web/apps/user`.
 
 ## Excluded Surfaces
 
@@ -36,5 +36,5 @@ These surfaces are real HTTP endpoints, but they are excluded from this OpenAPI 
 
 1. Update route declarations and shared conventions in `server/routers/`.
 2. Regenerate specs and generated clients with `bun run openapi`.
-3. Review generated diff in `docs/openapi/`, `apps/admin/services/`, and `apps/user/services/`.
+3. Review generated diff in `docs/openapi/`, `web/apps/admin/services/`, and `web/apps/user/services/`.
 4. Call out intentional contract renames or compatibility risks in review before merge.

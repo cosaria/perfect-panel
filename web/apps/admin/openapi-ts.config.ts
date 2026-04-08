@@ -1,9 +1,9 @@
 import { defaultPlugins, defineConfig } from "@hey-api/openapi-ts";
 
 export default defineConfig({
-  input: "../../docs/openapi/user.json",
+  input: "../../../docs/openapi/admin.json",
   output: {
-    path: "./services/user-api",
+    path: "./services/admin-api",
     clean: true,
   },
   plugins: [

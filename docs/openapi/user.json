@@ -16,13 +16,22 @@
             "type": "integer"
           },
           "pinned": {
-            "type": ["boolean", "null"]
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "popup": {
-            "type": ["boolean", "null"]
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "show": {
-            "type": ["boolean", "null"]
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "title": {
             "type": "string"
@@ -72,7 +81,13 @@
             "type": "integer"
           }
         },
-        "required": ["type", "user_id", "amount", "balance", "timestamp"],
+        "required": [
+          "type",
+          "user_id",
+          "amount",
+          "balance",
+          "timestamp"
+        ],
         "type": "object"
       },
       "BindOAuthCallbackRequest": {
@@ -83,7 +98,10 @@
             "type": "string"
           }
         },
-        "required": ["method", "callback"],
+        "required": [
+          "method",
+          "callback"
+        ],
         "type": "object"
       },
       "BindOAuthRequest": {
@@ -96,7 +114,10 @@
             "type": "string"
           }
         },
-        "required": ["method", "redirect"],
+        "required": [
+          "method",
+          "redirect"
+        ],
         "type": "object"
       },
       "BindOAuthResponse": {
@@ -106,7 +127,9 @@
             "type": "string"
           }
         },
-        "required": ["redirect"],
+        "required": [
+          "redirect"
+        ],
         "type": "object"
       },
       "BindTelegramResponse": {
@@ -120,7 +143,10 @@
             "type": "string"
           }
         },
-        "required": ["url", "expired_at"],
+        "required": [
+          "url",
+          "expired_at"
+        ],
         "type": "object"
       },
       "CheckUserResponse": {
@@ -130,7 +156,9 @@
             "type": "boolean"
           }
         },
-        "required": ["exist"],
+        "required": [
+          "exist"
+        ],
         "type": "object"
       },
       "CheckoutOrderRequest": {
@@ -143,7 +171,9 @@
             "type": "string"
           }
         },
-        "required": ["orderNo"],
+        "required": [
+          "orderNo"
+        ],
         "type": "object"
       },
       "CheckoutOrderResponse": {
@@ -159,7 +189,9 @@
             "type": "string"
           }
         },
-        "required": ["type"],
+        "required": [
+          "type"
+        ],
         "type": "object"
       },
       "CloseOrderRequest": {
@@ -169,7 +201,9 @@
             "type": "string"
           }
         },
-        "required": ["orderNo"],
+        "required": [
+          "orderNo"
+        ],
         "type": "object"
       },
       "CommissionLog": {
@@ -196,7 +230,13 @@
             "type": "integer"
           }
         },
-        "required": ["type", "user_id", "amount", "order_no", "timestamp"],
+        "required": [
+          "type",
+          "user_id",
+          "amount",
+          "order_no",
+          "timestamp"
+        ],
         "type": "object"
       },
       "CommissionWithdrawRequest": {
@@ -210,7 +250,10 @@
             "type": "string"
           }
         },
-        "required": ["amount", "content"],
+        "required": [
+          "amount",
+          "content"
+        ],
         "type": "object"
       },
       "CreateUserTicketFollowRequest": {
@@ -232,7 +275,12 @@
             "type": "integer"
           }
         },
-        "required": ["ticket_id", "from", "type", "content"],
+        "required": [
+          "ticket_id",
+          "from",
+          "type",
+          "content"
+        ],
         "type": "object"
       },
       "CreateUserTicketRequest": {
@@ -245,7 +293,10 @@
             "type": "string"
           }
         },
-        "required": ["title", "description"],
+        "required": [
+          "title",
+          "description"
+        ],
         "type": "object"
       },
       "DeviceLoginRequest": {
@@ -264,7 +315,10 @@
             "type": "string"
           }
         },
-        "required": ["identifier", "user_agent"],
+        "required": [
+          "identifier",
+          "user_agent"
+        ],
         "type": "object"
       },
       "Document": {
@@ -288,7 +342,10 @@
             "items": {
               "type": "string"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "title": {
             "type": "string"
@@ -298,7 +355,15 @@
             "type": "integer"
           }
         },
-        "required": ["id", "title", "content", "tags", "show", "created_at", "updated_at"],
+        "required": [
+          "id",
+          "title",
+          "content",
+          "tags",
+          "show",
+          "created_at",
+          "updated_at"
+        ],
         "type": "object"
       },
       "ErrorDetail": {
@@ -345,7 +410,14 @@
             "type": "integer"
           }
         },
-        "required": ["id", "ticket_id", "from", "type", "content", "created_at"],
+        "required": [
+          "id",
+          "ticket_id",
+          "from",
+          "type",
+          "content",
+          "created_at"
+        ],
         "type": "object"
       },
       "GetAvailablePaymentMethodsResponse": {
@@ -355,10 +427,15 @@
             "items": {
               "$ref": "#/components/schemas/PaymentMethod"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
-        "required": ["list"],
+        "required": [
+          "list"
+        ],
         "type": "object"
       },
       "GetDeviceListResponse": {
@@ -368,14 +445,20 @@
             "items": {
               "$ref": "#/components/schemas/UserDevice"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["list", "total"],
+        "required": [
+          "list",
+          "total"
+        ],
         "type": "object"
       },
       "GetLoginLogResponse": {
@@ -385,14 +468,20 @@
             "items": {
               "$ref": "#/components/schemas/UserLoginLog"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["list", "total"],
+        "required": [
+          "list",
+          "total"
+        ],
         "type": "object"
       },
       "GetOAuthMethodsResponse": {
@@ -402,10 +491,15 @@
             "items": {
               "$ref": "#/components/schemas/UserAuthMethod"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
-        "required": ["methods"],
+        "required": [
+          "methods"
+        ],
         "type": "object"
       },
       "GetSubscribeLogResponse": {
@@ -415,14 +509,20 @@
             "items": {
               "$ref": "#/components/schemas/UserSubscribeLog"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["list", "total"],
+        "required": [
+          "list",
+          "total"
+        ],
         "type": "object"
       },
       "GetSubscriptionResponse": {
@@ -432,10 +532,15 @@
             "items": {
               "$ref": "#/components/schemas/Subscribe"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
-        "required": ["list"],
+        "required": [
+          "list"
+        ],
         "type": "object"
       },
       "GetUserTicketListRequest": {
@@ -458,7 +563,10 @@
             "type": "integer"
           }
         },
-        "required": ["page", "size"],
+        "required": [
+          "page",
+          "size"
+        ],
         "type": "object"
       },
       "GetUserTicketListResponse": {
@@ -468,14 +576,20 @@
             "items": {
               "$ref": "#/components/schemas/Ticket"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["total", "list"],
+        "required": [
+          "total",
+          "list"
+        ],
         "type": "object"
       },
       "LoginResponse": {
@@ -485,7 +599,9 @@
             "type": "string"
           }
         },
-        "required": ["token"],
+        "required": [
+          "token"
+        ],
         "type": "object"
       },
       "OAuthLoginGetTokenRequest": {
@@ -496,7 +612,10 @@
             "type": "string"
           }
         },
-        "required": ["method", "callback"],
+        "required": [
+          "method",
+          "callback"
+        ],
         "type": "object"
       },
       "OAuthLoginRequest": {
@@ -509,7 +628,10 @@
             "type": "string"
           }
         },
-        "required": ["method", "redirect"],
+        "required": [
+          "method",
+          "redirect"
+        ],
         "type": "object"
       },
       "OAuthLoginResponse": {
@@ -519,7 +641,9 @@
             "type": "string"
           }
         },
-        "required": ["redirect"],
+        "required": [
+          "redirect"
+        ],
         "type": "object"
       },
       "OrderDetail": {
@@ -709,7 +833,13 @@
             "type": "string"
           }
         },
-        "required": ["auth_type", "identifier", "payment", "subscribe_id", "quantity"],
+        "required": [
+          "auth_type",
+          "identifier",
+          "payment",
+          "subscribe_id",
+          "quantity"
+        ],
         "type": "object"
       },
       "PortalPurchaseResponse": {
@@ -719,7 +849,9 @@
             "type": "string"
           }
         },
-        "required": ["order_no"],
+        "required": [
+          "order_no"
+        ],
         "type": "object"
       },
       "PreOrderResponse": {
@@ -783,7 +915,10 @@
             "type": "integer"
           }
         },
-        "required": ["subscribe_id", "quantity"],
+        "required": [
+          "subscribe_id",
+          "quantity"
+        ],
         "type": "object"
       },
       "PrePurchaseOrderResponse": {
@@ -813,7 +948,14 @@
             "type": "integer"
           }
         },
-        "required": ["price", "amount", "discount", "coupon", "coupon_discount", "fee_amount"],
+        "required": [
+          "price",
+          "amount",
+          "discount",
+          "coupon",
+          "coupon_discount",
+          "fee_amount"
+        ],
         "type": "object"
       },
       "PreUnsubscribeRequest": {
@@ -824,7 +966,9 @@
             "type": "integer"
           }
         },
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "type": "object"
       },
       "PreUnsubscribeResponse": {
@@ -835,7 +979,9 @@
             "type": "integer"
           }
         },
-        "required": ["deduction_amount"],
+        "required": [
+          "deduction_amount"
+        ],
         "type": "object"
       },
       "Problem": {
@@ -853,7 +999,10 @@
             "items": {
               "$ref": "#/components/schemas/ErrorDetail"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "instance": {
             "format": "uri",
@@ -892,7 +1041,10 @@
             "type": "integer"
           }
         },
-        "required": ["subscribe_id", "quantity"],
+        "required": [
+          "subscribe_id",
+          "quantity"
+        ],
         "type": "object"
       },
       "PurchaseOrderResponse": {
@@ -902,7 +1054,9 @@
             "type": "string"
           }
         },
-        "required": ["order_no"],
+        "required": [
+          "order_no"
+        ],
         "type": "object"
       },
       "QueryAnnouncementRequest": {
@@ -913,17 +1067,28 @@
             "type": "integer"
           },
           "pinned": {
-            "type": ["boolean", "null"]
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "popup": {
-            "type": ["boolean", "null"]
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "size": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["page", "size", "pinned", "popup"],
+        "required": [
+          "page",
+          "size",
+          "pinned",
+          "popup"
+        ],
         "type": "object"
       },
       "QueryAnnouncementResponse": {
@@ -933,14 +1098,20 @@
             "items": {
               "$ref": "#/components/schemas/Announcement"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["total", "announcements"],
+        "required": [
+          "total",
+          "announcements"
+        ],
         "type": "object"
       },
       "QueryDocumentListResponse": {
@@ -950,14 +1121,20 @@
             "items": {
               "$ref": "#/components/schemas/Document"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["total", "list"],
+        "required": [
+          "total",
+          "list"
+        ],
         "type": "object"
       },
       "QueryOrderListResponse": {
@@ -967,14 +1144,20 @@
             "items": {
               "$ref": "#/components/schemas/OrderDetail"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["total", "list"],
+        "required": [
+          "total",
+          "list"
+        ],
         "type": "object"
       },
       "QueryPurchaseOrderResponse": {
@@ -1052,14 +1235,20 @@
             "items": {
               "$ref": "#/components/schemas/Subscribe"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["list", "total"],
+        "required": [
+          "list",
+          "total"
+        ],
         "type": "object"
       },
       "QueryUserAffiliateCountResponse": {
@@ -1074,7 +1263,10 @@
             "type": "integer"
           }
         },
-        "required": ["registers", "total_commission"],
+        "required": [
+          "registers",
+          "total_commission"
+        ],
         "type": "object"
       },
       "QueryUserAffiliateListResponse": {
@@ -1084,14 +1276,20 @@
             "items": {
               "$ref": "#/components/schemas/UserAffiliate"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["list", "total"],
+        "required": [
+          "list",
+          "total"
+        ],
         "type": "object"
       },
       "QueryUserBalanceLogListResponse": {
@@ -1101,14 +1299,20 @@
             "items": {
               "$ref": "#/components/schemas/BalanceLog"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["list", "total"],
+        "required": [
+          "list",
+          "total"
+        ],
         "type": "object"
       },
       "QueryUserCommissionLogListResponse": {
@@ -1118,14 +1322,20 @@
             "items": {
               "$ref": "#/components/schemas/CommissionLog"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["list", "total"],
+        "required": [
+          "list",
+          "total"
+        ],
         "type": "object"
       },
       "QueryUserSubscribeListResponse": {
@@ -1135,14 +1345,20 @@
             "items": {
               "$ref": "#/components/schemas/UserSubscribe"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["list", "total"],
+        "required": [
+          "list",
+          "total"
+        ],
         "type": "object"
       },
       "QueryUserSubscribeNodeListResponse": {
@@ -1152,10 +1368,15 @@
             "items": {
               "$ref": "#/components/schemas/UserSubscribeInfo"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
-        "required": ["list"],
+        "required": [
+          "list"
+        ],
         "type": "object"
       },
       "QueryWithdrawalLogListResponse": {
@@ -1165,14 +1386,20 @@
             "items": {
               "$ref": "#/components/schemas/WithdrawalLog"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["list", "total"],
+        "required": [
+          "list",
+          "total"
+        ],
         "type": "object"
       },
       "RechargeOrderRequest": {
@@ -1187,7 +1414,10 @@
             "type": "integer"
           }
         },
-        "required": ["amount", "payment"],
+        "required": [
+          "amount",
+          "payment"
+        ],
         "type": "object"
       },
       "RechargeOrderResponse": {
@@ -1197,7 +1427,9 @@
             "type": "string"
           }
         },
-        "required": ["order_no"],
+        "required": [
+          "order_no"
+        ],
         "type": "object"
       },
       "RenewalOrderRequest": {
@@ -1219,7 +1451,11 @@
             "type": "integer"
           }
         },
-        "required": ["user_subscribe_id", "quantity", "payment"],
+        "required": [
+          "user_subscribe_id",
+          "quantity",
+          "payment"
+        ],
         "type": "object"
       },
       "RenewalOrderResponse": {
@@ -1229,7 +1465,9 @@
             "type": "string"
           }
         },
-        "required": ["order_no"],
+        "required": [
+          "order_no"
+        ],
         "type": "object"
       },
       "ResetPasswordRequest": {
@@ -1260,7 +1498,10 @@
             "type": "string"
           }
         },
-        "required": ["email", "password"],
+        "required": [
+          "email",
+          "password"
+        ],
         "type": "object"
       },
       "ResetTrafficOrderRequest": {
@@ -1275,7 +1516,10 @@
             "type": "integer"
           }
         },
-        "required": ["user_subscribe_id", "payment"],
+        "required": [
+          "user_subscribe_id",
+          "payment"
+        ],
         "type": "object"
       },
       "ResetTrafficOrderResponse": {
@@ -1285,7 +1529,9 @@
             "type": "string"
           }
         },
-        "required": ["order_no"],
+        "required": [
+          "order_no"
+        ],
         "type": "object"
       },
       "ResetUserSubscribeTokenRequest": {
@@ -1296,7 +1542,9 @@
             "type": "integer"
           }
         },
-        "required": ["user_subscribe_id"],
+        "required": [
+          "user_subscribe_id"
+        ],
         "type": "object"
       },
       "StripePayment": {
@@ -1312,7 +1560,11 @@
             "type": "string"
           }
         },
-        "required": ["method", "client_secret", "publishable_key"],
+        "required": [
+          "method",
+          "client_secret",
+          "publishable_key"
+        ],
         "type": "object"
       },
       "Subscribe": {
@@ -1340,7 +1592,10 @@
             "items": {
               "$ref": "#/components/schemas/SubscribeDiscount"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "id": {
             "format": "int64",
@@ -1360,14 +1615,20 @@
             "items": {
               "type": "string"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "nodes": {
             "items": {
               "format": "int64",
               "type": "integer"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "quota": {
             "format": "int64",
@@ -1458,7 +1719,10 @@
             "type": "integer"
           }
         },
-        "required": ["quantity", "discount"],
+        "required": [
+          "quantity",
+          "discount"
+        ],
         "type": "object"
       },
       "TelephoneCheckUserResponse": {
@@ -1468,7 +1732,9 @@
             "type": "boolean"
           }
         },
-        "required": ["exist"],
+        "required": [
+          "exist"
+        ],
         "type": "object"
       },
       "TelephoneLoginRequest": {
@@ -1502,7 +1768,12 @@
             "type": "string"
           }
         },
-        "required": ["telephone", "telephone_code", "telephone_area_code", "password"],
+        "required": [
+          "telephone",
+          "telephone_code",
+          "telephone_area_code",
+          "password"
+        ],
         "type": "object"
       },
       "TelephoneRegisterRequest": {
@@ -1539,7 +1810,11 @@
             "type": "string"
           }
         },
-        "required": ["telephone", "telephone_area_code", "password"],
+        "required": [
+          "telephone",
+          "telephone_area_code",
+          "password"
+        ],
         "type": "object"
       },
       "TelephoneResetPasswordRequest": {
@@ -1573,7 +1848,11 @@
             "type": "string"
           }
         },
-        "required": ["telephone", "telephone_area_code", "password"],
+        "required": [
+          "telephone",
+          "telephone_area_code",
+          "password"
+        ],
         "type": "object"
       },
       "Ticket": {
@@ -1590,7 +1869,10 @@
             "items": {
               "$ref": "#/components/schemas/Follow"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "id": {
             "format": "int64",
@@ -1613,7 +1895,15 @@
             "type": "integer"
           }
         },
-        "required": ["id", "title", "description", "user_id", "status", "created_at", "updated_at"],
+        "required": [
+          "id",
+          "title",
+          "description",
+          "user_id",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
         "type": "object"
       },
       "UnbindDeviceRequest": {
@@ -1624,7 +1914,9 @@
             "type": "integer"
           }
         },
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "type": "object"
       },
       "UnbindOAuthRequest": {
@@ -1634,7 +1926,9 @@
             "type": "string"
           }
         },
-        "required": ["method"],
+        "required": [
+          "method"
+        ],
         "type": "object"
       },
       "UnsubscribeRequest": {
@@ -1645,7 +1939,9 @@
             "type": "integer"
           }
         },
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "type": "object"
       },
       "UpdateBindEmailRequest": {
@@ -1655,7 +1951,9 @@
             "type": "string"
           }
         },
-        "required": ["email"],
+        "required": [
+          "email"
+        ],
         "type": "object"
       },
       "UpdateBindMobileRequest": {
@@ -1671,23 +1969,39 @@
             "type": "string"
           }
         },
-        "required": ["area_code", "mobile", "code"],
+        "required": [
+          "area_code",
+          "mobile",
+          "code"
+        ],
         "type": "object"
       },
       "UpdateUserNotifyRequest": {
         "additionalProperties": false,
         "properties": {
           "enable_balance_notify": {
-            "type": ["boolean", "null"]
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "enable_login_notify": {
-            "type": ["boolean", "null"]
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "enable_subscribe_notify": {
-            "type": ["boolean", "null"]
+            "type": [
+              "boolean",
+              "null"
+            ]
           },
           "enable_trade_notify": {
-            "type": ["boolean", "null"]
+            "type": [
+              "boolean",
+              "null"
+            ]
           }
         },
         "required": [
@@ -1705,7 +2019,9 @@
             "type": "string"
           }
         },
-        "required": ["password"],
+        "required": [
+          "password"
+        ],
         "type": "object"
       },
       "UpdateUserRulesRequest": {
@@ -1715,10 +2031,15 @@
             "items": {
               "type": "string"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
-        "required": ["rules"],
+        "required": [
+          "rules"
+        ],
         "type": "object"
       },
       "UpdateUserSubscribeNoteRequest": {
@@ -1732,7 +2053,10 @@
             "type": "integer"
           }
         },
-        "required": ["user_subscribe_id", "note"],
+        "required": [
+          "user_subscribe_id",
+          "note"
+        ],
         "type": "object"
       },
       "UpdateUserTicketStatusRequest": {
@@ -1745,10 +2069,16 @@
           "status": {
             "format": "int32",
             "minimum": 0,
-            "type": ["integer", "null"]
+            "type": [
+              "integer",
+              "null"
+            ]
           }
         },
-        "required": ["id", "status"],
+        "required": [
+          "id",
+          "status"
+        ],
         "type": "object"
       },
       "User": {
@@ -1758,7 +2088,10 @@
             "items": {
               "$ref": "#/components/schemas/UserAuthMethod"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "avatar": {
             "type": "string"
@@ -1824,7 +2157,10 @@
             "items": {
               "type": "string"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "telegram": {
             "format": "int64",
@@ -1838,7 +2174,10 @@
             "items": {
               "$ref": "#/components/schemas/UserDevice"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
         "required": [
@@ -1882,7 +2221,12 @@
             "type": "integer"
           }
         },
-        "required": ["avatar", "identifier", "registered_at", "enable"],
+        "required": [
+          "avatar",
+          "identifier",
+          "registered_at",
+          "enable"
+        ],
         "type": "object"
       },
       "UserAuthMethod": {
@@ -1898,7 +2242,11 @@
             "type": "boolean"
           }
         },
-        "required": ["auth_type", "auth_identifier", "verified"],
+        "required": [
+          "auth_type",
+          "auth_identifier",
+          "verified"
+        ],
         "type": "object"
       },
       "UserDevice": {
@@ -1969,7 +2317,14 @@
             "type": "integer"
           }
         },
-        "required": ["id", "user_id", "login_ip", "user_agent", "success", "timestamp"],
+        "required": [
+          "id",
+          "user_id",
+          "login_ip",
+          "user_agent",
+          "success",
+          "timestamp"
+        ],
         "type": "object"
       },
       "UserLoginRequest": {
@@ -1997,7 +2352,10 @@
             "type": "string"
           }
         },
-        "required": ["email", "password"],
+        "required": [
+          "email",
+          "password"
+        ],
         "type": "object"
       },
       "UserRegisterRequest": {
@@ -2031,7 +2389,10 @@
             "type": "string"
           }
         },
-        "required": ["email", "password"],
+        "required": [
+          "email",
+          "password"
+        ],
         "type": "object"
       },
       "UserSubscribe": {
@@ -2155,7 +2516,10 @@
             "items": {
               "$ref": "#/components/schemas/UserSubscribeNodeInfo"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "order_id": {
             "format": "int64",
@@ -2294,7 +2658,10 @@
             "items": {
               "type": "string"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "uuid": {
             "type": "string"
@@ -2324,7 +2691,10 @@
             "type": "string"
           }
         },
-        "required": ["email", "code"],
+        "required": [
+          "email",
+          "code"
+        ],
         "type": "object"
       },
       "WithdrawalLog": {
@@ -2362,7 +2732,15 @@
             "type": "integer"
           }
         },
-        "required": ["id", "user_id", "amount", "content", "status", "created_at", "updated_at"],
+        "required": [
+          "id",
+          "user_id",
+          "amount",
+          "content",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
         "type": "object"
       }
     },
@@ -2487,7 +2865,9 @@
         },
         "security": [],
         "summary": "Check user is exist",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/check/telephone": {
@@ -2597,7 +2977,9 @@
         },
         "security": [],
         "summary": "Check user telephone is exist",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/login": {
@@ -2736,7 +3118,9 @@
         },
         "security": [],
         "summary": "User login",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/login/device": {
@@ -2857,7 +3241,9 @@
         },
         "security": [],
         "summary": "Device Login",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/login/telephone": {
@@ -2996,7 +3382,9 @@
         },
         "security": [],
         "summary": "User Telephone login",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/oauth/login": {
@@ -3106,7 +3494,9 @@
         },
         "security": [],
         "summary": "OAuth login",
-        "tags": ["oauth"]
+        "tags": [
+          "oauth"
+        ]
       }
     },
     "/api/v1/auth/oauth/login/token": {
@@ -3236,7 +3626,9 @@
         },
         "security": [],
         "summary": "OAuth login get token",
-        "tags": ["oauth"]
+        "tags": [
+          "oauth"
+        ]
       }
     },
     "/api/v1/auth/register": {
@@ -3375,7 +3767,9 @@
         },
         "security": [],
         "summary": "User register",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/register/telephone": {
@@ -3514,7 +3908,9 @@
         },
         "security": [],
         "summary": "User Telephone register",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/reset": {
@@ -3653,7 +4049,9 @@
         },
         "security": [],
         "summary": "Reset password",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/auth/reset/telephone": {
@@ -3792,7 +4190,9 @@
         },
         "security": [],
         "summary": "Reset password",
-        "tags": ["auth"]
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/api/v1/public/announcement/list": {
@@ -3906,7 +4306,9 @@
           }
         ],
         "summary": "Query announcement",
-        "tags": ["announcement"]
+        "tags": [
+          "announcement"
+        ]
       }
     },
     "/api/v1/public/document/detail": {
@@ -4021,7 +4423,9 @@
           }
         ],
         "summary": "Get document detail",
-        "tags": ["document"]
+        "tags": [
+          "document"
+        ]
       }
     },
     "/api/v1/public/document/list": {
@@ -4115,7 +4519,9 @@
           }
         ],
         "summary": "Get document list",
-        "tags": ["document"]
+        "tags": [
+          "document"
+        ]
       }
     },
     "/api/v1/public/order/close": {
@@ -4222,7 +4628,9 @@
           }
         ],
         "summary": "Close order",
-        "tags": ["order"]
+        "tags": [
+          "order"
+        ]
       }
     },
     "/api/v1/public/order/detail": {
@@ -4336,7 +4744,9 @@
           }
         ],
         "summary": "Get order",
-        "tags": ["order"]
+        "tags": [
+          "order"
+        ]
       }
     },
     "/api/v1/public/order/list": {
@@ -4460,7 +4870,9 @@
           }
         ],
         "summary": "Get order list",
-        "tags": ["order"]
+        "tags": [
+          "order"
+        ]
       }
     },
     "/api/v1/public/order/pre": {
@@ -4574,7 +4986,9 @@
           }
         ],
         "summary": "Pre create order",
-        "tags": ["order"]
+        "tags": [
+          "order"
+        ]
       }
     },
     "/api/v1/public/order/purchase": {
@@ -4688,7 +5102,9 @@
           }
         ],
         "summary": "purchase Subscription",
-        "tags": ["order"]
+        "tags": [
+          "order"
+        ]
       }
     },
     "/api/v1/public/order/recharge": {
@@ -4802,7 +5218,9 @@
           }
         ],
         "summary": "Recharge",
-        "tags": ["order"]
+        "tags": [
+          "order"
+        ]
       }
     },
     "/api/v1/public/order/renewal": {
@@ -4916,7 +5334,9 @@
           }
         ],
         "summary": "Renewal Subscription",
-        "tags": ["order"]
+        "tags": [
+          "order"
+        ]
       }
     },
     "/api/v1/public/order/reset": {
@@ -5030,7 +5450,9 @@
           }
         ],
         "summary": "Reset traffic",
-        "tags": ["order"]
+        "tags": [
+          "order"
+        ]
       }
     },
     "/api/v1/public/payment/methods": {
@@ -5124,7 +5546,9 @@
           }
         ],
         "summary": "Get available payment methods",
-        "tags": ["payment"]
+        "tags": [
+          "payment"
+        ]
       }
     },
     "/api/v1/public/portal/order/checkout": {
@@ -5234,7 +5658,9 @@
         },
         "security": [],
         "summary": "Purchase Checkout",
-        "tags": ["portal"]
+        "tags": [
+          "portal"
+        ]
       }
     },
     "/api/v1/public/portal/order/status": {
@@ -5360,7 +5786,9 @@
         },
         "security": [],
         "summary": "Query Purchase Order",
-        "tags": ["portal"]
+        "tags": [
+          "portal"
+        ]
       }
     },
     "/api/v1/public/portal/payment-method": {
@@ -5450,7 +5878,9 @@
         },
         "security": [],
         "summary": "Get available payment methods",
-        "tags": ["portal"]
+        "tags": [
+          "portal"
+        ]
       }
     },
     "/api/v1/public/portal/pre": {
@@ -5560,7 +5990,9 @@
         },
         "security": [],
         "summary": "Pre Purchase Order",
-        "tags": ["portal"]
+        "tags": [
+          "portal"
+        ]
       }
     },
     "/api/v1/public/portal/purchase": {
@@ -5670,7 +6102,9 @@
         },
         "security": [],
         "summary": "Purchase subscription",
-        "tags": ["portal"]
+        "tags": [
+          "portal"
+        ]
       }
     },
     "/api/v1/public/portal/subscribe": {
@@ -5780,7 +6214,9 @@
         },
         "security": [],
         "summary": "Get Subscription",
-        "tags": ["portal"]
+        "tags": [
+          "portal"
+        ]
       }
     },
     "/api/v1/public/subscribe/list": {
@@ -5894,7 +6330,9 @@
           }
         ],
         "summary": "Get subscribe list",
-        "tags": ["subscribe"]
+        "tags": [
+          "subscribe"
+        ]
       }
     },
     "/api/v1/public/subscribe/node/list": {
@@ -5988,7 +6426,9 @@
           }
         ],
         "summary": "Get user subscribe node info",
-        "tags": ["subscribe"]
+        "tags": [
+          "subscribe"
+        ]
       }
     },
     "/api/v1/public/ticket/detail": {
@@ -6103,7 +6543,9 @@
           }
         ],
         "summary": "Get ticket detail",
-        "tags": ["ticket"]
+        "tags": [
+          "ticket"
+        ]
       }
     },
     "/api/v1/public/ticket/follow": {
@@ -6210,7 +6652,9 @@
           }
         ],
         "summary": "Create ticket follow",
-        "tags": ["ticket"]
+        "tags": [
+          "ticket"
+        ]
       }
     },
     "/api/v1/public/ticket/list": {
@@ -6324,7 +6768,9 @@
           }
         ],
         "summary": "Get ticket list",
-        "tags": ["ticket"]
+        "tags": [
+          "ticket"
+        ]
       }
     },
     "/api/v1/public/ticket/ticket": {
@@ -6431,7 +6877,9 @@
           }
         ],
         "summary": "Create ticket",
-        "tags": ["ticket"]
+        "tags": [
+          "ticket"
+        ]
       },
       "put": {
         "operationId": "updateUserTicketStatus",
@@ -6536,7 +6984,9 @@
           }
         ],
         "summary": "Update ticket status",
-        "tags": ["ticket"]
+        "tags": [
+          "ticket"
+        ]
       }
     },
     "/api/v1/public/user/affiliate/count": {
@@ -6630,7 +7080,9 @@
           }
         ],
         "summary": "Query User Affiliate Count",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/affiliate/list": {
@@ -6754,7 +7206,9 @@
           }
         ],
         "summary": "Query User Affiliate List",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/balance_log": {
@@ -6848,7 +7302,9 @@
           }
         ],
         "summary": "Query User Balance Log",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/bind_email": {
@@ -6955,7 +7411,9 @@
           }
         ],
         "summary": "Update Bind Email",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/bind_mobile": {
@@ -7062,7 +7520,9 @@
           }
         ],
         "summary": "Update Bind Mobile",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/bind_oauth": {
@@ -7176,7 +7636,9 @@
           }
         ],
         "summary": "Bind OAuth",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/bind_oauth/callback": {
@@ -7283,7 +7745,9 @@
           }
         ],
         "summary": "Bind OAuth Callback",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/bind_telegram": {
@@ -7377,7 +7841,9 @@
           }
         ],
         "summary": "Bind Telegram",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/commission_log": {
@@ -7501,7 +7967,9 @@
           }
         ],
         "summary": "Query User Commission Log",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/commission_withdraw": {
@@ -7615,7 +8083,9 @@
           }
         ],
         "summary": "Commission Withdraw",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/devices": {
@@ -7709,7 +8179,9 @@
           }
         ],
         "summary": "Get Device List",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/info": {
@@ -7803,7 +8275,9 @@
           }
         ],
         "summary": "Query User Info",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/login_log": {
@@ -7927,7 +8401,9 @@
           }
         ],
         "summary": "Get Login Log",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/notify": {
@@ -8034,7 +8510,9 @@
           }
         ],
         "summary": "Update User Notify",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/oauth_methods": {
@@ -8128,7 +8606,9 @@
           }
         ],
         "summary": "Get OAuth Methods",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/password": {
@@ -8235,7 +8715,9 @@
           }
         ],
         "summary": "Update User Password",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/rules": {
@@ -8342,7 +8824,9 @@
           }
         ],
         "summary": "Update User Rules",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/subscribe": {
@@ -8436,7 +8920,9 @@
           }
         ],
         "summary": "Query User Subscribe",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/subscribe_log": {
@@ -8560,7 +9046,9 @@
           }
         ],
         "summary": "Get Subscribe Log",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/subscribe_note": {
@@ -8667,7 +9155,9 @@
           }
         ],
         "summary": "Update User Subscribe Note",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/subscribe_token": {
@@ -8774,7 +9264,9 @@
           }
         ],
         "summary": "Reset User Subscribe Token",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/unbind_device": {
@@ -8881,7 +9373,9 @@
           }
         ],
         "summary": "Unbind Device",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/unbind_oauth": {
@@ -8988,7 +9482,9 @@
           }
         ],
         "summary": "Unbind OAuth",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/unbind_telegram": {
@@ -9075,7 +9571,9 @@
           }
         ],
         "summary": "Unbind Telegram",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/unsubscribe": {
@@ -9182,7 +9680,9 @@
           }
         ],
         "summary": "Unsubscribe",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/unsubscribe/pre": {
@@ -9296,7 +9796,9 @@
           }
         ],
         "summary": "Pre Unsubscribe",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/verify_email": {
@@ -9403,7 +9905,9 @@
           }
         ],
         "summary": "Verify Email",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     },
     "/api/v1/public/user/withdrawal_log": {
@@ -9527,7 +10031,9 @@
           }
         ],
         "summary": "Query Withdrawal Log",
-        "tags": ["user"]
+        "tags": [
+          "user"
+        ]
       }
     }
   },

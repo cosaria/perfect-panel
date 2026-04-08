@@ -75,7 +75,12 @@
             "$ref": "#/components/schemas/PubilcRegisterConfig"
           }
         },
-        "required": ["mobile", "email", "device", "register"],
+        "required": [
+          "mobile",
+          "email",
+          "device",
+          "register"
+        ],
         "type": "object"
       },
       "CheckVerificationCodeRequest": {
@@ -96,7 +101,12 @@
             "type": "integer"
           }
         },
-        "required": ["method", "account", "code", "type"],
+        "required": [
+          "method",
+          "account",
+          "code",
+          "type"
+        ],
         "type": "object"
       },
       "CheckVerificationCodeRespone": {
@@ -106,7 +116,9 @@
             "type": "boolean"
           }
         },
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "type": "object"
       },
       "Currency": {
@@ -119,7 +131,10 @@
             "type": "string"
           }
         },
-        "required": ["currency_unit", "currency_symbol"],
+        "required": [
+          "currency_unit",
+          "currency_symbol"
+        ],
         "type": "object"
       },
       "DeviceAuthticateConfig": {
@@ -138,7 +153,12 @@
             "type": "boolean"
           }
         },
-        "required": ["enable", "show_ads", "enable_security", "only_real_device"],
+        "required": [
+          "enable",
+          "show_ads",
+          "enable_security",
+          "only_real_device"
+        ],
         "type": "object"
       },
       "DownloadLink": {
@@ -181,7 +201,12 @@
             "type": "boolean"
           }
         },
-        "required": ["enable", "enable_verify", "enable_domain_suffix", "domain_suffix_list"],
+        "required": [
+          "enable",
+          "enable_verify",
+          "enable_domain_suffix",
+          "domain_suffix_list"
+        ],
         "type": "object"
       },
       "ErrorDetail": {
@@ -208,10 +233,15 @@
             "items": {
               "$ref": "#/components/schemas/Ads"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
-        "required": ["list"],
+        "required": [
+          "list"
+        ],
         "type": "object"
       },
       "GetGlobalConfigResponse": {
@@ -230,7 +260,10 @@
             "items": {
               "type": "string"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "site": {
             "$ref": "#/components/schemas/SiteConfig"
@@ -276,14 +309,22 @@
             "items": {
               "type": "string"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "user": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["user", "node", "country", "protocol"],
+        "required": [
+          "user",
+          "node",
+          "country",
+          "protocol"
+        ],
         "type": "object"
       },
       "GetSubscribeClientResponse": {
@@ -293,14 +334,20 @@
             "items": {
               "$ref": "#/components/schemas/SubscribeClient"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "total": {
             "format": "int64",
             "type": "integer"
           }
         },
-        "required": ["total", "list"],
+        "required": [
+          "total",
+          "list"
+        ],
         "type": "object"
       },
       "GetTosResponse": {
@@ -310,7 +357,9 @@
             "type": "string"
           }
         },
-        "required": ["tos_content"],
+        "required": [
+          "tos_content"
+        ],
         "type": "object"
       },
       "HeartbeatResponse": {
@@ -327,7 +376,9 @@
             "type": "integer"
           }
         },
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "type": "object"
       },
       "InviteConfig": {
@@ -344,7 +395,11 @@
             "type": "integer"
           }
         },
-        "required": ["forced_invite", "referral_percentage", "only_first_purchase"],
+        "required": [
+          "forced_invite",
+          "referral_percentage",
+          "only_first_purchase"
+        ],
         "type": "object"
       },
       "MobileAuthenticateConfig": {
@@ -360,10 +415,17 @@
             "items": {
               "type": "string"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           }
         },
-        "required": ["enable", "enable_whitelist", "whitelist"],
+        "required": [
+          "enable",
+          "enable_whitelist",
+          "whitelist"
+        ],
         "type": "object"
       },
       "PrivacyPolicyConfig": {
@@ -373,7 +435,9 @@
             "type": "string"
           }
         },
-        "required": ["privacy_policy"],
+        "required": [
+          "privacy_policy"
+        ],
         "type": "object"
       },
       "Problem": {
@@ -391,7 +455,10 @@
             "items": {
               "$ref": "#/components/schemas/ErrorDetail"
             },
-            "type": ["array", "null"]
+            "type": [
+              "array",
+              "null"
+            ]
           },
           "instance": {
             "format": "uri",
@@ -445,7 +512,9 @@
             "type": "integer"
           }
         },
-        "required": ["verify_code_interval"],
+        "required": [
+          "verify_code_interval"
+        ],
         "type": "object"
       },
       "SendCodeRequest": {
@@ -460,7 +529,10 @@
             "type": "integer"
           }
         },
-        "required": ["email", "type"],
+        "required": [
+          "email",
+          "type"
+        ],
         "type": "object"
       },
       "SendCodeResponse": {
@@ -473,7 +545,9 @@
             "type": "boolean"
           }
         },
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "type": "object"
       },
       "SendSmsCodeRequest": {
@@ -491,7 +565,11 @@
             "type": "integer"
           }
         },
-        "required": ["type", "telephone", "telephone_area_code"],
+        "required": [
+          "type",
+          "telephone",
+          "telephone_area_code"
+        ],
         "type": "object"
       },
       "SiteConfig": {
@@ -556,7 +634,11 @@
             "type": "string"
           }
         },
-        "required": ["id", "name", "is_default"],
+        "required": [
+          "id",
+          "name",
+          "is_default"
+        ],
         "type": "object"
       },
       "SubscribeConfig": {
@@ -745,7 +827,9 @@
         },
         "security": [],
         "summary": "Get Ads",
-        "tags": ["common"]
+        "tags": [
+          "common"
+        ]
       }
     },
     "/check_verification_code": {
@@ -855,7 +939,9 @@
         },
         "security": [],
         "summary": "Check verification code",
-        "tags": ["common"]
+        "tags": [
+          "common"
+        ]
       }
     },
     "/client": {
@@ -945,7 +1031,9 @@
         },
         "security": [],
         "summary": "Get Client",
-        "tags": ["common"]
+        "tags": [
+          "common"
+        ]
       }
     },
     "/heartbeat": {
@@ -1035,7 +1123,9 @@
         },
         "security": [],
         "summary": "Heartbeat",
-        "tags": ["common"]
+        "tags": [
+          "common"
+        ]
       }
     },
     "/send_code": {
@@ -1145,7 +1235,9 @@
         },
         "security": [],
         "summary": "Get verification code",
-        "tags": ["common"]
+        "tags": [
+          "common"
+        ]
       }
     },
     "/send_sms_code": {
@@ -1255,7 +1347,9 @@
         },
         "security": [],
         "summary": "Get sms verification code",
-        "tags": ["common"]
+        "tags": [
+          "common"
+        ]
       }
     },
     "/site/config": {
@@ -1345,7 +1439,9 @@
         },
         "security": [],
         "summary": "Get global config",
-        "tags": ["common"]
+        "tags": [
+          "common"
+        ]
       }
     },
     "/site/privacy": {
@@ -1435,7 +1531,9 @@
         },
         "security": [],
         "summary": "Get Privacy Policy",
-        "tags": ["common"]
+        "tags": [
+          "common"
+        ]
       }
     },
     "/site/stat": {
@@ -1525,7 +1623,9 @@
         },
         "security": [],
         "summary": "Get stat",
-        "tags": ["common"]
+        "tags": [
+          "common"
+        ]
       }
     },
     "/site/tos": {
@@ -1615,7 +1715,9 @@
         },
         "security": [],
         "summary": "Get Tos Content",
-        "tags": ["common"]
+        "tags": [
+          "common"
+        ]
       }
     }
   },

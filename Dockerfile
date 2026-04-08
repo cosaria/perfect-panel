@@ -4,10 +4,11 @@
 # Stage 1: Build both frontends
 FROM oven/bun:1-alpine AS web-builder
 WORKDIR /app
-COPY package.json bun.lock turbo.json biome.json ./
-COPY packages/ ./packages/
-COPY apps/admin/ ./apps/admin/
-COPY apps/user/ ./apps/user/
+COPY web/package.json web/bun.lock web/turbo.json web/biome.json ./web/
+COPY web/packages/ ./web/packages/
+COPY web/apps/admin/ ./web/apps/admin/
+COPY web/apps/user/ ./web/apps/user/
+WORKDIR /app/web
 # frozen-lockfile skipped: workspace symlink bug between macOS/Linux lockfiles
 RUN bun install
 RUN bun run build --filter=ppanel-admin-web --filter=ppanel-user-web
@@ -22,8 +23,8 @@ WORKDIR /build
 COPY server/go.mod server/go.sum ./
 RUN go mod download
 COPY server/ .
-COPY --from=web-builder /app/apps/admin/out ./web/admin-dist
-COPY --from=web-builder /app/apps/user/out ./web/user-dist
+COPY --from=web-builder /app/web/apps/admin/out ./web/admin-dist
+COPY --from=web-builder /app/web/apps/user/out ./web/user-dist
 
 RUN BUILD_TIME=$(date -u +"%Y-%m-%d %H:%M:%S") && \
     go build -tags embed \
