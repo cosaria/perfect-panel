@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { type ComponentType, type LazyExoticComponent, lazy, Suspense } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import DashboardLayout from "@/app/(main)/(user)/layout";
 import MainLayout from "@/app/(main)/layout";
 import AppShell from "./app-shell";
@@ -40,14 +40,34 @@ function DashboardShell() {
   );
 }
 
-function RoutePlaceholder({ title, description }: { title: string; description: string }) {
+function RoutePlaceholder({
+  title,
+  description,
+  actionLabel,
+  actionTo,
+}: {
+  title: string;
+  description: string;
+  actionLabel?: string;
+  actionTo?: string;
+}) {
   return (
     <div className="mx-auto flex h-full max-w-3xl items-center justify-center">
       <Card className="w-full">
         <CardHeader>
           <CardTitle>{title}</CardTitle>
         </CardHeader>
-        <CardContent className="text-muted-foreground text-sm">{description}</CardContent>
+        <CardContent className="space-y-4 text-sm">
+          <p className="text-muted-foreground">{description}</p>
+          {actionLabel && actionTo ? (
+            <Link
+              className="text-primary inline-flex font-medium underline-offset-4 hover:underline"
+              to={actionTo}
+            >
+              {actionLabel}
+            </Link>
+          ) : null}
+        </CardContent>
       </Card>
     </div>
   );
@@ -55,6 +75,17 @@ function RoutePlaceholder({ title, description }: { title: string; description: 
 
 function RouteLoadingFallback() {
   return <RoutePlaceholder title="Loading" description="正在加载用户端页面，请稍候。" />;
+}
+
+function RouteNotFound({ actionLabel, actionTo }: { actionLabel: string; actionTo: string }) {
+  return (
+    <RoutePlaceholder
+      title="404"
+      description="页面不存在，你访问的地址无效或已经下线。"
+      actionLabel={actionLabel}
+      actionTo={actionTo}
+    />
+  );
 }
 
 function renderLazyPage(Page: LazyExoticComponent<ComponentType>) {
@@ -152,13 +183,21 @@ export const routes = [
                 path: "ticket",
                 element: renderLazyPage(TicketPage),
               },
+              {
+                path: "*",
+                element: <RouteNotFound actionLabel="返回仪表盘" actionTo="/dashboard" />,
+              },
             ],
+          },
+          {
+            path: "*",
+            element: <RouteNotFound actionLabel="返回首页" actionTo="/" />,
           },
         ],
       },
       {
         path: "*",
-        element: <Navigate replace to="/" />,
+        element: <RouteNotFound actionLabel="返回首页" actionTo="/" />,
       },
     ],
   },

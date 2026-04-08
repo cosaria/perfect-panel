@@ -1,7 +1,15 @@
-import { createBrowserRouter } from "react-router-dom";
+import { BrowserRouter, useRoutes } from "react-router-dom";
 import { getAdminRouterBasename } from "./env";
 import { routes } from "./routes";
 
-export const router = createBrowserRouter(routes, {
-  basename: getAdminRouterBasename(),
-});
+function AdminRouteRenderer() {
+  return useRoutes(routes);
+}
+
+export function AppRouter() {
+  return (
+    <BrowserRouter basename={getAdminRouterBasename()} unstable_useTransitions={false}>
+      <AdminRouteRenderer />
+    </BrowserRouter>
+  );
+}

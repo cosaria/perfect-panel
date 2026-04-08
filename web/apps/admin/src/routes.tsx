@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { type ComponentType, type LazyExoticComponent, lazy, Suspense } from "react";
-import { Link, Navigate, Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import DashboardLayout from "@/app/dashboard/layout";
+import { ADMIN_HOME_PATH } from "@/utils/admin-path";
 import AppShell from "./app-shell";
 
 const AuthPage = lazy(() => import("@/app/(auth)/page"));
@@ -32,6 +33,14 @@ const SubscribePage = lazy(() => import("@/app/dashboard/subscribe/page"));
 const SystemPage = lazy(() => import("@/app/dashboard/system/page"));
 const TicketPage = lazy(() => import("@/app/dashboard/ticket/page"));
 const UserPage = lazy(() => import("@/app/dashboard/user/page"));
+
+function RootShell() {
+  return (
+    <AppShell>
+      <Outlet />
+    </AppShell>
+  );
+}
 
 function DashboardShell() {
   return (
@@ -78,153 +87,161 @@ function RouteLoadingFallback() {
   return <RoutePlaceholder title="Loading" description="正在加载管理端页面，请稍候。" />;
 }
 
-function renderLazyPage(Page: LazyExoticComponent<ComponentType>) {
+function RouteNotFound({ actionLabel, actionTo }: { actionLabel: string; actionTo: string }) {
   return (
-    <Suspense fallback={<RouteLoadingFallback />}>
-      <Page />
-    </Suspense>
+    <RoutePlaceholder
+      title="404"
+      description="页面不存在，你访问的管理端地址无效或已经下线。"
+      actionLabel={actionLabel}
+      actionTo={actionTo}
+    />
   );
+}
+
+function createLazyRouteComponent(Page: LazyExoticComponent<ComponentType>) {
+  return function LazyRouteComponent() {
+    return (
+      <Suspense fallback={<RouteLoadingFallback />}>
+        <Page />
+      </Suspense>
+    );
+  };
 }
 
 export const routes = [
   {
     path: "/",
-    element: (
-      <AppShell>
-        <Outlet />
-      </AppShell>
-    ),
+    Component: RootShell,
     children: [
       {
         index: true,
-        element: renderLazyPage(AuthPage),
+        Component: createLazyRouteComponent(AuthPage),
       },
       {
         path: "dashboard",
-        element: <DashboardShell />,
+        Component: DashboardShell,
         children: [
           {
             index: true,
-            element: renderLazyPage(DashboardPage),
+            element: <RouteNotFound actionLabel="前往工作台" actionTo={ADMIN_HOME_PATH} />,
+          },
+          {
+            path: "workplace",
+            Component: createLazyRouteComponent(DashboardPage),
           },
           {
             path: "servers",
-            element: renderLazyPage(ServersPage),
+            Component: createLazyRouteComponent(ServersPage),
           },
           {
             path: "auth-control",
-            element: renderLazyPage(AuthControlPage),
+            Component: createLazyRouteComponent(AuthControlPage),
           },
           {
             path: "announcement",
-            element: renderLazyPage(AnnouncementPage),
+            Component: createLazyRouteComponent(AnnouncementPage),
           },
           {
             path: "coupon",
-            element: renderLazyPage(CouponPage),
+            Component: createLazyRouteComponent(CouponPage),
           },
           {
             path: "document",
-            element: renderLazyPage(DocumentPage),
+            Component: createLazyRouteComponent(DocumentPage),
           },
           {
             path: "marketing",
-            element: renderLazyPage(MarketingPage),
+            Component: createLazyRouteComponent(MarketingPage),
           },
           {
             path: "nodes",
-            element: renderLazyPage(NodesPage),
+            Component: createLazyRouteComponent(NodesPage),
           },
           {
             path: "order",
-            element: renderLazyPage(OrderPage),
+            Component: createLazyRouteComponent(OrderPage),
           },
           {
             path: "payment",
-            element: renderLazyPage(PaymentPage),
+            Component: createLazyRouteComponent(PaymentPage),
           },
           {
             path: "product",
-            element: renderLazyPage(ProductPage),
+            Component: createLazyRouteComponent(ProductPage),
           },
           {
             path: "subscribe",
-            element: renderLazyPage(SubscribePage),
+            Component: createLazyRouteComponent(SubscribePage),
           },
           {
             path: "system",
-            element: renderLazyPage(SystemPage),
+            Component: createLazyRouteComponent(SystemPage),
           },
           {
             path: "ticket",
-            element: renderLazyPage(TicketPage),
+            Component: createLazyRouteComponent(TicketPage),
           },
           {
             path: "user",
-            element: renderLazyPage(UserPage),
+            Component: createLazyRouteComponent(UserPage),
           },
           {
             path: "log/login",
-            element: renderLazyPage(LoginLogPage),
+            Component: createLazyRouteComponent(LoginLogPage),
           },
           {
             path: "log/register",
-            element: renderLazyPage(RegisterLogPage),
+            Component: createLazyRouteComponent(RegisterLogPage),
           },
           {
             path: "log/email",
-            element: renderLazyPage(EmailLogPage),
+            Component: createLazyRouteComponent(EmailLogPage),
           },
           {
             path: "log/mobile",
-            element: renderLazyPage(MobileLogPage),
+            Component: createLazyRouteComponent(MobileLogPage),
           },
           {
             path: "log/subscribe",
-            element: renderLazyPage(SubscribeLogPage),
+            Component: createLazyRouteComponent(SubscribeLogPage),
           },
           {
             path: "log/reset-subscribe",
-            element: renderLazyPage(ResetSubscribeLogPage),
+            Component: createLazyRouteComponent(ResetSubscribeLogPage),
           },
           {
             path: "log/subscribe-traffic",
-            element: renderLazyPage(SubscribeTrafficLogPage),
+            Component: createLazyRouteComponent(SubscribeTrafficLogPage),
           },
           {
             path: "log/server-traffic",
-            element: renderLazyPage(ServerTrafficLogPage),
+            Component: createLazyRouteComponent(ServerTrafficLogPage),
           },
           {
             path: "log/traffic-details",
-            element: renderLazyPage(TrafficDetailsLogPage),
+            Component: createLazyRouteComponent(TrafficDetailsLogPage),
           },
           {
             path: "log/balance",
-            element: renderLazyPage(BalanceLogPage),
+            Component: createLazyRouteComponent(BalanceLogPage),
           },
           {
             path: "log/commission",
-            element: renderLazyPage(CommissionLogPage),
+            Component: createLazyRouteComponent(CommissionLogPage),
           },
           {
             path: "log/gift",
-            element: renderLazyPage(GiftLogPage),
+            Component: createLazyRouteComponent(GiftLogPage),
           },
           {
             path: "*",
-            element: (
-              <RoutePlaceholder
-                title="Admin Route Placeholder"
-                description="当前阶段只验证管理端壳与关键路由，完整页面树会在后续 unit 接入。"
-              />
-            ),
+            element: <RouteNotFound actionLabel="返回仪表盘" actionTo={ADMIN_HOME_PATH} />,
           },
         ],
       },
       {
         path: "*",
-        element: <Navigate replace to="/" />,
+        element: <RouteNotFound actionLabel="返回登录页" actionTo="/" />,
       },
     ],
   },

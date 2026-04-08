@@ -19,7 +19,7 @@ function isNavGroup(item: NavNode): item is NavGroup {
 export const navs = [
   {
     title: "Dashboard",
-    url: "/dashboard",
+    url: "/dashboard/workplace",
     icon: "flat-color-icons:globe",
   },
 

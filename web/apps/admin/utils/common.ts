@@ -3,7 +3,7 @@ import { intlFormat } from "date-fns";
 import Cookies from "universal-cookie";
 import { locales, NEXT_PUBLIC_ADMIN_PATH, NEXT_PUBLIC_DEFAULT_LANGUAGE } from "@/config/constants";
 import { dispatchAdminLocaleChange } from "@/src/compat/next-intl";
-import { toAdminPath } from "./admin-path";
+import { ADMIN_HOME_PATH, stripAdminPath, toAdminPath } from "./admin-path";
 
 const cookies = new Cookies(null, {
   path: "/",
@@ -47,7 +47,8 @@ export function setRedirectUrl(value?: string) {
 }
 
 export function getRedirectUrl() {
-  return toAdminPath(sessionStorage.getItem("redirect-url") ?? "/dashboard");
+  const redirectUrl = sessionStorage.getItem("redirect-url") ?? ADMIN_HOME_PATH;
+  return toAdminPath(stripAdminPath(redirectUrl));
 }
 
 export function Logout() {

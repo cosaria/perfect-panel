@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Fragment, useMemo } from "react";
 import { findNavByUrl } from "@/config/navs";
-import { stripAdminPath } from "@/utils/admin-path";
+import { ADMIN_HOME_PATH, stripAdminPath } from "@/utils/admin-path";
 import { AdminLink } from "./admin-link";
 import LanguageSwitch from "./language-switch";
 import ThemeSwitch from "./theme-switch";
@@ -37,7 +37,7 @@ export function Header() {
                   {index !== items.length - 1 && (
                     <BreadcrumbItem>
                       <BreadcrumbLink asChild>
-                        <AdminLink href={"url" in item ? item.url : "/dashboard"}>
+                        <AdminLink href={"url" in item ? item.url : ADMIN_HOME_PATH}>
                           {t(item?.title)}
                         </AdminLink>
                       </BreadcrumbLink>

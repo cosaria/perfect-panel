@@ -12,16 +12,34 @@ function isAbsoluteHref(href: string) {
   return /^https?:\/\//.test(href);
 }
 
-function isPlainLeftClick(event: MouseEvent<HTMLAnchorElement>) {
-  return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
-}
-
 export default forwardRef<HTMLAnchorElement, LinkProps>(function Link(
-  { href, onClick, replace = false, target, download, ...props },
+  { href, replace = false, target, download, onClick, ...props },
   ref,
 ) {
   const navigate = useNavigate();
   const resolvedHref = isAbsoluteHref(href) ? href : toAdminPath(href);
+  const navigationTarget = isAbsoluteHref(href) ? href : stripAdminPath(resolvedHref);
+  const isInternalAdminHref =
+    !isAbsoluteHref(href) && target !== "_blank" && download === undefined;
+
+  function handleClick(event: MouseEvent<HTMLAnchorElement>) {
+    onClick?.(event);
+
+    if (
+      event.defaultPrevented ||
+      !isInternalAdminHref ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.shiftKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    navigate(navigationTarget, { replace });
+  }
 
   return (
     <a
@@ -30,22 +48,7 @@ export default forwardRef<HTMLAnchorElement, LinkProps>(function Link(
       href={resolvedHref}
       target={target}
       download={download}
-      onClick={(event) => {
-        onClick?.(event);
-
-        if (
-          event.defaultPrevented ||
-          isAbsoluteHref(href) ||
-          target === "_blank" ||
-          download !== undefined ||
-          !isPlainLeftClick(event)
-        ) {
-          return;
-        }
-
-        event.preventDefault();
-        navigate(stripAdminPath(resolvedHref), { replace });
-      }}
+      onClick={handleClick}
     />
   );
 });

@@ -1,5 +1,7 @@
 import { NEXT_PUBLIC_ADMIN_PATH } from "@/config/constants";
 
+export const ADMIN_HOME_PATH = "/dashboard/workplace";
+
 function hasPathPrefix(pathname: string, prefix: string) {
   return pathname === prefix || pathname.startsWith(`${prefix}/`);
 }

@@ -52,8 +52,8 @@ export function useRouter() {
 }
 
 export function usePathname() {
-  useLocation();
-  return window.location.pathname;
+  const location = useLocation();
+  return location.pathname;
 }
 
 export function useSearchParams() {

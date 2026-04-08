@@ -19,8 +19,9 @@ import { useTranslations } from "next-intl";
 import { type ComponentProps, useCallback, useEffect, useState } from "react";
 import { navs } from "@/config/navs";
 import useGlobalStore from "@/config/use-global";
-import { stripAdminPath } from "@/utils/admin-path";
+import { ADMIN_HOME_PATH, stripAdminPath } from "@/utils/admin-path";
 import { AdminLink } from "./admin-link";
+import { CollapsedStandaloneNavLink } from "./collapsed-standalone-nav-link";
 
 type Nav = (typeof navs)[number];
 type NavWithItems = Extract<Nav, { items: readonly unknown[] }>;
@@ -73,7 +74,7 @@ export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>) {
     (url: string) => {
       const path = normalize(stripAdminPath(pathname));
       const target = normalize(url);
-      if (target === "/dashboard") return path === target;
+      if (target === ADMIN_HOME_PATH) return path === "/dashboard" || path === target;
       if (path === target) return true;
       // Only treat as active if next char is a path boundary '/'
       return path.startsWith(`${target}/`);
@@ -101,6 +102,17 @@ export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>) {
 
   const renderCollapsedFlyout = (nav: Nav) => {
     const icon = getNavIcon(nav);
+    if (!hasChildren(nav)) {
+      return (
+        <CollapsedStandaloneNavLink
+          href={nav.url}
+          label={t(nav.title)}
+          isActive={isActiveUrl(nav.url)}
+          icon={icon ? <Icon icon={icon} className="size-4" /> : null}
+        />
+      );
+    }
+
     const ParentButton = (
       <SidebarMenuButton
         size="sm"
@@ -108,17 +120,9 @@ export function SidebarLeft({ ...props }: ComponentProps<typeof Sidebar>) {
         isActive={false}
         aria-label={t(nav.title)}
       >
-        {hasUrl(nav) ? (
-          <AdminLink href={nav.url}>
-            {icon ? <Icon icon={icon} className="size-4" /> : null}
-          </AdminLink>
-        ) : icon ? (
-          <Icon icon={icon} className="size-4" />
-        ) : null}
+        {icon ? <Icon icon={icon} className="size-4" /> : null}
       </SidebarMenuButton>
     );
-
-    if (!hasChildren(nav)) return ParentButton;
 
     return (
       <HoverCard openDelay={40} closeDelay={200}>

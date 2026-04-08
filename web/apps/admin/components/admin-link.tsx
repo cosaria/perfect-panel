@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { type ComponentPropsWithoutRef, forwardRef, type MouseEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { stripAdminPath, toAdminPath } from "@/utils/admin-path";
 
 export interface AdminLinkProps extends Omit<ComponentPropsWithoutRef<"a">, "href"> {
@@ -9,41 +9,33 @@ export interface AdminLinkProps extends Omit<ComponentPropsWithoutRef<"a">, "hre
   replace?: boolean;
 }
 
-function isPlainLeftClick(event: MouseEvent<HTMLAnchorElement>) {
-  return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
-}
-
 export const AdminLink = forwardRef<HTMLAnchorElement, AdminLinkProps>(function AdminLink(
-  { href, onClick, replace = false, target, download, ...props },
+  { href, replace = false, target, download, onClick, ...props },
   ref,
 ) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const resolvedHref = toAdminPath(href);
   const navigationTarget = stripAdminPath(resolvedHref);
-  const isInternalAdminHref = resolvedHref.startsWith("/");
+  const isInternalAdminHref = resolvedHref.startsWith("/") && target !== "_blank" && !download;
 
-  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+  function handleClick(event: MouseEvent<HTMLAnchorElement>) {
     onClick?.(event);
 
     if (
       event.defaultPrevented ||
       !isInternalAdminHref ||
-      target === "_blank" ||
-      download !== undefined ||
-      !isPlainLeftClick(event)
+      event.button !== 0 ||
+      event.metaKey ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.shiftKey
     ) {
       return;
     }
 
     event.preventDefault();
-
-    if (replace) {
-      router.replace(navigationTarget);
-      return;
-    }
-
-    router.push(navigationTarget);
-  };
+    navigate(navigationTarget, { replace });
+  }
 
   return (
     <a

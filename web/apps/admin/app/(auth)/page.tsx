@@ -9,7 +9,7 @@ import { AdminLink } from "@/components/admin-link";
 import LanguageSwitch from "@/components/language-switch";
 import ThemeSwitch from "@/components/theme-switch";
 import useGlobalStore from "@/config/use-global";
-import { toAdminPath } from "@/utils/admin-path";
+import { ADMIN_HOME_PATH, toAdminPath } from "@/utils/admin-path";
 import EmailAuthForm from "./email/auth-form";
 
 export default function Page() {
@@ -19,7 +19,7 @@ export default function Page() {
 
   useEffect(() => {
     if (user) {
-      window.location.replace(toAdminPath("/dashboard"));
+      window.location.replace(toAdminPath(ADMIN_HOME_PATH));
     }
   }, [user]);
 
