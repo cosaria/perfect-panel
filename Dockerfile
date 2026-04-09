@@ -28,7 +28,7 @@ COPY --from=web-builder /app/web/apps/user/dist ./web/user-dist
 RUN BUILD_TIME=$(date -u +"%Y-%m-%d %H:%M:%S") && \
     go build -tags embed \
       -ldflags="-s -w -X 'github.com/perfect-panel/server/config.Version=${VERSION}' -X 'github.com/perfect-panel/server/config.BuildTime=${BUILD_TIME}'" \
-      -o /app/ppanel ppanel.go
+      -o /app/ppanel .
 
 # Stage 3: Minimal runtime
 FROM alpine:3.21

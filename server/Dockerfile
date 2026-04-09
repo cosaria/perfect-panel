@@ -14,7 +14,7 @@ RUN go mod download
 COPY . .
 
 RUN BUILD_TIME=$(date -u +"%Y-%m-%d %H:%M:%S") && \
-    go build -ldflags="-s -w -X 'github.com/perfect-panel/server/config.Version=${VERSION}' -X 'github.com/perfect-panel/server/config.BuildTime=${BUILD_TIME}'" -o /app/ppanel ppanel.go
+    go build -ldflags="-s -w -X 'github.com/perfect-panel/server/config.Version=${VERSION}' -X 'github.com/perfect-panel/server/config.BuildTime=${BUILD_TIME}'" -o /app/ppanel .
 
 FROM alpine:3.21
 
