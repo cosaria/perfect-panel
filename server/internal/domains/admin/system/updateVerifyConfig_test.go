@@ -7,6 +7,7 @@ import (
 
 	serverconfig "github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/internal/platform/http/types"
+	modelsystem "github.com/perfect-panel/server/internal/platform/persistence/system"
 	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
@@ -163,4 +164,49 @@ func TestUpdateVerifyConfigReturnsErrorWhenReloadHookFails(t *testing.T) {
 	err := logic.UpdateVerifyConfig(&types.VerifyConfig{})
 
 	requireSystemCodeError(t, err, xerr.ERROR)
+}
+
+func TestUpdateVerifyConfigFallbackWritesVerificationPoliciesWhenNewSchemaIsPresent(t *testing.T) {
+	db := testAdminSystemDB(t)
+	require.NoError(t, db.AutoMigrate(&modelsystem.Setting{}, &modelsystem.VerificationPolicy{}))
+	markIdentitySystemRevisionApplied(t, db)
+
+	rows := []modelsystem.VerificationPolicy{
+		{Category: "verify", Key: "TurnstileSiteKey", Value: "", Type: "string", Desc: "site key"},
+		{Category: "verify", Key: "TurnstileSecret", Value: "", Type: "string", Desc: "secret"},
+		{Category: "verify", Key: "EnableLoginVerify", Value: "false", Type: "bool", Desc: "login"},
+		{Category: "verify", Key: "EnableRegisterVerify", Value: "false", Type: "bool", Desc: "register"},
+		{Category: "verify", Key: "EnableResetPasswordVerify", Value: "false", Type: "bool", Desc: "reset"},
+	}
+	for _, row := range rows {
+		require.NoError(t, db.Create(&row).Error)
+	}
+
+	cfg := &serverconfig.Config{}
+	logic := NewUpdateVerifyConfigLogic(context.Background(), Deps{
+		Config:      cfg,
+		SystemModel: modelsystem.NewModel(db, nil),
+		DeleteCacheKeys: func(context.Context, ...string) error {
+			return nil
+		},
+	})
+
+	req := &types.VerifyConfig{
+		TurnstileSiteKey:          "site-key",
+		TurnstileSecret:           "secret-key",
+		EnableLoginVerify:         true,
+		EnableRegisterVerify:      true,
+		EnableResetPasswordVerify: true,
+	}
+
+	err := logic.UpdateVerifyConfig(req)
+
+	require.NoError(t, err)
+
+	var row modelsystem.VerificationPolicy
+	require.NoError(t, db.Where("category = ? AND `key` = ?", "verify", "EnableResetPasswordVerify").First(&row).Error)
+	require.Equal(t, "true", row.Value)
+
+	require.Equal(t, req.TurnstileSiteKey, cfg.Verify.TurnstileSiteKey)
+	require.False(t, db.Migrator().HasTable(&modelsystem.System{}))
 }

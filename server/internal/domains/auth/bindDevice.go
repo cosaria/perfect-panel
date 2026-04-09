@@ -95,7 +95,7 @@ func (l *BindDeviceLogic) createDeviceForUser(identifier, ip, userAgent string, 
 			AuthIdentifier: identifier,
 			Verified:       true,
 		}
-		if err := db.Create(authMethod).Error; err != nil {
+		if err := l.deps.UserModel.InsertUserAuthMethods(l.ctx, authMethod, db); err != nil {
 			l.Errorw("failed to create device auth method",
 				logger.Field("user_id", userId),
 				logger.Field("identifier", identifier),
@@ -113,7 +113,7 @@ func (l *BindDeviceLogic) createDeviceForUser(identifier, ip, userAgent string, 
 			Enabled:    true,
 			Online:     false,
 		}
-		if err := db.Create(deviceInfo).Error; err != nil {
+		if err := l.deps.UserModel.InsertDevice(l.ctx, deviceInfo, db); err != nil {
 			l.Errorw("failed to create device",
 				logger.Field("user_id", userId),
 				logger.Field("identifier", identifier),
@@ -147,8 +147,8 @@ func (l *BindDeviceLogic) rebindDeviceToNewUser(deviceInfo *user.Device, ip, use
 
 	err := l.deps.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		// Check if old user has other auth methods besides device
-		var authMethods []user.AuthMethods
-		if err := db.Where("user_id = ?", oldUserId).Find(&authMethods).Error; err != nil {
+		authMethods, err := l.deps.UserModel.FindUserAuthMethods(l.ctx, oldUserId)
+		if err != nil {
 			l.Errorw("failed to query auth methods for old user",
 				logger.Field("old_user_id", oldUserId),
 				logger.Field("error", err.Error()),
@@ -167,7 +167,12 @@ func (l *BindDeviceLogic) rebindDeviceToNewUser(deviceInfo *user.Device, ip, use
 		// Only disable old user if they have no other auth methods
 		if nonDeviceAuthCount == 0 {
 			falseVal := false
-			if err := db.Model(&user.User{}).Where("id = ?", oldUserId).Update("enable", &falseVal).Error; err != nil {
+			oldUser, err := l.deps.UserModel.FindOne(l.ctx, oldUserId)
+			if err != nil {
+				return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "load old user failed: %v", err)
+			}
+			oldUser.Enable = &falseVal
+			if err := l.deps.UserModel.Update(l.ctx, oldUser, db); err != nil {
 				l.Errorw("failed to disable old user",
 					logger.Field("old_user_id", oldUserId),
 					logger.Field("error", err.Error()),
@@ -186,9 +191,12 @@ func (l *BindDeviceLogic) rebindDeviceToNewUser(deviceInfo *user.Device, ip, use
 		}
 
 		// Update device auth method to new user
-		if err := db.Model(&user.AuthMethods{}).
-			Where("auth_type = ? AND auth_identifier = ?", "device", deviceInfo.Identifier).
-			Update("user_id", newUserId).Error; err != nil {
+		authMethod, err := l.deps.UserModel.FindUserAuthMethodByOpenID(l.ctx, "device", deviceInfo.Identifier)
+		if err != nil {
+			return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "load device auth method failed: %v", err)
+		}
+		authMethod.UserId = newUserId
+		if err := l.deps.UserModel.UpdateUserAuthMethods(l.ctx, authMethod, db); err != nil {
 			l.Errorw("failed to update device auth method",
 				logger.Field("identifier", deviceInfo.Identifier),
 				logger.Field("error", err.Error()),
@@ -202,7 +210,7 @@ func (l *BindDeviceLogic) rebindDeviceToNewUser(deviceInfo *user.Device, ip, use
 		deviceInfo.UserAgent = userAgent
 		deviceInfo.Enabled = true
 
-		if err := db.Save(deviceInfo).Error; err != nil {
+		if err := l.deps.UserModel.UpdateDevice(l.ctx, deviceInfo, db); err != nil {
 			l.Errorw("failed to update device",
 				logger.Field("identifier", deviceInfo.Identifier),
 				logger.Field("error", err.Error()),

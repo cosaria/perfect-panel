@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/perfect-panel/server/internal/platform/cache"
+	modelsystem "github.com/perfect-panel/server/internal/platform/persistence/system"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
@@ -34,14 +35,18 @@ type (
 	}
 	defaultAuthModel struct {
 		cache.CachedConn
-		table string
+		db         *gorm.DB
+		table      string
+		systemRepo *modelsystem.Repository
 	}
 )
 
 func newAuthModel(db *gorm.DB, c *redis.Client) *defaultAuthModel {
 	return &defaultAuthModel{
 		CachedConn: cache.NewConn(db, c),
+		db:         db,
 		table:      "`auth_config`",
+		systemRepo: modelsystem.NewRepository(db),
 	}
 }
 
@@ -69,12 +74,27 @@ func (m *defaultAuthModel) getCacheKeys(data *Auth) []string {
 
 func (m *defaultAuthModel) Insert(ctx context.Context, data *Auth) error {
 	err := m.ExecCtx(ctx, func(conn *gorm.DB) error {
+		if m.useAuthProviderSchema(conn) {
+			state, err := m.systemRepo.UpsertAuthProvider(ctx, data.Method, data.Config, data.Enabled, conn)
+			if err != nil {
+				return err
+			}
+			data.Id = state.Provider.ID
+			return nil
+		}
 		return conn.Create(&data).Error
 	}, m.getCacheKeys(data)...)
 	return err
 }
 
 func (m *defaultAuthModel) FindOne(ctx context.Context, id int64) (*Auth, error) {
+	if m.useAuthProviderSchema(nil) {
+		state, err := m.systemRepo.FindAuthProviderByID(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		return m.authProviderStateToLegacy(state), nil
+	}
 	AuthIdKey := fmt.Sprintf("%s%v", cacheAuthIdPrefix, id)
 	var resp Auth
 	err := m.QueryCtx(ctx, &resp, AuthIdKey, func(conn *gorm.DB, v interface{}) error {
@@ -93,6 +113,10 @@ func (m *defaultAuthModel) Update(ctx context.Context, data *Auth) error {
 	}
 	err = m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		db := conn
+		if m.useAuthProviderSchema(db) {
+			_, err := m.systemRepo.UpsertAuthProvider(ctx, data.Method, data.Config, data.Enabled, db)
+			return err
+		}
 		return db.Save(data).Error
 	}, m.getCacheKeys(old)...)
 	return err
@@ -108,6 +132,9 @@ func (m *defaultAuthModel) Delete(ctx context.Context, id int64) error {
 	}
 	err = m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		db := conn
+		if m.useAuthProviderSchema(db) {
+			return m.systemRepo.DeleteAuthProvider(ctx, data.Method, db)
+		}
 		return db.Delete(&Auth{}, id).Error
 	}, m.getCacheKeys(data)...)
 	return err
@@ -115,4 +142,27 @@ func (m *defaultAuthModel) Delete(ctx context.Context, id int64) error {
 
 func (m *defaultAuthModel) Transaction(ctx context.Context, fn func(db *gorm.DB) error) error {
 	return m.TransactCtx(ctx, fn)
+}
+
+func (m *defaultAuthModel) useAuthProviderSchema(conn *gorm.DB) bool {
+	if m.systemRepo == nil {
+		return false
+	}
+	return m.systemRepo.HasAuthProviderSchema(conn)
+}
+
+func (m *defaultAuthModel) authProviderStateToLegacy(state *modelsystem.AuthProviderState) *Auth {
+	if state == nil || state.Provider == nil {
+		return nil
+	}
+	config := ""
+	if state.Config != nil {
+		config = state.Config.Config
+	}
+	return &Auth{
+		Id:      state.Provider.ID,
+		Method:  state.Provider.Method,
+		Config:  config,
+		Enabled: state.Provider.Enabled,
+	}
 }

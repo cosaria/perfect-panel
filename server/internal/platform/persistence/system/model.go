@@ -33,6 +33,9 @@ func NewModel(conn *gorm.DB, c *redis.Client) Model {
 
 // GetSmsConfig returns the sms config.
 func (m *customSystemModel) GetSmsConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "sms")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.SmsConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "sms").Find(v).Error
@@ -42,6 +45,9 @@ func (m *customSystemModel) GetSmsConfig(ctx context.Context) ([]*System, error)
 
 // GetSiteConfig returns the site config.
 func (m *customSystemModel) GetSiteConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "site")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.SiteConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "site").Find(v).Error
@@ -51,6 +57,9 @@ func (m *customSystemModel) GetSiteConfig(ctx context.Context) ([]*System, error
 
 // GetEmailConfig returns the email config.
 func (m *customSystemModel) GetEmailConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "email")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.EmailSmtpConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "email").Find(v).Error
@@ -60,6 +69,9 @@ func (m *customSystemModel) GetEmailConfig(ctx context.Context) ([]*System, erro
 
 // GetSubscribeConfig returns the subscribe config.
 func (m *customSystemModel) GetSubscribeConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "subscribe")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.SubscribeConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "subscribe").Find(v).Error
@@ -69,6 +81,9 @@ func (m *customSystemModel) GetSubscribeConfig(ctx context.Context) ([]*System, 
 
 // GetRegisterConfig returns the register config.
 func (m *customSystemModel) GetRegisterConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "register")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.RegisterConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "register").Find(v).Error
@@ -78,6 +93,9 @@ func (m *customSystemModel) GetRegisterConfig(ctx context.Context) ([]*System, e
 
 // GetVerifyConfig returns the verify config.
 func (m *customSystemModel) GetVerifyConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "verify")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.VerifyConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "verify").Find(v).Error
@@ -87,6 +105,9 @@ func (m *customSystemModel) GetVerifyConfig(ctx context.Context) ([]*System, err
 
 // GetNodeConfig returns the server config.
 func (m *customSystemModel) GetNodeConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "server")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.NodeConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "server").Find(v).Error
@@ -96,6 +117,9 @@ func (m *customSystemModel) GetNodeConfig(ctx context.Context) ([]*System, error
 
 // GetInviteConfig returns the invite config.
 func (m *customSystemModel) GetInviteConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "invite")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.InviteConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "invite").Find(v).Error
@@ -105,6 +129,9 @@ func (m *customSystemModel) GetInviteConfig(ctx context.Context) ([]*System, err
 
 // GetTelegramConfig returns the telegram config.
 func (m *customSystemModel) GetTelegramConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "telegram")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.TelegramConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "telegram").Find(v).Error
@@ -114,6 +141,9 @@ func (m *customSystemModel) GetTelegramConfig(ctx context.Context) ([]*System, e
 
 // GetTosConfig returns the tos config.
 func (m *customSystemModel) GetTosConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "tos")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.TosConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "tos").Find(v).Error
@@ -123,6 +153,9 @@ func (m *customSystemModel) GetTosConfig(ctx context.Context) ([]*System, error)
 
 // GetCurrencyConfig returns the currency config.
 func (m *customSystemModel) GetCurrencyConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "currency")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.CurrencyConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "currency").Find(v).Error
@@ -131,12 +164,18 @@ func (m *customSystemModel) GetCurrencyConfig(ctx context.Context) ([]*System, e
 }
 
 func (m *customSystemModel) UpdateNodeMultiplierConfig(ctx context.Context, config string) error {
+	if m.useSettingsSchema(nil) {
+		return m.repo.UpdateValue(ctx, "server", "NodeMultiplierConfig", config)
+	}
 	return m.ExecNoCacheCtx(ctx, func(conn *gorm.DB) error {
 		return conn.Model(&System{}).Where("`category` = ? AND `key` = ?", "server", "NodeMultiplierConfig").Update("value", config).Error
 	})
 }
 
 func (m *customSystemModel) FindNodeMultiplierConfig(ctx context.Context) (*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.FindValueByKey(ctx, "NodeMultiplierConfig")
+	}
 	var data System
 	err := m.QueryNoCacheCtx(ctx, &data, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ? AND `key` = ?", "server", "NodeMultiplierConfig").Find(v).Error
@@ -147,6 +186,9 @@ func (m *customSystemModel) FindNodeMultiplierConfig(ctx context.Context) (*Syst
 // GetVerifyCodeConfig returns the verify code config.
 
 func (m *customSystemModel) GetVerifyCodeConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "verify_code")
+	}
 	var configs []*System
 	err := m.QueryCtx(ctx, &configs, config.VerifyCodeConfigKey, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "verify_code").Find(v).Error
@@ -156,6 +198,9 @@ func (m *customSystemModel) GetVerifyCodeConfig(ctx context.Context) ([]*System,
 
 // GetLogConfig returns the log config.
 func (m *customSystemModel) GetLogConfig(ctx context.Context) ([]*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.ListCategoryValues(ctx, "log")
+	}
 	var configs []*System
 	err := m.QueryNoCacheCtx(ctx, &configs, func(conn *gorm.DB, v interface{}) error {
 		return conn.Where("`category` = ?", "log").Find(v).Error

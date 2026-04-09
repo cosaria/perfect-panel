@@ -166,7 +166,7 @@ func (l *DeviceLoginLogic) registerUserAndDevice(req *types.DeviceLoginRequest) 
 		userInfo = &user.User{
 			OnlyFirstPurchase: &cfg.Invite.OnlyFirstPurchase,
 		}
-		if err := db.Create(userInfo).Error; err != nil {
+		if err := l.deps.UserModel.Insert(l.ctx, userInfo, db); err != nil {
 			l.Errorw("failed to create user",
 				logger.Field("error", err.Error()),
 			)
@@ -175,7 +175,7 @@ func (l *DeviceLoginLogic) registerUserAndDevice(req *types.DeviceLoginRequest) 
 
 		// Update refer code
 		userInfo.ReferCode = uuidx.UserInviteCode(userInfo.Id)
-		if err := db.Model(&user.User{}).Where("id = ?", userInfo.Id).Update("refer_code", userInfo.ReferCode).Error; err != nil {
+		if err := l.deps.UserModel.Update(l.ctx, userInfo, db); err != nil {
 			l.Errorw("failed to update refer code",
 				logger.Field("user_id", userInfo.Id),
 				logger.Field("error", err.Error()),
@@ -190,7 +190,7 @@ func (l *DeviceLoginLogic) registerUserAndDevice(req *types.DeviceLoginRequest) 
 			AuthIdentifier: req.Identifier,
 			Verified:       true,
 		}
-		if err := db.Create(authMethod).Error; err != nil {
+		if err := l.deps.UserModel.InsertUserAuthMethods(l.ctx, authMethod, db); err != nil {
 			l.Errorw("failed to create device auth method",
 				logger.Field("user_id", userInfo.Id),
 				logger.Field("identifier", req.Identifier),
@@ -208,7 +208,7 @@ func (l *DeviceLoginLogic) registerUserAndDevice(req *types.DeviceLoginRequest) 
 			Enabled:    true,
 			Online:     false,
 		}
-		if err := db.Create(deviceInfo).Error; err != nil {
+		if err := l.deps.UserModel.InsertDevice(l.ctx, deviceInfo, db); err != nil {
 			l.Errorw("failed to insert device",
 				logger.Field("user_id", userInfo.Id),
 				logger.Field("identifier", req.Identifier),

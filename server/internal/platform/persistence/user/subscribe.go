@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/perfect-panel/server/internal/platform/persistence/identity"
 	"github.com/perfect-panel/server/internal/platform/support/logger"
 	"gorm.io/gorm"
 )
@@ -99,6 +100,20 @@ func (m *defaultUserModel) FindOneUserSubscribe(ctx context.Context, id int64) (
 	//TODO cache
 	//key := fmt.Sprintf("%s%d", cacheUserSubscribeUserPrefix, userId)
 	err = m.QueryNoCacheCtx(ctx, subscribeDetails, func(conn *gorm.DB, v interface{}) error {
+		if m.useIdentitySchema(conn) {
+			var data SubscribeDetails
+			if err := conn.Model(&Subscribe{}).Preload("Subscribe").Where("id = ?", id).First(&data).Error; err != nil {
+				return err
+			}
+			var userRow *identity.User
+			userRow, err = m.identityRepo.FindUserByID(ctx, data.UserId, conn)
+			if err != nil {
+				return err
+			}
+			data.User = m.identityUserToLegacy(userRow)
+			subscribeDetails = &data
+			return nil
+		}
 		return conn.Model(&Subscribe{}).Preload("Subscribe").Where("id = ?", id).First(&subscribeDetails).Error
 	})
 	return

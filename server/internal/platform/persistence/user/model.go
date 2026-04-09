@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/perfect-panel/server/internal/platform/persistence/identity"
 	"github.com/perfect-panel/server/internal/platform/persistence/order"
 	"github.com/perfect-panel/server/internal/platform/persistence/subscribe"
 	"github.com/perfect-panel/server/internal/platform/support/logger"
@@ -131,6 +132,15 @@ func (m *customUserModel) QueryPageList(ctx context.Context, page, size int, fil
 	var list []*User
 	var total int64
 	err := m.QueryNoCacheCtx(ctx, &list, func(conn *gorm.DB, v interface{}) error {
+		if m.useIdentitySchema(conn) {
+			rows, count, err := m.queryIdentityUserPageList(conn, page, size, filter)
+			if err != nil {
+				return err
+			}
+			list = rows
+			total = count
+			return nil
+		}
 		if filter != nil {
 			if filter.UserId != nil {
 				conn = conn.Where("user.id =?", *filter.UserId)
@@ -166,12 +176,29 @@ func (m *customUserModel) BatchDeleteUser(ctx context.Context, ids []int64, tx .
 		if len(tx) > 0 {
 			conn = tx[0]
 		}
+		if m.useIdentitySchema(conn) {
+			var rows []*identity.User
+			if err := conn.Where("id in ?", ids).Find(&rows).Error; err != nil {
+				return err
+			}
+			users = make([]*User, 0, len(rows))
+			for _, row := range rows {
+				users = append(users, m.identityUserToLegacy(row))
+			}
+			return nil
+		}
 		return conn.Where("id in ?", ids).Find(&users).Error
 	})
 	if err != nil {
 		return err
 	}
 	return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+		if len(tx) > 0 {
+			conn = tx[0]
+		}
+		if m.useIdentitySchema(conn) {
+			return conn.Where("id in ?", ids).Delete(&identity.User{}).Error
+		}
 		return conn.Where("id in ?", ids).Delete(&User{}).Error
 	}, m.batchGetCacheKeys(users...)...)
 }
@@ -205,6 +232,9 @@ func (m *customUserModel) QueryResisterUserTotalByDate(ctx context.Context, date
 	start := date.Truncate(24 * time.Hour)
 	end := start.Add(24 * time.Hour).Add(-time.Second)
 	err := m.QueryNoCacheCtx(ctx, &total, func(conn *gorm.DB, v interface{}) error {
+		if m.useIdentitySchema(conn) {
+			return conn.Model(&identity.User{}).Where("created_at > ? and created_at < ?", start, end).Count(&total).Error
+		}
 		return conn.Model(&User{}).Where("created_at > ? and created_at < ?", start, end).Count(&total).Error
 	})
 	return total, err
@@ -215,6 +245,9 @@ func (m *customUserModel) QueryResisterUserTotalByMonthly(ctx context.Context, d
 	start := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, time.Local)
 	end := start.AddDate(0, 1, 0).Add(-time.Nanosecond)
 	err := m.QueryNoCacheCtx(ctx, &total, func(conn *gorm.DB, v interface{}) error {
+		if m.useIdentitySchema(conn) {
+			return conn.Model(&identity.User{}).Where("created_at > ? and created_at < ?", start, end).Count(&total).Error
+		}
 		return conn.Model(&User{}).Where("created_at > ? and created_at < ?", start, end).Count(&total).Error
 	})
 	return total, err
@@ -223,12 +256,26 @@ func (m *customUserModel) QueryResisterUserTotalByMonthly(ctx context.Context, d
 func (m *customUserModel) QueryResisterUserTotal(ctx context.Context) (int64, error) {
 	var total int64
 	err := m.QueryNoCacheCtx(ctx, &total, func(conn *gorm.DB, v interface{}) error {
+		if m.useIdentitySchema(conn) {
+			return conn.Model(&identity.User{}).Count(&total).Error
+		}
 		return conn.Model(&User{}).Count(&total).Error
 	})
 	return total, err
 }
 
 func (m *customUserModel) QueryAdminUsers(ctx context.Context) ([]*User, error) {
+	if m.useIdentitySchema(nil) {
+		rows, err := m.identityRepo.FindAdminUsers(ctx)
+		if err != nil {
+			return nil, err
+		}
+		result := make([]*User, 0, len(rows))
+		for _, row := range rows {
+			result = append(result, m.identityUserToLegacy(row))
+		}
+		return result, nil
+	}
 	var data []*User
 	err := m.QueryNoCacheCtx(ctx, &data, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&User{}).Preload("AuthMethods").Where("is_admin = ?", true).Find(&data).Error
@@ -241,6 +288,13 @@ func (m *customUserModel) UpdateUserCache(ctx context.Context, data *User) error
 }
 
 func (m *customUserModel) FindOneByReferCode(ctx context.Context, referCode string) (*User, error) {
+	if m.useIdentitySchema(nil) {
+		data, err := m.identityRepo.FindUserByReferCode(ctx, referCode)
+		if err != nil {
+			return nil, err
+		}
+		return m.identityUserToLegacy(data), nil
+	}
 	var data User
 	err := m.QueryNoCacheCtx(ctx, &data, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&User{}).Where("refer_code = ?", referCode).First(&data).Error
@@ -251,6 +305,17 @@ func (m *customUserModel) FindOneByReferCode(ctx context.Context, referCode stri
 func (m *customUserModel) FindOneSubscribeDetailsById(ctx context.Context, id int64) (*SubscribeDetails, error) {
 	var data SubscribeDetails
 	err := m.QueryNoCacheCtx(ctx, &data, func(conn *gorm.DB, v interface{}) error {
+		if m.useIdentitySchema(conn) {
+			if err := conn.Model(&Subscribe{}).Preload("Subscribe").Where("id = ?", id).First(&data).Error; err != nil {
+				return err
+			}
+			userRow, err := m.identityRepo.FindUserByID(ctx, data.UserId, conn)
+			if err != nil {
+				return err
+			}
+			data.User = m.identityUserToLegacy(userRow)
+			return nil
+		}
 		return conn.Model(&Subscribe{}).Preload("Subscribe").Preload("User").Where("id = ?", id).First(&data).Error
 	})
 	return &data, err
@@ -274,6 +339,22 @@ func (m *customUserModel) QueryDailyUserStatisticsList(ctx context.Context, date
 			Select("DATE_FORMAT(created_at, '%Y-%m-%d') AS date, COUNT(DISTINCT user_id) AS renewal_order_users").
 			Where("is_new = 0 AND created_at BETWEEN ? AND ? AND status IN ?", firstDay, date, []int64{2, 5}).
 			Group("DATE_FORMAT(created_at, '%Y-%m-%d')")
+
+		if m.useIdentitySchema(conn) {
+			return conn.Model(&identity.User{}).
+				Select(`
+                DATE_FORMAT(users.created_at, '%Y-%m-%d') AS date,
+                COUNT(*) AS register,
+                IFNULL(MAX(n.new_order_users), 0) AS new_order_users,
+                IFNULL(MAX(r.renewal_order_users), 0) AS renewal_order_users
+            `).
+				Joins("LEFT JOIN (?) AS n ON DATE_FORMAT(users.created_at, '%Y-%m-%d') = n.date", newOrderSub).
+				Joins("LEFT JOIN (?) AS r ON DATE_FORMAT(users.created_at, '%Y-%m-%d') = r.date", renewalOrderSub).
+				Where("users.created_at BETWEEN ? AND ?", firstDay, date).
+				Group("DATE_FORMAT(users.created_at, '%Y-%m-%d')").
+				Order("date ASC").
+				Scan(v).Error
+		}
 
 		return conn.Model(&User{}).
 			Select(`
@@ -313,6 +394,22 @@ func (m *customUserModel) QueryMonthlyUserStatisticsList(ctx context.Context, da
 			Where("is_new = 0 AND created_at >= ? AND status IN ?", sixMonthsAgo, []int64{2, 5}).
 			Group("DATE_FORMAT(created_at, '%Y-%m')")
 
+		if m.useIdentitySchema(conn) {
+			return conn.Model(&identity.User{}).
+				Select(`
+				DATE_FORMAT(users.created_at, '%Y-%m') AS date,
+				COUNT(*) AS register,
+				IFNULL(MAX(n.new_order_users), 0) AS new_order_users,
+				IFNULL(MAX(r.renewal_order_users), 0) AS renewal_order_users
+			`).
+				Joins("LEFT JOIN (?) AS n ON DATE_FORMAT(users.created_at, '%Y-%m') = n.date", newOrderSub).
+				Joins("LEFT JOIN (?) AS r ON DATE_FORMAT(users.created_at, '%Y-%m') = r.date", renewalOrderSub).
+				Where("users.created_at >= ?", sixMonthsAgo).
+				Group("DATE_FORMAT(users.created_at, '%Y-%m')").
+				Order("date ASC").
+				Scan(v).Error
+		}
+
 		return conn.Model(&User{}).
 			Select(`
 				DATE_FORMAT(user.created_at, '%Y-%m') AS date,
@@ -329,4 +426,61 @@ func (m *customUserModel) QueryMonthlyUserStatisticsList(ctx context.Context, da
 	})
 
 	return results, err
+}
+
+func (m *customUserModel) queryIdentityUserPageList(conn *gorm.DB, page, size int, filter *UserFilterParams) ([]*User, int64, error) {
+	base := m.identityUserPageQuery(conn, filter)
+
+	var total int64
+	if err := base.Distinct("users.id").Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	query := m.identityUserPageQuery(conn, filter)
+	var rows []*identity.User
+	if err := query.
+		Distinct("users.*").
+		Preload("UserDevices").
+		Preload("AuthIdentities").
+		Limit(size).
+		Offset((page - 1) * size).
+		Find(&rows).Error; err != nil {
+		return nil, 0, err
+	}
+
+	result := make([]*User, 0, len(rows))
+	for _, row := range rows {
+		result = append(result, m.identityUserToLegacy(row))
+	}
+	return result, total, nil
+}
+
+func (m *customUserModel) identityUserPageQuery(conn *gorm.DB, filter *UserFilterParams) *gorm.DB {
+	query := conn.Model(&identity.User{})
+	if filter == nil {
+		return query
+	}
+
+	if filter.UserId != nil {
+		query = query.Where("users.id = ?", *filter.UserId)
+	}
+	if filter.Search != "" {
+		query = query.Joins("LEFT JOIN user_auth_identities ON users.id = user_auth_identities.user_id").
+			Where("user_auth_identities.auth_identifier LIKE ? OR users.refer_code LIKE ?", "%"+filter.Search+"%", "%"+filter.Search+"%")
+	}
+	if filter.UserSubscribeId != nil {
+		query = query.Joins("LEFT JOIN user_subscribe ON users.id = user_subscribe.user_id").
+			Where("user_subscribe.id = ? AND user_subscribe.status IN ?", *filter.UserSubscribeId, []int64{0, 1})
+	}
+	if filter.SubscribeId != nil {
+		query = query.Joins("LEFT JOIN user_subscribe ON users.id = user_subscribe.user_id").
+			Where("user_subscribe.subscribe_id = ? AND user_subscribe.status IN ?", *filter.SubscribeId, []int64{0, 1})
+	}
+	if filter.Order != "" {
+		query = query.Order(fmt.Sprintf("users.id %s", filter.Order))
+	}
+	if filter.Unscoped {
+		query = query.Unscoped()
+	}
+	return query
 }

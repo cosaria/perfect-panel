@@ -15,6 +15,7 @@ var registerEmbeddedOnce sync.Once
 func RegisterEmbedded() {
 	registerEmbeddedOnce.Do(func() {
 		schema.RegisterRevision(baselineRevision{})
+		schema.RegisterRevision(identitySystemRevision{})
 	})
 }
 

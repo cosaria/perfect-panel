@@ -135,13 +135,13 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 	}
 	err = l.deps.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		// Save user information
-		if err := db.Create(userInfo).Error; err != nil {
+		if err := l.deps.UserModel.Insert(l.ctx, userInfo, db); err != nil {
 			return err
 		}
 		// Generate ReferCode
 		userInfo.ReferCode = uuidx.UserInviteCode(userInfo.Id)
 		// Update ReferCode
-		if err := db.Model(&user.User{}).Where("id = ?", userInfo.Id).Update("refer_code", userInfo.ReferCode).Error; err != nil {
+		if err := l.deps.UserModel.Update(l.ctx, userInfo, db); err != nil {
 			return err
 		}
 		// create user auth info
@@ -151,7 +151,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.UserRegisterRequest) (resp *
 			AuthIdentifier: req.Email,
 			Verified:       email.EnableVerify,
 		}
-		if err = db.Create(authInfo).Error; err != nil {
+		if err = l.deps.UserModel.InsertUserAuthMethods(l.ctx, authInfo, db); err != nil {
 			return err
 		}
 

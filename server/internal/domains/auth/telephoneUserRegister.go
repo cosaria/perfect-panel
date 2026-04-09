@@ -144,26 +144,27 @@ func (l *TelephoneUserRegisterLogic) TelephoneUserRegister(req *types.TelephoneR
 		Password:          pwd,
 		Algo:              "default",
 		OnlyFirstPurchase: &cfg.Invite.OnlyFirstPurchase,
-		AuthMethods: []user.AuthMethods{
-			{
-				AuthType:       "mobile",
-				AuthIdentifier: phoneNumber,
-				Verified:       true,
-			},
-		},
 	}
 	if referer != nil {
 		userInfo.RefererId = referer.Id
 	}
 	err = l.deps.UserModel.Transaction(l.ctx, func(db *gorm.DB) error {
 		// Save user information
-		if err := db.Create(userInfo).Error; err != nil {
+		if err := l.deps.UserModel.Insert(l.ctx, userInfo, db); err != nil {
 			return err
 		}
 		// Generate ReferCode
 		userInfo.ReferCode = uuidx.UserInviteCode(userInfo.Id)
 		// Update ReferCode
-		if err := db.Model(&user.User{}).Where("id = ?", userInfo.Id).Update("refer_code", userInfo.ReferCode).Error; err != nil {
+		if err := l.deps.UserModel.Update(l.ctx, userInfo, db); err != nil {
+			return err
+		}
+		if err := l.deps.UserModel.InsertUserAuthMethods(l.ctx, &user.AuthMethods{
+			UserId:         userInfo.Id,
+			AuthType:       "mobile",
+			AuthIdentifier: phoneNumber,
+			Verified:       true,
+		}, db); err != nil {
 			return err
 		}
 		if cfg.Register.EnableTrial {

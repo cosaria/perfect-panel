@@ -35,14 +35,18 @@ type (
 	}
 	defaultSystemModel struct {
 		cache.CachedConn
+		db    *gorm.DB
 		table string
+		repo  *Repository
 	}
 )
 
 func newSystemModel(db *gorm.DB, c *redis.Client) *defaultSystemModel {
 	return &defaultSystemModel{
 		CachedConn: cache.NewConn(db, c),
+		db:         db,
 		table:      "`System`",
+		repo:       NewRepository(db),
 	}
 }
 
@@ -58,6 +62,9 @@ func (m *defaultSystemModel) getCacheKeys(data *System) []string {
 }
 
 func (m *defaultSystemModel) FindOneByKey(ctx context.Context, key string) (*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.FindValueByKey(ctx, key)
+	}
 	system := new(System)
 	cacheKey := fmt.Sprintf("%s%v", cacheSystemKeyPrefix, key)
 	err := m.QueryCtx(ctx, system, cacheKey, func(conn *gorm.DB, v interface{}) error {
@@ -68,12 +75,18 @@ func (m *defaultSystemModel) FindOneByKey(ctx context.Context, key string) (*Sys
 
 func (m *defaultSystemModel) Insert(ctx context.Context, data *System) error {
 	err := m.ExecCtx(ctx, func(conn *gorm.DB) error {
+		if m.useSettingsSchema(conn) {
+			return m.repo.SaveValue(ctx, data, conn)
+		}
 		return conn.Create(&data).Error
 	}, m.getCacheKeys(data)...)
 	return err
 }
 
 func (m *defaultSystemModel) FindOne(ctx context.Context, id int64) (*System, error) {
+	if m.useSettingsSchema(nil) {
+		return m.repo.FindValueByID(ctx, id)
+	}
 	SystemIdKey := fmt.Sprintf("%s%v", cacheSystemIdPrefix, id)
 	var resp System
 	err := m.QueryCtx(ctx, &resp, SystemIdKey, func(conn *gorm.DB, v interface{}) error {
@@ -92,6 +105,9 @@ func (m *defaultSystemModel) Update(ctx context.Context, data *System) error {
 	}
 	err = m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		db := conn
+		if m.useSettingsSchema(db) {
+			return m.repo.SaveValue(ctx, data, db)
+		}
 		return db.Save(data).Error
 	}, m.getCacheKeys(old)...)
 	return err
@@ -107,6 +123,9 @@ func (m *defaultSystemModel) Delete(ctx context.Context, id int64) error {
 	}
 	err = m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		db := conn
+		if m.useSettingsSchema(db) {
+			return m.repo.DeleteValue(ctx, data, db)
+		}
 		return db.Delete(&System{}, id).Error
 	}, m.getCacheKeys(data)...)
 	return err
@@ -114,4 +133,11 @@ func (m *defaultSystemModel) Delete(ctx context.Context, id int64) error {
 
 func (m *defaultSystemModel) Transaction(ctx context.Context, fn func(db *gorm.DB) error) error {
 	return m.TransactCtx(ctx, fn)
+}
+
+func (m *defaultSystemModel) useSettingsSchema(conn *gorm.DB) bool {
+	if m.repo == nil {
+		return false
+	}
+	return m.repo.HasSettingsSchema(conn)
 }

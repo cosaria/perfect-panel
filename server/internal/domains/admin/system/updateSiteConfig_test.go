@@ -7,6 +7,7 @@ import (
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/internal/platform/http/types"
+	modelsystem "github.com/perfect-panel/server/internal/platform/persistence/system"
 	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
@@ -159,4 +160,54 @@ func TestUpdateSiteConfigReturnsErrorWhenReloadHookFails(t *testing.T) {
 	err := logic.UpdateSiteConfig(&types.SiteConfig{})
 
 	requireSystemCodeError(t, err, xerr.ERROR)
+}
+
+func TestUpdateSiteConfigFallbackWritesSystemSettingsWhenNewSchemaIsPresent(t *testing.T) {
+	db := testAdminSystemDB(t)
+	require.NoError(t, db.AutoMigrate(&modelsystem.Setting{}, &modelsystem.VerificationPolicy{}))
+	markIdentitySystemRevisionApplied(t, db)
+
+	rows := []modelsystem.Setting{
+		{Category: "site", Key: "Host", Value: "", Type: "string", Desc: "host"},
+		{Category: "site", Key: "SiteName", Value: "old-name", Type: "string", Desc: "site name"},
+		{Category: "site", Key: "SiteDesc", Value: "old-desc", Type: "string", Desc: "site desc"},
+		{Category: "site", Key: "SiteLogo", Value: "/old.svg", Type: "string", Desc: "site logo"},
+		{Category: "site", Key: "Keywords", Value: "old", Type: "string", Desc: "keywords"},
+		{Category: "site", Key: "CustomHTML", Value: "", Type: "string", Desc: "custom html"},
+		{Category: "site", Key: "CustomData", Value: "", Type: "string", Desc: "custom data"},
+	}
+	for _, row := range rows {
+		require.NoError(t, db.Create(&row).Error)
+	}
+
+	logic := NewUpdateSiteConfigLogic(context.Background(), Deps{
+		SystemModel: modelsystem.NewModel(db, nil),
+		DeleteCacheKeys: func(context.Context, ...string) error {
+			return nil
+		},
+	})
+
+	req := &types.SiteConfig{
+		Host:       "https://panel.example.com",
+		SiteName:   "Perfect Panel",
+		SiteDesc:   "normalized",
+		SiteLogo:   "/logo.svg",
+		Keywords:   "proxy,panel",
+		CustomHTML: "<div>ok</div>",
+		CustomData: "{\"theme\":\"dark\"}",
+	}
+
+	err := logic.UpdateSiteConfig(req)
+
+	require.NoError(t, err)
+
+	var host modelsystem.Setting
+	require.NoError(t, db.Where("category = ? AND `key` = ?", "site", "Host").First(&host).Error)
+	require.Equal(t, req.Host, host.Value)
+
+	var customData modelsystem.Setting
+	require.NoError(t, db.Where("category = ? AND `key` = ?", "site", "CustomData").First(&customData).Error)
+	require.Equal(t, req.CustomData, customData.Value)
+
+	require.False(t, db.Migrator().HasTable(&modelsystem.System{}))
 }

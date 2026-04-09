@@ -380,7 +380,7 @@ func (l *OAuthLoginGetTokenLogic) register(email, avatar, method, openid, reques
 		)
 
 		userInfo = &user.User{Avatar: avatar, OnlyFirstPurchase: &cfg.Invite.OnlyFirstPurchase}
-		if err := db.Create(userInfo).Error; err != nil {
+		if err := l.deps.UserModel.Insert(l.ctx, userInfo, db); err != nil {
 			l.Errorw("failed to create user record",
 				logger.Field("request_id", requestID),
 				logger.Field("error", err.Error()),
@@ -395,7 +395,7 @@ func (l *OAuthLoginGetTokenLogic) register(email, avatar, method, openid, reques
 			logger.Field("refer_code", userInfo.ReferCode),
 		)
 
-		if err := db.Model(&user.User{}).Where("id = ?", userInfo.Id).Update("refer_code", userInfo.ReferCode).Error; err != nil {
+		if err := l.deps.UserModel.Update(l.ctx, userInfo, db); err != nil {
 			l.Errorw("failed to update refer code",
 				logger.Field("request_id", requestID),
 				logger.Field("user_id", userInfo.Id),
@@ -475,8 +475,8 @@ func (l *OAuthLoginGetTokenLogic) register(email, avatar, method, openid, reques
 }
 
 func (l *OAuthLoginGetTokenLogic) checkEmailExists(db *gorm.DB, email, requestID string) error {
-	var methodInfo user.AuthMethods
-	err := db.Model(&user.AuthMethods{}).Where("auth_identifier = ?", email).First(&methodInfo).Error
+	_ = db
+	methodInfo, err := l.deps.UserModel.FindUserAuthMethodByOpenID(l.ctx, AuthEmail, email)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		l.Errorw("failed to check email existence",
 			logger.Field("request_id", requestID),
@@ -485,7 +485,7 @@ func (l *OAuthLoginGetTokenLogic) checkEmailExists(db *gorm.DB, email, requestID
 		)
 		return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseQueryError), "check email exists failed: %v", err)
 	}
-	if methodInfo.UserId != 0 {
+	if methodInfo != nil && methodInfo.UserId != 0 {
 		l.Errorw("email already exists for another user",
 			logger.Field("request_id", requestID),
 			logger.Field("email", email),
@@ -514,7 +514,7 @@ func (l *OAuthLoginGetTokenLogic) createAuthMethod(db *gorm.DB, userID int64, au
 		AuthIdentifier: identifier,
 		Verified:       true,
 	}
-	if err := db.Create(authMethod).Error; err != nil {
+	if err := l.deps.UserModel.InsertUserAuthMethods(l.ctx, authMethod, db); err != nil {
 		l.Errorw("failed to create auth method",
 			logger.Field("request_id", requestID),
 			logger.Field("user_id", userID),

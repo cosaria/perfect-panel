@@ -30,6 +30,9 @@ type Filter struct {
 
 // GetAuthListByPage  get auth list by page
 func (m *customAuthModel) GetAuthListByPage(ctx context.Context) ([]*Auth, error) {
+	if m.useAuthProviderSchema(nil) {
+		return m.FindAll(ctx)
+	}
 	var list []*Auth
 	err := m.QueryNoCacheCtx(ctx, &list, func(conn *gorm.DB, v interface{}) error {
 		conn = conn.Model(&Auth{})
@@ -40,6 +43,13 @@ func (m *customAuthModel) GetAuthListByPage(ctx context.Context) ([]*Auth, error
 
 // FindOneByMethod  find one by method
 func (m *customAuthModel) FindOneByMethod(ctx context.Context, method string) (*Auth, error) {
+	if m.useAuthProviderSchema(nil) {
+		state, err := m.systemRepo.FindAuthProviderByMethod(ctx, method)
+		if err != nil {
+			return nil, err
+		}
+		return m.authProviderStateToLegacy(state), nil
+	}
 	key := fmt.Sprintf("%s%s", cacheAuthMethodPrefix, method)
 	var data Auth
 	err := m.QueryCtx(ctx, &data, key, func(conn *gorm.DB, v interface{}) error {
@@ -51,6 +61,17 @@ func (m *customAuthModel) FindOneByMethod(ctx context.Context, method string) (*
 
 // FindAll find all
 func (m *customAuthModel) FindAll(ctx context.Context) ([]*Auth, error) {
+	if m.useAuthProviderSchema(nil) {
+		states, err := m.systemRepo.ListAuthProviders(ctx)
+		if err != nil {
+			return nil, err
+		}
+		result := make([]*Auth, 0, len(states))
+		for _, state := range states {
+			result = append(result, m.authProviderStateToLegacy(state))
+		}
+		return result, nil
+	}
 	var list []*Auth
 	err := m.QueryNoCacheCtx(ctx, &list, func(conn *gorm.DB, v interface{}) error {
 		conn = conn.Model(&Auth{})

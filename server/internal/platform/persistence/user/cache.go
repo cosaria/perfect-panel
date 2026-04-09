@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/perfect-panel/server/internal/platform/support/logger"
+	"gorm.io/gorm"
 )
 
 type CacheKeyGenerator interface {
@@ -34,13 +35,7 @@ func (c *UserCacheManager) ClearCache(ctx context.Context, keys ...string) error
 }
 
 func (c *UserCacheManager) ClearModelCache(ctx context.Context, models ...CacheKeyGenerator) error {
-	var allKeys []string
-	for _, model := range models {
-		if model != nil {
-			allKeys = append(allKeys, model.GetCacheKeys()...)
-		}
-	}
-	return c.ClearCache(ctx, allKeys...)
+	return c.ClearCache(ctx, collectCacheKeys(models...)...)
 }
 
 func (u *User) GetCacheKeys() []string {
@@ -233,6 +228,30 @@ func (m *defaultUserModel) CacheInvalidationHandler(ctx context.Context, operati
 		}
 	}
 	return nil
+}
+
+func collectCacheKeys(models ...CacheKeyGenerator) []string {
+	var keys []string
+	for _, model := range models {
+		if model != nil {
+			keys = append(keys, model.GetCacheKeys()...)
+		}
+	}
+	return keys
+}
+
+func (m *defaultUserModel) clearModelsCacheWithTx(ctx context.Context, tx *gorm.DB, models ...CacheKeyGenerator) error {
+	keys := uniqueStrings(collectCacheKeys(models...))
+	if len(keys) == 0 {
+		return nil
+	}
+	if tx != nil && tx.Statement != nil && tx.Statement.Context != nil {
+		if pending, ok := tx.Statement.Context.Value(userDeferredCacheKeysContextKey{}).(*[]string); ok && pending != nil {
+				*pending = append(*pending, keys...)
+				return nil
+		}
+	}
+	return m.DelCacheCtx(ctx, keys...)
 }
 
 func (m *customUserModel) GetRelatedCacheKeys(ctx context.Context, modelType string, modelId int64) ([]string, error) {

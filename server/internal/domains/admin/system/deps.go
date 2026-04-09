@@ -67,6 +67,12 @@ func (d Deps) UpdateSystemConfigField(ctx context.Context, db *gorm.DB, category
 	if db == nil {
 		return errors.New("site config transaction db is nil")
 	}
+
+	repo := modelsystem.NewRepository(db)
+	if repo.HasSettingsSchema(db) {
+		return repo.UpdateValue(ctx, category, fieldName, fieldValue, db)
+	}
+
 	return db.Model(&modelsystem.System{}).
 		Where("`category` = ? and `key` = ?", category, fieldName).
 		Update("value", fieldValue).Error
