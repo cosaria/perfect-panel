@@ -5,8 +5,8 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/gin-gonic/gin"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	"github.com/perfect-panel/server/routers/response"
-	appruntime "github.com/perfect-panel/server/runtime"
 )
 
 var bearerSecurity = []map[string][]string{{"bearer": {}}}

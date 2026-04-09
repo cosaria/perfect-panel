@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	"github.com/perfect-panel/server/models/node"
-	appruntime "github.com/perfect-panel/server/runtime"
 	emailLogic "github.com/perfect-panel/server/worker/email"
 	orderLogic "github.com/perfect-panel/server/worker/order"
 	"github.com/perfect-panel/server/worker/registry"
@@ -14,11 +15,9 @@ import (
 	"github.com/perfect-panel/server/worker/subscription"
 	"github.com/perfect-panel/server/worker/task"
 	"github.com/perfect-panel/server/worker/traffic"
-
-	"github.com/perfect-panel/server/svc"
 )
 
-func newWorkerRegistryDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveState) registry.Deps {
+func newWorkerRegistryDeps(svcCtx *appbootstrap.ServiceContext, live *appruntime.LiveState) registry.Deps {
 	deps := registry.Deps{
 		Email: emailLogic.Deps{},
 		SMS:   smslogic.Deps{},
@@ -47,7 +46,7 @@ func newWorkerRegistryDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveStat
 	return deps
 }
 
-func newEmailWorkerDeps(svcCtx *svc.ServiceContext) emailLogic.Deps {
+func newEmailWorkerDeps(svcCtx *appbootstrap.ServiceContext) emailLogic.Deps {
 	return emailLogic.Deps{
 		DB:       svcCtx.DB,
 		LogModel: svcCtx.LogModel,
@@ -55,14 +54,14 @@ func newEmailWorkerDeps(svcCtx *svc.ServiceContext) emailLogic.Deps {
 	}
 }
 
-func newSMSWorkerDeps(svcCtx *svc.ServiceContext) smslogic.Deps {
+func newSMSWorkerDeps(svcCtx *appbootstrap.ServiceContext) smslogic.Deps {
 	return smslogic.Deps{
 		LogModel: svcCtx.LogModel,
 		Config:   &svcCtx.Config,
 	}
 }
 
-func newOrderWorkerDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveState) orderLogic.Deps {
+func newOrderWorkerDeps(svcCtx *appbootstrap.ServiceContext, live *appruntime.LiveState) orderLogic.Deps {
 	return orderLogic.Deps{
 		OrderModel:     svcCtx.OrderModel,
 		PaymentModel:   svcCtx.PaymentModel,
@@ -83,7 +82,7 @@ func newOrderWorkerDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveState) 
 	}
 }
 
-func newSubscriptionWorkerDeps(svcCtx *svc.ServiceContext) subscription.Deps {
+func newSubscriptionWorkerDeps(svcCtx *appbootstrap.ServiceContext) subscription.Deps {
 	return subscription.Deps{
 		UserModel:      svcCtx.UserModel,
 		SubscribeModel: svcCtx.SubscribeModel,
@@ -92,7 +91,7 @@ func newSubscriptionWorkerDeps(svcCtx *svc.ServiceContext) subscription.Deps {
 	}
 }
 
-func newTaskWorkerDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveState) task.Deps {
+func newTaskWorkerDeps(svcCtx *appbootstrap.ServiceContext, live *appruntime.LiveState) task.Deps {
 	return task.Deps{
 		DB:             svcCtx.DB,
 		SystemModel:    svcCtx.SystemModel,
@@ -126,7 +125,7 @@ func newTaskWorkerDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveState) t
 	}
 }
 
-func newTrafficWorkerDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveState) traffic.Deps {
+func newTrafficWorkerDeps(svcCtx *appbootstrap.ServiceContext, live *appruntime.LiveState) traffic.Deps {
 	return traffic.Deps{
 		DB:              svcCtx.DB,
 		Redis:           svcCtx.Redis,
@@ -149,7 +148,7 @@ func newTrafficWorkerDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveState
 	}
 }
 
-func loadNodeMultiplierManager(ctx context.Context, svcCtx *svc.ServiceContext, live *appruntime.LiveState) (*node.Manager, error) {
+func loadNodeMultiplierManager(ctx context.Context, svcCtx *appbootstrap.ServiceContext, live *appruntime.LiveState) (*node.Manager, error) {
 	if svcCtx == nil {
 		return nil, nil
 	}

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	appruntime "github.com/perfect-panel/server/runtime"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 )
 
 func ServerMiddleware(runtimeDeps *appruntime.Deps) func(c *gin.Context) {

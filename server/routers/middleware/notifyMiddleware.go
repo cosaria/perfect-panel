@@ -7,8 +7,8 @@ import (
 	serverconfig "github.com/perfect-panel/server/config"
 
 	"github.com/gin-gonic/gin"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	"github.com/perfect-panel/server/modules/payment"
-	appruntime "github.com/perfect-panel/server/runtime"
 )
 
 type PaymentParams struct {

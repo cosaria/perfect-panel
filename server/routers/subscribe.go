@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	appruntime "github.com/perfect-panel/server/runtime"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	servicesubscribe "github.com/perfect-panel/server/services/subscribe"
 )
 

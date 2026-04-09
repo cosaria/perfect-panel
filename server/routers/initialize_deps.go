@@ -2,18 +2,18 @@ package handler
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/perfect-panel/server/initialize"
+	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	"github.com/perfect-panel/server/models/node"
-	appruntime "github.com/perfect-panel/server/runtime"
 )
 
-func initializeDepsFromRuntimeDeps(runtimeDeps *appruntime.Deps) initialize.Deps {
-	deps := initialize.Deps{}
+func initializeDepsFromRuntimeDeps(runtimeDeps *appruntime.Deps) configinit.Deps {
+	deps := configinit.Deps{}
 	if runtimeDeps == nil {
 		return deps
 	}
 
-	return initialize.Deps{
+	return configinit.Deps{
 		DB:          runtimeDeps.DB,
 		Redis:       runtimeDeps.Redis,
 		Config:      runtimeDeps.Config,

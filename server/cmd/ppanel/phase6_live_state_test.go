@@ -7,16 +7,16 @@ import (
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
 	"github.com/perfect-panel/server/models/node"
 	modelsystem "github.com/perfect-panel/server/models/system"
-	"github.com/perfect-panel/server/svc"
 	"gorm.io/gorm"
 )
 
 func TestPhase6InitializeDepsPropagateToLiveState(t *testing.T) {
 	t.Parallel()
 
-	svcCtx := &svc.ServiceContext{}
+	svcCtx := &appbootstrap.ServiceContext{}
 	live := newLiveState(svcCtx)
 	deps := newInitializeDeps(svcCtx, live)
 
@@ -50,7 +50,7 @@ func TestPhase6InitializeDepsPropagateToLiveState(t *testing.T) {
 func TestPhase6WorkerDepsReadLiveState(t *testing.T) {
 	t.Parallel()
 
-	svcCtx := &svc.ServiceContext{}
+	svcCtx := &appbootstrap.ServiceContext{}
 	live := newLiveState(svcCtx)
 
 	bot := &tgbotapi.BotAPI{}
@@ -81,7 +81,7 @@ func TestPhase6WorkerDepsLoadNodeMultiplierManagerFallback(t *testing.T) {
 		t.Fatalf("marshal multiplier config: %v", err)
 	}
 
-	svcCtx := &svc.ServiceContext{
+	svcCtx := &appbootstrap.ServiceContext{
 		SystemModel: phase6SystemModelStub{
 			findNodeMultiplierConfig: func(context.Context) (*modelsystem.System, error) {
 				return &modelsystem.System{Value: string(payload)}, nil

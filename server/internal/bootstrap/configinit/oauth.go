@@ -1,4 +1,4 @@
-package initialize
+package configinit
 
 import (
 	"github.com/perfect-panel/server/modules/infra/logger"

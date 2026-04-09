@@ -1,4 +1,4 @@
-package initialize
+package configinit
 
 func StartInitSystemConfig(deps Deps) {
 	Migrate(deps)

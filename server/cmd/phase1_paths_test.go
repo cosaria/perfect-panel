@@ -7,6 +7,7 @@ import (
 
 	serverppanel "github.com/perfect-panel/server/cmd/ppanel"
 	serverconfig "github.com/perfect-panel/server/config"
+	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
 	servermigrate "github.com/perfect-panel/server/models/migrate"
 	servernode "github.com/perfect-panel/server/models/node"
 	serverauthmethod "github.com/perfect-panel/server/modules/auth/authmethod"
@@ -37,7 +38,6 @@ import (
 	serversubscribe "github.com/perfect-panel/server/services/subscribe"
 	servertelegram "github.com/perfect-panel/server/services/telegram"
 	serveruserorder "github.com/perfect-panel/server/services/user/order"
-	serversvc "github.com/perfect-panel/server/svc"
 	serverworker "github.com/perfect-panel/server/worker"
 )
 
@@ -45,7 +45,7 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	var cfg serverconfig.Config
 	var tempOrder serverconfig.TemporaryOrderInfo
 	var multiplierPeriods []servernode.TimePeriod
-	var ctx serversvc.ServiceContext
+	var ctx appbootstrap.ServiceContext
 	var cache servercache.Cache
 	var emailErr serveremail.ErrorInfo
 	loadFn := serverconf.Load

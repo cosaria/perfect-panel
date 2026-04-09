@@ -6,9 +6,9 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-gonic/gin"
-	"github.com/perfect-panel/server/initialize"
+	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	"github.com/perfect-panel/server/routers/middleware"
-	appruntime "github.com/perfect-panel/server/runtime"
 	adminAnnouncement "github.com/perfect-panel/server/services/admin/announcement"
 	adminApplication "github.com/perfect-panel/server/services/admin/application"
 	adminAuthMethod "github.com/perfect-panel/server/services/admin/authMethod"
@@ -79,13 +79,13 @@ func registerAdminRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specO
 		adminAuthMethodDeps.AuthModel = runtimeDeps.AuthModel
 		adminAuthMethodDeps.Config = runtimeDeps.Config
 		adminAuthMethodDeps.ReloadEmail = func() {
-			initialize.Email(initDeps)
+			configinit.Email(initDeps)
 		}
 		adminAuthMethodDeps.ReloadMobile = func() {
-			initialize.Mobile(initDeps)
+			configinit.Mobile(initDeps)
 		}
 		adminAuthMethodDeps.ReloadDevice = func() {
-			initialize.Device(initDeps)
+			configinit.Device(initDeps)
 		}
 		adminConsoleDeps.OrderModel = runtimeDeps.OrderModel
 		adminConsoleDeps.UserModel = runtimeDeps.UserModel

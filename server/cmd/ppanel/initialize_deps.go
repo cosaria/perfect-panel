@@ -2,14 +2,14 @@ package ppanel
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/perfect-panel/server/initialize"
+	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
+	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	"github.com/perfect-panel/server/models/node"
-	appruntime "github.com/perfect-panel/server/runtime"
-	"github.com/perfect-panel/server/svc"
 )
 
-func newInitializeDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveState) initialize.Deps {
-	deps := initialize.Deps{}
+func newInitializeDeps(svcCtx *appbootstrap.ServiceContext, live *appruntime.LiveState) configinit.Deps {
+	deps := configinit.Deps{}
 	if svcCtx == nil {
 		return deps
 	}
@@ -17,7 +17,7 @@ func newInitializeDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveState) i
 		live = newLiveState(svcCtx)
 	}
 
-	return initialize.Deps{
+	return configinit.Deps{
 		DB:          svcCtx.DB,
 		Redis:       svcCtx.Redis,
 		Config:      &svcCtx.Config,

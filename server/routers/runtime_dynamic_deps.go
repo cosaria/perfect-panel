@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/perfect-panel/server/initialize"
-	appruntime "github.com/perfect-panel/server/runtime"
+	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	adminSystem "github.com/perfect-panel/server/services/admin/system"
 	adminTool "github.com/perfect-panel/server/services/admin/tool"
 	servicetelegram "github.com/perfect-panel/server/services/telegram"
@@ -63,7 +63,7 @@ func newPublicUserDeps(runtimeDeps *appruntime.Deps) publicUser.Deps {
 	return deps
 }
 
-func newAdminSystemDeps(runtimeDeps *appruntime.Deps, initDeps initialize.Deps) adminSystem.Deps {
+func newAdminSystemDeps(runtimeDeps *appruntime.Deps, initDeps configinit.Deps) adminSystem.Deps {
 	deps := adminSystem.Deps{}
 	if runtimeDeps == nil {
 		return deps
@@ -82,14 +82,14 @@ func newAdminSystemDeps(runtimeDeps *appruntime.Deps, initDeps initialize.Deps) 
 			return restart()
 		}
 	}
-	deps.ReloadVerify = func() { initialize.Verify(initDeps) }
-	deps.ReloadNode = func() { initialize.Node(initDeps) }
-	deps.ReloadCurrency = func() { initialize.Currency(initDeps) }
-	deps.ReloadInvite = func() { initialize.Invite(initDeps) }
-	deps.ReloadRegister = func() { initialize.Register(initDeps) }
-	deps.ReloadSite = func() { initialize.Site(initDeps) }
-	deps.ReloadSubscribe = func() { initialize.Subscribe(initDeps) }
-	deps.ReloadTelegram = func() { initialize.Telegram(initDeps) }
+	deps.ReloadVerify = func() { configinit.Verify(initDeps) }
+	deps.ReloadNode = func() { configinit.Node(initDeps) }
+	deps.ReloadCurrency = func() { configinit.Currency(initDeps) }
+	deps.ReloadInvite = func() { configinit.Invite(initDeps) }
+	deps.ReloadRegister = func() { configinit.Register(initDeps) }
+	deps.ReloadSite = func() { configinit.Site(initDeps) }
+	deps.ReloadSubscribe = func() { configinit.Subscribe(initDeps) }
+	deps.ReloadTelegram = func() { configinit.Telegram(initDeps) }
 	return deps
 }
 

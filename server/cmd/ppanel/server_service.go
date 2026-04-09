@@ -10,8 +10,10 @@ import (
 	"sync/atomic"
 	"time"
 
+	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
+	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	"github.com/perfect-panel/server/modules/infra/logger"
-	appruntime "github.com/perfect-panel/server/runtime"
 	"github.com/perfect-panel/server/services/report"
 
 	"github.com/perfect-panel/server/modules/infra/proc"
@@ -20,21 +22,19 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
-	"github.com/perfect-panel/server/initialize"
 	handler "github.com/perfect-panel/server/routers"
 	"github.com/perfect-panel/server/routers/middleware"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/web"
 )
 
 type Service struct {
 	server     *http.Server
-	svc        *svc.ServiceContext
+	svc        *appbootstrap.ServiceContext
 	live       *appruntime.LiveState
 	restarting atomic.Bool
 }
 
-func NewService(svc *svc.ServiceContext, live *appruntime.LiveState) *Service {
+func NewService(svc *appbootstrap.ServiceContext, live *appruntime.LiveState) *Service {
 	if live == nil {
 		live = newLiveState(svc)
 	}
@@ -44,10 +44,10 @@ func NewService(svc *svc.ServiceContext, live *appruntime.LiveState) *Service {
 	}
 }
 
-func initServer(svc *svc.ServiceContext, live *appruntime.LiveState) *gin.Engine {
+func initServer(svc *appbootstrap.ServiceContext, live *appruntime.LiveState) *gin.Engine {
 
 	// start init system config
-	initialize.StartInitSystemConfig(newInitializeDeps(svc, live))
+	configinit.StartInitSystemConfig(newInitializeDeps(svc, live))
 	// init gin server
 	r := gin.Default()
 	r.RemoteIPHeaders = []string{"X-Original-Forwarded-For", "X-Forwarded-For", "X-Real-IP"}

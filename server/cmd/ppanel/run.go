@@ -13,13 +13,13 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/initialize"
+	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
+	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
 	"github.com/perfect-panel/server/modules/infra/conf"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/orm"
 	"github.com/perfect-panel/server/modules/infra/service"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/svc"
 	"github.com/perfect-panel/server/worker"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
@@ -70,7 +70,7 @@ func getServers() *service.Group {
 	}
 	// check config file is empty, if empty, start init web server
 	if initConfig(&c) {
-		status, server := initialize.Config(startConfigPath)
+		status, server := configinit.Config(startConfigPath)
 		<-status
 		if err := server.Shutdown(context.TODO()); err != nil {
 			log.Printf("Init Server Shutdown: %s\n", err.Error())
@@ -86,7 +86,7 @@ func getServers() *service.Group {
 	}
 
 	// init service context
-	ctx := svc.NewServiceContext(c)
+	ctx := appbootstrap.NewServiceContext(c)
 	live := newLiveState(ctx)
 	services := service.NewServiceGroup()
 	services.Add(NewService(ctx, live))

@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/util/tool"
-	appruntime "github.com/perfect-panel/server/runtime"
 	"github.com/perfect-panel/server/services/subscribe"
 	"github.com/perfect-panel/server/types"
 )

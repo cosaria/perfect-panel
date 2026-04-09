@@ -1,4 +1,4 @@
-package initialize
+package configinit
 
 import (
 	"context"
@@ -114,11 +114,15 @@ type phase6TelegramAuthModelStub struct {
 	findOneByMethod func(context.Context, string) (*modelauth.Auth, error)
 }
 
-func (s phase6TelegramAuthModelStub) Insert(context.Context, *modelauth.Auth) error { panic("unexpected Insert") }
+func (s phase6TelegramAuthModelStub) Insert(context.Context, *modelauth.Auth) error {
+	panic("unexpected Insert")
+}
 func (s phase6TelegramAuthModelStub) FindOne(context.Context, int64) (*modelauth.Auth, error) {
 	panic("unexpected FindOne")
 }
-func (s phase6TelegramAuthModelStub) Update(context.Context, *modelauth.Auth) error { panic("unexpected Update") }
+func (s phase6TelegramAuthModelStub) Update(context.Context, *modelauth.Auth) error {
+	panic("unexpected Update")
+}
 func (s phase6TelegramAuthModelStub) Delete(context.Context, int64) error { panic("unexpected Delete") }
 func (s phase6TelegramAuthModelStub) Transaction(context.Context, func(*gorm.DB) error) error {
 	panic("unexpected Transaction")

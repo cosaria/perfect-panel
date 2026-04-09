@@ -1,4 +1,4 @@
-package initialize
+package configinit
 
 import (
 	"errors"

@@ -12,10 +12,10 @@ import (
 	"strings"
 
 	"github.com/perfect-panel/server/config"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	pkgaes "github.com/perfect-panel/server/modules/crypto/aes"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/routers/response"
-	appruntime "github.com/perfect-panel/server/runtime"
 	"github.com/pkg/errors"
 
 	"github.com/gin-gonic/gin"

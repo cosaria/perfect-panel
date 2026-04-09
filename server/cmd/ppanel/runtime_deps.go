@@ -1,11 +1,11 @@
 package ppanel
 
 import (
-	appruntime "github.com/perfect-panel/server/runtime"
-	"github.com/perfect-panel/server/svc"
+	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 )
 
-func newLiveState(svcCtx *svc.ServiceContext) *appruntime.LiveState {
+func newLiveState(svcCtx *appbootstrap.ServiceContext) *appruntime.LiveState {
 	live := appruntime.NewLiveState()
 	if svcCtx == nil {
 		return live
@@ -21,7 +21,7 @@ func newLiveState(svcCtx *svc.ServiceContext) *appruntime.LiveState {
 	return live
 }
 
-func newRuntimeDeps(svcCtx *svc.ServiceContext, live *appruntime.LiveState) *appruntime.Deps {
+func newRuntimeDeps(svcCtx *appbootstrap.ServiceContext, live *appruntime.LiveState) *appruntime.Deps {
 	if svcCtx == nil {
 		return nil
 	}

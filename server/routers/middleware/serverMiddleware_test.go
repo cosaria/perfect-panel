@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/config"
-	appruntime "github.com/perfect-panel/server/runtime"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	"github.com/stretchr/testify/require"
 )
 

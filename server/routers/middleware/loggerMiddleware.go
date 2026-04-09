@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/gin-gonic/gin"
-	appruntime "github.com/perfect-panel/server/runtime"
+	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 )
 
 type responseBodyWriter struct {
