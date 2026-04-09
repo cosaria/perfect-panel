@@ -74,6 +74,9 @@ func globPhase6Targets(t *testing.T, pattern string) []string {
 	if err != nil {
 		t.Fatalf("glob %s: %v", pattern, err)
 	}
+	if len(targets) == 0 {
+		t.Fatalf("glob %s matched no targets", pattern)
+	}
 	return targets
 }
 

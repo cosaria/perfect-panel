@@ -31,10 +31,12 @@ func TestPhase7DomainDirectoriesExist(t *testing.T) {
 
 func TestPhase7LegacyServicesDirectoriesRemoved(t *testing.T) {
 	legacy := []string{
+		filepath.Join("..", "services"),
 		filepath.Join("..", "services", "admin"),
 		filepath.Join("..", "services", "auth"),
 		filepath.Join("..", "services", "common"),
 		filepath.Join("..", "services", "node"),
+		filepath.Join("..", "services", "notify"),
 		filepath.Join("..", "services", "report"),
 		filepath.Join("..", "services", "subscribe"),
 		filepath.Join("..", "services", "telegram"),
