@@ -35,9 +35,9 @@ import (
 	serverrules "github.com/perfect-panel/server/internal/platform/support/rules"
 	serverservice "github.com/perfect-panel/server/internal/platform/support/service"
 	serverthreading "github.com/perfect-panel/server/internal/platform/support/threading"
-	servertraffic "github.com/perfect-panel/server/internal/platform/support/traffic"
 	servertool "github.com/perfect-panel/server/internal/platform/support/tool"
 	servertrace "github.com/perfect-panel/server/internal/platform/support/trace"
+	servertraffic "github.com/perfect-panel/server/internal/platform/support/traffic"
 	serverturnstile "github.com/perfect-panel/server/internal/platform/support/verify/turnstile"
 	serverxerr "github.com/perfect-panel/server/internal/platform/support/xerr"
 )

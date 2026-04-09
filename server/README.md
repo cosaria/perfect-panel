@@ -123,19 +123,14 @@ Visit [ppanel.dev](https://ppanel.dev/) for more details.
 
 ```
 server/
-├── cmd/              # CLI entry points, including run and openapi
+├── cmd/              # CLI entry points, including cmd/openapi/main.go
 ├── doc/              # Server docs and diagrams
 ├── etc/              # 配置模板和运行时配置
-├── initialize/       # Bootstrap and setup flow
-├── models/           # GORM models, migrations, and data access
-├── modules/          # Shared infrastructure, auth, payment, and utility packages
-├── routers/          # HTTP routes and middleware wiring
-├── runtime/          # Runtime helpers and live-state support
-├── services/         # Business logic grouped by domain
-├── types/            # 请求与响应类型定义
-├── svc/              # Service context and dependency wiring
-├── worker/           # 异步任务与定时任务
-├── adapter/          # 订阅配置生成器
+├── internal/
+│   ├── bootstrap/    # 初始化、依赖注入与运行时状态（原 svc/initialize/runtime）
+│   ├── domains/      # 业务域逻辑（原 services）
+│   ├── jobs/         # 异步任务与调度（原 worker）
+│   └── platform/     # HTTP、持久层与基础设施（原 routers/models/types/modules/adapter）
 ├── web/              # Embedded frontend assets and static serving
 ├── config/           # 配置与版本信息
 ├── script/           # 辅助脚本
@@ -162,7 +157,7 @@ server/
 3. 格式化代码：
    ```bash
    go fmt ./...
-   goimports -w .
+   ../.tools/bin/goimports -w .
    ```
 
 4. 本地启动：

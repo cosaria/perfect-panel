@@ -1,6 +1,6 @@
 # OpenAPI Governance
 
-This document defines the contract-governance policy for the documented server APIs exported from [`server/cmd/openapi.go`](/Users/admin/Codes/ProxyCode/perfect-panel/server/cmd/openapi.go).
+This document defines the contract-governance policy for the documented server APIs exported from [`server/cmd/openapi/main.go`](/Users/admin/Codes/ProxyCode/perfect-panel/server/cmd/openapi/main.go).
 本文件仅定义 OpenAPI 契约治理范围，不覆盖其他文档或交付流程。
 
 ## Governed Surfaces
@@ -29,13 +29,13 @@ These artifacts are generated from Huma-declared first-party JSON APIs and are t
 - webhook and callback protocols such as payment notifications and Telegram webhook handlers
 - node polling and conditional-cache endpoints
 - redirect-based OAuth callback flows
-- init/bootstrap setup endpoints in `server/initialize/`
+- init/bootstrap setup endpoints in `server/internal/bootstrap/configinit/`
 
 These surfaces are real HTTP endpoints, but they are excluded from this OpenAPI governance layer because they do not behave like ordinary documented JSON APIs.
 
 ## Breaking Change Workflow
 
-1. Update route declarations and shared conventions in `server/routers/`.
+1. Update route declarations and shared conventions in `server/internal/platform/http/`.
 2. Regenerate specs and generated clients with `bun run openapi`.
 3. Review generated diff in `docs/openapi/`, `web/apps/admin/services/`, and `web/apps/user/services/`.
 4. Call out intentional contract renames or compatibility risks in review before merge.
