@@ -21,3 +21,17 @@ func TestPhase7HTTPDirectoriesExist(t *testing.T) {
 		}
 	}
 }
+
+func TestPhase7LegacyHTTPDirectoriesRemoved(t *testing.T) {
+	legacy := []string{
+		filepath.Join("..", "routers"),
+	}
+
+	for _, target := range legacy {
+		if _, err := os.Stat(target); err == nil {
+			t.Fatalf("expected legacy HTTP directory %s to be removed", target)
+		} else if !os.IsNotExist(err) {
+			t.Fatalf("stat %s: %v", target, err)
+		}
+	}
+}

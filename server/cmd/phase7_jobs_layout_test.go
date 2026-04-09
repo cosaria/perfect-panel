@@ -18,3 +18,17 @@ func TestPhase7JobsDirectoryExists(t *testing.T) {
 		}
 	}
 }
+
+func TestPhase7LegacyJobsDirectoriesRemoved(t *testing.T) {
+	legacy := []string{
+		filepath.Join("..", "worker"),
+	}
+
+	for _, target := range legacy {
+		if _, err := os.Stat(target); err == nil {
+			t.Fatalf("expected legacy jobs directory %s to be removed", target)
+		} else if !os.IsNotExist(err) {
+			t.Fatalf("stat %s: %v", target, err)
+		}
+	}
+}
