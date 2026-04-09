@@ -2,9 +2,9 @@ package task
 
 import (
 	serverconfig "github.com/perfect-panel/server/config"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modelsystem "github.com/perfect-panel/server/models/system"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modelsystem "github.com/perfect-panel/server/internal/platform/persistence/system"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 	"gorm.io/gorm"
 )
 

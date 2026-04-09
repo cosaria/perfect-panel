@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/perfect-panel/server/models/node"
+	"github.com/perfect-panel/server/internal/platform/persistence/node"
 )
 
 // LiveState holds the mutable runtime values that can change after process start.

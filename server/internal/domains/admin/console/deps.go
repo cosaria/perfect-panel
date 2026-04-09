@@ -1,10 +1,10 @@
 package console
 
 import (
-	modelnode "github.com/perfect-panel/server/models/node"
-	modelorder "github.com/perfect-panel/server/models/order"
-	modelticket "github.com/perfect-panel/server/models/ticket"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
+	modelorder "github.com/perfect-panel/server/internal/platform/persistence/order"
+	modelticket "github.com/perfect-panel/server/internal/platform/persistence/ticket"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 	"gorm.io/gorm"
 )
 

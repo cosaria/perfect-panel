@@ -2,7 +2,7 @@ package emailLogic
 
 import (
 	"github.com/perfect-panel/server/config"
-	modellog "github.com/perfect-panel/server/models/log"
+	modellog "github.com/perfect-panel/server/internal/platform/persistence/log"
 	"gorm.io/gorm"
 )
 

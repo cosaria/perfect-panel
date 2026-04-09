@@ -4,12 +4,12 @@ import (
 	"errors"
 	"time"
 
-	"github.com/perfect-panel/server/models/user"
+	"github.com/perfect-panel/server/internal/platform/persistence/user"
 	"gorm.io/gorm"
 
-	"github.com/perfect-panel/server/models/migrate"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/infra/orm"
+	"github.com/perfect-panel/server/internal/platform/persistence/migrate"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
+	"github.com/perfect-panel/server/internal/platform/support/orm"
 )
 
 func Migrate(deps Deps) {

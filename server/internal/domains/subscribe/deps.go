@@ -2,11 +2,11 @@ package subscribe
 
 import (
 	"github.com/perfect-panel/server/config"
-	modelclient "github.com/perfect-panel/server/models/client"
-	modellog "github.com/perfect-panel/server/models/log"
-	modelnode "github.com/perfect-panel/server/models/node"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modelclient "github.com/perfect-panel/server/internal/platform/persistence/client"
+	modellog "github.com/perfect-panel/server/internal/platform/persistence/log"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 )
 
 // Deps holds the narrow subscribe dependencies while Phase 6 removes direct

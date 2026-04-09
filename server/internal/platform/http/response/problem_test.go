@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	pkgerrors "github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )

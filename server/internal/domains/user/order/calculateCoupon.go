@@ -1,7 +1,7 @@
 package order
 
 import (
-	"github.com/perfect-panel/server/models/coupon"
+	"github.com/perfect-panel/server/internal/platform/persistence/coupon"
 )
 
 func calculateCoupon(amount int64, couponInfo *coupon.Coupon) int64 {

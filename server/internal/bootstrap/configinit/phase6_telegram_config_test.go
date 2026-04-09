@@ -3,7 +3,7 @@ package configinit
 import (
 	"testing"
 
-	"github.com/perfect-panel/server/models/auth"
+	"github.com/perfect-panel/server/internal/platform/persistence/auth"
 )
 
 func TestPhase6TelegramRuntimeConfigUsesAuthConfigValues(t *testing.T) {

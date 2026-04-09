@@ -6,10 +6,10 @@ import (
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/internal/platform/http/types"
-	modelcoupon "github.com/perfect-panel/server/models/coupon"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeluser "github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	modelcoupon "github.com/perfect-panel/server/internal/platform/persistence/coupon"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/stretchr/testify/require"
 )
 

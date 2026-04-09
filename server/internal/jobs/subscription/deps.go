@@ -3,8 +3,8 @@ package subscription
 import (
 	"github.com/hibiken/asynq"
 	serverconfig "github.com/perfect-panel/server/config"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 )
 
 type Deps struct {

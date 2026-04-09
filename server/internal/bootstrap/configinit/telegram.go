@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/internal/domains/telegram"
-	"github.com/perfect-panel/server/models/auth"
-	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/internal/platform/persistence/auth"
+	"github.com/perfect-panel/server/internal/platform/support/tool"
 )
 
 func Telegram(deps Deps) {

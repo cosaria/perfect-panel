@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/models/user"
+	"github.com/perfect-panel/server/internal/platform/persistence/user"
 
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/verify/device"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
+	"github.com/perfect-panel/server/internal/platform/support/verify/device"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )

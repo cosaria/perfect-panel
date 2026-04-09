@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/perfect-panel/server/models/node"
+	"github.com/perfect-panel/server/internal/platform/persistence/node"
 )
 
 func TestResolveNodeMultiplierManagerFallsBackToLoader(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/perfect-panel/server/models/node"
+	"github.com/perfect-panel/server/internal/platform/persistence/node"
 )
 
 func TestLiveStateTracksMutableRuntimeValues(t *testing.T) {

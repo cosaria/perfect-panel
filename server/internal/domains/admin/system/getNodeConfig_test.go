@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	modelsystem "github.com/perfect-panel/server/models/system"
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	modelsystem "github.com/perfect-panel/server/internal/platform/persistence/system"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/stretchr/testify/require"
 )
 

@@ -3,7 +3,7 @@ package notify
 import (
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/config"
-	modelorder "github.com/perfect-panel/server/models/order"
+	modelorder "github.com/perfect-panel/server/internal/platform/persistence/order"
 )
 
 // Deps holds the narrow notify dependencies while Phase 6 removes direct

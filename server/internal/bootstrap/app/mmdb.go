@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/oschwald/geoip2-golang"
-	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 )
 
 const GeoIPDBURL = "https://raw.githubusercontent.com/adysec/IP_database/main/geolite/GeoLite2-City.mmdb"

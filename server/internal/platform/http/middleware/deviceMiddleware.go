@@ -13,9 +13,9 @@ import (
 
 	"github.com/perfect-panel/server/config"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
+	pkgaes "github.com/perfect-panel/server/internal/platform/crypto/aes"
 	"github.com/perfect-panel/server/internal/platform/http/response"
-	pkgaes "github.com/perfect-panel/server/modules/crypto/aes"
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/pkg/errors"
 
 	"github.com/gin-gonic/gin"

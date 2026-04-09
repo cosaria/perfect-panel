@@ -14,31 +14,31 @@ import (
 	servertelegram "github.com/perfect-panel/server/internal/domains/telegram"
 	serveruserorder "github.com/perfect-panel/server/internal/domains/user/order"
 	serverworker "github.com/perfect-panel/server/internal/jobs"
+	servercache "github.com/perfect-panel/server/internal/platform/cache"
+	serversyncx "github.com/perfect-panel/server/internal/platform/cache/syncx"
+	serveraes "github.com/perfect-panel/server/internal/platform/crypto/aes"
 	servernotify "github.com/perfect-panel/server/internal/platform/http/notify"
 	serverresponse "github.com/perfect-panel/server/internal/platform/http/response"
-	servermigrate "github.com/perfect-panel/server/models/migrate"
-	servernode "github.com/perfect-panel/server/models/node"
-	serverauthmethod "github.com/perfect-panel/server/modules/auth/authmethod"
-	serverjwt "github.com/perfect-panel/server/modules/auth/jwt"
-	servercache "github.com/perfect-panel/server/modules/cache"
-	serversyncx "github.com/perfect-panel/server/modules/cache/syncx"
-	serveraes "github.com/perfect-panel/server/modules/crypto/aes"
-	serverconf "github.com/perfect-panel/server/modules/infra/conf"
-	servererrorx "github.com/perfect-panel/server/modules/infra/errorx"
-	serverlimit "github.com/perfect-panel/server/modules/infra/limit"
-	serverlogger "github.com/perfect-panel/server/modules/infra/logger"
-	serverorm "github.com/perfect-panel/server/modules/infra/orm"
-	serverproc "github.com/perfect-panel/server/modules/infra/proc"
-	serverrescue "github.com/perfect-panel/server/modules/infra/rescue"
-	serverservice "github.com/perfect-panel/server/modules/infra/service"
-	serverthreading "github.com/perfect-panel/server/modules/infra/threading"
-	servertrace "github.com/perfect-panel/server/modules/infra/trace"
-	serverxerr "github.com/perfect-panel/server/modules/infra/xerr"
-	serveremail "github.com/perfect-panel/server/modules/notify/email"
-	serverip "github.com/perfect-panel/server/modules/util/ip"
-	serverrules "github.com/perfect-panel/server/modules/util/rules"
-	servertool "github.com/perfect-panel/server/modules/util/tool"
-	serverturnstile "github.com/perfect-panel/server/modules/verify/turnstile"
+	serveremail "github.com/perfect-panel/server/internal/platform/notify/email"
+	servermigrate "github.com/perfect-panel/server/internal/platform/persistence/migrate"
+	servernode "github.com/perfect-panel/server/internal/platform/persistence/node"
+	serverauthmethod "github.com/perfect-panel/server/internal/platform/support/auth/authmethod"
+	serverjwt "github.com/perfect-panel/server/internal/platform/support/auth/jwt"
+	serverconf "github.com/perfect-panel/server/internal/platform/support/conf"
+	servererrorx "github.com/perfect-panel/server/internal/platform/support/errorx"
+	serverip "github.com/perfect-panel/server/internal/platform/support/ip"
+	serverlimit "github.com/perfect-panel/server/internal/platform/support/limit"
+	serverlogger "github.com/perfect-panel/server/internal/platform/support/logger"
+	serverorm "github.com/perfect-panel/server/internal/platform/support/orm"
+	serverproc "github.com/perfect-panel/server/internal/platform/support/proc"
+	serverrescue "github.com/perfect-panel/server/internal/platform/support/rescue"
+	serverrules "github.com/perfect-panel/server/internal/platform/support/rules"
+	serverservice "github.com/perfect-panel/server/internal/platform/support/service"
+	serverthreading "github.com/perfect-panel/server/internal/platform/support/threading"
+	servertool "github.com/perfect-panel/server/internal/platform/support/tool"
+	servertrace "github.com/perfect-panel/server/internal/platform/support/trace"
+	serverturnstile "github.com/perfect-panel/server/internal/platform/support/verify/turnstile"
+	serverxerr "github.com/perfect-panel/server/internal/platform/support/xerr"
 )
 
 func TestPhase1TopLevelPathsExist(t *testing.T) {
@@ -104,19 +104,19 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	}
 
 	if !limit.TryBorrow() {
-		t.Fatal("expected syncx limit from modules/cache to be usable")
+		t.Fatal("expected syncx limit from internal/platform/cache to be usable")
 	}
 
 	if rule == nil {
-		t.Fatal("expected rules package from modules/util to parse a basic rule")
+		t.Fatal("expected rules package from internal/platform/support to parse a basic rule")
 	}
 
 	if token == "" || err != nil {
-		t.Fatal("expected jwt package from modules/auth to mint a token")
+		t.Fatal("expected jwt package from internal/platform/support/auth to mint a token")
 	}
 
 	if serverauthmethod.Email == "" {
-		t.Fatal("expected authmethod constants from modules/auth")
+		t.Fatal("expected authmethod constants from internal/platform/support/auth")
 	}
 
 	if cache != nil {
@@ -124,7 +124,7 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	}
 
 	if _, _, err := serveraes.Encrypt([]byte("hello"), "secret"); err != nil {
-		t.Fatal("expected aes package from modules/crypto to encrypt test bytes")
+		t.Fatal("expected aes package from internal/platform/crypto to encrypt test bytes")
 	}
 
 	if emailErr.Email != "" {
@@ -136,7 +136,7 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	}
 
 	if service == nil {
-		t.Fatal("expected turnstile package from modules/verify to create a service")
+		t.Fatal("expected turnstile package from internal/platform/support/verify to create a service")
 	}
 
 	if loadFn == nil || shutdownFn == nil || rescueFn == nil {
@@ -160,7 +160,7 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	}
 
 	if versionNumber < 0 {
-		t.Fatal("expected modules/util/tool package to expose legacy utility helpers during phase 2")
+		t.Fatal("expected internal/platform/support/tool package to expose legacy utility helpers during phase 2")
 	}
 
 	if checkUserHandler == nil || closeOrderHandler == nil {

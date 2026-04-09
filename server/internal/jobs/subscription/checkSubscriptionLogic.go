@@ -7,10 +7,10 @@ import (
 
 	queue "github.com/perfect-panel/server/internal/jobs/spec"
 
-	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/models/user"
+	"github.com/perfect-panel/server/internal/platform/persistence/user"
 	"gorm.io/gorm"
 )
 

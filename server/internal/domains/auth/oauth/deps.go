@@ -2,10 +2,10 @@ package oauth
 
 import (
 	"github.com/perfect-panel/server/config"
-	modelauth "github.com/perfect-panel/server/models/auth"
-	modellog "github.com/perfect-panel/server/models/log"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modelauth "github.com/perfect-panel/server/internal/platform/persistence/auth"
+	modellog "github.com/perfect-panel/server/internal/platform/persistence/log"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 	"github.com/redis/go-redis/v9"
 )
 

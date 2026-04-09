@@ -1,9 +1,9 @@
 package subscribe
 
 import (
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeluser "github.com/perfect-panel/server/models/user"
-	verifydevice "github.com/perfect-panel/server/modules/verify/device"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
+	verifydevice "github.com/perfect-panel/server/internal/platform/support/verify/device"
 	"gorm.io/gorm"
 )
 

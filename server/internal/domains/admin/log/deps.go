@@ -2,8 +2,8 @@ package log
 
 import (
 	"github.com/perfect-panel/server/config"
-	modellog "github.com/perfect-panel/server/models/log"
-	modelsystem "github.com/perfect-panel/server/models/system"
+	modellog "github.com/perfect-panel/server/internal/platform/persistence/log"
+	modelsystem "github.com/perfect-panel/server/internal/platform/persistence/system"
 	"gorm.io/gorm"
 )
 

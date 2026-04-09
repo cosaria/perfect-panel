@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/models/log"
-	"github.com/perfect-panel/server/models/traffic"
-	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/internal/platform/persistence/log"
+	"github.com/perfect-panel/server/internal/platform/persistence/traffic"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 )
 
 type StatLogic struct {

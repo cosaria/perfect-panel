@@ -8,14 +8,14 @@ import (
 
 	"github.com/perfect-panel/server/config"
 
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/pkg/errors"
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/internal/jobs/spec"
-	"github.com/perfect-panel/server/models/payment"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/payment/alipay"
+	"github.com/perfect-panel/server/internal/platform/payment/alipay"
+	"github.com/perfect-panel/server/internal/platform/persistence/payment"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 )
 
 type AlipayNotifyLogic struct {

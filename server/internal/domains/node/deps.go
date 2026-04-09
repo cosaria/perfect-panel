@@ -3,9 +3,9 @@ package server
 import (
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/config"
-	modelnode "github.com/perfect-panel/server/models/node"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 	"github.com/redis/go-redis/v9"
 )
 

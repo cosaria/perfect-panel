@@ -1,8 +1,8 @@
 package server
 
 import (
-	modelnode "github.com/perfect-panel/server/models/node"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 	"gorm.io/gorm"
 )
 

@@ -3,7 +3,7 @@ package system
 import (
 	"context"
 
-	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 )
 
 func SettingTelegramBotHandler(deps Deps) func(context.Context, *struct{}) (*struct{}, error) {

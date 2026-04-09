@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	pkgerrors "github.com/pkg/errors"
 
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 )
 
 const problemContentType = "application/problem+json; charset=utf-8"

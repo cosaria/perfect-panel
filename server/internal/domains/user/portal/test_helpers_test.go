@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	serverconfig "github.com/perfect-panel/server/config"
-	modelorder "github.com/perfect-panel/server/models/order"
-	modelpayment "github.com/perfect-panel/server/models/payment"
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	modelorder "github.com/perfect-panel/server/internal/platform/persistence/order"
+	modelpayment "github.com/perfect-panel/server/internal/platform/persistence/payment"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )

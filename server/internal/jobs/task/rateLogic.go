@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/payment/exchangeRate"
-	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/internal/platform/payment/exchangeRate"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
+	"github.com/perfect-panel/server/internal/platform/support/tool"
 )
 
 type RateLogic struct {

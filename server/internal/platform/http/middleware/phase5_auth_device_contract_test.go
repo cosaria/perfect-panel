@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/config"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
-	authjwt "github.com/perfect-panel/server/modules/auth/jwt"
+	authjwt "github.com/perfect-panel/server/internal/platform/support/auth/jwt"
 	"github.com/stretchr/testify/require"
 )
 

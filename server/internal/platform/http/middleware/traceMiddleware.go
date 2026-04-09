@@ -14,7 +14,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	oteltrace "go.opentelemetry.io/otel/trace"
 
-	"github.com/perfect-panel/server/modules/infra/trace"
+	"github.com/perfect-panel/server/internal/platform/support/trace"
 )
 
 // statusByWriter returns a span status code and message for an HTTP status code

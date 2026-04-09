@@ -3,11 +3,11 @@ package order
 import (
 	"github.com/hibiken/asynq"
 	serverconfig "github.com/perfect-panel/server/config"
-	modelcoupon "github.com/perfect-panel/server/models/coupon"
-	modelorder "github.com/perfect-panel/server/models/order"
-	modelpayment "github.com/perfect-panel/server/models/payment"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modelcoupon "github.com/perfect-panel/server/internal/platform/persistence/coupon"
+	modelorder "github.com/perfect-panel/server/internal/platform/persistence/order"
+	modelpayment "github.com/perfect-panel/server/internal/platform/persistence/payment"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 	"gorm.io/gorm"
 )
 

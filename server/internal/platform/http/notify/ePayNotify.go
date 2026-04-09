@@ -7,16 +7,16 @@ import (
 
 	"github.com/perfect-panel/server/config"
 
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/pkg/errors"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/internal/platform/http/types"
-	"github.com/perfect-panel/server/models/payment"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/payment/epay"
+	"github.com/perfect-panel/server/internal/platform/payment/epay"
+	"github.com/perfect-panel/server/internal/platform/persistence/payment"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 
 	queueType "github.com/perfect-panel/server/internal/jobs"
 )

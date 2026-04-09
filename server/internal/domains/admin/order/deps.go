@@ -2,8 +2,8 @@ package order
 
 import (
 	"github.com/hibiken/asynq"
-	modelorder "github.com/perfect-panel/server/models/order"
-	modelpayment "github.com/perfect-panel/server/models/payment"
+	modelorder "github.com/perfect-panel/server/internal/platform/persistence/order"
+	modelpayment "github.com/perfect-panel/server/internal/platform/persistence/payment"
 )
 
 // Deps holds the narrow admin order dependencies while Phase 6 removes

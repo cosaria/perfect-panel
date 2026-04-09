@@ -4,7 +4,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
-	"github.com/perfect-panel/server/models/node"
+	"github.com/perfect-panel/server/internal/platform/persistence/node"
 )
 
 func initializeDepsFromRuntimeDeps(runtimeDeps *appruntime.Deps) configinit.Deps {

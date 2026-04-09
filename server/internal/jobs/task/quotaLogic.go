@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/models/log"
-	"github.com/perfect-panel/server/models/task"
-	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/internal/platform/persistence/log"
+	"github.com/perfect-panel/server/internal/platform/persistence/task"
+	"github.com/perfect-panel/server/internal/platform/persistence/user"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
+	"github.com/perfect-panel/server/internal/platform/support/tool"
 	"gorm.io/gorm"
 )
 

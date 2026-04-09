@@ -10,8 +10,8 @@ import (
 
 	"github.com/alicebob/miniredis/v2"
 	"github.com/gin-gonic/gin"
-	nodeModel "github.com/perfect-panel/server/models/node"
-	"github.com/perfect-panel/server/modules/util/tool"
+	nodeModel "github.com/perfect-panel/server/internal/platform/persistence/node"
+	"github.com/perfect-panel/server/internal/platform/support/tool"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/require"
 )

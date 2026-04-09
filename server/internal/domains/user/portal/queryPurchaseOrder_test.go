@@ -6,8 +6,8 @@ import (
 
 	serverconfig "github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/internal/platform/http/types"
-	modelorder "github.com/perfect-panel/server/models/order"
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	modelorder "github.com/perfect-panel/server/internal/platform/persistence/order"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/stretchr/testify/require"
 )
 

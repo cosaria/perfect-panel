@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	"github.com/perfect-panel/server/config"
-	modelnode "github.com/perfect-panel/server/models/node"
-	modelsystem "github.com/perfect-panel/server/models/system"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
+	modelsystem "github.com/perfect-panel/server/internal/platform/persistence/system"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )

@@ -10,19 +10,19 @@ import (
 	"time"
 
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/models/log"
-	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/internal/platform/persistence/log"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/google/uuid"
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/internal/domains/telegram"
 	"github.com/perfect-panel/server/internal/jobs/spec"
-	"github.com/perfect-panel/server/models/order"
-	"github.com/perfect-panel/server/models/subscribe"
-	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/modules/util/uuidx"
+	"github.com/perfect-panel/server/internal/platform/persistence/order"
+	"github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	"github.com/perfect-panel/server/internal/platform/persistence/user"
+	"github.com/perfect-panel/server/internal/platform/support/tool"
+	"github.com/perfect-panel/server/internal/platform/support/uuidx"
 	"gorm.io/gorm"
 )
 

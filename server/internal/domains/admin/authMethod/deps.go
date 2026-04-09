@@ -2,7 +2,7 @@ package authMethod
 
 import (
 	"github.com/perfect-panel/server/config"
-	modelauth "github.com/perfect-panel/server/models/auth"
+	modelauth "github.com/perfect-panel/server/internal/platform/persistence/auth"
 )
 
 type Deps struct {

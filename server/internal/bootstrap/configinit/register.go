@@ -3,10 +3,10 @@ package configinit
 import (
 	"context"
 
-	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/internal/platform/support/tool"
 )
 
 func Register(deps Deps) {

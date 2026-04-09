@@ -12,7 +12,7 @@ import (
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	telegramsvc "github.com/perfect-panel/server/internal/domains/telegram"
 	"github.com/perfect-panel/server/internal/platform/http/middleware"
-	paymentModel "github.com/perfect-panel/server/models/payment"
+	paymentModel "github.com/perfect-panel/server/internal/platform/persistence/payment"
 	"github.com/stretchr/testify/require"
 )
 

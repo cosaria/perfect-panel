@@ -2,7 +2,7 @@ package payment
 
 import (
 	serverconfig "github.com/perfect-panel/server/config"
-	modelpayment "github.com/perfect-panel/server/models/payment"
+	modelpayment "github.com/perfect-panel/server/internal/platform/persistence/payment"
 )
 
 // Deps holds the narrow admin payment dependencies while Phase 6 removes

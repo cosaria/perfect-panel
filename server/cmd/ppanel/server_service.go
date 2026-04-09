@@ -14,10 +14,10 @@ import (
 	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
 	"github.com/perfect-panel/server/internal/domains/common/report"
-	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 
-	"github.com/perfect-panel/server/modules/infra/proc"
-	"github.com/perfect-panel/server/modules/infra/trace"
+	"github.com/perfect-panel/server/internal/platform/support/proc"
+	"github.com/perfect-panel/server/internal/platform/support/trace"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"

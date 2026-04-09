@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/perfect-panel/server/internal/platform/http/types"
-	"github.com/perfect-panel/server/models/ticket"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	"github.com/perfect-panel/server/internal/platform/persistence/ticket"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/pkg/errors"
 )
 

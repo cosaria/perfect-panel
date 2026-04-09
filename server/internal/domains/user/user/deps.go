@@ -3,11 +3,11 @@ package user
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/perfect-panel/server/config"
-	modelauth "github.com/perfect-panel/server/models/auth"
-	modellog "github.com/perfect-panel/server/models/log"
-	modelorder "github.com/perfect-panel/server/models/order"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modelauth "github.com/perfect-panel/server/internal/platform/persistence/auth"
+	modellog "github.com/perfect-panel/server/internal/platform/persistence/log"
+	modelorder "github.com/perfect-panel/server/internal/platform/persistence/order"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )

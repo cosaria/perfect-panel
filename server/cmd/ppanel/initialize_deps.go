@@ -5,7 +5,7 @@ import (
 	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
 	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
-	"github.com/perfect-panel/server/models/node"
+	"github.com/perfect-panel/server/internal/platform/persistence/node"
 )
 
 func newInitializeDeps(svcCtx *appbootstrap.ServiceContext, live *appruntime.LiveState) configinit.Deps {

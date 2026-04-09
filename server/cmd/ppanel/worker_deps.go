@@ -14,7 +14,7 @@ import (
 	"github.com/perfect-panel/server/internal/jobs/subscription"
 	"github.com/perfect-panel/server/internal/jobs/task"
 	"github.com/perfect-panel/server/internal/jobs/traffic"
-	"github.com/perfect-panel/server/models/node"
+	"github.com/perfect-panel/server/internal/platform/persistence/node"
 )
 
 func newWorkerRegistryDeps(svcCtx *appbootstrap.ServiceContext, live *appruntime.LiveState) registry.Deps {

@@ -1,8 +1,8 @@
 package application
 
 import (
-	modelclient "github.com/perfect-panel/server/models/client"
-	modelnode "github.com/perfect-panel/server/models/node"
+	modelclient "github.com/perfect-panel/server/internal/platform/persistence/client"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
 )
 
 // Deps holds the narrow admin application dependencies while Phase 6 removes

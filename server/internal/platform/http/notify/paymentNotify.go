@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/internal/platform/http/types"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/payment"
+	"github.com/perfect-panel/server/internal/platform/payment"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 )
 
 // PaymentNotifyHandler Payment Notify

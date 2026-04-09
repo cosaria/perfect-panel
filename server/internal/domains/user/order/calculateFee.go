@@ -1,6 +1,6 @@
 package order
 
-import "github.com/perfect-panel/server/models/payment"
+import "github.com/perfect-panel/server/internal/platform/persistence/payment"
 
 func calculateFee(amount int64, config *payment.Payment) int64 {
 	var fee float64

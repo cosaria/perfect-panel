@@ -9,10 +9,10 @@ import (
 	"time"
 
 	"github.com/perfect-panel/server/internal/jobs/spec"
-	"github.com/perfect-panel/server/models/log"
-	"github.com/perfect-panel/server/models/subscribe"
-	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/internal/platform/persistence/log"
+	"github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	"github.com/perfect-panel/server/internal/platform/persistence/user"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 
 	"github.com/hibiken/asynq"
 	"github.com/redis/go-redis/v9"

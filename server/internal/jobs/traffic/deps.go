@@ -5,11 +5,11 @@ import (
 
 	"github.com/hibiken/asynq"
 	serverconfig "github.com/perfect-panel/server/config"
-	modellog "github.com/perfect-panel/server/models/log"
-	modelnode "github.com/perfect-panel/server/models/node"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeltraffic "github.com/perfect-panel/server/models/traffic"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modellog "github.com/perfect-panel/server/internal/platform/persistence/log"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeltraffic "github.com/perfect-panel/server/internal/platform/persistence/traffic"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )

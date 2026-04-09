@@ -6,7 +6,7 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/perfect-panel/server/config"
-	modelauth "github.com/perfect-panel/server/models/auth"
+	modelauth "github.com/perfect-panel/server/internal/platform/persistence/auth"
 	"gorm.io/gorm"
 )
 

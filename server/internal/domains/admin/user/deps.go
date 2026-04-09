@@ -2,11 +2,11 @@ package user
 
 import (
 	"github.com/perfect-panel/server/config"
-	modellog "github.com/perfect-panel/server/models/log"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeltraffic "github.com/perfect-panel/server/models/traffic"
-	modeluser "github.com/perfect-panel/server/models/user"
-	verifydevice "github.com/perfect-panel/server/modules/verify/device"
+	modellog "github.com/perfect-panel/server/internal/platform/persistence/log"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeltraffic "github.com/perfect-panel/server/internal/platform/persistence/traffic"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
+	verifydevice "github.com/perfect-panel/server/internal/platform/support/verify/device"
 )
 
 // Deps holds the narrow admin user dependencies while Phase 6 removes direct

@@ -2,7 +2,7 @@ package smslogic
 
 import (
 	"github.com/perfect-panel/server/config"
-	modellog "github.com/perfect-panel/server/models/log"
+	modellog "github.com/perfect-panel/server/internal/platform/persistence/log"
 )
 
 type Deps struct {

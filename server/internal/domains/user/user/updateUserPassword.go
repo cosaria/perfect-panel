@@ -5,10 +5,10 @@ import (
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/internal/platform/http/types"
-	"github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/internal/platform/persistence/user"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
+	"github.com/perfect-panel/server/internal/platform/support/tool"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/pkg/errors"
 )
 

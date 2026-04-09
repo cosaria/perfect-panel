@@ -8,8 +8,8 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
-	"github.com/perfect-panel/server/models/node"
-	modelsystem "github.com/perfect-panel/server/models/system"
+	"github.com/perfect-panel/server/internal/platform/persistence/node"
+	modelsystem "github.com/perfect-panel/server/internal/platform/persistence/system"
 	"gorm.io/gorm"
 )
 

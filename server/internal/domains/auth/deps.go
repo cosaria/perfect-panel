@@ -2,9 +2,9 @@ package auth
 
 import (
 	"github.com/perfect-panel/server/config"
-	modellog "github.com/perfect-panel/server/models/log"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modellog "github.com/perfect-panel/server/internal/platform/persistence/log"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 	"github.com/redis/go-redis/v9"
 )
 

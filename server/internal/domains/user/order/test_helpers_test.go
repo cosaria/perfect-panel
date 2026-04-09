@@ -5,11 +5,11 @@ import (
 	"testing"
 
 	serverconfig "github.com/perfect-panel/server/config"
-	modelcoupon "github.com/perfect-panel/server/models/coupon"
-	modelpayment "github.com/perfect-panel/server/models/payment"
-	modelsubscribe "github.com/perfect-panel/server/models/subscribe"
-	modeluser "github.com/perfect-panel/server/models/user"
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	modelcoupon "github.com/perfect-panel/server/internal/platform/persistence/coupon"
+	modelpayment "github.com/perfect-panel/server/internal/platform/persistence/payment"
+	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/stretchr/testify/require"
 )
 

@@ -10,8 +10,8 @@ import (
 	task "github.com/perfect-panel/server/internal/jobs"
 	"github.com/perfect-panel/server/internal/platform/http/response"
 	"github.com/perfect-panel/server/internal/platform/http/types"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/util/tool"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
+	"github.com/perfect-panel/server/internal/platform/support/tool"
 	"github.com/pkg/errors"
 )
 

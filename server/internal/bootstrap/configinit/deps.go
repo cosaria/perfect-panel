@@ -3,10 +3,10 @@ package configinit
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/perfect-panel/server/config"
-	modelauth "github.com/perfect-panel/server/models/auth"
-	modelnode "github.com/perfect-panel/server/models/node"
-	modelsystem "github.com/perfect-panel/server/models/system"
-	modeluser "github.com/perfect-panel/server/models/user"
+	modelauth "github.com/perfect-panel/server/internal/platform/persistence/auth"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
+	modelsystem "github.com/perfect-panel/server/internal/platform/persistence/system"
+	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )

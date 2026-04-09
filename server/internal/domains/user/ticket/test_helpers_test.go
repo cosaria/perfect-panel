@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	modelticket "github.com/perfect-panel/server/models/ticket"
-	"github.com/perfect-panel/server/modules/infra/xerr"
+	modelticket "github.com/perfect-panel/server/internal/platform/persistence/ticket"
+	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/stretchr/testify/require"
 )
 

@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/internal/platform/http/response"
 	"github.com/perfect-panel/server/internal/platform/http/types"
-	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/internal/platform/support/logger"
 )
 
 func AppleLoginCallbackHandler(deps Deps) func(c *gin.Context) {
