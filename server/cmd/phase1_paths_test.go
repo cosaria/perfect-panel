@@ -8,6 +8,7 @@ import (
 	serverppanel "github.com/perfect-panel/server/cmd/ppanel"
 	serverconfig "github.com/perfect-panel/server/config"
 	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
+	serverworker "github.com/perfect-panel/server/internal/jobs"
 	servernotify "github.com/perfect-panel/server/internal/platform/http/notify"
 	serverresponse "github.com/perfect-panel/server/internal/platform/http/response"
 	servermigrate "github.com/perfect-panel/server/models/migrate"
@@ -38,7 +39,6 @@ import (
 	serversubscribe "github.com/perfect-panel/server/services/subscribe"
 	servertelegram "github.com/perfect-panel/server/services/telegram"
 	serveruserorder "github.com/perfect-panel/server/services/user/order"
-	serverworker "github.com/perfect-panel/server/worker"
 )
 
 func TestPhase1TopLevelPathsExist(t *testing.T) {

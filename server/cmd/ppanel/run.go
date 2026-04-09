@@ -15,12 +15,12 @@ import (
 	"github.com/perfect-panel/server/config"
 	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
 	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
+	worker "github.com/perfect-panel/server/internal/jobs"
 	"github.com/perfect-panel/server/modules/infra/conf"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/orm"
 	"github.com/perfect-panel/server/modules/infra/service"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/worker"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )

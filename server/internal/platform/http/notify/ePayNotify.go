@@ -18,7 +18,7 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment/epay"
 
-	queueType "github.com/perfect-panel/server/worker"
+	queueType "github.com/perfect-panel/server/internal/jobs"
 )
 
 type EPayNotifyLogic struct {

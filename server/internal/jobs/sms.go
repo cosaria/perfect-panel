@@ -1,6 +1,6 @@
 package worker
 
-import "github.com/perfect-panel/server/worker/spec"
+import "github.com/perfect-panel/server/internal/jobs/spec"
 
 const (
 	ForthwithSendSms = spec.ForthwithSendSms

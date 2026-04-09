@@ -2,10 +2,10 @@ package registry
 
 import (
 	"github.com/hibiken/asynq"
-	smslogic "github.com/perfect-panel/server/worker/sms"
-	"github.com/perfect-panel/server/worker/spec"
+	smslogic "github.com/perfect-panel/server/internal/jobs/sms"
+	"github.com/perfect-panel/server/internal/jobs/spec"
 
-	emailLogic "github.com/perfect-panel/server/worker/email"
+	emailLogic "github.com/perfect-panel/server/internal/jobs/email"
 )
 
 type Deps struct {

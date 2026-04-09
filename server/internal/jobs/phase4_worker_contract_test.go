@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/worker/registry"
-	"github.com/perfect-panel/server/worker/task"
+	"github.com/perfect-panel/server/internal/jobs/registry"
+	"github.com/perfect-panel/server/internal/jobs/task"
 )
 
 func TestRegisterHandlersIncludesExchangeRateTask(t *testing.T) {

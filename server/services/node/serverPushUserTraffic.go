@@ -3,15 +3,16 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/hibiken/asynq"
-	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/modules/util/tool"
+	task "github.com/perfect-panel/server/internal/jobs"
 	"github.com/perfect-panel/server/internal/platform/http/response"
 	"github.com/perfect-panel/server/internal/platform/http/types"
-	task "github.com/perfect-panel/server/worker"
+	"github.com/perfect-panel/server/modules/infra/logger"
+	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/pkg/errors"
-	"time"
 )
 
 func ServerPushUserTrafficHandler(deps Deps) func(c *gin.Context) {

@@ -3,8 +3,13 @@ package portal
 import (
 	"context"
 	"encoding/json"
+	"strconv"
+	"time"
+
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/config"
+	queueType "github.com/perfect-panel/server/internal/jobs"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/models/order"
 	"github.com/perfect-panel/server/models/payment"
@@ -17,12 +22,8 @@ import (
 	"github.com/perfect-panel/server/modules/payment/exchangeRate"
 	"github.com/perfect-panel/server/modules/payment/stripe"
 	"github.com/perfect-panel/server/services/report"
-	"github.com/perfect-panel/server/internal/platform/http/types"
-	queueType "github.com/perfect-panel/server/worker"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
-	"strconv"
-	"time"
 )
 
 type PurchaseCheckoutInput struct {

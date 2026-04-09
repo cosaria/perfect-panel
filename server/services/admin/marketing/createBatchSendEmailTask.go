@@ -2,18 +2,19 @@ package marketing
 
 import (
 	"context"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/hibiken/asynq"
+	types2 "github.com/perfect-panel/server/internal/jobs"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 	"github.com/perfect-panel/server/models/task"
 	"github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/internal/platform/http/types"
-	types2 "github.com/perfect-panel/server/worker"
 	"gorm.io/gorm"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type CreateBatchSendEmailTaskInput struct {

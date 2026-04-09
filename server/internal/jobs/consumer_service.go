@@ -3,8 +3,8 @@ package worker
 import (
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/config"
+	"github.com/perfect-panel/server/internal/jobs/registry"
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/worker/registry"
 )
 
 type ConsumerService struct {

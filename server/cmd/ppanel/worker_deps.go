@@ -7,14 +7,14 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
+	emailLogic "github.com/perfect-panel/server/internal/jobs/email"
+	orderLogic "github.com/perfect-panel/server/internal/jobs/order"
+	"github.com/perfect-panel/server/internal/jobs/registry"
+	smslogic "github.com/perfect-panel/server/internal/jobs/sms"
+	"github.com/perfect-panel/server/internal/jobs/subscription"
+	"github.com/perfect-panel/server/internal/jobs/task"
+	"github.com/perfect-panel/server/internal/jobs/traffic"
 	"github.com/perfect-panel/server/models/node"
-	emailLogic "github.com/perfect-panel/server/worker/email"
-	orderLogic "github.com/perfect-panel/server/worker/order"
-	"github.com/perfect-panel/server/worker/registry"
-	smslogic "github.com/perfect-panel/server/worker/sms"
-	"github.com/perfect-panel/server/worker/subscription"
-	"github.com/perfect-panel/server/worker/task"
-	"github.com/perfect-panel/server/worker/traffic"
 )
 
 func newWorkerRegistryDeps(svcCtx *appbootstrap.ServiceContext, live *appruntime.LiveState) registry.Deps {

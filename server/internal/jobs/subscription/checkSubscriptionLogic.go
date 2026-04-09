@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	queue "github.com/perfect-panel/server/worker/spec"
+	queue "github.com/perfect-panel/server/internal/jobs/spec"
 
 	"github.com/perfect-panel/server/modules/infra/logger"
 

@@ -12,10 +12,10 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/hibiken/asynq"
+	"github.com/perfect-panel/server/internal/jobs/spec"
 	"github.com/perfect-panel/server/models/payment"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment/alipay"
-	"github.com/perfect-panel/server/worker/spec"
 )
 
 type AlipayNotifyLogic struct {

@@ -90,21 +90,21 @@ func TestPhase6WorkerNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
 	assertTargetsHaveNoBootstrapBoundaryDependency(t, []string{
-		filepath.Join("..", "worker", "consumer_service.go"),
-		filepath.Join("..", "worker", "scheduler_service.go"),
-		filepath.Join("..", "worker", "email", "sendEmailLogic.go"),
-		filepath.Join("..", "worker", "email", "batchEmailLogic.go"),
-		filepath.Join("..", "worker", "sms", "sendSmsLogic.go"),
-		filepath.Join("..", "worker", "registry", "routes.go"),
-		filepath.Join("..", "worker", "order", "activateOrderLogic.go"),
-		filepath.Join("..", "worker", "order", "deferCloseOrderLogic.go"),
-		filepath.Join("..", "worker", "subscription", "checkSubscriptionLogic.go"),
-		filepath.Join("..", "worker", "task", "quotaLogic.go"),
-		filepath.Join("..", "worker", "task", "rateLogic.go"),
-		filepath.Join("..", "worker", "traffic", "resetTrafficLogic.go"),
-		filepath.Join("..", "worker", "traffic", "serverDataLogic.go"),
-		filepath.Join("..", "worker", "traffic", "trafficStatLogic.go"),
-		filepath.Join("..", "worker", "traffic", "trafficStatisticsLogic.go"),
+		filepath.Join("..", "internal", "jobs", "consumer_service.go"),
+		filepath.Join("..", "internal", "jobs", "scheduler_service.go"),
+		filepath.Join("..", "internal", "jobs", "email", "sendEmailLogic.go"),
+		filepath.Join("..", "internal", "jobs", "email", "batchEmailLogic.go"),
+		filepath.Join("..", "internal", "jobs", "sms", "sendSmsLogic.go"),
+		filepath.Join("..", "internal", "jobs", "registry", "routes.go"),
+		filepath.Join("..", "internal", "jobs", "order", "activateOrderLogic.go"),
+		filepath.Join("..", "internal", "jobs", "order", "deferCloseOrderLogic.go"),
+		filepath.Join("..", "internal", "jobs", "subscription", "checkSubscriptionLogic.go"),
+		filepath.Join("..", "internal", "jobs", "task", "quotaLogic.go"),
+		filepath.Join("..", "internal", "jobs", "task", "rateLogic.go"),
+		filepath.Join("..", "internal", "jobs", "traffic", "resetTrafficLogic.go"),
+		filepath.Join("..", "internal", "jobs", "traffic", "serverDataLogic.go"),
+		filepath.Join("..", "internal", "jobs", "traffic", "trafficStatLogic.go"),
+		filepath.Join("..", "internal", "jobs", "traffic", "trafficStatisticsLogic.go"),
 	})
 }
 

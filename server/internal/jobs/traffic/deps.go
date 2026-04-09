@@ -15,17 +15,17 @@ import (
 )
 
 type Deps struct {
-	DB                    *gorm.DB
-	Redis                 *redis.Client
-	Queue                 *asynq.Client
-	NodeModel             modelnode.Model
-	UserModel             modeluser.Model
-	SubscribeModel        modelsubscribe.Model
-	TrafficLogModel       modeltraffic.Model
-	NodeMultiplierManager func() *modelnode.Manager
+	DB                        *gorm.DB
+	Redis                     *redis.Client
+	Queue                     *asynq.Client
+	NodeModel                 modelnode.Model
+	UserModel                 modeluser.Model
+	SubscribeModel            modelsubscribe.Model
+	TrafficLogModel           modeltraffic.Model
+	NodeMultiplierManager     func() *modelnode.Manager
 	LoadNodeMultiplierManager func(context.Context) (*modelnode.Manager, error)
-	Config                *serverconfig.Config
-	LogModel              modellog.Model
+	Config                    *serverconfig.Config
+	LogModel                  modellog.Model
 }
 
 func (d Deps) currentConfig() serverconfig.Config {

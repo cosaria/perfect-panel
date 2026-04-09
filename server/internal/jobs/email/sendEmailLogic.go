@@ -10,9 +10,9 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 
 	"github.com/hibiken/asynq"
+	"github.com/perfect-panel/server/internal/jobs/spec"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/notify/email"
-	"github.com/perfect-panel/server/worker/spec"
 )
 
 type SendEmailLogic struct {

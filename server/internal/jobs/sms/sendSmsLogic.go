@@ -10,9 +10,9 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/config"
+	"github.com/perfect-panel/server/internal/jobs/spec"
 	"github.com/perfect-panel/server/models/log"
 	"github.com/perfect-panel/server/modules/notify/sms"
-	"github.com/perfect-panel/server/worker/spec"
 )
 
 type SmsSendCount struct {

@@ -10,8 +10,8 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 
 	"github.com/hibiken/asynq"
+	"github.com/perfect-panel/server/internal/jobs/spec"
 	"github.com/perfect-panel/server/models/traffic"
-	"github.com/perfect-panel/server/worker/spec"
 )
 
 //goland:noinspection GoNameStartsWithPackageName
