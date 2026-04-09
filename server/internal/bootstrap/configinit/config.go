@@ -16,7 +16,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/perfect-panel/server/config"
-	"github.com/perfect-panel/server/internal/platform/persistence/migrate"
+	"github.com/perfect-panel/server/internal/platform/persistence/schema"
+	schemarevisions "github.com/perfect-panel/server/internal/platform/persistence/schema/revisions"
+	"github.com/perfect-panel/server/internal/platform/persistence/schema/seed"
 	"github.com/perfect-panel/server/internal/platform/support/conf"
 	"github.com/perfect-panel/server/internal/platform/support/orm"
 	"github.com/perfect-panel/server/internal/platform/support/tool"
@@ -30,6 +32,14 @@ var templateFS embed.FS
 
 var initStatus = make(chan bool)
 var configPath string
+
+func bootstrapInitDatabase(db *gorm.DB, adminEmail, adminPassword string) error {
+	schemarevisions.RegisterEmbedded()
+	if err := schema.Bootstrap(db, schema.SourceEmbedded); err != nil {
+		return err
+	}
+	return seed.Admin(db, adminEmail, adminPassword)
+}
 
 func Config(path string) (chan bool, *http.Server) {
 	// Set the configuration file path
@@ -162,25 +172,11 @@ func handleInitConfig(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", request.MysqlUser, request.MysqlPassword, request.MysqlHost, request.MysqlPort, request.MysqlDatabase)
-	// migrate database
-	if err = migrate.Migrate(dsn).Up(); err != nil {
-		logger.Errorf("[Init Mysql] Migrate failed: %v", err.Error())
+	if err = bootstrapInitDatabase(db, request.AdminEmail, request.AdminPassword); err != nil {
+		logger.Errorf("[Init Mysql] Schema bootstrap failed: %v", err.Error())
 		c.JSON(http.StatusOK, gin.H{
 			"code": 500,
-			"msg":  "Database migration failed",
-			"data": nil,
-		})
-		c.Abort()
-		return
-	}
-
-	// create admin user
-	if err = migrate.CreateAdminUser(request.AdminEmail, request.AdminPassword, db); err != nil {
-		logger.Errorf("[Init Mysql] Create admin user failed: %v", err.Error())
-		c.JSON(http.StatusOK, gin.H{
-			"code": 500,
-			"msg":  "Admin user creation failed",
+			"msg":  "Database bootstrap failed",
 			"data": nil,
 		})
 		c.Abort()
