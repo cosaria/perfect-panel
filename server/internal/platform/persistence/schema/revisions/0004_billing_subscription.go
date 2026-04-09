@@ -15,11 +15,39 @@ import (
 
 type billingSubscriptionRevision struct{}
 
+type legacyUserSubscriptionTable struct {
+	ID          int64      `gorm:"primaryKey"`
+	UserID      int64      `gorm:"index:idx_user_id;not null;comment:User ID"`
+	OrderID     int64      `gorm:"index:idx_order_id;not null;comment:Order ID"`
+	SubscribeID int64      `gorm:"index:idx_subscribe_id;not null;comment:Subscription ID"`
+	StartTime   time.Time  `gorm:"type:datetime;default:CURRENT_TIMESTAMP;not null;comment:Subscription Start Time"`
+	ExpireTime  time.Time  `gorm:"default:NULL;comment:Subscription Expire Time"`
+	FinishedAt  *time.Time `gorm:"default:NULL;comment:Finished Time"`
+	Traffic     int64      `gorm:"default:0;comment:Traffic"`
+	Download    int64      `gorm:"default:0;comment:Download Traffic"`
+	Upload      int64      `gorm:"default:0;comment:Upload Traffic"`
+	Token       string     `gorm:"index:idx_token;unique;type:varchar(255);default:'';comment:Token"`
+	UUID        string     `gorm:"type:varchar(255);unique;index:idx_uuid;default:'';comment:UUID"`
+	Status      uint8      `gorm:"type:tinyint(1);default:0;comment:Subscription Status: 0: Pending 1: Active 2: Finished 3: Expired 4: Deducted 5: stopped"`
+	Note        string     `gorm:"type:varchar(500);default:'';comment:User note for subscription"`
+	CreatedAt   time.Time  `gorm:"<-:create;comment:Creation Time"`
+	UpdatedAt   time.Time  `gorm:"comment:Update Time"`
+}
+
+func (legacyUserSubscriptionTable) TableName() string {
+	return "user_subscribe"
+}
+
 func (billingSubscriptionRevision) Name() string {
 	return schema.RevisionName(4, "billing_subscription")
 }
 
 func (billingSubscriptionRevision) Up(db *gorm.DB) error {
+	if db.Dialector.Name() == "mysql" {
+		if err := db.AutoMigrate(&legacyUserSubscriptionTable{}); err != nil {
+			return err
+		}
+	}
 	if err := db.AutoMigrate(
 		&billing.PaymentGateway{},
 		&billing.PaymentGatewaySecret{},

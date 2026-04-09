@@ -21,7 +21,7 @@ type NodeUsageReport struct {
 	IdempotencyKey  string     `gorm:"type:varchar(255);not null;uniqueIndex:idx_node_usage_reports_idempotency"`
 	AuthStatus      string     `gorm:"type:varchar(50);not null;default:''"`
 	ProcessingState string     `gorm:"type:varchar(50);not null;default:''"`
-	RawPayload      string     `gorm:"type:text;default:''"`
+	RawPayload      string     `gorm:"type:text"`
 	LogCount        int        `gorm:"not null;default:0"`
 	ProcessedAt     *time.Time `gorm:"default:null"`
 	CreatedAt       time.Time  `gorm:"<-:create"`

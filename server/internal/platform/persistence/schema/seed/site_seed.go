@@ -2,6 +2,7 @@ package seed
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/internal/platform/persistence/auth"
@@ -24,18 +25,26 @@ func Site(tx *gorm.DB) error {
 	}
 
 	return tx.Transaction(func(tx *gorm.DB) error {
-		if err := seedAuthMethods(tx); err != nil {
+		authRows := authSeedRows()
+		if err := seedAuthMethods(tx, authRows); err != nil {
 			return err
 		}
-		if err := seedSystemValues(tx); err != nil {
+		if err := seedAuthProviders(tx, authRows); err != nil {
+			return err
+		}
+		systemRows := systemSeedRows()
+		if err := seedSystemValues(tx, systemRows); err != nil {
+			return err
+		}
+		if err := seedNormalizedSystemValues(tx, systemRows); err != nil {
 			return err
 		}
 		return nil
 	})
 }
 
-func seedAuthMethods(tx *gorm.DB) error {
-	rows := []auth.Auth{
+func authSeedRows() []auth.Auth {
+	return []auth.Auth{
 		{Method: "email", Config: mustJSONString(auth.EmailAuthConfig{
 			Platform:                   "smtp",
 			PlatformConfig:             map[string]any{},
@@ -61,7 +70,9 @@ func seedAuthMethods(tx *gorm.DB) error {
 		{Method: "telegram", Config: mustJSONString(auth.TelegramAuthConfig{}), Enabled: boolPtr(false)},
 		{Method: "device", Config: mustJSONString(auth.DeviceConfig{}), Enabled: boolPtr(false)},
 	}
+}
 
+func seedAuthMethods(tx *gorm.DB, rows []auth.Auth) error {
 	for _, row := range rows {
 		if err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&row).Error; err != nil {
 			return err
@@ -70,14 +81,70 @@ func seedAuthMethods(tx *gorm.DB) error {
 	return nil
 }
 
-func seedSystemValues(tx *gorm.DB) error {
-	rows := []systemSeed{
+func seedAuthProviders(tx *gorm.DB, rows []auth.Auth) error {
+	if !tx.Migrator().HasTable(&system.AuthProvider{}) || !tx.Migrator().HasTable(&system.AuthProviderConfig{}) {
+		return nil
+	}
+
+	for _, row := range rows {
+		var legacy auth.Auth
+		if err := tx.Where("method = ?", row.Method).First(&legacy).Error; err != nil {
+			return err
+		}
+
+		var provider system.AuthProvider
+		err := tx.Where("method = ?", legacy.Method).First(&provider).Error
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			provider = system.AuthProvider{
+				ID:      legacy.Id,
+				Method:  legacy.Method,
+				Enabled: legacy.Enabled,
+			}
+			if err := tx.Create(&provider).Error; err != nil {
+				return err
+			}
+		case err != nil:
+			return err
+		default:
+			if err := tx.Model(&provider).Updates(map[string]any{
+				"enabled": legacy.Enabled,
+			}).Error; err != nil {
+				return err
+			}
+		}
+
+		var config system.AuthProviderConfig
+		err = tx.Where("provider_id = ?", provider.ID).First(&config).Error
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			config = system.AuthProviderConfig{
+				ProviderID: provider.ID,
+				Config:     legacy.Config,
+			}
+			if err := tx.Create(&config).Error; err != nil {
+				return err
+			}
+		case err != nil:
+			return err
+		default:
+			if err := tx.Model(&config).Update("config", legacy.Config).Error; err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func systemSeedRows() []systemSeed {
+	return []systemSeed{
 		{Category: "site", Key: "SiteLogo", Value: "/favicon.svg", Type: "string", Desc: "Site Logo"},
 		{Category: "site", Key: "SiteName", Value: "Perfect Panel", Type: "string", Desc: "Site Name"},
 		{Category: "site", Key: "SiteDesc", Value: "PPanel is a pure, professional, and perfect open-source proxy panel tool, designed to be your ideal choice for learning and practical use.", Type: "string", Desc: "Site Description"},
 		{Category: "site", Key: "Host", Value: "", Type: "string", Desc: "Site Host"},
 		{Category: "site", Key: "Keywords", Value: "Perfect Panel,PPanel", Type: "string", Desc: "Site Keywords"},
 		{Category: "site", Key: "CustomHTML", Value: "", Type: "string", Desc: "Custom HTML"},
+		{Category: "site", Key: "WebAD", Value: "false", Type: "bool", Desc: "Enable Web Ad"},
 		{Category: "tos", Key: "TosContent", Value: "Welcome to use Perfect Panel", Type: "string", Desc: "Terms of Service"},
 		{Category: "tos", Key: "PrivacyPolicy", Value: "", Type: "string", Desc: "PrivacyPolicy"},
 		{Category: "subscribe", Key: "SingleModel", Value: "false", Type: "bool", Desc: "是否单订阅模式"},
@@ -113,7 +180,9 @@ func seedSystemValues(tx *gorm.DB) error {
 		{Category: "verify_code", Key: "VerifyCodeInterval", Value: "60", Type: "int", Desc: "Interval of verify code"},
 		{Category: "system", Key: "Version", Value: config.Version, Type: "string", Desc: "System Version"},
 	}
+}
 
+func seedSystemValues(tx *gorm.DB, rows []systemSeed) error {
 	for _, row := range rows {
 		record := system.System{
 			Category: row.Category,
@@ -124,6 +193,79 @@ func seedSystemValues(tx *gorm.DB) error {
 		}
 		if err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&record).Error; err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+func seedNormalizedSystemValues(tx *gorm.DB, rows []systemSeed) error {
+	if !tx.Migrator().HasTable(&system.Setting{}) || !tx.Migrator().HasTable(&system.VerificationPolicy{}) {
+		return nil
+	}
+
+	for _, row := range rows {
+		var legacy system.System
+		if err := tx.Where("`key` = ?", row.Key).First(&legacy).Error; err != nil {
+			return err
+		}
+
+		switch row.Category {
+		case "verify", "verify_code":
+			var policy system.VerificationPolicy
+			err := tx.Where("`key` = ?", legacy.Key).First(&policy).Error
+			switch {
+			case errors.Is(err, gorm.ErrRecordNotFound):
+				policy = system.VerificationPolicy{
+					ID:       legacy.Id,
+					Category: legacy.Category,
+					Key:      legacy.Key,
+					Value:    legacy.Value,
+					Type:     legacy.Type,
+					Desc:     legacy.Desc,
+				}
+				if err := tx.Create(&policy).Error; err != nil {
+					return err
+				}
+			case err != nil:
+				return err
+			default:
+				if err := tx.Model(&policy).Updates(map[string]any{
+					"category": legacy.Category,
+					"value":    legacy.Value,
+					"type":     legacy.Type,
+					"desc":     legacy.Desc,
+				}).Error; err != nil {
+					return err
+				}
+			}
+		default:
+			var setting system.Setting
+			err := tx.Where("`key` = ?", legacy.Key).First(&setting).Error
+			switch {
+			case errors.Is(err, gorm.ErrRecordNotFound):
+				setting = system.Setting{
+					ID:       legacy.Id,
+					Category: legacy.Category,
+					Key:      legacy.Key,
+					Value:    legacy.Value,
+					Type:     legacy.Type,
+					Desc:     legacy.Desc,
+				}
+				if err := tx.Create(&setting).Error; err != nil {
+					return err
+				}
+			case err != nil:
+				return err
+			default:
+				if err := tx.Model(&setting).Updates(map[string]any{
+					"category": legacy.Category,
+					"value":    legacy.Value,
+					"type":     legacy.Type,
+					"desc":     legacy.Desc,
+				}).Error; err != nil {
+					return err
+				}
+			}
 		}
 	}
 	return nil

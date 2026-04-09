@@ -20,6 +20,7 @@ func RegisterEmbedded() {
 		schema.RegisterRevision(billingSubscriptionRevision{})
 		schema.RegisterRevision(asyncTrustAndUsageRevision{})
 		schema.RegisterRevision(contentCleanupRevision{})
+		schema.RegisterRevision(clientApplicationsRevision{})
 	})
 }
 

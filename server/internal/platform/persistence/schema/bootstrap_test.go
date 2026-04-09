@@ -82,6 +82,14 @@ func TestBootstrapSupportsSeedWorkflow(t *testing.T) {
 		t.Fatal("expected site seed to create system rows")
 	}
 
+	var webAd system.System
+	if err := db.Where("`key` = ?", "WebAD").First(&webAd).Error; err != nil {
+		t.Fatalf("expected site seed to create WebAD system row: %v", err)
+	}
+	if webAd.Value != "false" {
+		t.Fatalf("expected WebAD default false, got %q", webAd.Value)
+	}
+
 	var userCount int64
 	if err := db.Model(&user.User{}).Count(&userCount).Error; err != nil {
 		t.Fatalf("count user rows: %v", err)

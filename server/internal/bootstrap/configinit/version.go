@@ -17,6 +17,10 @@ func Migrate(deps Deps) {
 		logger.Errorf("[Migrate] schema bootstrap error: %v", err.Error())
 		panic(err)
 	}
+	if err := schema.ApplyRevisions(deps.DB, schema.SourceEmbedded); err != nil {
+		logger.Errorf("[Migrate] apply revisions error: %v", err.Error())
+		panic(err)
+	}
 	if err := seed.Site(deps.DB); err != nil {
 		logger.Errorf("[Migrate] seed site error: %v", err.Error())
 		panic(err)

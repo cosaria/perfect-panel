@@ -43,7 +43,7 @@ type Subscribe struct {
 	User        User       `gorm:"foreignKey:UserId;references:Id"`
 	OrderId     int64      `gorm:"index:idx_order_id;not null;comment:Order ID"`
 	SubscribeId int64      `gorm:"index:idx_subscribe_id;not null;comment:Subscription ID"`
-	StartTime   time.Time  `gorm:"default:CURRENT_TIMESTAMP(3);not null;comment:Subscription Start Time"`
+	StartTime   time.Time  `gorm:"type:datetime;default:CURRENT_TIMESTAMP;not null;comment:Subscription Start Time"`
 	ExpireTime  time.Time  `gorm:"default:NULL;comment:Subscription Expire Time"`
 	FinishedAt  *time.Time `gorm:"default:NULL;comment:Finished Time"`
 	Traffic     int64      `gorm:"default:0;comment:Traffic"`

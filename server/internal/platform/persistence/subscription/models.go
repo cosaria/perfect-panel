@@ -72,7 +72,7 @@ type SubscriptionEvent struct {
 	ID             int64     `gorm:"primaryKey"`
 	SubscriptionID int64     `gorm:"not null;index"`
 	EventType      string    `gorm:"type:varchar(100);not null;default:''"`
-	Payload        string    `gorm:"type:text;default:''"`
+	Payload        string    `gorm:"type:text"`
 	CreatedAt      time.Time `gorm:"<-:create"`
 	UpdatedAt      time.Time
 }

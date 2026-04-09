@@ -19,6 +19,16 @@ func (catalogNodeRelationsRevision) Name() string {
 }
 
 func (catalogNodeRelationsRevision) Up(db *gorm.DB) error {
+	if db.Dialector.Name() == "mysql" {
+		if err := db.AutoMigrate(
+			&node.Server{},
+			&node.Node{},
+			&subscribe.Group{},
+			&subscribe.Subscribe{},
+		); err != nil {
+			return err
+		}
+	}
 	if err := db.AutoMigrate(
 		&catalog.NodeGroup{},
 		&catalog.NodeGroupNode{},

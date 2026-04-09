@@ -39,7 +39,7 @@ type OrderItem struct {
 	Quantity    int64     `gorm:"not null;default:1"`
 	UnitPrice   int64     `gorm:"not null;default:0"`
 	Amount      int64     `gorm:"not null;default:0"`
-	Snapshot    string    `gorm:"type:text;default:''"`
+	Snapshot    string    `gorm:"type:text"`
 	CreatedAt   time.Time `gorm:"<-:create"`
 	UpdatedAt   time.Time
 }
@@ -54,8 +54,8 @@ type PaymentGateway struct {
 	Platform     string    `gorm:"type:varchar(100);not null;default:''"`
 	Icon         string    `gorm:"type:varchar(255);default:''"`
 	Domain       string    `gorm:"type:varchar(255);default:''"`
-	PublicConfig string    `gorm:"type:text;not null;default:''"`
-	Description  string    `gorm:"type:text;default:''"`
+	PublicConfig string    `gorm:"type:text;not null"`
+	Description  string    `gorm:"type:text"`
 	FeeMode      uint      `gorm:"type:tinyint(1);not null;default:0"`
 	FeePercent   int64     `gorm:"not null;default:0"`
 	FeeAmount    int64     `gorm:"not null;default:0"`
@@ -73,7 +73,7 @@ func (PaymentGateway) TableName() string {
 type PaymentGatewaySecret struct {
 	ID               int64     `gorm:"primaryKey"`
 	PaymentGatewayID int64     `gorm:"not null;uniqueIndex"`
-	SecretConfig     string    `gorm:"type:text;not null;default:''"`
+	SecretConfig     string    `gorm:"type:text;not null"`
 	CreatedAt        time.Time `gorm:"<-:create"`
 	UpdatedAt        time.Time
 }
@@ -89,7 +89,7 @@ type Payment struct {
 	Amount           int64     `gorm:"not null;default:0"`
 	TradeNo          string    `gorm:"type:varchar(255);default:''"`
 	Status           uint8     `gorm:"type:tinyint(1);not null;default:0"`
-	RawPayload       string    `gorm:"type:text;default:''"`
+	RawPayload       string    `gorm:"type:text"`
 	CreatedAt        time.Time `gorm:"<-:create"`
 	UpdatedAt        time.Time
 }
@@ -103,7 +103,7 @@ type PaymentCallback struct {
 	PaymentID    int64     `gorm:"index;not null;default:0"`
 	CallbackType string    `gorm:"type:varchar(100);not null;default:''"`
 	CallbackID   string    `gorm:"type:varchar(255);not null;uniqueIndex"`
-	RawPayload   string    `gorm:"type:text;default:''"`
+	RawPayload   string    `gorm:"type:text"`
 	Status       string    `gorm:"type:varchar(50);not null;default:''"`
 	CreatedAt    time.Time `gorm:"<-:create"`
 	UpdatedAt    time.Time
@@ -118,7 +118,7 @@ type Refund struct {
 	OrderID   int64     `gorm:"index;not null;default:0"`
 	Amount    int64     `gorm:"not null;default:0"`
 	Status    string    `gorm:"type:varchar(50);not null;default:''"`
-	Reason    string    `gorm:"type:text;default:''"`
+	Reason    string    `gorm:"type:text"`
 	CreatedAt time.Time `gorm:"<-:create"`
 	UpdatedAt time.Time
 }

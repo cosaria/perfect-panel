@@ -38,6 +38,9 @@ func bootstrapInitDatabase(db *gorm.DB, adminEmail, adminPassword string) error 
 	if err := schema.Bootstrap(db, schema.SourceEmbedded); err != nil {
 		return err
 	}
+	if err := schema.ApplyRevisions(db, schema.SourceEmbedded); err != nil {
+		return err
+	}
 	return seed.Admin(db, adminEmail, adminPassword)
 }
 

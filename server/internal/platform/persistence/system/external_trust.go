@@ -14,8 +14,8 @@ type ExternalTrustEvent struct {
 	IdempotencyKey  string     `gorm:"type:varchar(255);default:'';index:idx_external_trust_idempotency"`
 	AuthStatus      string     `gorm:"type:varchar(50);not null;default:''"`
 	ProcessingState string     `gorm:"type:varchar(50);not null;default:''"`
-	FailureReason   string     `gorm:"type:text;default:''"`
-	RawPayload      string     `gorm:"type:text;default:''"`
+	FailureReason   string     `gorm:"type:text"`
+	RawPayload      string     `gorm:"type:text"`
 	ProcessedAt     *time.Time `gorm:"default:null"`
 	CreatedAt       time.Time  `gorm:"<-:create"`
 	UpdatedAt       time.Time

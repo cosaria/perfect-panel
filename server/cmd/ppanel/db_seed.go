@@ -25,6 +25,9 @@ var dbSeedCmd = &cobra.Command{
 		if err := schema.Bootstrap(db, dbRevisionSource); err != nil {
 			return err
 		}
+		if err := schema.ApplyRevisions(db, dbRevisionSource); err != nil {
+			return err
+		}
 		if err := seed.Site(db); err != nil {
 			return err
 		}
