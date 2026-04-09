@@ -1,16 +1,14 @@
 package cmd_test
 
 import (
-	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 )
 
-func TestPhase6AuthMethodNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6AuthMethodNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets := []string{
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, []string{
 		filepath.Join("..", "services", "admin", "authMethod", "getAuthMethodConfig.go"),
 		filepath.Join("..", "services", "admin", "authMethod", "getAuthMethodList.go"),
 		filepath.Join("..", "services", "admin", "authMethod", "getEmailPlatform.go"),
@@ -18,250 +16,80 @@ func TestPhase6AuthMethodNoLongerImportsServiceContext(t *testing.T) {
 		filepath.Join("..", "services", "admin", "authMethod", "testEmailSend.go"),
 		filepath.Join("..", "services", "admin", "authMethod", "testSmsSend.go"),
 		filepath.Join("..", "services", "admin", "authMethod", "updateAuthMethodConfig.go"),
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	})
 }
 
-func TestPhase6SystemRuntimeSeamsNoLongerImportServiceContext(t *testing.T) {
+func TestPhase6SystemRuntimeSeamsNoLongerImportBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets, err := filepath.Glob(filepath.Join("..", "services", "admin", "system", "*.go"))
-	if err != nil {
-		t.Fatalf("glob system targets: %v", err)
-	}
+	targets := globPhase6Targets(t, filepath.Join("..", "services", "admin", "system", "*.go"))
 	targets = append(targets, filepath.Join("..", "services", "admin", "tool", "restartSystem.go"))
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, targets)
 }
 
-func TestPhase6AdminLogNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6AdminLogNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets, err := filepath.Glob(filepath.Join("..", "services", "admin", "log", "*.go"))
-	if err != nil {
-		t.Fatalf("glob admin/log targets: %v", err)
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, globPhase6Targets(t, filepath.Join("..", "services", "admin", "log", "*.go")))
 }
 
-func TestPhase6AdminSubscribeNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6AdminSubscribeNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets, err := filepath.Glob(filepath.Join("..", "services", "admin", "subscribe", "*.go"))
-	if err != nil {
-		t.Fatalf("glob admin/subscribe targets: %v", err)
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, globPhase6Targets(t, filepath.Join("..", "services", "admin", "subscribe", "*.go")))
 }
 
-func TestPhase6AdminServerNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6AdminServerNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets, err := filepath.Glob(filepath.Join("..", "services", "admin", "server", "*.go"))
-	if err != nil {
-		t.Fatalf("glob admin/server targets: %v", err)
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, globPhase6Targets(t, filepath.Join("..", "services", "admin", "server", "*.go")))
 }
 
-func TestPhase6AdminPaymentNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6AdminPaymentNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets, err := filepath.Glob(filepath.Join("..", "services", "admin", "payment", "*.go"))
-	if err != nil {
-		t.Fatalf("glob admin/payment targets: %v", err)
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, globPhase6Targets(t, filepath.Join("..", "services", "admin", "payment", "*.go")))
 }
 
-func TestPhase6AdminConsoleNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6AdminConsoleNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets, err := filepath.Glob(filepath.Join("..", "services", "admin", "console", "*.go"))
-	if err != nil {
-		t.Fatalf("glob admin/console targets: %v", err)
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, globPhase6Targets(t, filepath.Join("..", "services", "admin", "console", "*.go")))
 }
 
-func TestPhase6AdminToolNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6AdminToolNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets, err := filepath.Glob(filepath.Join("..", "services", "admin", "tool", "*.go"))
-	if err != nil {
-		t.Fatalf("glob admin/tool targets: %v", err)
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, globPhase6Targets(t, filepath.Join("..", "services", "admin", "tool", "*.go")))
 }
 
-func TestPhase6NotifyNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6NotifyNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets := []string{
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, []string{
 		filepath.Join("..", "services", "notify", "paymentNotify.go"),
 		filepath.Join("..", "services", "notify", "ePayNotify.go"),
 		filepath.Join("..", "services", "notify", "stripeNotify.go"),
 		filepath.Join("..", "services", "notify", "alipayNotify.go"),
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	})
 }
 
-func TestPhase6NodeNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6NodeNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets := []string{
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, []string{
 		filepath.Join("..", "services", "node", "getServerConfig.go"),
 		filepath.Join("..", "services", "node", "getServerUserList.go"),
 		filepath.Join("..", "services", "node", "pushOnlineUsers.go"),
 		filepath.Join("..", "services", "node", "serverPushStatus.go"),
 		filepath.Join("..", "services", "node", "serverPushUserTraffic.go"),
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	})
 }
 
-func TestPhase6WorkerNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6WorkerNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets := []string{
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, []string{
 		filepath.Join("..", "worker", "consumer_service.go"),
 		filepath.Join("..", "worker", "scheduler_service.go"),
 		filepath.Join("..", "worker", "email", "sendEmailLogic.go"),
@@ -277,152 +105,50 @@ func TestPhase6WorkerNoLongerImportsServiceContext(t *testing.T) {
 		filepath.Join("..", "worker", "traffic", "serverDataLogic.go"),
 		filepath.Join("..", "worker", "traffic", "trafficStatLogic.go"),
 		filepath.Join("..", "worker", "traffic", "trafficStatisticsLogic.go"),
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	})
 }
 
-func TestPhase6InitializeNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6InitializeNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets := []string{
-		filepath.Join("..", "initialize", "currency.go"),
-		filepath.Join("..", "initialize", "device.go"),
-		filepath.Join("..", "initialize", "email.go"),
-		filepath.Join("..", "initialize", "init.go"),
-		filepath.Join("..", "initialize", "invite.go"),
-		filepath.Join("..", "initialize", "mobile.go"),
-		filepath.Join("..", "initialize", "node.go"),
-		filepath.Join("..", "initialize", "oauth.go"),
-		filepath.Join("..", "initialize", "register.go"),
-		filepath.Join("..", "initialize", "site.go"),
-		filepath.Join("..", "initialize", "subscribe.go"),
-		filepath.Join("..", "initialize", "telegram.go"),
-		filepath.Join("..", "initialize", "verify.go"),
-		filepath.Join("..", "initialize", "version.go"),
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, []string{
+		filepath.Join("..", "internal", "bootstrap", "configinit", "currency.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "device.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "email.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "init.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "invite.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "mobile.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "node.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "oauth.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "register.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "site.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "subscribe.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "telegram.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "verify.go"),
+		filepath.Join("..", "internal", "bootstrap", "configinit", "version.go"),
+	})
 }
 
-func TestPhase6AdminMarketingNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6AdminMarketingNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets, err := filepath.Glob(filepath.Join("..", "services", "admin", "marketing", "*.go"))
-	if err != nil {
-		t.Fatalf("glob admin/marketing targets: %v", err)
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, globPhase6Targets(t, filepath.Join("..", "services", "admin", "marketing", "*.go")))
 }
 
-func TestPhase6AdminApplicationNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6AdminApplicationNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets, err := filepath.Glob(filepath.Join("..", "services", "admin", "application", "*.go"))
-	if err != nil {
-		t.Fatalf("glob admin/application targets: %v", err)
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, globPhase6Targets(t, filepath.Join("..", "services", "admin", "application", "*.go")))
 }
 
-func TestPhase6AdminTicketNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6AdminTicketNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets, err := filepath.Glob(filepath.Join("..", "services", "admin", "ticket", "*.go"))
-	if err != nil {
-		t.Fatalf("glob admin/ticket targets: %v", err)
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, globPhase6Targets(t, filepath.Join("..", "services", "admin", "ticket", "*.go")))
 }
 
-func TestPhase6AdminOrderNoLongerImportsServiceContext(t *testing.T) {
+func TestPhase6AdminOrderNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
-	targets, err := filepath.Glob(filepath.Join("..", "services", "admin", "order", "*.go"))
-	if err != nil {
-		t.Fatalf("glob admin/order targets: %v", err)
-	}
-
-	for _, target := range targets {
-		content, err := os.ReadFile(target)
-		if err != nil {
-			t.Fatalf("read %s: %v", target, err)
-		}
-
-		source := string(content)
-		if strings.Contains(source, "*svc.ServiceContext") {
-			t.Fatalf("%s still depends on *svc.ServiceContext", target)
-		}
-		if strings.Contains(source, "\"github.com/perfect-panel/server/svc\"") {
-			t.Fatalf("%s still imports server/svc", target)
-		}
-	}
+	assertTargetsHaveNoBootstrapBoundaryDependency(t, globPhase6Targets(t, filepath.Join("..", "services", "admin", "order", "*.go")))
 }
