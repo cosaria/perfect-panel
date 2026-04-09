@@ -35,6 +35,7 @@ import (
 	serverrules "github.com/perfect-panel/server/internal/platform/support/rules"
 	serverservice "github.com/perfect-panel/server/internal/platform/support/service"
 	serverthreading "github.com/perfect-panel/server/internal/platform/support/threading"
+	servertraffic "github.com/perfect-panel/server/internal/platform/support/traffic"
 	servertool "github.com/perfect-panel/server/internal/platform/support/tool"
 	servertrace "github.com/perfect-panel/server/internal/platform/support/trace"
 	serverturnstile "github.com/perfect-panel/server/internal/platform/support/verify/turnstile"
@@ -74,6 +75,7 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	wrappedErr := servererrorx.Wrap(errors.New("inner"), "outer")
 	logField := serverlogger.Field("phase", 2)
 	parsedDSN := serverorm.ParseDSN("user:pass@tcp(localhost:3306)/ppanel")
+	trafficValue := servertraffic.Convert(1000*1000, servertraffic.Mb)
 
 	if servermigrate.NoChange == nil {
 		t.Fatal("expected migrate package to expose NoChange")
@@ -157,6 +159,10 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 
 	if successPayload == nil || successPayload.Code != 200 {
 		t.Fatal("expected internal/platform/http/response package to expose HTTP response helpers")
+	}
+
+	if trafficValue != 1 {
+		t.Fatal("expected internal/platform/support/traffic package to expose convert helpers")
 	}
 
 	if versionNumber < 0 {
