@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import { useRouter } from "@/src/compat/app-navigation";
+import { useRouter } from "@/utils/router";
 import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { navs } from "@/config/navs";
 import useGlobalStore from "@/config/use-global";

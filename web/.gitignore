@@ -1,10 +1,10 @@
 node_modules
 .turbo
-apps/*/.next
 apps/*/.turbo
 apps/*/dist
-apps/*/out
 coverage
+playwright-report
+test-results
 .env
 .env.local
 .env.development.local

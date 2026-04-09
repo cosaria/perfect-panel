@@ -27,6 +27,7 @@
     "openapi:client": "turbo run openapi",
     "openapi:lint": "bunx redocly lint --config ../redocly.yaml ../docs/openapi/*.json",
     "openapi": "bun run openapi:spec && bun run openapi:lint && bun run openapi:client && bun run format",
+    "smoke": "playwright test --config playwright.config.ts",
     "typecheck": "turbo run check-types",
     "update:deps": "./scripts/update-deps.sh",
     "update:shadcn": "./scripts/update-shadcn-ui.sh && bun run format"
@@ -112,6 +113,7 @@
     "zod": "^4.1.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.1",
     "@biomejs/biome": "^2.4.9",
     "@hey-api/openapi-ts": "^0.95.0",
     "@redocly/cli": "^2.25.4",

@@ -12,7 +12,7 @@ import {
 import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
 import { unitConversion } from "@workspace/ui/utils";
 import { LoaderCircle } from "lucide-react";
-import { useRouter } from "@/src/compat/app-navigation";
+import { useRouter } from "@/utils/router";
 import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useState, useTransition } from "react";
 import useGlobalStore from "@/config/use-global";

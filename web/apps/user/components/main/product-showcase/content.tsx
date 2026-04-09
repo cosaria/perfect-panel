@@ -6,7 +6,7 @@ import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { cn } from "@workspace/ui/lib/utils";
 import { motion } from "framer-motion";
-import Link from "@/src/compat/app-link";
+import Link from "@/components/app-link";
 import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import type { ReactNode } from "react";
 import { Display } from "@/components/display";

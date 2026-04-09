@@ -1,8 +1,8 @@
 import { isBrowser } from "@workspace/ui/utils";
 import { UAParser } from "ua-parser-js";
 import Cookies from "universal-cookie";
-import { locales, NEXT_PUBLIC_DEFAULT_LANGUAGE } from "@/config/constants";
-import { dispatchUserLocaleChange } from "@/src/compat/runtime-intl";
+import { locales, VITE_DEFAULT_LANGUAGE } from "@/config/constants";
+import { dispatchUserLocaleChange } from "@/src/runtime-intl";
 
 const cookies = new Cookies(null, {
   path: "/",
@@ -17,7 +17,7 @@ export function getLocale() {
   const cookieLocale = cookies.get("locale") || "";
   const storedLocale =
     typeof window !== "undefined" ? window.localStorage?.getItem("locale") || "" : "";
-  const locale = cookieLocale || storedLocale || defaultLocale || NEXT_PUBLIC_DEFAULT_LANGUAGE;
+  const locale = cookieLocale || storedLocale || defaultLocale || VITE_DEFAULT_LANGUAGE;
   return locale;
 }
 

@@ -1,6 +1,6 @@
 import { extractDomain } from "@workspace/ui/utils";
 import { create } from "zustand";
-import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
+import { VITE_API_URL, VITE_SITE_URL } from "@/config/constants";
 import type { User } from "@/services/admin-api/types.gen";
 import type { GetGlobalConfigResponse } from "@/services/common-api/types.gen";
 
@@ -91,7 +91,7 @@ export const useGlobalStore = create<GlobalStore>((set, get) => ({
     const { pan_domain, subscribe_domain, subscribe_path } = get().common.subscribe || {};
     const domains = subscribe_domain
       ? subscribe_domain.split("\n")
-      : [extractDomain(NEXT_PUBLIC_API_URL || NEXT_PUBLIC_SITE_URL || "", pan_domain)];
+      : [extractDomain(VITE_API_URL || VITE_SITE_URL || "", pan_domain)];
 
     return domains.map((domain) => {
       if (pan_domain) {

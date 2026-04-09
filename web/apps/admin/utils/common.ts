@@ -1,8 +1,8 @@
 import { isBrowser } from "@workspace/ui/utils";
 import { intlFormat } from "date-fns";
 import Cookies from "universal-cookie";
-import { locales, NEXT_PUBLIC_ADMIN_PATH, NEXT_PUBLIC_DEFAULT_LANGUAGE } from "@/config/constants";
-import { dispatchAdminLocaleChange } from "@/src/compat/runtime-intl";
+import { locales, VITE_ADMIN_PATH, VITE_DEFAULT_LANGUAGE } from "@/config/constants";
+import { dispatchAdminLocaleChange } from "@/src/runtime-intl";
 import { ADMIN_HOME_PATH, stripAdminPath, toAdminPath } from "./admin-path";
 
 const cookies = new Cookies(null, {
@@ -18,7 +18,7 @@ export function getLocale() {
   const cookieLocale = cookies.get("locale") || "";
   const storedLocale =
     typeof window !== "undefined" ? window.localStorage?.getItem("locale") || "" : "";
-  const locale = cookieLocale || storedLocale || defaultLocale || NEXT_PUBLIC_DEFAULT_LANGUAGE;
+  const locale = cookieLocale || storedLocale || defaultLocale || VITE_DEFAULT_LANGUAGE;
   return locale;
 }
 
@@ -55,7 +55,7 @@ export function Logout() {
   if (!isBrowser()) return;
   cookies.remove("Authorization");
   const pathname = location.pathname;
-  if (!["", "/", NEXT_PUBLIC_ADMIN_PATH].includes(pathname)) {
+  if (!["", "/", VITE_ADMIN_PATH].includes(pathname)) {
     setRedirectUrl(location.pathname);
     location.href = toAdminPath("/");
   }

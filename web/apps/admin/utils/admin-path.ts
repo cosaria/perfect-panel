@@ -1,4 +1,4 @@
-import { NEXT_PUBLIC_ADMIN_PATH } from "@/config/constants";
+import { VITE_ADMIN_PATH } from "@/config/constants";
 
 export const ADMIN_HOME_PATH = "/dashboard/workplace";
 
@@ -16,7 +16,7 @@ export function normalizeAdminPath(value?: string) {
   return normalized === "/" ? "/admin" : normalized;
 }
 
-export function stripAdminPath(pathname: string, adminPath: string = NEXT_PUBLIC_ADMIN_PATH) {
+export function stripAdminPath(pathname: string, adminPath: string = VITE_ADMIN_PATH) {
   const normalizedAdminPath = normalizeAdminPath(adminPath);
   if (!hasPathPrefix(pathname, normalizedAdminPath)) {
     return pathname || "/";
@@ -26,7 +26,7 @@ export function stripAdminPath(pathname: string, adminPath: string = NEXT_PUBLIC
   return stripped || "/";
 }
 
-export function toAdminPath(pathname: string, adminPath: string = NEXT_PUBLIC_ADMIN_PATH) {
+export function toAdminPath(pathname: string, adminPath: string = VITE_ADMIN_PATH) {
   const normalizedAdminPath = normalizeAdminPath(adminPath);
   const normalizedPathname = pathname.trim() || "/";
 
@@ -60,7 +60,7 @@ export function toAdminPath(pathname: string, adminPath: string = NEXT_PUBLIC_AD
 
 export function canonicalizeAdminBrowserPath(
   pathname: string,
-  adminPath: string = NEXT_PUBLIC_ADMIN_PATH,
+  adminPath: string = VITE_ADMIN_PATH,
 ) {
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     return toAdminPath(pathname, adminPath);

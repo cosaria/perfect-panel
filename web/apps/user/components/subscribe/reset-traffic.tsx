@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
 import { LoaderCircle } from "lucide-react";
-import { useRouter } from "@/src/compat/app-navigation";
+import { useRouter } from "@/utils/router";
 import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState, useTransition } from "react";
 import { Display } from "@/components/display";

@@ -1,4 +1,4 @@
-import { locales, NEXT_PUBLIC_DEFAULT_LANGUAGE } from "@/config/constants";
+import { locales, VITE_DEFAULT_LANGUAGE } from "@/config/constants";
 import enMessages from "./en-US";
 import zhMessages from "./zh-CN";
 
@@ -30,7 +30,7 @@ export function getClientLocale(): string {
       return browserLang;
     }
   }
-  return NEXT_PUBLIC_DEFAULT_LANGUAGE;
+  return VITE_DEFAULT_LANGUAGE;
 }
 
 export function getMessages(locale: string): Record<string, unknown> {

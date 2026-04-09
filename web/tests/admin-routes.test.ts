@@ -57,7 +57,10 @@ function collectNavUrls() {
   return urls;
 }
 
-function findRoute(routeObjects: RouteObject[], matcher: (route: RouteObject) => boolean): RouteObject | null {
+function findRoute(
+  routeObjects: RouteObject[],
+  matcher: (route: RouteObject) => boolean,
+): RouteObject | null {
   for (const route of routeObjects) {
     if (matcher(route)) {
       return route;
@@ -80,7 +83,9 @@ function resolveRouteElementProps(element: RouteObject["element"]) {
   }
 
   if (typeof element.type === "function") {
-    const rendered = element.type(element.props as object) as { props?: Record<string, unknown> } | null;
+    const rendered = element.type(element.props as object) as {
+      props?: Record<string, unknown>;
+    } | null;
     return rendered?.props ?? null;
   }
 
@@ -116,7 +121,8 @@ describe("admin routes", () => {
 
   test("renders an explicit 404 page for unknown dashboard routes", () => {
     const dashboardRoute = findRoute(routes, (route) => route.path === "dashboard");
-    const dashboardNotFoundRoute = dashboardRoute?.children?.find((route) => route.path === "*") ?? null;
+    const dashboardNotFoundRoute =
+      dashboardRoute?.children?.find((route) => route.path === "*") ?? null;
 
     expect(dashboardNotFoundRoute).not.toBeNull();
     const props = resolveRouteElementProps(dashboardNotFoundRoute?.element);

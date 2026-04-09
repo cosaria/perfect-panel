@@ -1,28 +1,28 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { type ComponentType, type LazyExoticComponent, lazy, Suspense } from "react";
 import { Link, Outlet } from "react-router-dom";
-import DashboardLayout from "@/app/(main)/(user)/layout";
-import MainLayout from "@/app/(main)/layout";
+import DashboardLayout from "@/src/pages/(main)/(user)/layout";
+import MainLayout from "@/src/pages/(main)/layout";
 import AppShell from "./app-shell";
 
-const AffiliatePage = lazy(() => import("@/app/(main)/(user)/affiliate/page"));
-const AnnouncementPage = lazy(() => import("@/app/(main)/(user)/announcement/page"));
-const DocumentPage = lazy(() => import("@/app/(main)/(user)/document/page"));
-const HomePage = lazy(() => import("@/app/(main)/page"));
-const OrderPage = lazy(() => import("@/app/(main)/(user)/order/page"));
-const PaymentPage = lazy(() => import("@/app/(main)/(user)/payment/page"));
-const ProfilePage = lazy(() => import("@/app/(main)/(user)/profile/page"));
-const SubscribePage = lazy(() => import("@/app/(main)/(user)/subscribe/page"));
-const TicketPage = lazy(() => import("@/app/(main)/(user)/ticket/page"));
-const WalletPage = lazy(() => import("@/app/(main)/(user)/wallet/page"));
-const PrivacyPolicyPage = lazy(() => import("@/app/(main)/privacy-policy/page"));
-const PurchasingOrderPage = lazy(() => import("@/app/(main)/purchasing/order/page"));
-const PurchasingPage = lazy(() => import("@/app/(main)/purchasing/page"));
-const TosPage = lazy(() => import("@/app/(main)/tos/page"));
-const AuthPage = lazy(() => import("@/app/auth/page"));
-const BindPage = lazy(() => import("@/app/bind/[platform]/page"));
-const DashboardPage = lazy(() => import("@/app/(main)/(user)/dashboard/page"));
-const OAuthPage = lazy(() => import("@/app/oauth/[platform]/page"));
+const AffiliatePage = lazy(() => import("@/src/pages/(main)/(user)/affiliate/page"));
+const AnnouncementPage = lazy(() => import("@/src/pages/(main)/(user)/announcement/page"));
+const DocumentPage = lazy(() => import("@/src/pages/(main)/(user)/document/page"));
+const HomePage = lazy(() => import("@/src/pages/(main)/page"));
+const OrderPage = lazy(() => import("@/src/pages/(main)/(user)/order/page"));
+const PaymentPage = lazy(() => import("@/src/pages/(main)/(user)/payment/page"));
+const ProfilePage = lazy(() => import("@/src/pages/(main)/(user)/profile/page"));
+const SubscribePage = lazy(() => import("@/src/pages/(main)/(user)/subscribe/page"));
+const TicketPage = lazy(() => import("@/src/pages/(main)/(user)/ticket/page"));
+const WalletPage = lazy(() => import("@/src/pages/(main)/(user)/wallet/page"));
+const PrivacyPolicyPage = lazy(() => import("@/src/pages/(main)/privacy-policy/page"));
+const PurchasingOrderPage = lazy(() => import("@/src/pages/(main)/purchasing/order/page"));
+const PurchasingPage = lazy(() => import("@/src/pages/(main)/purchasing/page"));
+const TosPage = lazy(() => import("@/src/pages/(main)/tos/page"));
+const AuthPage = lazy(() => import("@/src/pages/auth/page"));
+const BindPage = lazy(() => import("@/src/pages/bind/[platform]/page"));
+const DashboardPage = lazy(() => import("@/src/pages/(main)/(user)/dashboard/page"));
+const OAuthPage = lazy(() => import("@/src/pages/oauth/[platform]/page"));
 
 function MainShell() {
   return (

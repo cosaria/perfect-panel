@@ -41,6 +41,18 @@ describe("admin build chain", () => {
     const webGitignore = readRepoFile("web/.gitignore");
 
     expect(webGitignore).toContain("apps/*/dist");
+    expect(webGitignore).not.toContain("apps/*/.next");
+    expect(webGitignore).not.toContain("apps/*/out");
+  });
+
+  test("uses vite dist in the compatibility web dockerfile", () => {
+    const compatibilityDockerfile = readRepoFile("docker/web.Dockerfile");
+
+    expect(compatibilityDockerfile).toContain(
+      "COPY --from=builder /app/web/apps/${APP_NAME}/dist /usr/share/nginx/html",
+    );
+    expect(compatibilityDockerfile).not.toContain("/out ");
+    expect(compatibilityDockerfile).not.toContain("Next.js");
   });
 
   test("declares vite dist as the only frontend build output to turbo", () => {

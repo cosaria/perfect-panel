@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Label } from "@workspace/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/radio-group";
 import { cn } from "@workspace/ui/lib/utils";
-import Image from "@/src/compat/app-image";
+import Image from "@/components/app-image";
 import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import type React from "react";
 import { memo } from "react";

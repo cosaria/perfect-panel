@@ -12,7 +12,7 @@ import {
 } from "@workspace/ui/components/dialog";
 import { Separator } from "@workspace/ui/components/separator";
 import { LoaderCircle } from "lucide-react";
-import { useRouter } from "@/src/compat/app-navigation";
+import { useRouter } from "@/utils/router";
 import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import CouponInput from "@/components/subscribe/coupon-input";

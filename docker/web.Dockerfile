@@ -1,4 +1,4 @@
-# Unified multi-stage Dockerfile for Next.js apps (admin / user)
+# Unified multi-stage Dockerfile for Vite apps (admin / user)
 # Usage:
 #   docker build --build-arg APP_NAME=admin -f docker/web.Dockerfile .
 #   docker build --build-arg APP_NAME=user  -f docker/web.Dockerfile .
@@ -39,20 +39,18 @@ COPY web/packages/ ./packages/
 COPY web/apps/${APP_NAME}/ ./apps/${APP_NAME}/
 COPY web/package.json web/turbo.json web/biome.json ./
 
-ENV NEXT_TELEMETRY_DISABLED=1
-
 RUN bun install --frozen-lockfile
 RUN cd apps/${APP_NAME} && bun run build
 
 # ---------------------------------------------------------------------------
-# Stage 3 — Minimal production runtime (static export via Nginx)
+# Stage 3 — Minimal production runtime (Vite static assets via Nginx)
 # ---------------------------------------------------------------------------
 FROM nginx:1.27-alpine AS runner
 
 ARG APP_NAME
 RUN test -n "$APP_NAME" || (echo "ERROR: APP_NAME build arg is required (admin | user)" && exit 1)
 
-COPY --from=builder /app/web/apps/${APP_NAME}/out /usr/share/nginx/html
+COPY --from=builder /app/web/apps/${APP_NAME}/dist /usr/share/nginx/html
 
 RUN set -eu; \
   if [ "$APP_NAME" = "admin" ]; then \

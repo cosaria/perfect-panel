@@ -1,13 +1,13 @@
 import { buildApiBaseUrl, isBrowser } from "@workspace/ui/utils";
 import { toast } from "sonner";
-import { NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL } from "@/config/constants";
+import { VITE_API_URL, VITE_SITE_URL } from "@/config/constants";
 import { client as commonClient } from "@/services/common-api/client.gen";
 import { client as userClient } from "@/services/user-api/client.gen";
 import { getAuthorization, Logout } from "./common";
 
 function setupClient(client: typeof userClient, serverPrefix: string) {
   client.setConfig({
-    baseUrl: buildApiBaseUrl(NEXT_PUBLIC_API_URL, NEXT_PUBLIC_SITE_URL, serverPrefix),
+    baseUrl: buildApiBaseUrl(VITE_API_URL, VITE_SITE_URL, serverPrefix),
   });
 
   client.interceptors.request.use((request) => {

@@ -5,8 +5,8 @@ import { getLangDir } from "@workspace/ui/hooks/use-lang-dir";
 import { type ReactNode, useEffect } from "react";
 import Providers from "@/components/providers";
 import { getClientLocale, getMessages } from "@/locales/client";
-import { NextIntlClientProvider, useLocale } from "./compat/runtime-intl";
-import RouterTopLoader from "./compat/router-top-loader";
+import { NextIntlClientProvider, useLocale } from "./runtime-intl";
+import RouterTopLoader from "./router-top-loader";
 
 function DocumentLocaleSync() {
   const locale = useLocale();

@@ -1,6 +1,6 @@
-import { NEXT_PUBLIC_ADMIN_PATH } from "@/config/constants";
+import { VITE_ADMIN_PATH } from "@/config/constants";
 import { normalizeAdminPath } from "@/utils/admin-path";
 
 export function getAdminRouterBasename() {
-  return normalizeAdminPath(NEXT_PUBLIC_ADMIN_PATH);
+  return normalizeAdminPath(VITE_ADMIN_PATH);
 }

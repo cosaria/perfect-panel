@@ -29,6 +29,9 @@ jobs:
       - name: Install web dependencies
         run: cd web && bun install --frozen-lockfile
 
+      - name: Install Playwright browser
+        run: cd web && bunx playwright install --with-deps chromium
+
       - name: Run repo contracts
         run: bun run repo:contracts
 

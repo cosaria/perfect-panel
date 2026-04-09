@@ -86,5 +86,6 @@ export function useLocale() {
 export function useTranslations(namespace?: string) {
   const { t } = useTranslation();
 
-  return (key: string, options?: TranslatorOptions) => t(joinTranslationKey(namespace, key), options);
+  return (key: string, options?: TranslatorOptions) =>
+    t(joinTranslationKey(namespace, key), options);
 }

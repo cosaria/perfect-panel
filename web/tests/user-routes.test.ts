@@ -40,7 +40,10 @@ function collectRoutePaths(routeObjects: RouteObject[], parentPath = ""): Set<st
   return paths;
 }
 
-function findRoute(routeObjects: RouteObject[], matcher: (route: RouteObject) => boolean): RouteObject | null {
+function findRoute(
+  routeObjects: RouteObject[],
+  matcher: (route: RouteObject) => boolean,
+): RouteObject | null {
   for (const route of routeObjects) {
     if (matcher(route)) {
       return route;
@@ -63,7 +66,9 @@ function resolveRouteElementProps(element: RouteObject["element"]) {
   }
 
   if (typeof element.type === "function") {
-    const rendered = element.type(element.props as object) as { props?: Record<string, unknown> } | null;
+    const rendered = element.type(element.props as object) as {
+      props?: Record<string, unknown>;
+    } | null;
     return rendered?.props ?? null;
   }
 
@@ -123,9 +128,11 @@ describe("user routes", () => {
     const { routes } = (await import("../apps/user/src/routes")) as { routes: RouteObject[] };
     const dashboardShellRoute = findRoute(
       routes,
-      (route) => route.element !== undefined && route.children?.some((child) => child.path === "dashboard"),
+      (route) =>
+        route.element !== undefined && route.children?.some((child) => child.path === "dashboard"),
     );
-    const dashboardNotFoundRoute = dashboardShellRoute?.children?.find((route) => route.path === "*") ?? null;
+    const dashboardNotFoundRoute =
+      dashboardShellRoute?.children?.find((route) => route.path === "*") ?? null;
 
     expect(dashboardNotFoundRoute).not.toBeNull();
     const props = resolveRouteElementProps(dashboardNotFoundRoute?.element);

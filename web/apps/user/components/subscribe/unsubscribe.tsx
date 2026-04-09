@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
-import { useRouter } from "@/src/compat/app-navigation";
+import { useRouter } from "@/utils/router";
 import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useState } from "react";
 import { toast } from "sonner";

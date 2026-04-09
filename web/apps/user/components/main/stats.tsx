@@ -8,9 +8,9 @@ import { motion } from "framer-motion";
 import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 import {
-  NEXT_PUBLIC_HOME_LOCATION_COUNT,
-  NEXT_PUBLIC_HOME_SERVER_COUNT,
-  NEXT_PUBLIC_HOME_USER_COUNT,
+  VITE_HOME_LOCATION_COUNT,
+  VITE_HOME_SERVER_COUNT,
+  VITE_HOME_USER_COUNT,
 } from "@/config/constants";
 
 export function Stats() {
@@ -19,17 +19,17 @@ export function Stats() {
   const list = [
     {
       name: t("users"),
-      number: NEXT_PUBLIC_HOME_USER_COUNT,
+      number: VITE_HOME_USER_COUNT,
       icon: <DotLottieReact className="size-24" data={UsersLottie} autoplay loop />,
     },
     {
       name: t("servers"),
-      number: NEXT_PUBLIC_HOME_SERVER_COUNT,
+      number: VITE_HOME_SERVER_COUNT,
       icon: <DotLottieReact className="size-24" data={ServersLottie} autoplay loop />,
     },
     {
       name: t("locations"),
-      number: NEXT_PUBLIC_HOME_LOCATION_COUNT,
+      number: VITE_HOME_LOCATION_COUNT,
       icon: <DotLottieReact className="size-24" data={LocationsLittie} autoplay loop />,
     },
   ];

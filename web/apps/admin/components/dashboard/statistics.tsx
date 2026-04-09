@@ -17,7 +17,7 @@ import { formatBytes } from "@workspace/ui/utils";
 import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts";
-import { UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
+import { UserSubscribeDetail } from "@/src/pages/dashboard/user/user-detail";
 import { AdminLink } from "@/components/admin-link";
 import { queryServerTotalData, queryTicketWaitReply } from "@/services/admin-api/sdk.gen";
 import { Empty } from "../empty";

@@ -1,38 +1,40 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { type ComponentType, type LazyExoticComponent, lazy, Suspense } from "react";
 import { Link, Outlet } from "react-router-dom";
-import DashboardLayout from "@/app/dashboard/layout";
+import DashboardLayout from "@/src/pages/dashboard/layout";
 import { ADMIN_HOME_PATH } from "@/utils/admin-path";
 import AppShell from "./app-shell";
 
-const AuthPage = lazy(() => import("@/app/(auth)/page"));
-const AnnouncementPage = lazy(() => import("@/app/dashboard/announcement/page"));
-const AuthControlPage = lazy(() => import("@/app/dashboard/auth-control/page"));
-const CouponPage = lazy(() => import("@/app/dashboard/coupon/page"));
-const DashboardPage = lazy(() => import("@/app/dashboard/page"));
-const DocumentPage = lazy(() => import("@/app/dashboard/document/page"));
-const BalanceLogPage = lazy(() => import("@/app/dashboard/log/balance/page"));
-const CommissionLogPage = lazy(() => import("@/app/dashboard/log/commission/page"));
-const EmailLogPage = lazy(() => import("@/app/dashboard/log/email/page"));
-const GiftLogPage = lazy(() => import("@/app/dashboard/log/gift/page"));
-const LoginLogPage = lazy(() => import("@/app/dashboard/log/login/page"));
-const MobileLogPage = lazy(() => import("@/app/dashboard/log/mobile/page"));
-const RegisterLogPage = lazy(() => import("@/app/dashboard/log/register/page"));
-const ResetSubscribeLogPage = lazy(() => import("@/app/dashboard/log/reset-subscribe/page"));
-const ServerTrafficLogPage = lazy(() => import("@/app/dashboard/log/server-traffic/page"));
-const SubscribeLogPage = lazy(() => import("@/app/dashboard/log/subscribe/page"));
-const SubscribeTrafficLogPage = lazy(() => import("@/app/dashboard/log/subscribe-traffic/page"));
-const TrafficDetailsLogPage = lazy(() => import("@/app/dashboard/log/traffic-details/page"));
-const MarketingPage = lazy(() => import("@/app/dashboard/marketing/page"));
-const NodesPage = lazy(() => import("@/app/dashboard/nodes/page"));
-const OrderPage = lazy(() => import("@/app/dashboard/order/page"));
-const PaymentPage = lazy(() => import("@/app/dashboard/payment/page"));
-const ProductPage = lazy(() => import("@/app/dashboard/product/page"));
-const ServersPage = lazy(() => import("@/app/dashboard/servers/page"));
-const SubscribePage = lazy(() => import("@/app/dashboard/subscribe/page"));
-const SystemPage = lazy(() => import("@/app/dashboard/system/page"));
-const TicketPage = lazy(() => import("@/app/dashboard/ticket/page"));
-const UserPage = lazy(() => import("@/app/dashboard/user/page"));
+const AuthPage = lazy(() => import("@/src/pages/(auth)/page"));
+const AnnouncementPage = lazy(() => import("@/src/pages/dashboard/announcement/page"));
+const AuthControlPage = lazy(() => import("@/src/pages/dashboard/auth-control/page"));
+const CouponPage = lazy(() => import("@/src/pages/dashboard/coupon/page"));
+const DashboardPage = lazy(() => import("@/src/pages/dashboard/page"));
+const DocumentPage = lazy(() => import("@/src/pages/dashboard/document/page"));
+const BalanceLogPage = lazy(() => import("@/src/pages/dashboard/log/balance/page"));
+const CommissionLogPage = lazy(() => import("@/src/pages/dashboard/log/commission/page"));
+const EmailLogPage = lazy(() => import("@/src/pages/dashboard/log/email/page"));
+const GiftLogPage = lazy(() => import("@/src/pages/dashboard/log/gift/page"));
+const LoginLogPage = lazy(() => import("@/src/pages/dashboard/log/login/page"));
+const MobileLogPage = lazy(() => import("@/src/pages/dashboard/log/mobile/page"));
+const RegisterLogPage = lazy(() => import("@/src/pages/dashboard/log/register/page"));
+const ResetSubscribeLogPage = lazy(() => import("@/src/pages/dashboard/log/reset-subscribe/page"));
+const ServerTrafficLogPage = lazy(() => import("@/src/pages/dashboard/log/server-traffic/page"));
+const SubscribeLogPage = lazy(() => import("@/src/pages/dashboard/log/subscribe/page"));
+const SubscribeTrafficLogPage = lazy(
+  () => import("@/src/pages/dashboard/log/subscribe-traffic/page"),
+);
+const TrafficDetailsLogPage = lazy(() => import("@/src/pages/dashboard/log/traffic-details/page"));
+const MarketingPage = lazy(() => import("@/src/pages/dashboard/marketing/page"));
+const NodesPage = lazy(() => import("@/src/pages/dashboard/nodes/page"));
+const OrderPage = lazy(() => import("@/src/pages/dashboard/order/page"));
+const PaymentPage = lazy(() => import("@/src/pages/dashboard/payment/page"));
+const ProductPage = lazy(() => import("@/src/pages/dashboard/product/page"));
+const ServersPage = lazy(() => import("@/src/pages/dashboard/servers/page"));
+const SubscribePage = lazy(() => import("@/src/pages/dashboard/subscribe/page"));
+const SystemPage = lazy(() => import("@/src/pages/dashboard/system/page"));
+const TicketPage = lazy(() => import("@/src/pages/dashboard/ticket/page"));
+const UserPage = lazy(() => import("@/src/pages/dashboard/user/page"));
 
 function RootShell() {
   return (

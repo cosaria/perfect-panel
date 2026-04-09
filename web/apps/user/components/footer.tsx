@@ -2,48 +2,48 @@
 
 import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import Link from "@/src/compat/app-link";
+import Link from "@/components/app-link";
 import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Fragment } from "react";
 import {
-  NEXT_PUBLIC_DISCORD_LINK,
-  NEXT_PUBLIC_EMAIL,
-  NEXT_PUBLIC_GITHUB_LINK,
-  NEXT_PUBLIC_INSTAGRAM_LINK,
-  NEXT_PUBLIC_LINKEDIN_LINK,
-  NEXT_PUBLIC_TELEGRAM_LINK,
-  NEXT_PUBLIC_TWITTER_LINK,
+  VITE_DISCORD_LINK,
+  VITE_EMAIL,
+  VITE_GITHUB_LINK,
+  VITE_INSTAGRAM_LINK,
+  VITE_LINKEDIN_LINK,
+  VITE_TELEGRAM_LINK,
+  VITE_TWITTER_LINK,
 } from "@/config/constants";
 import useGlobalStore from "@/config/use-global";
 
 const Links = [
   {
     icon: "uil:envelope",
-    href: NEXT_PUBLIC_EMAIL ? `mailto:${NEXT_PUBLIC_EMAIL}` : undefined,
+    href: VITE_EMAIL ? `mailto:${VITE_EMAIL}` : undefined,
   },
   {
     icon: "uil:telegram",
-    href: NEXT_PUBLIC_TELEGRAM_LINK,
+    href: VITE_TELEGRAM_LINK,
   },
   {
     icon: "uil:twitter",
-    href: NEXT_PUBLIC_TWITTER_LINK,
+    href: VITE_TWITTER_LINK,
   },
   {
     icon: "uil:discord",
-    href: NEXT_PUBLIC_DISCORD_LINK,
+    href: VITE_DISCORD_LINK,
   },
   {
     icon: "uil:instagram",
-    href: NEXT_PUBLIC_INSTAGRAM_LINK,
+    href: VITE_INSTAGRAM_LINK,
   },
   {
     icon: "uil:linkedin",
-    href: NEXT_PUBLIC_LINKEDIN_LINK,
+    href: VITE_LINKEDIN_LINK,
   },
   {
     icon: "uil:github",
-    href: NEXT_PUBLIC_GITHUB_LINK,
+    href: VITE_GITHUB_LINK,
   },
 ];
 
