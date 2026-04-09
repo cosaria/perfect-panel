@@ -3,7 +3,7 @@ import { Button } from "@workspace/ui/components/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { type Dispatch, type SetStateAction, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

@@ -4,7 +4,7 @@ import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
 import { cn } from "@workspace/ui/lib/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { ProTable, type ProTableActions } from "@/components/pro-table";

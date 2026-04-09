@@ -6,8 +6,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@workspace/ui/components/tooltip";
-import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useSearchParams } from "@/utils/router";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Suspense } from "react";
 import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
 import { IpLink } from "@/components/ip-link";

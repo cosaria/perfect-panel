@@ -27,12 +27,16 @@ for ITEM in "${PROJECTS[@]}"; do
     echo "Build failed for $PROJECT"
     exit 1
   }
-  # Copy build output and static resources to the build directory
+  # Copy the built static SPA assets into the archive payload
   PROJECT_BUILD_DIR=$OUT_DIR/$PROJECT
-  cp -r $PROJECT_PATH/.next/standalone/. $PROJECT_BUILD_DIR/
-  cp -r $PROJECT_PATH/.next/static $PROJECT_BUILD_DIR/$PROJECT_PATH/.next/
-  cp -r $PROJECT_PATH/public $PROJECT_BUILD_DIR/$PROJECT_PATH/
-  cp -r $PROJECT_PATH/.env.template $PROJECT_BUILD_DIR/$PROJECT_PATH/.env
+  mkdir -p $PROJECT_BUILD_DIR/$PROJECT_PATH
+  cp -r $PROJECT_PATH/dist $PROJECT_BUILD_DIR/$PROJECT_PATH/
+  if [ -d "$PROJECT_PATH/public" ]; then
+    cp -r $PROJECT_PATH/public $PROJECT_BUILD_DIR/$PROJECT_PATH/
+  fi
+  if [ -f "$PROJECT_PATH/.env.template" ]; then
+    cp $PROJECT_PATH/.env.template $PROJECT_BUILD_DIR/$PROJECT_PATH/.env
+  fi
 
   # Generate ecosystem.config.js for the project
   ECOSYSTEM_CONFIG="$PROJECT_BUILD_DIR/ecosystem.config.js"
@@ -41,11 +45,11 @@ module.exports = {
   apps: [
     {
       name: "$PROJECT",
-      script: "$PROJECT_PATH/server.js",
-      interpreter: "bun",
-      watch: true,
-      instances: "max",
-      exec_mode: "cluster",
+      script: "bun",
+      args: "run --cwd $PROJECT_PATH preview -- --host 0.0.0.0 --port $DEFAULT_PORT",
+      watch: false,
+      instances: 1,
+      exec_mode: "fork",
       env: {
         PORT: $DEFAULT_PORT
       }

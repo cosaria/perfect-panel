@@ -1,7 +1,7 @@
 "use client";
 
 import { Table, TableBody, TableCell, TableRow } from "@workspace/ui/components/table";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import AppleForm from "./forms/apple-form";
 import DeviceForm from "./forms/device-form";
 import EmailSettingsForm from "./forms/email-settings-form";

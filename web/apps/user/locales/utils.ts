@@ -1,4 +1,4 @@
-import { createTranslator } from "next-intl";
+import { createTranslator } from "@workspace/ui/components/i18n-provider";
 import { getLocale } from "@/utils/common";
 
 export async function getTranslations(namespace: string) {

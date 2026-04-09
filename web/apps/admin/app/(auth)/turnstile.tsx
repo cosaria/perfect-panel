@@ -1,7 +1,7 @@
 "use client";
 
-import { useLocale } from "next-intl";
-import { useTheme } from "next-themes";
+import { useTheme } from "@workspace/ui/components/theme-provider";
+import { useLocale } from "@workspace/ui/components/i18n-provider";
 import { forwardRef, useEffect, useImperativeHandle } from "react";
 import Turnstile, { useTurnstile } from "react-turnstile";
 

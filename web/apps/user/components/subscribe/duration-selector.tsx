@@ -3,7 +3,7 @@
 import { Badge } from "@workspace/ui/components/badge";
 import { Label } from "@workspace/ui/components/label";
 import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/radio-group";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import type React from "react";
 import { useCallback } from "react";
 

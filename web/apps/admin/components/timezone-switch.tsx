@@ -10,7 +10,7 @@ import {
 } from "@workspace/ui/components/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import { useLocale } from "next-intl";
+import { useLocale } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useMemo, useState } from "react";
 
 interface TimezoneOption {

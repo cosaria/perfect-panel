@@ -12,7 +12,7 @@ import {
 } from "@workspace/ui/components/dialog";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";

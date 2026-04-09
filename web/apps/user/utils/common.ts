@@ -2,7 +2,7 @@ import { isBrowser } from "@workspace/ui/utils";
 import { UAParser } from "ua-parser-js";
 import Cookies from "universal-cookie";
 import { locales, NEXT_PUBLIC_DEFAULT_LANGUAGE } from "@/config/constants";
-import { dispatchUserLocaleChange } from "@/src/compat/next-intl";
+import { dispatchUserLocaleChange } from "@/src/compat/runtime-intl";
 
 const cookies = new Cookies(null, {
   path: "/",

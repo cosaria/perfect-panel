@@ -9,7 +9,7 @@ import {
 } from "@workspace/ui/components/select";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { getCountry } from "@workspace/ui/utils";
-import { useLocale } from "next-intl";
+import { useLocale } from "@workspace/ui/components/i18n-provider";
 import { locales } from "@/config/constants";
 import { setLocale } from "@/utils/common";
 

@@ -5,7 +5,7 @@ import LocationsLittie from "@workspace/ui/lotties/locations.json";
 import ServersLottie from "@workspace/ui/lotties/servers.json";
 import UsersLottie from "@workspace/ui/lotties/users.json";
 import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 import {
   NEXT_PUBLIC_HOME_LOCATION_COUNT,

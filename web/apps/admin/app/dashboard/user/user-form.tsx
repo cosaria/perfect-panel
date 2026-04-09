@@ -24,7 +24,7 @@ import { AreaCodeSelect } from "@workspace/ui/custom-components/area-code-select
 import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { unitConversion } from "@workspace/ui/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

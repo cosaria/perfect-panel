@@ -1,6 +1,8 @@
+"use client";
+
 import { forwardRef } from "react";
 
-type ImageProps = Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> & {
+type AppImageProps = Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> & {
   alt: string;
   fill?: boolean;
   loader?: unknown;
@@ -12,14 +14,14 @@ type ImageProps = Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> & {
   unoptimized?: boolean;
 };
 
-export default forwardRef<HTMLImageElement, ImageProps>(function Image(
+export default forwardRef<HTMLImageElement, AppImageProps>(function AppImage(
   { alt, fill = false, src, style, ...props },
   ref,
 ) {
   const resolvedSrc = typeof src === "string" ? src : (src?.src ?? "");
 
   return (
-    // biome-ignore lint/performance/noImgElement: Vite spike 需要一个轻量兼容层替代 next/image。
+    // biome-ignore lint/performance/noImgElement: 管理端改为 Vite 后保留轻量图片组件即可。
     <img
       {...props}
       ref={ref}

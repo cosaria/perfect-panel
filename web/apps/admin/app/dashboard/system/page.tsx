@@ -1,7 +1,7 @@
 "use client";
 
 import { Table, TableBody, TableCell, TableRow } from "@workspace/ui/components/table";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import CurrencyForm from "./basic-settings/currency-form";
 import PrivacyPolicyForm from "./basic-settings/privacy-policy-form";
 import SiteForm from "./basic-settings/site-form";

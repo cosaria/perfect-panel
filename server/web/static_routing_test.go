@@ -59,27 +59,27 @@ func TestResolveUserRouteReturnsAPI404ForAPIPrefix(t *testing.T) {
 
 func TestResolveUserRouteServesExistingStaticAsset(t *testing.T) {
 	staticFS := fstest.MapFS{
-		"_next/static/chunks/app.js": &fstest.MapFile{Data: []byte("console.log('ok')")},
+		"assets/app-abc12345.js": &fstest.MapFile{Data: []byte("console.log('ok')")},
 	}
 
-	got := resolveUserRoute("/_next/static/chunks/app.js", staticFS)
+	got := resolveUserRoute("/assets/app-abc12345.js", staticFS)
 	if got.kind != routeStaticAsset {
 		t.Fatalf("expected static asset route, got %v", got.kind)
 	}
-	if got.filePath != "_next/static/chunks/app.js" {
+	if got.filePath != "assets/app-abc12345.js" {
 		t.Fatalf("expected asset path to match, got %q", got.filePath)
 	}
 }
 
 func TestInjectEnvIntoHTMLAddsWindowEnvScript(t *testing.T) {
 	raw := []byte("<html><head><title>PPanel</title></head><body>auth</body></html>")
-	envJSON := []byte(`{"NEXT_PUBLIC_API_URL":"http://localhost:8080"}`)
+	envJSON := []byte(`{"VITE_API_URL":"http://localhost:8080"}`)
 
 	got := injectEnvIntoHTML(raw, envJSON)
 	if string(got) == string(raw) {
 		t.Fatal("expected HTML to change after env injection")
 	}
-	want := `<script>window.__ENV={"NEXT_PUBLIC_API_URL":"http://localhost:8080"}</script></head>`
+	want := `<script>window.__ENV={"VITE_API_URL":"http://localhost:8080"}</script></head>`
 	if !bytes.Contains(got, []byte(want)) {
 		t.Fatalf("expected injected env script %q, got %q", want, string(got))
 	}
@@ -87,7 +87,7 @@ func TestInjectEnvIntoHTMLAddsWindowEnvScript(t *testing.T) {
 
 func TestInjectEnvIntoHTMLLeavesHeadlessDocumentUntouched(t *testing.T) {
 	raw := []byte("<html><body>no head</body></html>")
-	envJSON := []byte(`{"NEXT_PUBLIC_API_URL":"http://localhost:8080"}`)
+	envJSON := []byte(`{"VITE_API_URL":"http://localhost:8080"}`)
 
 	got := injectEnvIntoHTML(raw, envJSON)
 	if string(got) != string(raw) {
@@ -96,7 +96,7 @@ func TestInjectEnvIntoHTMLLeavesHeadlessDocumentUntouched(t *testing.T) {
 }
 
 func TestRewriteAdminHTMLBasePathUsesRuntimeAdminPath(t *testing.T) {
-	raw := []byte(`<html><head></head><body><a href="/admin/dashboard">Dashboard</a><script src="/admin/_next/static/app.js"></script></body></html>`)
+	raw := []byte(`<html><head></head><body><a href="/admin/dashboard">Dashboard</a><script src="/admin/assets/app-abc12345.js"></script></body></html>`)
 
 	got := rewriteAdminHTMLBasePath(raw, "/manage")
 
@@ -106,8 +106,8 @@ func TestRewriteAdminHTMLBasePathUsesRuntimeAdminPath(t *testing.T) {
 	if !bytes.Contains(got, []byte(`/manage/dashboard`)) {
 		t.Fatalf("expected rewritten dashboard link, got %q", string(got))
 	}
-	if !bytes.Contains(got, []byte(`/manage/_next/static/app.js`)) {
-		t.Fatalf("expected rewritten _next asset path, got %q", string(got))
+	if !bytes.Contains(got, []byte(`/manage/assets/app-abc12345.js`)) {
+		t.Fatalf("expected rewritten vite asset path, got %q", string(got))
 	}
 }
 
@@ -116,7 +116,7 @@ func TestShouldUseImmutableAssetCache(t *testing.T) {
 		path string
 		want bool
 	}{
-		{path: "_next/static/chunks/app.js", want: true},
+		{path: "_next/static/chunks/app.js", want: false},
 		{path: "assets/index-BqUBe2a_.js", want: true},
 		{path: "assets/index-qFa1SYuY.css", want: true},
 		{path: "favicon-BqUBe2a_.ico", want: true},

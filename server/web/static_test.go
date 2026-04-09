@@ -15,15 +15,15 @@ func setupTestRouter() *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
 	adminEnvVars := map[string]string{
-		"NEXT_PUBLIC_API_URL":            "",
-		"NEXT_PUBLIC_SITE_URL":           "http://localhost:8080",
-		"NEXT_PUBLIC_DEFAULT_LANGUAGE":   "en-US",
-		"NEXT_PUBLIC_DEFAULT_USER_EMAIL": "admin@ppanel.dev",
+		"VITE_API_URL":            "",
+		"VITE_SITE_URL":           "http://localhost:8080",
+		"VITE_DEFAULT_LANGUAGE":   "en-US",
+		"VITE_DEFAULT_USER_EMAIL": "admin@ppanel.dev",
 	}
 	userEnvVars := map[string]string{
-		"NEXT_PUBLIC_API_URL":          "",
-		"NEXT_PUBLIC_SITE_URL":         "http://localhost:8080",
-		"NEXT_PUBLIC_DEFAULT_LANGUAGE": "en-US",
+		"VITE_API_URL":          "",
+		"VITE_SITE_URL":         "http://localhost:8080",
+		"VITE_DEFAULT_LANGUAGE": "en-US",
 	}
 	if err := RegisterStaticRoutes(r, "/admin", adminEnvVars, userEnvVars); err != nil {
 		panic(err)
@@ -49,7 +49,7 @@ func TestAdminIndexServesHTML(t *testing.T) {
 	if !strings.Contains(body, "window.__ENV") {
 		t.Fatal("GET /admin: window.__ENV not injected")
 	}
-	if !strings.Contains(body, "NEXT_PUBLIC_API_URL") {
+	if !strings.Contains(body, "VITE_API_URL") {
 		t.Fatal("GET /admin: env vars not found in injected script")
 	}
 	t.Logf("GET /admin: %d bytes, window.__ENV injected", w.Body.Len())
@@ -153,11 +153,14 @@ func TestAdminEnvVarsContent(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	body := w.Body.String()
-	if !strings.Contains(body, `"NEXT_PUBLIC_SITE_URL":"http://localhost:8080"`) {
-		t.Fatal("GET /admin: NEXT_PUBLIC_SITE_URL not found in window.__ENV")
+	if !strings.Contains(body, `"VITE_SITE_URL":"http://localhost:8080"`) {
+		t.Fatal("GET /admin: VITE_SITE_URL not found in window.__ENV")
 	}
-	if !strings.Contains(body, `"NEXT_PUBLIC_DEFAULT_USER_EMAIL":"admin@ppanel.dev"`) {
-		t.Fatal("GET /admin: NEXT_PUBLIC_DEFAULT_USER_EMAIL not found in window.__ENV")
+	if !strings.Contains(body, `"VITE_DEFAULT_USER_EMAIL":"admin@ppanel.dev"`) {
+		t.Fatal("GET /admin: VITE_DEFAULT_USER_EMAIL not found in window.__ENV")
+	}
+	if strings.Contains(body, "NEXT_PUBLIC_") {
+		t.Fatal("GET /admin: should not leak legacy NEXT_PUBLIC_* keys in window.__ENV")
 	}
 }
 
@@ -168,10 +171,10 @@ func TestUserEnvVarsDoNotContainCredentials(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	body := w.Body.String()
-	if strings.Contains(body, "NEXT_PUBLIC_DEFAULT_USER_EMAIL") {
+	if strings.Contains(body, "VITE_DEFAULT_USER_EMAIL") {
 		t.Fatal("GET /: user frontend should NOT contain admin email")
 	}
-	if strings.Contains(body, "NEXT_PUBLIC_DEFAULT_USER_PASSWORD") {
+	if strings.Contains(body, "VITE_DEFAULT_USER_PASSWORD") {
 		t.Fatal("GET /: user frontend should NOT contain admin password")
 	}
 }
@@ -242,8 +245,11 @@ func TestUserEnvVarsContent(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	body := w.Body.String()
-	if !strings.Contains(body, `"NEXT_PUBLIC_SITE_URL":"http://localhost:8080"`) {
-		t.Fatal("GET /: NEXT_PUBLIC_SITE_URL not found in window.__ENV")
+	if !strings.Contains(body, `"VITE_SITE_URL":"http://localhost:8080"`) {
+		t.Fatal("GET /: VITE_SITE_URL not found in window.__ENV")
+	}
+	if strings.Contains(body, "NEXT_PUBLIC_") {
+		t.Fatal("GET /: should not leak legacy NEXT_PUBLIC_* keys in window.__ENV")
 	}
 }
 

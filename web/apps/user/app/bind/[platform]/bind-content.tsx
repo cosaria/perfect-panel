@@ -3,8 +3,8 @@
 import HyperText from "@workspace/ui/components/hyper-text";
 import { OrbitingCircles } from "@workspace/ui/components/orbiting-circles";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import { useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useParams } from "@/src/compat/app-navigation";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import Certification from "./certification";
 
 export default function BindContent() {

@@ -11,7 +11,7 @@ import {
 } from "@workspace/ui/components/card";
 import { formatDate, isBrowser } from "@workspace/ui/utils";
 import { Copy } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { toast } from "sonner";
 import { Display } from "@/components/display";

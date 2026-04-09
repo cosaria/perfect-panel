@@ -3,9 +3,9 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import LoginLottie from "@workspace/ui/lotties/login.json";
-import Image from "next/legacy/image";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+import Image from "@/src/compat/app-image";
+import Link from "@/src/compat/app-link";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { OAuthMethods } from "@/components/auth/oauth-methods";
 import LanguageSwitch from "@/components/language-switch";
 import ThemeSwitch from "@/components/theme-switch";

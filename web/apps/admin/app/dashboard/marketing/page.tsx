@@ -1,7 +1,7 @@
 "use client";
 
 import { Table, TableBody, TableCell, TableRow } from "@workspace/ui/components/table";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import EmailBroadcastForm from "./email/broadcast-form";
 import EmailTaskManager from "./email/task-manager";
 import QuotaBroadcastForm from "./quota/broadcast-form";

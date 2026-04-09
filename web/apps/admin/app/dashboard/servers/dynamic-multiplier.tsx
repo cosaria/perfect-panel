@@ -15,7 +15,7 @@ import {
 } from "@workspace/ui/components/sheet";
 import { ArrayInput } from "@workspace/ui/custom-components/dynamic-Inputs";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { getNodeMultiplier, setNodeMultiplier } from "@/services/admin-api/sdk.gen";

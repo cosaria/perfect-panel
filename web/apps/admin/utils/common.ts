@@ -2,7 +2,7 @@ import { isBrowser } from "@workspace/ui/utils";
 import { intlFormat } from "date-fns";
 import Cookies from "universal-cookie";
 import { locales, NEXT_PUBLIC_ADMIN_PATH, NEXT_PUBLIC_DEFAULT_LANGUAGE } from "@/config/constants";
-import { dispatchAdminLocaleChange } from "@/src/compat/next-intl";
+import { dispatchAdminLocaleChange } from "@/src/compat/runtime-intl";
 import { ADMIN_HOME_PATH, stripAdminPath, toAdminPath } from "./admin-path";
 
 const cookies = new Cookies(null, {

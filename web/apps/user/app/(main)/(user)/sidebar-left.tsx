@@ -10,9 +10,9 @@ import {
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
+import Link from "@/src/compat/app-link";
+import { usePathname } from "@/src/compat/app-navigation";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { navs } from "@/config/navs";
 
 export function SidebarLeft({ ...props }: React.ComponentProps<typeof Sidebar>) {

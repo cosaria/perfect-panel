@@ -4,7 +4,7 @@ import {
   ProTable as _ProTable,
   type ProTableProps,
 } from "@workspace/ui/custom-components/pro-table";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Empty } from "./empty";
 
 export type { ProTableActions } from "@workspace/ui/custom-components/pro-table";

@@ -10,8 +10,8 @@ import {
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
 import { LoaderCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useRouter } from "@/src/compat/app-navigation";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState, useTransition } from "react";
 import { Display } from "@/components/display";
 import useGlobalStore from "@/config/use-global";

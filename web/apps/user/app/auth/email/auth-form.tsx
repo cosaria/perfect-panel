@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useRouter } from "@/src/compat/app-navigation";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { type ReactNode, useState, useTransition } from "react";
 import { toast } from "sonner";
 import {

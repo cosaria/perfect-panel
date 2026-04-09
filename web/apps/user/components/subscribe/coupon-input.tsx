@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@workspace/ui/components/input";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import type React from "react";
 
 interface CouponInputProps {

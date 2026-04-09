@@ -5,8 +5,8 @@ import { HoverBorderGradient } from "@workspace/ui/components/hover-border-gradi
 import { TextGenerateEffect } from "@workspace/ui/components/text-generate-effect";
 import NetworkSecurityLottie from "@workspace/ui/lotties/network-security.json";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+import Link from "@/src/compat/app-link";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import useGlobalStore from "@/config/use-global";
 
 export function Hero() {

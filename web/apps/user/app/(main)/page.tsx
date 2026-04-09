@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/src/compat/app-navigation";
 import { useEffect, useState } from "react";
 import { GlobalMap } from "@/components/main/global-map";
 import { Hero } from "@/components/main/hero";

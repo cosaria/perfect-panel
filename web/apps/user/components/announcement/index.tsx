@@ -4,7 +4,7 @@ import { Card } from "@workspace/ui/components/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@workspace/ui/components/dialog";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { Markdown } from "@workspace/ui/custom-components/markdown";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 import { queryAnnouncement } from "@/services/user-api/sdk.gen";
 import type { Announcement as AnnouncementType } from "@/services/user-api/types.gen";

@@ -1,8 +1,8 @@
 "use client";
 
 import { Badge } from "@workspace/ui/components/badge";
-import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useSearchParams } from "@/utils/router";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Suspense } from "react";
 import { ProTable } from "@/components/pro-table";
 import { filterMobileLog } from "@/services/admin-api/sdk.gen";

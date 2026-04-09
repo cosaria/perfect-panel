@@ -9,8 +9,8 @@ import {
   CardTitle,
 } from "@workspace/ui/components/card";
 import { formatDate } from "@workspace/ui/utils";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+import Link from "@/src/compat/app-link";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useRef } from "react";
 import { Display } from "@/components/display";
 import { Empty } from "@/components/empty";

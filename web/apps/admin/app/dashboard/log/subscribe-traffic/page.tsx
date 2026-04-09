@@ -2,8 +2,8 @@
 
 import { Button } from "@workspace/ui/components/button";
 import { formatBytes } from "@workspace/ui/utils";
-import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useSearchParams } from "@/utils/router";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Suspense } from "react";
 import { UserDetail, UserSubscribeDetail } from "@/app/dashboard/user/user-detail";
 import { AdminLink } from "@/components/admin-link";

@@ -6,7 +6,7 @@ import type React from "react";
 import { useEffect } from "react";
 import Providers from "@/components/providers";
 import { getClientLocale, getMessages } from "@/locales/client";
-import { NextIntlClientProvider, useLocale } from "@/src/compat/next-intl";
+import { NextIntlClientProvider, useLocale } from "@/src/compat/runtime-intl";
 import RouterTopLoader from "@/src/compat/router-top-loader";
 
 function DocumentLocaleSync() {

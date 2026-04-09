@@ -43,10 +43,10 @@ describe("admin build chain", () => {
     expect(webGitignore).toContain("apps/*/dist");
   });
 
-  test("declares both vite and next build outputs to turbo", () => {
+  test("declares vite dist as the only frontend build output to turbo", () => {
     expect(turboJson.tasks.build.outputs).toContain("dist/**");
-    expect(turboJson.tasks.build.outputs).toContain("out/**");
-    expect(turboJson.tasks.build.outputs).toContain(".next/**");
+    expect(turboJson.tasks.build.outputs).not.toContain("out/**");
+    expect(turboJson.tasks.build.outputs).not.toContain(".next/**");
   });
 
   test("drops admin-only next build tooling files", () => {

@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
 import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { AdminLink } from "@/components/admin-link";

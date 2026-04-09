@@ -3,7 +3,7 @@
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import GlobalMapLottie from "@workspace/ui/lotties/global-map.json";
 import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 
 export function GlobalMap() {
   const t = useTranslations("index");

@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/src/compat/app-navigation";
 import { useEffect } from "react";
 import { oAuthLoginGetToken } from "@/services/user-api/sdk.gen";
 import { getAllUrlParams, getRedirectUrl, setAuthorization } from "@/utils/common";

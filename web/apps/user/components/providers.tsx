@@ -2,8 +2,7 @@
 
 import "@/utils/setup-clients";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ThemeProvider } from "@workspace/ui/components/theme-provider";
 import type React from "react";
 import { useEffect, useState } from "react";
 import useGlobalStore from "@/config/use-global";
@@ -81,14 +80,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryClientProvider client={queryClient}>
-        <ReactQueryStreamedHydration>
-          <Loading loading={loading || queryClient.isMutating() > 0} />
-          {children}
-        </ReactQueryStreamedHydration>
+        <Loading loading={loading || queryClient.isMutating() > 0} />
+        {children}
       </QueryClientProvider>
       {customHtml && <TrustedCustomHtml html={customHtml} />}
-    </NextThemesProvider>
+    </ThemeProvider>
   );
 }

@@ -11,7 +11,7 @@ import {
 } from "@workspace/ui/components/sheet";
 import { formatBytes } from "@workspace/ui/utils";
 import { Users } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useState } from "react";
 import { UserDetail } from "@/app/dashboard/user/user-detail";
 import { IpLink } from "@/components/ip-link";

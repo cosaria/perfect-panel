@@ -31,6 +31,8 @@ describe("user build chain", () => {
     expect(dockerfile).toContain("COPY --from=web-builder /app/web/apps/user/dist ./web/user-dist");
     expect(dockerfile).toContain("COPY --from=builder /build/cache ./cache");
     expect(rootWebPackageJson.scripts.clean).toContain("apps/user/dist");
+    expect(rootWebPackageJson.scripts.clean).not.toContain(".next");
+    expect(rootWebPackageJson.scripts.clean).not.toContain("out");
   });
 
   test("drops user-only next build tooling files", () => {

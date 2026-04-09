@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@workspace/ui/compone
 import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { cn } from "@workspace/ui/lib/utils";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useState } from "react";
 import { Display } from "@/components/display";
 import { Empty } from "@/components/empty";

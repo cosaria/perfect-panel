@@ -1,10 +1,12 @@
+"use client";
+
 import { forwardRef, type MouseEvent, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { stripAdminPath, toAdminPath } from "@/utils/admin-path";
 
 interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-  href: string;
   children: ReactNode;
+  href: string;
   replace?: boolean;
 }
 
@@ -12,7 +14,7 @@ function isAbsoluteHref(href: string) {
   return /^https?:\/\//.test(href);
 }
 
-export default forwardRef<HTMLAnchorElement, LinkProps>(function Link(
+export default forwardRef<HTMLAnchorElement, LinkProps>(function AppLink(
   { href, replace = false, target, download, onClick, ...props },
   ref,
 ) {

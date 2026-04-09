@@ -24,7 +24,7 @@ import {
 import { Switch } from "@workspace/ui/components/switch";
 import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

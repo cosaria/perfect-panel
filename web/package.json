@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "clean": "rm -rf apps/admin/dist apps/admin/.turbo apps/user/dist apps/user/.next apps/user/out apps/user/.turbo .turbo",
+    "clean": "rm -rf apps/admin/dist apps/admin/.turbo apps/user/dist apps/user/.turbo .turbo",
     "dev:admin": "turbo run dev --filter=ppanel-admin-web",
     "dev:user": "turbo run dev --filter=ppanel-user-web",
     "format": "biome format --write .",
@@ -93,7 +93,6 @@
     "monaco-editor": "^0.54.0 ",
     "monaco-themes": "^0.4.6",
     "motion": "^11.18.1",
-    "next-themes": "^0.4.6",
     "react-day-picker": "^9.9.0",
     "react-hook-form": "^7.62.0",
     "react-markdown": "^9.0.3",
@@ -115,7 +114,6 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.9",
     "@hey-api/openapi-ts": "^0.95.0",
-    "@netlify/plugin-nextjs": "^5.12.1",
     "@redocly/cli": "^2.25.4",
     "@workspace/commitlint-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",

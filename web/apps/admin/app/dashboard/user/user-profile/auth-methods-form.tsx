@@ -4,7 +4,7 @@ import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useState } from "react";
 import { toast } from "sonner";
 import {

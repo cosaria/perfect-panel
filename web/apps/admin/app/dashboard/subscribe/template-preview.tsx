@@ -11,7 +11,7 @@ import {
 } from "@workspace/ui/components/sheet";
 import { MonacoEditor } from "@workspace/ui/custom-components/editor/monaco-editor";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useState } from "react";
 import { previewSubscribeTemplate } from "@/services/admin-api/sdk.gen";
 

@@ -11,7 +11,7 @@ import {
 } from "@workspace/ui/components/sheet";
 import { Switch } from "@workspace/ui/components/switch";
 import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { type ReactNode, useState } from "react";
 import { toast } from "sonner";
 import { IpLink } from "@/components/ip-link";

@@ -23,7 +23,7 @@ import {
 } from "@workspace/ui/components/sheet";
 import { MarkdownEditor } from "@workspace/ui/custom-components/editor";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

@@ -6,8 +6,8 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@workspace/ui/com
 import { Separator } from "@workspace/ui/components/separator";
 import { Combobox } from "@workspace/ui/custom-components/combobox";
 import { cn } from "@workspace/ui/lib/utils";
-import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useSearchParams } from "@/utils/router";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Suspense, useRef } from "react";
 import { Display } from "@/components/display";
 import { ProTable, type ProTableActions } from "@/components/pro-table";

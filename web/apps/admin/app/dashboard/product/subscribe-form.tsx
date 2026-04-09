@@ -37,7 +37,7 @@ import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { evaluateWithPrecision, unitConversion } from "@workspace/ui/utils";
 import { CreditCard, Server, Settings } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { assign, shake } from "radash";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";

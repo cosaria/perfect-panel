@@ -14,7 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@workspace/
 import { Input } from "@workspace/ui/components/input";
 import { AreaCodeSelect } from "@workspace/ui/custom-components/area-code-select";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

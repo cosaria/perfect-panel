@@ -1,7 +1,7 @@
 "use client";
 
 import { Separator } from "@workspace/ui/components/separator";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Display } from "@/components/display";
 import type { OrderDetail } from "@/services/user-api/types.gen";
 

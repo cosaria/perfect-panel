@@ -238,7 +238,7 @@ func rewriteAdminHTMLBasePath(raw []byte, adminPath string) []byte {
 }
 
 func shouldUseImmutableAssetCache(filePath string) bool {
-	if strings.HasPrefix(filePath, "_next/static/") || strings.HasPrefix(filePath, "assets/") {
+	if strings.HasPrefix(filePath, "assets/") {
 		return true
 	}
 

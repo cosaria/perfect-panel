@@ -18,7 +18,7 @@ import {
 import { Separator } from "@workspace/ui/components/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { unitConversion } from "@workspace/ui/utils";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@workspace/ui/components/i18n-provider";
 import {
   Area,
   AreaChart,

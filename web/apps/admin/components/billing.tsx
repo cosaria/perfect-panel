@@ -2,8 +2,8 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
 import { Card, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+import Link from "@/components/app-link";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 
 interface BillingProps {

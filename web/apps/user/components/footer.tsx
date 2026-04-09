@@ -2,8 +2,8 @@
 
 import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+import Link from "@/src/compat/app-link";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Fragment } from "react";
 import {
   NEXT_PUBLIC_DISCORD_LINK,

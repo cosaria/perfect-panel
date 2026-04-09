@@ -21,7 +21,7 @@ import {
 import { MarkdownEditor } from "@workspace/ui/custom-components/editor";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { TagInput } from "@workspace/ui/custom-components/tag-input";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

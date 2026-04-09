@@ -18,7 +18,7 @@ import {
 } from "@workspace/ui/components/dialog";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useState } from "react";
 import { getSystemLog } from "@/services/admin-api/sdk.gen";
 

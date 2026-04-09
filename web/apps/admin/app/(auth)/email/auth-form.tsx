@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { type ReactNode, useState, useTransition } from "react";
 import { toast } from "sonner";
 import {

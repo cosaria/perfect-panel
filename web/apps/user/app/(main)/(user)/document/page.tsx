@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Empty } from "@/components/empty";
 import { queryDocumentList } from "@/services/user-api/sdk.gen";
 import { DocumentButton } from "./document-button";

@@ -13,9 +13,9 @@ import {
 } from "@workspace/ui/components/sidebar";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { cn } from "@workspace/ui/lib/utils";
-import Image from "next/legacy/image";
-import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
+import Image from "@/components/app-image";
+import { usePathname } from "@/utils/router";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { type ComponentProps, useCallback, useEffect, useState } from "react";
 import { navs } from "@/config/navs";
 import useGlobalStore from "@/config/use-global";

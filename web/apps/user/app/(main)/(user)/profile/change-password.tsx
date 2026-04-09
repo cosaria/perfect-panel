@@ -5,7 +5,7 @@ import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";

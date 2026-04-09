@@ -18,9 +18,9 @@ import {
 import { Button } from "@workspace/ui/components/button";
 import { Input } from "@workspace/ui/components/input";
 import { Label } from "@workspace/ui/components/label";
+import { useTheme } from "@workspace/ui/components/theme-provider";
 import { CheckCircle } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { QRCodeCanvas } from "qrcode.react";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";

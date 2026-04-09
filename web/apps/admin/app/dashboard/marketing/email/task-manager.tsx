@@ -19,7 +19,7 @@ import {
 } from "@workspace/ui/components/sheet";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { RawHtml } from "@workspace/ui/custom-components/raw-html";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { ProTable, type ProTableActions } from "@/components/pro-table";

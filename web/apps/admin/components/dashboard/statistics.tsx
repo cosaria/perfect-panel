@@ -14,7 +14,7 @@ import { Separator } from "@workspace/ui/components/separator";
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { formatBytes } from "@workspace/ui/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts";
 import { UserSubscribeDetail } from "@/app/dashboard/user/user-detail";

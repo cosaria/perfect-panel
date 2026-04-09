@@ -10,7 +10,7 @@ import {
   SheetTrigger,
 } from "@workspace/ui/components/sheet";
 import { Icon } from "@workspace/ui/custom-components/icon";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useState } from "react";
 import { Display } from "@/components/display";
 import { ProTable } from "@/components/pro-table";

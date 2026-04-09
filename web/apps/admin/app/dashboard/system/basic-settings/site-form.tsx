@@ -26,7 +26,7 @@ import { JSONEditor } from "@workspace/ui/custom-components/editor";
 import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { UploadImage } from "@workspace/ui/custom-components/upload-image";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";

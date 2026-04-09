@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/componen
 import { Sidebar, SidebarContent } from "@workspace/ui/components/sidebar";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { isBrowser } from "@workspace/ui/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { toast } from "sonner";
 import { Display } from "@/components/display";

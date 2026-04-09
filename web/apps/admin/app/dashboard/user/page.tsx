@@ -20,8 +20,8 @@ import {
 import { Switch } from "@workspace/ui/components/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { ConfirmButton } from "@workspace/ui/custom-components/confirm-button";
-import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useSearchParams } from "@/utils/router";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Suspense, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AdminLink } from "@/components/admin-link";

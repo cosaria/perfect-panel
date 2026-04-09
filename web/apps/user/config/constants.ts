@@ -6,6 +6,10 @@ declare global {
   }
 }
 
+type PublicImportMetaEnv = {
+  [key: string]: string | undefined;
+};
+
 function getEnv(key: string): string | undefined {
   if (typeof window !== "undefined") {
     return window.__ENV?.[key];
@@ -13,59 +17,71 @@ function getEnv(key: string): string | undefined {
   return undefined;
 }
 
+function getBuildEnv(key: string): string | undefined {
+  return (import.meta as ImportMeta & { env?: PublicImportMetaEnv }).env?.[key] ?? process.env[key];
+}
+
 export const locales = packageJSON.i18n.outputLocales;
 export const defaultLocale = packageJSON.i18n.entry;
 
-export const NEXT_PUBLIC_DEFAULT_LANGUAGE =
-  getEnv("NEXT_PUBLIC_DEFAULT_LANGUAGE") ??
-  process.env.NEXT_PUBLIC_DEFAULT_LANGUAGE ??
-  defaultLocale;
+export const VITE_DEFAULT_LANGUAGE =
+  getEnv("VITE_DEFAULT_LANGUAGE") ?? getBuildEnv("VITE_DEFAULT_LANGUAGE") ?? defaultLocale;
 
-export const NEXT_PUBLIC_SITE_URL =
-  getEnv("NEXT_PUBLIC_SITE_URL") ?? process.env.NEXT_PUBLIC_SITE_URL;
-export const NEXT_PUBLIC_API_URL = getEnv("NEXT_PUBLIC_API_URL") ?? process.env.NEXT_PUBLIC_API_URL;
-export const NEXT_PUBLIC_CDN_URL =
-  getEnv("NEXT_PUBLIC_CDN_URL") || process.env.NEXT_PUBLIC_CDN_URL || "https://cdn.jsdelivr.net";
+export const VITE_SITE_URL = getEnv("VITE_SITE_URL") ?? getBuildEnv("VITE_SITE_URL");
+export const VITE_API_URL = getEnv("VITE_API_URL") ?? getBuildEnv("VITE_API_URL");
+export const VITE_CDN_URL =
+  getEnv("VITE_CDN_URL") || getBuildEnv("VITE_CDN_URL") || "https://cdn.jsdelivr.net";
 
-export const NEXT_PUBLIC_DEFAULT_USER_EMAIL =
-  getEnv("NEXT_PUBLIC_DEFAULT_USER_EMAIL") ?? process.env.NEXT_PUBLIC_DEFAULT_USER_EMAIL;
-export const NEXT_PUBLIC_DEFAULT_USER_PASSWORD =
-  getEnv("NEXT_PUBLIC_DEFAULT_USER_PASSWORD") ?? process.env.NEXT_PUBLIC_DEFAULT_USER_PASSWORD;
+export const VITE_DEFAULT_USER_EMAIL =
+  getEnv("VITE_DEFAULT_USER_EMAIL") ?? getBuildEnv("VITE_DEFAULT_USER_EMAIL");
+export const VITE_DEFAULT_USER_PASSWORD =
+  getEnv("VITE_DEFAULT_USER_PASSWORD") ?? getBuildEnv("VITE_DEFAULT_USER_PASSWORD");
 
-export const NEXT_PUBLIC_EMAIL = getEnv("NEXT_PUBLIC_EMAIL") ?? process.env.NEXT_PUBLIC_EMAIL;
+export const VITE_EMAIL = getEnv("VITE_EMAIL") ?? getBuildEnv("VITE_EMAIL");
 
-export const NEXT_PUBLIC_TELEGRAM_LINK =
-  getEnv("NEXT_PUBLIC_TELEGRAM_LINK") ?? process.env.NEXT_PUBLIC_TELEGRAM_LINK;
-export const NEXT_PUBLIC_DISCORD_LINK =
-  getEnv("NEXT_PUBLIC_DISCORD_LINK") ?? process.env.NEXT_PUBLIC_DISCORD_LINK;
-export const NEXT_PUBLIC_GITHUB_LINK =
-  getEnv("NEXT_PUBLIC_GITHUB_LINK") ?? process.env.NEXT_PUBLIC_GITHUB_LINK;
-export const NEXT_PUBLIC_LINKEDIN_LINK =
-  getEnv("NEXT_PUBLIC_LINKEDIN_LINK") ?? process.env.NEXT_PUBLIC_LINKEDIN_LINK;
-export const NEXT_PUBLIC_TWITTER_LINK =
-  getEnv("NEXT_PUBLIC_TWITTER_LINK") ?? process.env.NEXT_PUBLIC_TWITTER_LINK;
-export const NEXT_PUBLIC_INSTAGRAM_LINK =
-  getEnv("NEXT_PUBLIC_INSTAGRAM_LINK") ?? process.env.NEXT_PUBLIC_INSTAGRAM_LINK;
+export const VITE_TELEGRAM_LINK = getEnv("VITE_TELEGRAM_LINK") ?? getBuildEnv("VITE_TELEGRAM_LINK");
+export const VITE_DISCORD_LINK = getEnv("VITE_DISCORD_LINK") ?? getBuildEnv("VITE_DISCORD_LINK");
+export const VITE_GITHUB_LINK = getEnv("VITE_GITHUB_LINK") ?? getBuildEnv("VITE_GITHUB_LINK");
+export const VITE_LINKEDIN_LINK = getEnv("VITE_LINKEDIN_LINK") ?? getBuildEnv("VITE_LINKEDIN_LINK");
+export const VITE_TWITTER_LINK = getEnv("VITE_TWITTER_LINK") ?? getBuildEnv("VITE_TWITTER_LINK");
+export const VITE_INSTAGRAM_LINK =
+  getEnv("VITE_INSTAGRAM_LINK") ?? getBuildEnv("VITE_INSTAGRAM_LINK");
 
-export const NEXT_PUBLIC_HOME_USER_COUNT = (() => {
-  const value = getEnv("NEXT_PUBLIC_HOME_USER_COUNT") ?? process.env.NEXT_PUBLIC_HOME_USER_COUNT;
+export const VITE_HOME_USER_COUNT = (() => {
+  const value = getEnv("VITE_HOME_USER_COUNT") ?? getBuildEnv("VITE_HOME_USER_COUNT");
   const numberValue = Number(value);
   if (Number.isNaN(numberValue)) return 999;
   return numberValue;
 })();
 
-export const NEXT_PUBLIC_HOME_SERVER_COUNT = (() => {
-  const value =
-    getEnv("NEXT_PUBLIC_HOME_SERVER_COUNT") ?? process.env.NEXT_PUBLIC_HOME_SERVER_COUNT;
+export const VITE_HOME_SERVER_COUNT = (() => {
+  const value = getEnv("VITE_HOME_SERVER_COUNT") ?? getBuildEnv("VITE_HOME_SERVER_COUNT");
   const numberValue = Number(value);
   if (Number.isNaN(numberValue)) return 999;
   return numberValue;
 })();
 
-export const NEXT_PUBLIC_HOME_LOCATION_COUNT = (() => {
-  const value =
-    getEnv("NEXT_PUBLIC_HOME_LOCATION_COUNT") ?? process.env.NEXT_PUBLIC_HOME_LOCATION_COUNT;
+export const VITE_HOME_LOCATION_COUNT = (() => {
+  const value = getEnv("VITE_HOME_LOCATION_COUNT") ?? getBuildEnv("VITE_HOME_LOCATION_COUNT");
   const numberValue = Number(value);
   if (Number.isNaN(numberValue)) return 999;
   return numberValue;
 })();
+
+// Transitional aliases keep existing imports working while Unit 1 migrates callers.
+export const NEXT_PUBLIC_DEFAULT_LANGUAGE = VITE_DEFAULT_LANGUAGE;
+export const NEXT_PUBLIC_SITE_URL = VITE_SITE_URL;
+export const NEXT_PUBLIC_API_URL = VITE_API_URL;
+export const NEXT_PUBLIC_CDN_URL = VITE_CDN_URL;
+export const NEXT_PUBLIC_DEFAULT_USER_EMAIL = VITE_DEFAULT_USER_EMAIL;
+export const NEXT_PUBLIC_DEFAULT_USER_PASSWORD = VITE_DEFAULT_USER_PASSWORD;
+export const NEXT_PUBLIC_EMAIL = VITE_EMAIL;
+export const NEXT_PUBLIC_TELEGRAM_LINK = VITE_TELEGRAM_LINK;
+export const NEXT_PUBLIC_DISCORD_LINK = VITE_DISCORD_LINK;
+export const NEXT_PUBLIC_GITHUB_LINK = VITE_GITHUB_LINK;
+export const NEXT_PUBLIC_LINKEDIN_LINK = VITE_LINKEDIN_LINK;
+export const NEXT_PUBLIC_TWITTER_LINK = VITE_TWITTER_LINK;
+export const NEXT_PUBLIC_INSTAGRAM_LINK = VITE_INSTAGRAM_LINK;
+export const NEXT_PUBLIC_HOME_USER_COUNT = VITE_HOME_USER_COUNT;
+export const NEXT_PUBLIC_HOME_SERVER_COUNT = VITE_HOME_SERVER_COUNT;
+export const NEXT_PUBLIC_HOME_LOCATION_COUNT = VITE_HOME_LOCATION_COUNT;

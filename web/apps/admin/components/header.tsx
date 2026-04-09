@@ -9,8 +9,8 @@ import {
 } from "@workspace/ui/components/breadcrumb";
 import { Separator } from "@workspace/ui/components/separator";
 import { SidebarTrigger } from "@workspace/ui/components/sidebar";
-import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { usePathname } from "@/utils/router";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Fragment, useMemo } from "react";
 import { findNavByUrl } from "@/config/navs";
 import { ADMIN_HOME_PATH, stripAdminPath } from "@/utils/admin-path";

@@ -1,9 +1,9 @@
 "use client";
 
 import { buttonVariants } from "@workspace/ui/components/button";
-import Image from "next/legacy/image";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+import Image from "@/src/compat/app-image";
+import Link from "@/src/compat/app-link";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import useGlobalStore from "@/config/use-global";
 import LanguageSwitch from "./language-switch";
 import ThemeSwitch from "./theme-switch";

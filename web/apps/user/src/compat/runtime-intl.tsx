@@ -1,9 +1,9 @@
 import {
-  NextIntlClientProvider as BaseNextIntlClientProvider,
   createTranslator,
   useLocale,
   useTranslations,
-} from "next-intl";
+  NextIntlClientProvider as BaseNextIntlClientProvider,
+} from "@workspace/ui/components/i18n-provider";
 import { type ComponentProps, useEffect, useState } from "react";
 import { getClientLocale, getMessages } from "@/locales/client";
 

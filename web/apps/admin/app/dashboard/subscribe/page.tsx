@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@workspace/ui/components/card";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import ConfigForm from "./config-form";
 import { ProtocolForm } from "./protocol-form";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { default as _Empty } from "@workspace/ui/custom-components/empty";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 
 interface EmptyProps {

@@ -2,8 +2,8 @@
 
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import LoginLottie from "@workspace/ui/lotties/login.json";
-import Image from "next/legacy/image";
-import { useTranslations } from "next-intl";
+import Image from "@/components/app-image";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect } from "react";
 import { AdminLink } from "@/components/admin-link";
 import LanguageSwitch from "@/components/language-switch";

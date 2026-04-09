@@ -8,9 +8,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
+import { useTheme } from "@workspace/ui/components/theme-provider";
 import MoonLottie from "@workspace/ui/lotties/moon.json";
 import SunLottie from "@workspace/ui/lotties/sun.json";
-import { useTheme } from "next-themes";
 
 export default function ThemeSwitch() {
   const { setTheme, resolvedTheme } = useTheme();

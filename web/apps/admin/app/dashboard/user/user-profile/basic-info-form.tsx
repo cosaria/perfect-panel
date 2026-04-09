@@ -16,7 +16,7 @@ import { Switch } from "@workspace/ui/components/switch";
 import { EnhancedInput } from "@workspace/ui/custom-components/enhanced-input";
 import { UploadImage } from "@workspace/ui/custom-components/upload-image";
 import { unitConversion } from "@workspace/ui/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";

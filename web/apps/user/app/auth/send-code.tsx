@@ -2,7 +2,7 @@
 
 import { Button } from "@workspace/ui/components/button";
 import { useCountDown } from "ahooks";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useEffect, useState } from "react";
 import useGlobalStore from "@/config/use-global";
 import { sendEmailCode, sendSmsCode } from "@/services/common-api/sdk.gen";

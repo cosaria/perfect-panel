@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Display } from "@/components/display";
 import type { Subscribe } from "@/services/user-api/types.gen";
 

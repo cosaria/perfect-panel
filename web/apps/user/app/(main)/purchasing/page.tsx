@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from "@/src/compat/app-navigation";
 import { Suspense, useEffect, useState } from "react";
 import { getClientLocale } from "@/locales/client";
 import { getSubscription } from "@/services/user-api/sdk.gen";

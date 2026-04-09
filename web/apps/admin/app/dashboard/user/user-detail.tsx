@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@workspace/ui/components/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@workspace/ui/components/hover-card";
 import { formatBytes } from "@workspace/ui/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { AdminLink } from "@/components/admin-link";
 import { Display } from "@/components/display";
 import { getUserDetail, getUserSubscribeById } from "@/services/admin-api/sdk.gen";

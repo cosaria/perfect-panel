@@ -1,7 +1,7 @@
 "use client";
 
 import { ProList as _ProList, type ProListProps } from "@workspace/ui/custom-components/pro-list";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 
 export type {
   ProListActions,

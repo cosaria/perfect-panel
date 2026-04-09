@@ -19,7 +19,7 @@ export default forwardRef<HTMLImageElement, ImageProps>(function Image(
   const resolvedSrc = typeof src === "string" ? src : (src?.src ?? "");
 
   return (
-    // biome-ignore lint/performance/noImgElement: Vite spike 需要一个轻量兼容层替代 next/image。
+    // biome-ignore lint/performance/noImgElement: Vite 应用这里使用轻量图片封装。
     <img
       {...props}
       ref={ref}

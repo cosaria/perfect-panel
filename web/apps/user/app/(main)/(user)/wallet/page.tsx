@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@workspace/ui/components/card";
 import { formatDate } from "@workspace/ui/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { useRef } from "react";
 import { Display } from "@/components/display";
 import { Empty } from "@/components/empty";

@@ -1,7 +1,7 @@
 "use client";
 
 import { formatBytes, unitConversion } from "@workspace/ui/utils";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import useGlobalStore from "@/config/use-global";
 
 type DisplayType = "currency" | "traffic" | "number" | "trafficSpeed";

@@ -8,7 +8,7 @@ import { useOutsideClick } from "@workspace/ui/hooks/use-outside-click";
 import { cn } from "@workspace/ui/lib/utils";
 import { formatDate } from "@workspace/ui/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { type RefObject, useEffect, useId, useRef, useState } from "react";
 import { queryDocumentDetail } from "@/services/user-api/sdk.gen";
 import type { Document as DocType } from "@/services/user-api/types.gen";
