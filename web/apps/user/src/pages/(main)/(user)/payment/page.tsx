@@ -10,15 +10,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card";
+import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { Separator } from "@workspace/ui/components/separator";
 import { Icon } from "@workspace/ui/custom-components/icon";
 import { formatDate } from "@workspace/ui/utils";
 import { useCountDown } from "ahooks";
 import { addMinutes, format } from "date-fns";
-import Link from "@/components/app-link";
-import { useTranslations } from "@workspace/ui/components/i18n-provider";
 import { QRCodeCanvas } from "qrcode.react";
 import { useEffect, useState } from "react";
+import Link from "@/components/app-link";
 import { Display } from "@/components/display";
 import StripePayment from "@/components/payment/stripe";
 import { SubscribeBilling } from "@/components/subscribe/billing";
