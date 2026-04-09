@@ -13,6 +13,7 @@ type customServerLogicModel interface {
 	FilterServerList(ctx context.Context, params *FilterParams) (int64, []*Server, error)
 	FilterNodeList(ctx context.Context, params *FilterNodeParams) (int64, []*Node, error)
 	ClearNodeCache(ctx context.Context, params *FilterNodeParams) error
+	ListAssignedUserSubscriptionIDs(ctx context.Context, serverId int64, protocol string) ([]int64, error)
 }
 
 const (
@@ -93,7 +94,19 @@ func (m *customServerModel) FilterNodeList(ctx context.Context, params *FilterNo
 		query = query.Where("server_id IN ?", params.ServerId)
 	}
 	if len(params.Tag) > 0 {
-		query = query.Scopes(InSet("tags", params.Tag))
+		if m.catalogRepo.Available(query) {
+			groupCodes := make([]string, 0, len(params.Tag))
+			for _, tag := range params.Tag {
+				groupCodes = append(groupCodes, "tag:"+tag)
+			}
+			query = query.
+				Joins("JOIN node_group_nodes ON node_group_nodes.node_id = nodes.id").
+				Joins("JOIN node_groups ON node_groups.id = node_group_nodes.node_group_id").
+				Where("node_groups.code IN ?", groupCodes).
+				Distinct("nodes.id, nodes.name, nodes.tags, nodes.port, nodes.address, nodes.server_id, nodes.protocol, nodes.enabled, nodes.sort, nodes.created_at, nodes.updated_at")
+		} else {
+			query = query.Scopes(InSet("tags", params.Tag))
+		}
 	}
 	if params.Protocol != "" {
 		query = query.Where("protocol = ?", params.Protocol)
@@ -188,4 +201,8 @@ func InSet(field string, values []string) func(db *gorm.DB) *gorm.DB {
 		// 用括号包裹 OR 条件，保证外层 AND 不受影响
 		return db.Where("("+strings.Join(conds, " OR ")+")", args...)
 	}
+}
+
+func (m *customServerModel) ListAssignedUserSubscriptionIDs(ctx context.Context, serverId int64, protocol string) ([]int64, error) {
+	return m.assignmentRepo.ListAssignedUserSubscriptionIDs(ctx, serverId, protocol)
 }

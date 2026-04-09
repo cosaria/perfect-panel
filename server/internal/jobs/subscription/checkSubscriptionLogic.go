@@ -7,6 +7,7 @@ import (
 
 	queue "github.com/perfect-panel/server/internal/jobs/spec"
 
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
 	"github.com/perfect-panel/server/internal/platform/support/logger"
 
 	"github.com/hibiken/asynq"
@@ -46,6 +47,10 @@ func (l *CheckSubscriptionLogic) ProcessTask(ctx context.Context, _ *asynq.Task)
 			if err != nil {
 				logger.Errorw("[Check Subscription Traffic] Update subscribe status failed", logger.Field("error", err.Error()))
 				return nil
+			}
+			if err = syncSubscriptionAssignments(ctx, db, list...); err != nil {
+				logger.Errorw("[Check Subscription Traffic] Sync assignments failed", logger.Field("error", err.Error()))
+				return err
 			}
 			err = l.sendTrafficNotify(ctx, ids)
 			if err != nil {
@@ -90,6 +95,10 @@ func (l *CheckSubscriptionLogic) ProcessTask(ctx context.Context, _ *asynq.Task)
 			}).Error
 			if err != nil {
 				logger.Error("[Check Subscription Expire] Update subscribe status failed", logger.Field("error", err.Error()))
+				return err
+			}
+			if err = syncSubscriptionAssignments(ctx, db, list...); err != nil {
+				logger.Errorw("[Check Subscription Expire] Sync assignments failed", logger.Field("error", err.Error()))
 				return err
 			}
 			err = l.sendExpiredNotify(ctx, ids)
@@ -209,4 +218,17 @@ func (l *CheckSubscriptionLogic) clearServerCache(ctx context.Context, userSubs 
 			logger.Errorw("[CheckSubscription] ClearCache failed", logger.Field("error", err.Error()), logger.Field("subscribe_id", sub))
 		}
 	}
+}
+
+func syncSubscriptionAssignments(ctx context.Context, db *gorm.DB, userSubs ...*user.Subscribe) error {
+	repo := modelnode.NewAssignmentRepository(db)
+	for _, userSub := range userSubs {
+		if userSub == nil {
+			continue
+		}
+		if err := repo.SyncUserSubscription(ctx, userSub.Id, userSub.SubscribeId, userSub.Status, db); err != nil {
+			return err
+		}
+	}
+	return nil
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
+	"github.com/perfect-panel/server/internal/platform/persistence/system"
 	"github.com/perfect-panel/server/internal/platform/payment"
 )
 
@@ -20,14 +21,30 @@ func NotifyMiddleware(runtimeDeps *appruntime.Deps) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 		var params PaymentParams
+		recordFailure := func(platform string, token string, reason string) {
+			if runtimeDeps == nil || runtimeDeps.DB == nil {
+				return
+			}
+			_ = system.NewExternalTrustRepository(runtimeDeps.DB).Record(ctx, &system.ExternalTrustEvent{
+				EntryPoint:      "payment_notify",
+				Credential:      token,
+				IdempotencyKey:  c.Request.Method + ":" + c.Request.URL.Path + "?" + c.Request.URL.RawQuery,
+				AuthStatus:      "failed",
+				ProcessingState: "rejected",
+				FailureReason:   reason,
+				RawPayload:      c.Request.URL.String(),
+			})
+		}
 		// Get platform and token from uri
 		if err := c.ShouldBindUri(&params); err != nil {
+			recordFailure(params.Platform, params.Token, err.Error())
 			writeNotifyProtocolFailure(c, params.Platform)
 			c.Abort()
 			return
 		}
 		paymentConfig, err := runtimeDeps.PaymentModel.FindOneByPaymentToken(ctx, params.Token)
 		if err != nil {
+			recordFailure(params.Platform, params.Token, err.Error())
 			writeNotifyProtocolFailure(c, params.Platform)
 			c.Abort()
 			return

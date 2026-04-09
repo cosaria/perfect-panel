@@ -4,16 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/internal/platform/http/response"
 	"github.com/perfect-panel/server/internal/platform/http/types"
 	"github.com/perfect-panel/server/internal/platform/persistence/node"
-	"github.com/perfect-panel/server/internal/platform/persistence/subscribe"
 	"github.com/perfect-panel/server/internal/platform/support/logger"
 	"github.com/perfect-panel/server/internal/platform/support/tool"
-	"github.com/perfect-panel/server/internal/platform/support/uuidx"
 	"github.com/perfect-panel/server/internal/platform/support/xerr"
 	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
@@ -85,64 +82,32 @@ func (l *GetServerUserListLogic) GetServerUserList(req *types.GetServerUserListR
 		return nil, err
 	}
 
-	_, nodes, err := l.deps.NodeModel.FilterNodeList(l.ctx, &node.FilterNodeParams{
-		Page:     1,
-		Size:     1000,
-		ServerId: []int64{server.Id},
-		Protocol: req.Protocol,
-	})
-	if err != nil {
-		l.Errorw("FilterNodeList error", logger.Field("error", err.Error()))
-		return nil, err
-	}
-	var nodeTag []string
-	var nodeIds []int64
-	for _, n := range nodes {
-		nodeIds = append(nodeIds, n.Id)
-		if n.Tags != "" {
-			nodeTag = append(nodeTag, strings.Split(n.Tags, ",")...)
-		}
-	}
-
-	_, subs, err := l.deps.SubscribeModel.FilterList(l.ctx, &subscribe.FilterParams{
-		Page: 1,
-		Size: 9999,
-		Node: nodeIds,
-		Tags: nodeTag,
-	})
-	if err != nil {
-		l.Errorw("QuerySubscribeIdsByServerIdAndServerGroupId error", logger.Field("error", err.Error()))
-		return nil, err
-	}
-	if len(subs) == 0 {
-		return &types.GetServerUserListResponse{
-			Users: []types.ServerUser{
-				{
-					Id:   1,
-					UUID: uuidx.NewUUID().String(),
-				},
-			},
-		}, nil
-	}
 	users := make([]types.ServerUser, 0)
-	for _, sub := range subs {
-		data, err := l.deps.UserModel.FindUsersSubscribeBySubscribeId(l.ctx, sub.Id)
-		if err != nil {
-			return nil, err
-		}
-		for _, datum := range data {
-			users = append(users, types.ServerUser{
-				Id:          datum.Id,
-				UUID:        datum.UUID,
-				SpeedLimit:  sub.SpeedLimit,
-				DeviceLimit: sub.DeviceLimit,
-			})
-		}
+	assignedIds, err := l.deps.NodeModel.ListAssignedUserSubscriptionIDs(l.ctx, server.Id, req.Protocol)
+	if err != nil {
+		l.Errorw("ListAssignedUserSubscriptionIDs error", logger.Field("error", err.Error()))
+		return nil, err
 	}
-	if len(users) == 0 {
+	subscriptions, err := l.deps.UserModel.ActivateAndFindUserSubscribeDetailsByIDs(l.ctx, assignedIds)
+	if err != nil {
+		l.Errorw("ActivateAndFindUserSubscribeDetailsByIDs error", logger.Field("error", err.Error()))
+		return nil, err
+	}
+	for _, data := range subscriptions {
+		if data == nil {
+			continue
+		}
+		speedLimit := int64(0)
+		deviceLimit := int64(0)
+		if data.Subscribe != nil {
+			speedLimit = data.Subscribe.SpeedLimit
+			deviceLimit = data.Subscribe.DeviceLimit
+		}
 		users = append(users, types.ServerUser{
-			Id:   1,
-			UUID: uuidx.NewUUID().String(),
+			Id:          data.Id,
+			UUID:        data.UUID,
+			SpeedLimit:  speedLimit,
+			DeviceLimit: deviceLimit,
 		})
 	}
 	resp = &types.GetServerUserListResponse{

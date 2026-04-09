@@ -38,6 +38,26 @@ func NewModel(conn *gorm.DB, c *redis.Client) Model {
 
 // QueryTicketDetail returns the ticket details.
 func (m *customTicketModel) QueryTicketDetail(ctx context.Context, id int64) (*Details, error) {
+	if m.content.Available() {
+		data, err := m.content.FindTicketDetail(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		resp := &Details{
+			Id:          data.ID,
+			Title:       data.Title,
+			Description: data.Description,
+			UserId:      data.UserID,
+			Status:      data.Status,
+			CreatedAt:   data.CreatedAt,
+			UpdatedAt:   data.UpdatedAt,
+			Follows:     make([]Follow, 0, len(data.Messages)),
+		}
+		for _, item := range data.Messages {
+			resp.Follows = append(resp.Follows, contentMessageToLegacy(item))
+		}
+		return resp, nil
+	}
 	key := fmt.Sprintf("%s%v", cacheTicketDetailPrefix, id)
 	var data *Details
 	err := m.QueryCtx(ctx, &data, key, func(conn *gorm.DB, v interface{}) error {
@@ -49,6 +69,11 @@ func (m *customTicketModel) QueryTicketDetail(ctx context.Context, id int64) (*D
 // InsertTicketFollow inserts a follow record.
 func (m *customTicketModel) InsertTicketFollow(ctx context.Context, data *Follow) error {
 	key := fmt.Sprintf("%s%v", cacheTicketDetailPrefix, data.TicketId)
+	if m.content.Available() {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.content.InsertTicketMessage(ctx, legacyFollowToContent(data))
+		}, key)
+	}
 	return m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		return conn.Model(&Follow{}).Create(data).Error
 	}, key)
@@ -56,6 +81,17 @@ func (m *customTicketModel) InsertTicketFollow(ctx context.Context, data *Follow
 
 // QueryTicketList returns the ticket list.
 func (m *customTicketModel) QueryTicketList(ctx context.Context, page, size int, userId int64, status *uint8, search string) (int64, []*Ticket, error) {
+	if m.content.Available() {
+		total, list, err := m.content.ListTickets(ctx, page, size, userId, status, search)
+		if err != nil {
+			return 0, nil, err
+		}
+		resp := make([]*Ticket, 0, len(list))
+		for _, item := range list {
+			resp = append(resp, contentTicketToLegacy(item))
+		}
+		return total, resp, nil
+	}
 	var data []*Ticket
 	var total int64
 	err := m.QueryNoCacheCtx(ctx, &data, func(conn *gorm.DB, v interface{}) error {
@@ -79,6 +115,11 @@ func (m *customTicketModel) QueryTicketList(ctx context.Context, page, size int,
 // UpdateTicketStatus updates the ticket status.
 func (m *customTicketModel) UpdateTicketStatus(ctx context.Context, id, userId int64, status uint8) error {
 	key := fmt.Sprintf("%s%v", cacheTicketDetailPrefix, id)
+	if m.content.Available() {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.content.UpdateTicketStatus(ctx, id, userId, status)
+		}, key)
+	}
 	return m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		conn = conn.Model(&Ticket{})
 		if userId > 0 {
@@ -90,6 +131,9 @@ func (m *customTicketModel) UpdateTicketStatus(ctx context.Context, id, userId i
 
 // QueryWaitReplyTotal returns the total number of tickets that are waiting for a reply.
 func (m *customTicketModel) QueryWaitReplyTotal(ctx context.Context) (int64, error) {
+	if m.content.Available() {
+		return m.content.CountPendingTickets(ctx)
+	}
 	var total int64
 	err := m.QueryNoCacheCtx(ctx, &total, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Ticket{}).Where("status = ?", Pending).Count(&total).Error

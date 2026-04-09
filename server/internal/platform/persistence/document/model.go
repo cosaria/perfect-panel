@@ -22,6 +22,13 @@ func NewModel(conn *gorm.DB, c *redis.Client) Model {
 
 // QueryDocumentDetail queries the details of a document.
 func (m *customDocumentModel) QueryDocumentDetail(ctx context.Context, id int64) (*Document, error) {
+	if m.content.Available() {
+		data, err := m.content.FindDocument(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		return contentDocumentToLegacy(data), nil
+	}
 	var data Document
 	err := m.QueryNoCacheCtx(ctx, &data, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Document{}).Preload("Group").Where("id = ?", id).Find(v).Error
@@ -31,6 +38,17 @@ func (m *customDocumentModel) QueryDocumentDetail(ctx context.Context, id int64)
 
 // QueryDocumentList queries a list of documents.
 func (m *customDocumentModel) QueryDocumentList(ctx context.Context, page, size int, tag string, search string) (int64, []*Document, error) {
+	if m.content.Available() {
+		total, list, err := m.content.ListDocuments(ctx, page, size, tag, search)
+		if err != nil {
+			return 0, nil, err
+		}
+		resp := make([]*Document, 0, len(list))
+		for _, item := range list {
+			resp = append(resp, contentDocumentToLegacy(item))
+		}
+		return total, resp, nil
+	}
 	var data []*Document
 	var total int64
 	err := m.QueryNoCacheCtx(ctx, &data, func(conn *gorm.DB, v interface{}) error {
@@ -48,6 +66,17 @@ func (m *customDocumentModel) QueryDocumentList(ctx context.Context, page, size 
 
 // GetDocumentListByAll queries a list of documents.
 func (m *customDocumentModel) GetDocumentListByAll(ctx context.Context) (int64, []*Document, error) {
+	if m.content.Available() {
+		total, list, err := m.content.ListVisibleDocuments(ctx)
+		if err != nil {
+			return 0, nil, err
+		}
+		resp := make([]*Document, 0, len(list))
+		for _, item := range list {
+			resp = append(resp, contentDocumentToLegacy(item))
+		}
+		return total, resp, nil
+	}
 	var data []*Document
 	var total int64
 	show := true

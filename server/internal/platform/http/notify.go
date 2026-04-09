@@ -12,6 +12,7 @@ func RegisterNotifyHandlers(router *gin.Engine, runtimeDeps *appruntime.Deps) {
 	group.Use(middleware.NotifyMiddleware(runtimeDeps))
 	notifyDeps := notify.Deps{}
 	if runtimeDeps != nil {
+		notifyDeps.DB = runtimeDeps.DB
 		notifyDeps.OrderModel = runtimeDeps.OrderModel
 		notifyDeps.Queue = runtimeDeps.Queue
 		notifyDeps.Config = runtimeDeps.Config

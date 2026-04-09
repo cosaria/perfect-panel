@@ -2,7 +2,9 @@ package node
 
 import (
 	"context"
+	"strings"
 
+	"github.com/perfect-panel/server/internal/platform/persistence/catalog"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
@@ -38,14 +40,18 @@ type (
 	}
 	defaultServerModel struct {
 		*gorm.DB
-		Cache *redis.Client
+		Cache          *redis.Client
+		catalogRepo    *catalog.Repository
+		assignmentRepo *AssignmentRepository
 	}
 )
 
 func newServerModel(db *gorm.DB, cache *redis.Client) *defaultServerModel {
 	return &defaultServerModel{
-		DB:    db,
-		Cache: cache,
+		DB:             db,
+		Cache:          cache,
+		catalogRepo:    catalog.NewRepository(db),
+		assignmentRepo: NewAssignmentRepository(db),
 	}
 }
 
@@ -93,11 +99,20 @@ func (m *defaultServerModel) DeleteServer(ctx context.Context, id int64, tx ...*
 }
 
 func (m *defaultServerModel) InsertNode(ctx context.Context, data *Node, tx ...*gorm.DB) error {
-	db := m.DB
-	if len(tx) > 0 {
-		db = tx[0]
-	}
-	return db.WithContext(ctx).Create(data).Error
+	return m.withWriteConn(ctx, tx, func(db *gorm.DB) error {
+		if err := db.Create(data).Error; err != nil {
+			return err
+		}
+		if m.catalogRepo.Available(db) {
+			if err := m.catalogRepo.SyncNodeTagMemberships(ctx, data.Id, splitCSV(data.Tags), db); err != nil {
+				return err
+			}
+			if err := m.assignmentRepo.RefreshAssignmentsForNode(ctx, data.Id, db); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func (m *defaultServerModel) FindOneNode(ctx context.Context, id int64) (*Node, error) {
@@ -112,21 +127,118 @@ func (m *defaultServerModel) UpdateNode(ctx context.Context, data *Node, tx ...*
 		return err
 	}
 
-	db := m.DB
-	if len(tx) > 0 {
-		db = tx[0]
-	}
-	return db.WithContext(ctx).Where("`id` = ?", data.Id).Save(data).Error
+	return m.withWriteConn(ctx, tx, func(db *gorm.DB) error {
+		affectedSubscribeIds, err := m.collectAffectedSubscribeIds(ctx, db, data.Id)
+		if err != nil {
+			return err
+		}
+		if err := db.Where("`id` = ?", data.Id).Save(data).Error; err != nil {
+			return err
+		}
+		if m.catalogRepo.Available(db) {
+			if err := m.catalogRepo.SyncNodeTagMemberships(ctx, data.Id, splitCSV(data.Tags), db); err != nil {
+				return err
+			}
+			currentSubscribeIds, err := m.collectAffectedSubscribeIds(ctx, db, data.Id)
+			if err != nil {
+				return err
+			}
+			if err := m.refreshAssignmentsForSubscribeIds(ctx, db, mergeInt64(affectedSubscribeIds, currentSubscribeIds)); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func (m *defaultServerModel) DeleteNode(ctx context.Context, id int64, tx ...*gorm.DB) error {
-	db := m.DB
-	if len(tx) > 0 {
-		db = tx[0]
-	}
-	return db.WithContext(ctx).Where("`id` = ?", id).Delete(&Node{}).Error
+	return m.withWriteConn(ctx, tx, func(db *gorm.DB) error {
+		affectedSubscribeIds, err := m.collectAffectedSubscribeIds(ctx, db, id)
+		if err != nil {
+			return err
+		}
+		if err := db.Where("node_id = ?", id).Delete(&SubscriptionNodeAssignment{}).Error; err != nil {
+			return err
+		}
+		if m.catalogRepo.Available(db) {
+			if err := m.catalogRepo.DeleteNodeMemberships(ctx, id, db); err != nil {
+				return err
+			}
+		}
+		if err := db.Where("`id` = ?", id).Delete(&Node{}).Error; err != nil {
+			return err
+		}
+		return m.refreshAssignmentsForSubscribeIds(ctx, db, affectedSubscribeIds)
+	})
 }
 
 func (m *defaultServerModel) Transaction(ctx context.Context, fn func(db *gorm.DB) error) error {
 	return m.WithContext(ctx).Transaction(fn)
+}
+
+func (m *defaultServerModel) withWriteConn(ctx context.Context, tx []*gorm.DB, fn func(db *gorm.DB) error) error {
+	if len(tx) > 0 && tx[0] != nil {
+		return fn(tx[0].WithContext(ctx))
+	}
+	return m.WithContext(ctx).Transaction(fn)
+}
+
+func splitCSV(raw string) []string {
+	if raw == "" {
+		return nil
+	}
+	parts := strings.Split(raw, ",")
+	result := make([]string, 0, len(parts))
+	seen := make(map[string]struct{}, len(parts))
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
+		}
+		if _, ok := seen[part]; ok {
+			continue
+		}
+		seen[part] = struct{}{}
+		result = append(result, part)
+	}
+	return result
+}
+
+func (m *defaultServerModel) collectAffectedSubscribeIds(ctx context.Context, db *gorm.DB, nodeId int64) ([]int64, error) {
+	if !m.catalogRepo.Available(db) {
+		return nil, nil
+	}
+	return m.catalogRepo.ListSubscribeIDsForNode(ctx, nodeId, db)
+}
+
+func (m *defaultServerModel) refreshAssignmentsForSubscribeIds(ctx context.Context, db *gorm.DB, subscribeIds []int64) error {
+	if !m.assignmentRepo.Available(db) {
+		return nil
+	}
+	for _, subscribeId := range subscribeIds {
+		if err := m.assignmentRepo.RefreshAssignmentsForSubscribe(ctx, subscribeId, db); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func mergeInt64(left, right []int64) []int64 {
+	seen := make(map[int64]struct{}, len(left)+len(right))
+	result := make([]int64, 0, len(left)+len(right))
+	for _, item := range left {
+		if _, ok := seen[item]; ok {
+			continue
+		}
+		seen[item] = struct{}{}
+		result = append(result, item)
+	}
+	for _, item := range right {
+		if _, ok := seen[item]; ok {
+			continue
+		}
+		seen[item] = struct{}{}
+		result = append(result, item)
+	}
+	return result
 }

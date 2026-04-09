@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/perfect-panel/server/internal/platform/cache"
+	"github.com/perfect-panel/server/internal/platform/persistence/content"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
@@ -33,7 +34,8 @@ type (
 	}
 	defaultDocumentModel struct {
 		cache.CachedConn
-		table string
+		table   string
+		content *content.Repository
 	}
 )
 
@@ -41,6 +43,7 @@ func newDocumentModel(db *gorm.DB, c *redis.Client) *defaultDocumentModel {
 	return &defaultDocumentModel{
 		CachedConn: cache.NewConn(db, c),
 		table:      "`document`",
+		content:    content.NewRepository(db),
 	}
 }
 
@@ -65,6 +68,11 @@ func (m *defaultDocumentModel) getCacheKeys(data *Document) []string {
 }
 
 func (m *defaultDocumentModel) Insert(ctx context.Context, data *Document) error {
+	if m.content.Available() {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.content.UpsertDocument(ctx, legacyDocumentToContent(data))
+		}, m.getCacheKeys(data)...)
+	}
 	err := m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		return conn.Create(&data).Error
 	}, m.getCacheKeys(data)...)
@@ -72,6 +80,13 @@ func (m *defaultDocumentModel) Insert(ctx context.Context, data *Document) error
 }
 
 func (m *defaultDocumentModel) FindOne(ctx context.Context, id int64) (*Document, error) {
+	if m.content.Available() {
+		data, err := m.content.FindDocument(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		return contentDocumentToLegacy(data), nil
+	}
 	DocumentIdKey := fmt.Sprintf("%s%v", cacheDocumentIdPrefix, id)
 	var resp Document
 	err := m.QueryCtx(ctx, &resp, DocumentIdKey, func(conn *gorm.DB, v interface{}) error {
@@ -88,6 +103,11 @@ func (m *defaultDocumentModel) Update(ctx context.Context, data *Document) error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
+	if m.content.Available() {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.content.UpsertDocument(ctx, legacyDocumentToContent(data))
+		}, m.getCacheKeys(old)...)
+	}
 	err = m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		db := conn
 		return db.Save(data).Error
@@ -103,6 +123,11 @@ func (m *defaultDocumentModel) Delete(ctx context.Context, id int64) error {
 		}
 		return err
 	}
+	if m.content.Available() {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.content.DeleteDocument(ctx, id)
+		}, m.getCacheKeys(data)...)
+	}
 	err = m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		db := conn
 		return db.Delete(&Document{}, id).Error
@@ -112,4 +137,34 @@ func (m *defaultDocumentModel) Delete(ctx context.Context, id int64) error {
 
 func (m *defaultDocumentModel) Transaction(ctx context.Context, fn func(db *gorm.DB) error) error {
 	return m.TransactCtx(ctx, fn)
+}
+
+func legacyDocumentToContent(data *Document) *content.Document {
+	if data == nil {
+		return nil
+	}
+	return &content.Document{
+		ID:        data.Id,
+		Title:     data.Title,
+		Content:   data.Content,
+		Tags:      data.Tags,
+		Show:      data.Show,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
+	}
+}
+
+func contentDocumentToLegacy(data *content.Document) *Document {
+	if data == nil {
+		return nil
+	}
+	return &Document{
+		Id:        data.ID,
+		Title:     data.Title,
+		Content:   data.Content,
+		Tags:      data.Tags,
+		Show:      data.Show,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
+	}
 }

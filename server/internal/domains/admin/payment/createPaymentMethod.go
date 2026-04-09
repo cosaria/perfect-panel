@@ -97,7 +97,7 @@ func (l *CreatePaymentMethodLogic) CreatePaymentMethod(req *types.CreatePaymentM
 			content, _ := cfg.Marshal()
 			paymentMethod.Config = string(content)
 		}
-		if err = tx.Model(&paymentModel.Payment{}).Create(paymentMethod).Error; err != nil {
+		if err = l.deps.PaymentModel.Insert(l.ctx, paymentMethod, tx); err != nil {
 			return errors.Wrapf(xerr.NewErrCode(xerr.DatabaseInsertError), "insert payment method error: %s", err.Error())
 		}
 		return nil

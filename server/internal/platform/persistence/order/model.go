@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/perfect-panel/server/internal/platform/persistence/billing"
 	"github.com/perfect-panel/server/internal/platform/persistence/payment"
 
 	"github.com/perfect-panel/server/internal/platform/persistence/subscribe"
@@ -78,6 +79,17 @@ func NewModel(conn *gorm.DB, c *redis.Client) Model {
 
 // QueryOrderListByPage Query order list by page
 func (m *customOrderModel) QueryOrderListByPage(ctx context.Context, page, size int, status uint8, user, subscribe int64, search string) (int64, []*Details, error) {
+	if m.billing.Available() {
+		total, rows, err := m.billing.ListOrdersByPage(ctx, page, size, status, user, subscribe, search)
+		if err != nil {
+			return 0, nil, err
+		}
+		list := make([]*Details, 0, len(rows))
+		for _, row := range rows {
+			list = append(list, m.billingOrderToDetails(ctx, row))
+		}
+		return total, list, nil
+	}
 	var list []*Details
 	var total int64
 	err := m.QueryNoCacheCtx(ctx, &list, func(conn *gorm.DB, v interface{}) error {
@@ -105,6 +117,11 @@ func (m *customOrderModel) UpdateOrderStatus(ctx context.Context, orderNo string
 	if err != nil {
 		return err
 	}
+	if m.billing.Available(firstOrderTx(tx)...) {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.billing.UpdateOrderStatus(ctx, orderNo, status, orderWithConn(conn, tx)...)
+		}, m.getCacheKeys(orderInfo)...)
+	}
 	return m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		if len(tx) > 0 {
 			conn = tx[0]
@@ -115,6 +132,13 @@ func (m *customOrderModel) UpdateOrderStatus(ctx context.Context, orderNo string
 
 // FindOneDetailsByOrderNo Find order details by order number
 func (m *customOrderModel) FindOneDetailsByOrderNo(ctx context.Context, orderNo string) (*Details, error) {
+	if m.billing.Available() {
+		record, err := m.billing.FindOrderByOrderNo(ctx, orderNo)
+		if err != nil {
+			return nil, err
+		}
+		return m.billingOrderToDetails(ctx, record), nil
+	}
 	var orderInfo Details
 	err := m.QueryNoCacheCtx(ctx, &orderInfo, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Order{}).Where("order_no = ?", orderNo).Preload("Subscribe").Preload("Payment").First(v).Error
@@ -123,6 +147,13 @@ func (m *customOrderModel) FindOneDetailsByOrderNo(ctx context.Context, orderNo 
 }
 
 func (m *customOrderModel) FindOneDetails(ctx context.Context, id int64) (*Details, error) {
+	if m.billing.Available() {
+		record, err := m.billing.FindOrderByID(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		return m.billingOrderToDetails(ctx, record), nil
+	}
 	var orderInfo Details
 	err := m.QueryNoCacheCtx(ctx, &orderInfo, func(conn *gorm.DB, v interface{}) error {
 		return conn.Model(&Order{}).
@@ -135,11 +166,12 @@ func (m *customOrderModel) FindOneDetails(ctx context.Context, id int64) (*Detai
 }
 
 func (m *customOrderModel) QueryMonthlyOrders(ctx context.Context, date time.Time) (OrdersTotal, error) {
+	model := m.orderStatsModel()
 	firstDay := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, date.Location())
 	lastDay := firstDay.AddDate(0, 1, 0).Add(-time.Nanosecond)
 	var result OrdersTotal
 	err := m.QueryNoCacheCtx(ctx, &result, func(conn *gorm.DB, v interface{}) error {
-		return conn.Model(&Order{}).
+		return conn.Model(model).
 			Where("status IN ? AND created_at BETWEEN ? AND ? AND method != ?", []int64{2, 5}, firstDay, lastDay, "balance").
 			Select(
 				"SUM(amount) as amount_total, " +
@@ -153,11 +185,12 @@ func (m *customOrderModel) QueryMonthlyOrders(ctx context.Context, date time.Tim
 
 // QueryDateOrders Query orders by date
 func (m *customOrderModel) QueryDateOrders(ctx context.Context, date time.Time) (OrdersTotal, error) {
+	model := m.orderStatsModel()
 	start := date.Truncate(24 * time.Hour)
 	end := start.Add(24 * time.Hour).Add(-time.Nanosecond)
 	var result OrdersTotal
 	err := m.QueryNoCacheCtx(ctx, &result, func(conn *gorm.DB, v interface{}) error {
-		return conn.Model(&Order{}).
+		return conn.Model(model).
 			Where("status IN ? AND created_at BETWEEN ? AND ? AND method != ?", []int64{2, 5}, start, end, "balance").
 			Select(
 				"SUM(amount) as amount_total, " +
@@ -170,10 +203,11 @@ func (m *customOrderModel) QueryDateOrders(ctx context.Context, date time.Time) 
 }
 
 func (m *customOrderModel) QueryTotalOrders(ctx context.Context) (OrdersTotal, error) {
+	model := m.orderStatsModel()
 	var result OrdersTotal
 
 	err := m.QueryNoCacheCtx(ctx, &result, func(conn *gorm.DB, _ interface{}) error {
-		return conn.Model(&Order{}).
+		return conn.Model(model).
 			Select(`
 				SUM(amount) AS amount_total,
 				SUM(CASE WHEN is_new = 1 THEN amount ELSE 0 END) AS new_order_amount,
@@ -187,6 +221,7 @@ func (m *customOrderModel) QueryTotalOrders(ctx context.Context) (OrdersTotal, e
 }
 
 func (m *customOrderModel) QueryMonthlyUserCounts(ctx context.Context, date time.Time) (int64, int64, error) {
+	model := m.orderStatsModel()
 	// 获取当月第一天零点
 	firstDay := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, date.Location())
 	// 获取下个月第一天零点（避免漏掉最后一天的订单）
@@ -196,7 +231,7 @@ func (m *customOrderModel) QueryMonthlyUserCounts(ctx context.Context, date time
 
 	// 执行查询
 	err := m.QueryNoCacheCtx(ctx, nil, func(conn *gorm.DB, _ interface{}) error {
-		return conn.Model(&Order{}).
+		return conn.Model(model).
 			Select(`
 				COUNT(DISTINCT CASE WHEN is_new = 1 THEN user_id END) AS new_users,
 				COUNT(DISTINCT CASE WHEN is_new = 0 THEN user_id END) AS renewal_users
@@ -209,6 +244,7 @@ func (m *customOrderModel) QueryMonthlyUserCounts(ctx context.Context, date time
 	return counts.NewUsers, counts.RenewalUsers, err
 }
 func (m *customOrderModel) QueryDateUserCounts(ctx context.Context, date time.Time) (int64, int64, error) {
+	model := m.orderStatsModel()
 	// 当天 00:00:00
 	start := time.Date(date.Year(), date.Month(), date.Day(), 0, 0, 0, 0, date.Location())
 	// 下一天 00:00:00
@@ -217,7 +253,7 @@ func (m *customOrderModel) QueryDateUserCounts(ctx context.Context, date time.Ti
 	var counts UserCounts
 
 	err := m.QueryNoCacheCtx(ctx, nil, func(conn *gorm.DB, _ interface{}) error {
-		return conn.Model(&Order{}).
+		return conn.Model(model).
 			Select(`
 				COUNT(DISTINCT CASE WHEN is_new = 1 THEN user_id END) AS new_users,
 				COUNT(DISTINCT CASE WHEN is_new = 0 THEN user_id END) AS renewal_users
@@ -230,10 +266,11 @@ func (m *customOrderModel) QueryDateUserCounts(ctx context.Context, date time.Ti
 	return counts.NewUsers, counts.RenewalUsers, err
 }
 func (m *customOrderModel) QueryTotalUserCounts(ctx context.Context) (int64, int64, error) {
+	model := m.orderStatsModel()
 	var counts UserCounts
 
 	err := m.QueryNoCacheCtx(ctx, nil, func(conn *gorm.DB, _ interface{}) error {
-		return conn.Model(&Order{}).
+		return conn.Model(model).
 			Where("status IN ? AND method != ?", []int64{2, 5}, "balance").
 			Select(`
 				COUNT(DISTINCT CASE WHEN is_new = 1 THEN user_id END) AS new_users,
@@ -246,9 +283,10 @@ func (m *customOrderModel) QueryTotalUserCounts(ctx context.Context) (int64, int
 }
 
 func (m *customOrderModel) IsUserEligibleForNewOrder(ctx context.Context, userID int64) (bool, error) {
+	model := m.orderStatsModel()
 	var count int64
 	err := m.QueryNoCacheCtx(ctx, nil, func(conn *gorm.DB, _ interface{}) error {
-		return conn.Model(&Order{}).
+		return conn.Model(model).
 			Where("user_id = ? AND status IN ?", userID, []int64{2, 5}).
 			Count(&count).Error
 	})
@@ -257,6 +295,7 @@ func (m *customOrderModel) IsUserEligibleForNewOrder(ctx context.Context, userID
 
 // QueryDailyOrdersList 查询当月每日订单统计
 func (m *customOrderModel) QueryDailyOrdersList(ctx context.Context, date time.Time) ([]OrdersTotalWithDate, error) {
+	model := m.orderStatsModel()
 	var results []OrdersTotalWithDate
 
 	err := m.QueryNoCacheCtx(ctx, &results, func(conn *gorm.DB, v interface{}) error {
@@ -265,7 +304,7 @@ func (m *customOrderModel) QueryDailyOrdersList(ctx context.Context, date time.T
 		// 第二天 00:00:00
 		nextDay := date.AddDate(0, 0, 1).Truncate(24 * time.Hour)
 
-		return conn.Model(&Order{}).
+		return conn.Model(model).
 			Select(`
 				DATE_FORMAT(created_at, '%Y-%m-%d') AS date,
 				SUM(amount) AS amount_total,
@@ -283,6 +322,7 @@ func (m *customOrderModel) QueryDailyOrdersList(ctx context.Context, date time.T
 
 // QueryMonthlyOrdersList 查询过去 6 个月订单统计（包含当前月）
 func (m *customOrderModel) QueryMonthlyOrdersList(ctx context.Context, date time.Time) ([]OrdersTotalWithDate, error) {
+	model := m.orderStatsModel()
 	var results []OrdersTotalWithDate
 
 	err := m.QueryNoCacheCtx(ctx, &results, func(conn *gorm.DB, v interface{}) error {
@@ -291,7 +331,7 @@ func (m *customOrderModel) QueryMonthlyOrdersList(ctx context.Context, date time
 		// 下个月月初
 		end := time.Date(date.Year(), date.Month(), 1, 0, 0, 0, 0, date.Location()).AddDate(0, 1, 0)
 
-		return conn.Model(&Order{}).
+		return conn.Model(model).
 			Select(`
 				DATE_FORMAT(created_at, '%Y-%m') AS date,
 				SUM(amount) AS amount_total,
@@ -305,4 +345,81 @@ func (m *customOrderModel) QueryMonthlyOrdersList(ctx context.Context, date time
 			Scan(v).Error
 	})
 	return results, err
+}
+
+func (m *customOrderModel) billingOrderToDetails(ctx context.Context, data *billing.OrderRecord) *Details {
+	if data == nil {
+		return nil
+	}
+	result := &Details{
+		Id:             data.ID,
+		ParentId:       data.ParentID,
+		UserId:         data.UserID,
+		OrderNo:        data.OrderNo,
+		Type:           data.Type,
+		Quantity:       data.Quantity,
+		Price:          data.Price,
+		Amount:         data.Amount,
+		Discount:       data.Discount,
+		Coupon:         data.Coupon,
+		CouponDiscount: data.CouponDiscount,
+		PaymentId:      data.PaymentID,
+		Method:         data.Method,
+		FeeAmount:      data.FeeAmount,
+		TradeNo:        data.TradeNo,
+		GiftAmount:     data.GiftAmount,
+		Commission:     data.Commission,
+		Status:         data.Status,
+		SubscribeId:    data.SubscribeID,
+		SubscribeToken: data.SubscribeToken,
+		IsNew:          data.IsNew,
+		CreatedAt:      data.CreatedAt,
+		UpdatedAt:      data.UpdatedAt,
+	}
+	if data.Payment != nil {
+		result.Payment = gatewayRecordToLegacyPayment(data.Payment)
+	}
+	if data.SubscribeID > 0 {
+		result.Subscribe = m.loadLegacySubscribe(ctx, data.SubscribeID)
+	}
+	return result
+}
+
+func gatewayRecordToLegacyPayment(data *billing.GatewayRecord) *payment.Payment {
+	if data == nil {
+		return nil
+	}
+	return &payment.Payment{
+		Id:          data.ID,
+		Name:        data.Name,
+		Platform:    data.Platform,
+		Icon:        data.Icon,
+		Domain:      data.Domain,
+		Config:      data.Config,
+		Description: data.Description,
+		FeeMode:     data.FeeMode,
+		FeePercent:  data.FeePercent,
+		FeeAmount:   data.FeeAmount,
+		Enable:      data.Enable,
+		Token:       data.Token,
+	}
+}
+
+func (m *customOrderModel) loadLegacySubscribe(ctx context.Context, subscribeID int64) *subscribe.Subscribe {
+	if m.db == nil {
+		return nil
+	}
+	var data subscribe.Subscribe
+	err := m.db.WithContext(ctx).Model(&subscribe.Subscribe{}).Where("id = ?", subscribeID).First(&data).Error
+	if err != nil {
+		return nil
+	}
+	return &data
+}
+
+func (m *customOrderModel) orderStatsModel() interface{} {
+	if m.billing.Available() {
+		return &billing.Order{}
+	}
+	return &Order{}
 }

@@ -14,6 +14,7 @@ func registerServerRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, spec
 
 	serverDeps := server.Deps{}
 	if runtimeDeps != nil {
+		serverDeps.DB = runtimeDeps.DB
 		serverDeps.NodeModel = runtimeDeps.NodeModel
 		serverDeps.SubscribeModel = runtimeDeps.SubscribeModel
 		serverDeps.UserModel = runtimeDeps.UserModel

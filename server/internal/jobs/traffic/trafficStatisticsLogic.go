@@ -38,6 +38,26 @@ func (l *TrafficStatisticsLogic) ProcessTask(ctx context.Context, task *asynq.Ta
 		logger.WithContext(ctx).Error("[TrafficStatistics] Payload is empty")
 		return nil
 	}
+	usageRepo := node.NewUsageIngestRepository(l.deps.DB)
+	if usageRepo.Available() && payload.ReportID > 0 {
+		decision, err := usageRepo.ClaimPending(ctx, payload.ReportID)
+		if err != nil {
+			return err
+		}
+		if decision != nil && !decision.Accepted {
+			logger.WithContext(ctx).Infow("[TrafficStatistics] duplicate usage report skipped",
+				logger.Field("report_id", payload.ReportID),
+				logger.Field("state", decision.ProcessingState))
+			return nil
+		}
+		defer func() {
+			if err := usageRepo.MarkProcessed(ctx, payload.ReportID, "processed"); err != nil {
+				logger.WithContext(ctx).Error("[TrafficStatistics] mark usage report processed failed",
+					logger.Field("report_id", payload.ReportID),
+					logger.Field("error", err.Error()))
+			}
+		}()
+	}
 	// query server info
 	serverInfo, err := l.deps.NodeModel.FindOneServer(ctx, payload.ServerId)
 	if err != nil {

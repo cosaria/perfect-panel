@@ -81,6 +81,7 @@ type customUserLogicModel interface {
 	QueryUserSubscribe(ctx context.Context, userId int64, status ...int64) ([]*SubscribeDetails, error)
 	FindOneSubscribeDetailsById(ctx context.Context, id int64) (*SubscribeDetails, error)
 	FindOneUserSubscribe(ctx context.Context, id int64) (*SubscribeDetails, error)
+	ActivateAndFindUserSubscribeDetailsByIDs(ctx context.Context, ids []int64) ([]*SubscribeDetails, error)
 	FindUsersSubscribeBySubscribeId(ctx context.Context, subscribeId int64) ([]*Subscribe, error)
 	UpdateUserSubscribeWithTraffic(ctx context.Context, id, download, upload int64, tx ...*gorm.DB) error
 	QueryResisterUserTotalByDate(ctx context.Context, date time.Time) (int64, error)
@@ -303,6 +304,13 @@ func (m *customUserModel) FindOneByReferCode(ctx context.Context, referCode stri
 }
 
 func (m *customUserModel) FindOneSubscribeDetailsById(ctx context.Context, id int64) (*SubscribeDetails, error) {
+	if m.subscriptionRepo.Available() {
+		record, err := m.subscriptionRepo.FindByID(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		return m.subscriptionRecordToDetails(ctx, record), nil
+	}
 	var data SubscribeDetails
 	err := m.QueryNoCacheCtx(ctx, &data, func(conn *gorm.DB, v interface{}) error {
 		if m.useIdentitySchema(conn) {

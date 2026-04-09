@@ -16,6 +16,10 @@ func RegisterEmbedded() {
 	registerEmbeddedOnce.Do(func() {
 		schema.RegisterRevision(baselineRevision{})
 		schema.RegisterRevision(identitySystemRevision{})
+		schema.RegisterRevision(catalogNodeRelationsRevision{})
+		schema.RegisterRevision(billingSubscriptionRevision{})
+		schema.RegisterRevision(asyncTrustAndUsageRevision{})
+		schema.RegisterRevision(contentCleanupRevision{})
 	})
 }
 

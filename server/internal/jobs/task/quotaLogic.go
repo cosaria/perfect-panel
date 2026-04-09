@@ -9,6 +9,7 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/internal/platform/persistence/log"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
 	"github.com/perfect-panel/server/internal/platform/persistence/task"
 	"github.com/perfect-panel/server/internal/platform/persistence/user"
 	"github.com/perfect-panel/server/internal/platform/support/logger"
@@ -178,7 +179,7 @@ func (l *QuotaTaskLogic) processSubscribes(ctx context.Context, subscribes []*us
 	now := time.Now()
 
 	for _, sub := range subscribes {
-		if err := l.processSubscription(tx, sub, content, now, &errors); err != nil {
+		if err := l.processSubscription(ctx, tx, sub, content, now, &errors); err != nil {
 			tx.Rollback()
 			return err
 		}
@@ -228,7 +229,7 @@ func (l *QuotaTaskLogic) processSubscribes(ctx context.Context, subscribes []*us
 	return nil
 }
 
-func (l *QuotaTaskLogic) processSubscription(tx *gorm.DB, sub *user.Subscribe, content task.QuotaContent, now time.Time, errors *[]ErrorInfo) error {
+func (l *QuotaTaskLogic) processSubscription(ctx context.Context, tx *gorm.DB, sub *user.Subscribe, content task.QuotaContent, now time.Time, errors *[]ErrorInfo) error {
 	// 验证订阅数据
 	if sub == nil {
 		*errors = append(*errors, ErrorInfo{
@@ -283,6 +284,13 @@ func (l *QuotaTaskLogic) processSubscription(tx *gorm.DB, sub *user.Subscribe, c
 			*errors = append(*errors, ErrorInfo{
 				UserSubscribeId: sub.Id,
 				Error:           "update subscription error: " + err.Error(),
+			})
+			return nil
+		}
+		if err := modelnode.NewAssignmentRepository(tx).SyncUserSubscription(ctx, sub.Id, sub.SubscribeId, sub.Status, tx); err != nil {
+			*errors = append(*errors, ErrorInfo{
+				UserSubscribeId: sub.Id,
+				Error:           "sync assignment error: " + err.Error(),
 			})
 			return nil
 		}

@@ -2,12 +2,15 @@ package server
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
+	"encoding/hex"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hibiken/asynq"
 	task "github.com/perfect-panel/server/internal/jobs"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
 	"github.com/perfect-panel/server/internal/platform/http/response"
 	"github.com/perfect-panel/server/internal/platform/http/types"
 	"github.com/perfect-panel/server/internal/platform/support/logger"
@@ -60,9 +63,38 @@ func (l *ServerPushUserTrafficLogic) ServerPushUserTraffic(req *types.ServerPush
 	request.ServerId = serverInfo.Id
 	request.Protocol = req.Protocol
 	tool.DeepCopy(&request.Logs, req.Traffic)
+	rawPayload, err := json.Marshal(request)
+	if err != nil {
+		return err
+	}
+	ingestRepo := modelnode.NewUsageIngestRepository(l.deps.DB)
+	if ingestRepo != nil && ingestRepo.Available() {
+		sum := sha256.Sum256(rawPayload)
+		decision, err := ingestRepo.Ingest(l.ctx, &modelnode.UsageIngestInput{
+			ServerID:       serverInfo.Id,
+			Protocol:       req.Protocol,
+			IdempotencyKey: hex.EncodeToString(sum[:]),
+			AuthStatus:     "verified",
+			RawPayload:     string(rawPayload),
+			LogCount:       len(request.Logs),
+		})
+		if err != nil {
+			return err
+		}
+		if decision != nil {
+			if !decision.Accepted {
+				l.Infow("[ServerPushUserTraffic] Duplicate traffic report ignored",
+					logger.Field("server_id", serverInfo.Id),
+					logger.Field("report_id", decision.ReportID),
+					logger.Field("state", decision.ProcessingState))
+				return nil
+			}
+			request.ReportID = decision.ReportID
+		}
+	}
 
 	// Push traffic task
-	val, _ := json.Marshal(request)
+	val := rawPayload
 	t := asynq.NewTask(task.ForthwithTrafficStatistics, val, asynq.MaxRetry(3))
 	info, err := l.deps.Queue.EnqueueContext(l.ctx, t)
 	if err != nil {

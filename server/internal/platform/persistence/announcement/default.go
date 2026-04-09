@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/perfect-panel/server/internal/platform/cache"
+	"github.com/perfect-panel/server/internal/platform/persistence/content"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
@@ -33,7 +34,8 @@ type (
 	}
 	defaultAnnouncementModel struct {
 		cache.CachedConn
-		table string
+		table   string
+		content *content.Repository
 	}
 )
 
@@ -41,6 +43,7 @@ func newAnnouncementModel(db *gorm.DB, c *redis.Client) *defaultAnnouncementMode
 	return &defaultAnnouncementModel{
 		CachedConn: cache.NewConn(db, c),
 		table:      "`announcement`",
+		content:    content.NewRepository(db),
 	}
 }
 
@@ -65,6 +68,11 @@ func (m *defaultAnnouncementModel) getCacheKeys(data *Announcement) []string {
 }
 
 func (m *defaultAnnouncementModel) Insert(ctx context.Context, data *Announcement) error {
+	if m.content.Available() {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.content.UpsertAnnouncement(ctx, legacyAnnouncementToContent(data))
+		}, m.getCacheKeys(data)...)
+	}
 	err := m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		return conn.Create(&data).Error
 	}, m.getCacheKeys(data)...)
@@ -72,6 +80,13 @@ func (m *defaultAnnouncementModel) Insert(ctx context.Context, data *Announcemen
 }
 
 func (m *defaultAnnouncementModel) FindOne(ctx context.Context, id int64) (*Announcement, error) {
+	if m.content.Available() {
+		data, err := m.content.FindAnnouncement(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		return contentAnnouncementToLegacy(data), nil
+	}
 	AnnouncementIdKey := fmt.Sprintf("%s%v", cacheAnnouncementIdPrefix, id)
 	var resp Announcement
 	err := m.QueryCtx(ctx, &resp, AnnouncementIdKey, func(conn *gorm.DB, v interface{}) error {
@@ -88,6 +103,11 @@ func (m *defaultAnnouncementModel) Update(ctx context.Context, data *Announcemen
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
+	if m.content.Available() {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.content.UpsertAnnouncement(ctx, legacyAnnouncementToContent(data))
+		}, m.getCacheKeys(old)...)
+	}
 	err = m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		db := conn
 		return db.Save(data).Error
@@ -103,6 +123,11 @@ func (m *defaultAnnouncementModel) Delete(ctx context.Context, id int64) error {
 		}
 		return err
 	}
+	if m.content.Available() {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.content.DeleteAnnouncement(ctx, id)
+		}, m.getCacheKeys(data)...)
+	}
 	err = m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		db := conn
 		return db.Delete(&Announcement{}, id).Error
@@ -112,4 +137,36 @@ func (m *defaultAnnouncementModel) Delete(ctx context.Context, id int64) error {
 
 func (m *defaultAnnouncementModel) Transaction(ctx context.Context, fn func(db *gorm.DB) error) error {
 	return m.TransactCtx(ctx, fn)
+}
+
+func legacyAnnouncementToContent(data *Announcement) *content.Announcement {
+	if data == nil {
+		return nil
+	}
+	return &content.Announcement{
+		ID:        data.Id,
+		Title:     data.Title,
+		Content:   data.Content,
+		Show:      data.Show,
+		Pinned:    data.Pinned,
+		Popup:     data.Popup,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
+	}
+}
+
+func contentAnnouncementToLegacy(data *content.Announcement) *Announcement {
+	if data == nil {
+		return nil
+	}
+	return &Announcement{
+		Id:        data.ID,
+		Title:     data.Title,
+		Content:   data.Content,
+		Show:      data.Show,
+		Pinned:    data.Pinned,
+		Popup:     data.Popup,
+		CreatedAt: data.CreatedAt,
+		UpdatedAt: data.UpdatedAt,
+	}
 }

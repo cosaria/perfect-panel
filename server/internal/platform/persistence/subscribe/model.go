@@ -2,6 +2,7 @@ package subscribe
 
 import (
 	"context"
+	"slices"
 
 	"github.com/perfect-panel/server/internal/platform/support/tool"
 	"github.com/redis/go-redis/v9"
@@ -76,6 +77,24 @@ func (m *customSubscribeModel) FilterList(ctx context.Context, params *FilterPar
 
 	var list []*Subscribe
 	var total int64
+	filterIds := append([]int64(nil), params.Ids...)
+	if m.catalogRepo.Available() && (len(params.Node) > 0 || len(params.Tags) > 0) {
+		resolvedIds, err := m.catalogRepo.ResolveSubscribeIDsBySelectors(ctx, params.Node, params.Tags)
+		if err != nil {
+			return 0, nil, err
+		}
+		if len(resolvedIds) == 0 {
+			return 0, []*Subscribe{}, nil
+		}
+		if len(filterIds) > 0 {
+			filterIds = intersectInt64(filterIds, resolvedIds)
+			if len(filterIds) == 0 {
+				return 0, []*Subscribe{}, nil
+			}
+		} else {
+			filterIds = resolvedIds
+		}
+	}
 
 	// 构建查询函数
 	buildQuery := func(conn *gorm.DB, lang string) *gorm.DB {
@@ -92,14 +111,14 @@ func (m *customSubscribeModel) FilterList(ctx context.Context, params *FilterPar
 			query = query.Where("`sell` = true")
 		}
 
-		if len(params.Ids) > 0 {
-			query = query.Where("id IN ?", params.Ids)
+		if len(filterIds) > 0 {
+			query = query.Where("id IN ?", filterIds)
 		}
-		if len(params.Node) > 0 {
+		if len(params.Node) > 0 && !m.catalogRepo.Available(conn) {
 			query = query.Scopes(InSet("nodes", tool.Int64SliceToStringSlice(params.Node)))
 		}
 
-		if len(params.Tags) > 0 {
+		if len(params.Tags) > 0 && !m.catalogRepo.Available(conn) {
 			query = query.Scopes(InSet("node_tags", params.Tags))
 		}
 		if lang != "" {
@@ -137,6 +156,11 @@ func (m *customSubscribeModel) FilterList(ctx context.Context, params *FilterPar
 			return 0, nil, err
 		}
 	}
+	for _, item := range list {
+		if err := m.hydrateSelectors(ctx, m.db, item); err != nil {
+			return 0, nil, err
+		}
+	}
 
 	return total, list, nil
 }
@@ -153,4 +177,21 @@ func InSet(field string, values []string) func(db *gorm.DB) *gorm.DB {
 		}
 		return query
 	}
+}
+
+func intersectInt64(left, right []int64) []int64 {
+	if len(left) == 0 || len(right) == 0 {
+		return nil
+	}
+	seen := make(map[int64]struct{}, len(right))
+	for _, item := range right {
+		seen[item] = struct{}{}
+	}
+	result := make([]int64, 0, len(left))
+	for _, item := range left {
+		if _, ok := seen[item]; ok && !slices.Contains(result, item) {
+			result = append(result, item)
+		}
+	}
+	return result
 }

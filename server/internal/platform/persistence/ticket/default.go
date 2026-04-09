@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/perfect-panel/server/internal/platform/cache"
+	"github.com/perfect-panel/server/internal/platform/persistence/content"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
@@ -33,7 +34,8 @@ type (
 	}
 	defaultTicketModel struct {
 		cache.CachedConn
-		table string
+		table   string
+		content *content.Repository
 	}
 )
 
@@ -41,6 +43,7 @@ func newTicketModel(db *gorm.DB, c *redis.Client) *defaultTicketModel {
 	return &defaultTicketModel{
 		CachedConn: cache.NewConn(db, c),
 		table:      "`ticket`",
+		content:    content.NewRepository(db),
 	}
 }
 
@@ -65,6 +68,11 @@ func (m *defaultTicketModel) getCacheKeys(data *Ticket) []string {
 }
 
 func (m *defaultTicketModel) Insert(ctx context.Context, data *Ticket) error {
+	if m.content.Available() {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.content.UpsertTicket(ctx, legacyTicketToContent(data))
+		}, m.getCacheKeys(data)...)
+	}
 	err := m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		return conn.Create(&data).Error
 	}, m.getCacheKeys(data)...)
@@ -72,6 +80,13 @@ func (m *defaultTicketModel) Insert(ctx context.Context, data *Ticket) error {
 }
 
 func (m *defaultTicketModel) FindOne(ctx context.Context, id int64) (*Ticket, error) {
+	if m.content.Available() {
+		data, err := m.content.FindTicket(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		return contentTicketToLegacy(data), nil
+	}
 	TicketIdKey := fmt.Sprintf("%s%v", cacheTicketIdPrefix, id)
 	var resp Ticket
 	err := m.QueryCtx(ctx, &resp, TicketIdKey, func(conn *gorm.DB, v interface{}) error {
@@ -89,6 +104,11 @@ func (m *defaultTicketModel) Update(ctx context.Context, data *Ticket) error {
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
+	if m.content.Available() {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.content.UpsertTicket(ctx, legacyTicketToContent(data))
+		}, m.getCacheKeys(old)...)
+	}
 	err = m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		db := conn
 		return db.Save(data).Error
@@ -104,6 +124,11 @@ func (m *defaultTicketModel) Delete(ctx context.Context, id int64) error {
 		}
 		return err
 	}
+	if m.content.Available() {
+		return m.ExecCtx(ctx, func(conn *gorm.DB) error {
+			return m.content.DeleteTicket(ctx, id)
+		}, m.getCacheKeys(data)...)
+	}
 	err = m.ExecCtx(ctx, func(conn *gorm.DB) error {
 		db := conn
 		return db.Delete(&Ticket{}, id).Error
@@ -113,4 +138,59 @@ func (m *defaultTicketModel) Delete(ctx context.Context, id int64) error {
 
 func (m *defaultTicketModel) Transaction(ctx context.Context, fn func(db *gorm.DB) error) error {
 	return m.TransactCtx(ctx, fn)
+}
+
+func legacyTicketToContent(data *Ticket) *content.Ticket {
+	if data == nil {
+		return nil
+	}
+	return &content.Ticket{
+		ID:          data.Id,
+		Title:       data.Title,
+		Description: data.Description,
+		UserID:      data.UserId,
+		Status:      data.Status,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
+	}
+}
+
+func contentTicketToLegacy(data *content.Ticket) *Ticket {
+	if data == nil {
+		return nil
+	}
+	return &Ticket{
+		Id:          data.ID,
+		Title:       data.Title,
+		Description: data.Description,
+		UserId:      data.UserID,
+		Status:      data.Status,
+		CreatedAt:   data.CreatedAt,
+		UpdatedAt:   data.UpdatedAt,
+	}
+}
+
+func legacyFollowToContent(data *Follow) *content.TicketMessage {
+	if data == nil {
+		return nil
+	}
+	return &content.TicketMessage{
+		ID:        data.Id,
+		TicketID:  data.TicketId,
+		From:      data.From,
+		Type:      data.Type,
+		Content:   data.Content,
+		CreatedAt: data.CreatedAt,
+	}
+}
+
+func contentMessageToLegacy(data content.TicketMessage) Follow {
+	return Follow{
+		Id:        data.ID,
+		TicketId:  data.TicketID,
+		From:      data.From,
+		Type:      data.Type,
+		Content:   data.Content,
+		CreatedAt: data.CreatedAt,
+	}
 }

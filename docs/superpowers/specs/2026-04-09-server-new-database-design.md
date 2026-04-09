@@ -110,6 +110,7 @@ server/internal/platform/persistence/
 5. `subscription/` 负责用户实际拥有的订阅、周期、token、配额与订阅事件。
 6. `node/` 负责 server、node、节点协议配置、节点运行态、节点授权解析和流量上报事实。
 7. `content/` 与 `system/` 负责工单、公告、文档、模板及各类平台配置和策略。
+8. `announcement / document / ticket` 这类旧包继续存在，但只作为指向 `content/` 的 compatibility façade。
 
 ## 表设计策略
 
@@ -448,6 +449,7 @@ server/internal/platform/persistence/
 
 1. `server/internal/platform/persistence/` 需要按规范化模块重组，但目标是支撑现有 API，不是推翻现有 HTTP 面。
 2. `server/internal/platform/persistence/migrate/` 和其下 SQL migration 文件退出主工作流。
+   当前 `run`、`configinit`、`version` 主链只依赖 `schema/bootstrap + revisions`。
 3. 当前服务层可以继续沿用现有 handler / route / job 名称，但底层查询与装配会逐步改写。
 4. `internal/domains/**` 的业务词汇继续保留参考价值，但底层不能继续依赖旧式平铺表结构。
 5. 当前支付回调、节点协议和后台任务需要补上幂等、审计和信任合同，而不是只换表名。

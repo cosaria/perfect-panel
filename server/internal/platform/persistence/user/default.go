@@ -7,6 +7,8 @@ import (
 
 	"github.com/perfect-panel/server/internal/platform/cache"
 	"github.com/perfect-panel/server/internal/platform/persistence/identity"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
+	modelsubscription "github.com/perfect-panel/server/internal/platform/persistence/subscription"
 	"github.com/perfect-panel/server/internal/platform/support/logger"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
@@ -39,18 +41,22 @@ type (
 	}
 	defaultUserModel struct {
 		cache.CachedConn
-		db           *gorm.DB
-		table        string
-		identityRepo *identity.Repository
+		db               *gorm.DB
+		table            string
+		identityRepo     *identity.Repository
+		assignmentSyncer subscriptionAssignmentSyncer
+		subscriptionRepo *modelsubscription.Repository
 	}
 )
 
 func newUserModel(db *gorm.DB, c *redis.Client) *defaultUserModel {
 	return &defaultUserModel{
-		CachedConn:  cache.NewConn(db, c),
-		db:          db,
-		table:       "`user`",
-		identityRepo: identity.NewRepository(db),
+		CachedConn:       cache.NewConn(db, c),
+		db:               db,
+		table:            "`user`",
+		identityRepo:     identity.NewRepository(db),
+		assignmentSyncer: modelnode.NewAssignmentRepository(db),
+		subscriptionRepo: modelsubscription.NewRepository(db),
 	}
 }
 
@@ -194,7 +200,11 @@ func (m *defaultUserModel) Transaction(ctx context.Context, fn func(db *gorm.DB)
 	if err != nil {
 		return err
 	}
-	return m.DelCacheCtx(ctx, uniqueStrings(deferredKeys)...)
+	keys := uniqueStrings(deferredKeys)
+	if len(keys) == 0 {
+		return nil
+	}
+	return m.DelCacheCtx(ctx, keys...)
 }
 
 func (m *defaultUserModel) useIdentitySchema(conn *gorm.DB) bool {

@@ -10,6 +10,7 @@ import (
 
 	"github.com/perfect-panel/server/internal/jobs/spec"
 	"github.com/perfect-panel/server/internal/platform/persistence/log"
+	modelnode "github.com/perfect-panel/server/internal/platform/persistence/node"
 	"github.com/perfect-panel/server/internal/platform/persistence/subscribe"
 	"github.com/perfect-panel/server/internal/platform/persistence/user"
 	"github.com/perfect-panel/server/internal/platform/support/logger"
@@ -246,6 +247,10 @@ func (l *ResetTrafficLogic) resetMonth(ctx context.Context) error {
 				logger.Errorw("[ResetTraffic] Failed to find user subscriptions for 1st reset", logger.Field("error", err.Error()))
 				return err
 			}
+			if err = syncResetAssignments(ctx, db, userSubs...); err != nil {
+				logger.Errorw("[ResetTraffic] Failed to sync monthly reset assignments", logger.Field("error", err.Error()))
+				return err
+			}
 			// Clear cache for these subscriptions
 			l.clearCache(ctx, userSubs)
 			logger.Infow("[ResetTraffic] Monthly reset completed", logger.Field("count", len(monthlyResetUsers)))
@@ -328,6 +333,10 @@ func (l *ResetTrafficLogic) reset1st(ctx context.Context, cache resetTrafficCach
 			err = db.Model(&user.Subscribe{}).Where("`id` IN ?", users1stReset).Find(&userSubs).Error
 			if err != nil {
 				logger.Errorw("[ResetTraffic] Failed to find user subscriptions for 1st reset", logger.Field("error", err.Error()))
+				return err
+			}
+			if err = syncResetAssignments(ctx, db, userSubs...); err != nil {
+				logger.Errorw("[ResetTraffic] Failed to sync 1st reset assignments", logger.Field("error", err.Error()))
 				return err
 			}
 
@@ -415,6 +424,10 @@ func (l *ResetTrafficLogic) resetYear(ctx context.Context) error {
 			err = db.Model(&user.Subscribe{}).Where("`id` IN ?", usersYearReset).Find(&userSubs).Error
 			if err != nil {
 				logger.Errorw("[ResetTraffic] Failed to find user subscriptions for 1st reset", logger.Field("error", err.Error()))
+				return err
+			}
+			if err = syncResetAssignments(ctx, db, userSubs...); err != nil {
+				logger.Errorw("[ResetTraffic] Failed to sync yearly reset assignments", logger.Field("error", err.Error()))
 				return err
 			}
 			// Clear cache for these subscriptions
@@ -621,4 +634,17 @@ func (l *ResetTrafficLogic) insertLog(ctx context.Context, subId, userId int64) 
 	}).Error; err != nil {
 		logger.Errorw("[ResetTraffic] Failed to create system log for subscription", logger.Field("error", err.Error()))
 	}
+}
+
+func syncResetAssignments(ctx context.Context, db *gorm.DB, userSubs ...*user.Subscribe) error {
+	repo := modelnode.NewAssignmentRepository(db)
+	for _, userSub := range userSubs {
+		if userSub == nil {
+			continue
+		}
+		if err := repo.SyncUserSubscription(ctx, userSub.Id, userSub.SubscribeId, userSub.Status, db); err != nil {
+			return err
+		}
+	}
+	return nil
 }

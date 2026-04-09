@@ -170,6 +170,34 @@ server/
    go build -o bin/ppanel .
    ```
 
+### 数据库工作流
+
+当前主链已经切到 `schema/bootstrap + revisions`。日常开发里优先使用下面这组命令，而不是继续往旧 `persistence/migrate` 链路追加内容：
+
+1. 初始化空库：
+   ```bash
+   go run . db bootstrap --config etc/ppanel.yaml
+   ```
+
+2. 注入基础站点和管理员数据：
+   ```bash
+   go run . db seed --config etc/ppanel.yaml
+   ```
+
+3. 查看当前 revision 状态：
+   ```bash
+   go run . db revisions --config etc/ppanel.yaml
+   ```
+
+### 持久层边界
+
+`server/internal/platform/persistence/` 现在按规范化模块推进：
+
+- `identity / catalog / billing / subscription / node / content / system / schema` 是新的规范化模块。
+- `user / auth / order / payment / subscribe / announcement / document / ticket` 保留为 compatibility façade，继续保护现有 handler、job 和 API 合同。
+- `announcement / document / ticket` 已经通过 `content` 模块承接新表结构；旧包仍然存在，但不再是新增 schema 的落点。
+- `persistence/migrate/` 只保留给过渡测试和旧资产检查，已经退出 `run`、`configinit`、`version` 主链。
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please follow the [Contribution Guidelines](CONTRIBUTING.md) for bug fixes, features, or

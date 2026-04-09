@@ -7,11 +7,13 @@ import (
 	modelsubscribe "github.com/perfect-panel/server/internal/platform/persistence/subscribe"
 	modeluser "github.com/perfect-panel/server/internal/platform/persistence/user"
 	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
 )
 
 // Deps holds the narrow node-service dependencies while Phase 6 removes direct
 // ServiceContext usage from service packages.
 type Deps struct {
+	DB             *gorm.DB
 	NodeModel      modelnode.Model
 	SubscribeModel modelsubscribe.Model
 	UserModel      modeluser.Model

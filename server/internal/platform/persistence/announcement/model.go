@@ -3,6 +3,7 @@ package announcement
 import (
 	"context"
 
+	"github.com/perfect-panel/server/internal/platform/persistence/content"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
@@ -27,6 +28,22 @@ type Filter struct {
 
 // GetAnnouncementListByPage  get announcement list by page
 func (m *customAnnouncementModel) GetAnnouncementListByPage(ctx context.Context, page, size int, filter Filter) (int64, []*Announcement, error) {
+	if m.content.Available() {
+		total, list, err := m.content.ListAnnouncements(ctx, page, size, content.AnnouncementFilter{
+			Show:   filter.Show,
+			Pinned: filter.Pinned,
+			Popup:  filter.Popup,
+			Search: filter.Search,
+		})
+		if err != nil {
+			return 0, nil, err
+		}
+		resp := make([]*Announcement, 0, len(list))
+		for _, item := range list {
+			resp = append(resp, contentAnnouncementToLegacy(item))
+		}
+		return total, resp, nil
+	}
 	var list []*Announcement
 	var total int64
 	err := m.QueryNoCacheCtx(ctx, &list, func(conn *gorm.DB, v interface{}) error {

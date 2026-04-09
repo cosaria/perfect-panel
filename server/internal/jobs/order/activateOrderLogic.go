@@ -69,6 +69,13 @@ func (l *ActivateOrderLogic) ProcessTask(ctx context.Context, task *asynq.Task) 
 	if err != nil {
 		return nil // Log and continue
 	}
+	release, locked := l.acquireOrderProcessingLock(ctx, payload.OrderNo)
+	if !locked {
+		logger.WithContext(ctx).Infow("[ActivateOrderLogic] duplicate order activation skipped",
+			logger.Field("order_no", payload.OrderNo))
+		return nil
+	}
+	defer release()
 
 	orderInfo, err := l.validateAndGetOrder(ctx, payload.OrderNo)
 	if err != nil {
@@ -82,6 +89,30 @@ func (l *ActivateOrderLogic) ProcessTask(ctx context.Context, task *asynq.Task) 
 
 	l.finalizeCouponAndOrder(ctx, orderInfo)
 	return nil
+}
+
+func (l *ActivateOrderLogic) acquireOrderProcessingLock(ctx context.Context, orderNo string) (func(), bool) {
+	if l.deps.Redis == nil || orderNo == "" {
+		return func() {}, true
+	}
+	key := fmt.Sprintf("order:activate:claim:%s", orderNo)
+	ok, err := l.deps.Redis.SetNX(ctx, key, "1", 5*time.Minute).Result()
+	if err != nil {
+		logger.WithContext(ctx).Error("[ActivateOrderLogic] acquire order lock failed",
+			logger.Field("order_no", orderNo),
+			logger.Field("error", err.Error()))
+		return func() {}, true
+	}
+	if !ok {
+		return func() {}, false
+	}
+	return func() {
+		if err := l.deps.Redis.Del(context.Background(), key).Err(); err != nil {
+			logger.WithContext(ctx).Error("[ActivateOrderLogic] release order lock failed",
+				logger.Field("order_no", orderNo),
+				logger.Field("error", err.Error()))
+		}
+	}, true
 }
 
 // parsePayload unMarshals the task payload into a structured format
