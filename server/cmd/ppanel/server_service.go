@@ -13,8 +13,8 @@ import (
 	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
 	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
+	"github.com/perfect-panel/server/internal/domains/common/report"
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/services/report"
 
 	"github.com/perfect-panel/server/modules/infra/proc"
 	"github.com/perfect-panel/server/modules/infra/trace"

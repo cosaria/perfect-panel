@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/perfect-panel/server/internal/domains/common/report"
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/services/report"
 	"gorm.io/driver/mysql"
 
 	"github.com/gin-gonic/gin"

@@ -3,11 +3,11 @@ package handler
 import (
 	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
-	adminSystem "github.com/perfect-panel/server/services/admin/system"
-	adminTool "github.com/perfect-panel/server/services/admin/tool"
-	servicetelegram "github.com/perfect-panel/server/services/telegram"
-	publicPortal "github.com/perfect-panel/server/services/user/portal"
-	publicUser "github.com/perfect-panel/server/services/user/user"
+	adminSystem "github.com/perfect-panel/server/internal/domains/admin/system"
+	adminTool "github.com/perfect-panel/server/internal/domains/admin/tool"
+	servicetelegram "github.com/perfect-panel/server/internal/domains/telegram"
+	publicPortal "github.com/perfect-panel/server/internal/domains/user/portal"
+	publicUser "github.com/perfect-panel/server/internal/domains/user/user"
 )
 
 func newPublicPortalDeps(runtimeDeps *appruntime.Deps) publicPortal.Deps {

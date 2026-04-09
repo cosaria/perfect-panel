@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
-	servicesubscribe "github.com/perfect-panel/server/services/subscribe"
+	servicesubscribe "github.com/perfect-panel/server/internal/domains/subscribe"
 )
 
 func RegisterSubscribeHandlers(router *gin.Engine, runtimeDeps *appruntime.Deps) {

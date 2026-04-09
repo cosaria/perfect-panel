@@ -3,8 +3,8 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
+	server "github.com/perfect-panel/server/internal/domains/node"
 	"github.com/perfect-panel/server/internal/platform/http/middleware"
-	server "github.com/perfect-panel/server/services/node"
 )
 
 func registerServerRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specOnly bool) {

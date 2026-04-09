@@ -7,15 +7,15 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-gonic/gin"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
+	publicAnnouncement "github.com/perfect-panel/server/internal/domains/user/announcement"
+	publicDocument "github.com/perfect-panel/server/internal/domains/user/document"
+	publicOrder "github.com/perfect-panel/server/internal/domains/user/order"
+	publicPayment "github.com/perfect-panel/server/internal/domains/user/payment"
+	publicPortal "github.com/perfect-panel/server/internal/domains/user/portal"
+	publicSubscribe "github.com/perfect-panel/server/internal/domains/user/subscribe"
+	publicTicket "github.com/perfect-panel/server/internal/domains/user/ticket"
+	publicUser "github.com/perfect-panel/server/internal/domains/user/user"
 	"github.com/perfect-panel/server/internal/platform/http/middleware"
-	publicAnnouncement "github.com/perfect-panel/server/services/user/announcement"
-	publicDocument "github.com/perfect-panel/server/services/user/document"
-	publicOrder "github.com/perfect-panel/server/services/user/order"
-	publicPayment "github.com/perfect-panel/server/services/user/payment"
-	publicPortal "github.com/perfect-panel/server/services/user/portal"
-	publicSubscribe "github.com/perfect-panel/server/services/user/subscribe"
-	publicTicket "github.com/perfect-panel/server/services/user/ticket"
-	publicUser "github.com/perfect-panel/server/services/user/user"
 )
 
 func registerPublicRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specOnly bool) []huma.API {

@@ -9,9 +9,9 @@ func TestPhase6MixedDependencyCheckpointNoLongerImportsBootstrapCompositionRoot(
 	t.Parallel()
 
 	assertTargetsHaveNoBootstrapBoundaryDependency(t, []string{
-		filepath.Join("..", "services", "common", "sendEmailCode.go"),
-		filepath.Join("..", "services", "common", "sendSmsCode.go"),
-		filepath.Join("..", "services", "common", "checkverificationcodehandler.go"),
-		filepath.Join("..", "services", "common", "checkverificationcodelogic.go"),
+		filepath.Join("..", "internal", "domains", "common", "sendEmailCode.go"),
+		filepath.Join("..", "internal", "domains", "common", "sendSmsCode.go"),
+		filepath.Join("..", "internal", "domains", "common", "checkverificationcodehandler.go"),
+		filepath.Join("..", "internal", "domains", "common", "checkverificationcodelogic.go"),
 	})
 }

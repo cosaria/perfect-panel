@@ -7,9 +7,9 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-gonic/gin"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
+	auth "github.com/perfect-panel/server/internal/domains/auth"
+	authOauth "github.com/perfect-panel/server/internal/domains/auth/oauth"
 	"github.com/perfect-panel/server/internal/platform/http/middleware"
-	auth "github.com/perfect-panel/server/services/auth"
-	authOauth "github.com/perfect-panel/server/services/auth/oauth"
 )
 
 func registerAuthRoutes(router *gin.Engine, runtimeDeps *appruntime.Deps, specOnly bool) []huma.API {

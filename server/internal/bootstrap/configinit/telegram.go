@@ -8,9 +8,9 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/perfect-panel/server/config"
+	"github.com/perfect-panel/server/internal/domains/telegram"
 	"github.com/perfect-panel/server/models/auth"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/services/telegram"
 )
 
 func Telegram(deps Deps) {

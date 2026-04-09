@@ -7,9 +7,9 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 
 	"github.com/hibiken/asynq"
+	"github.com/perfect-panel/server/internal/domains/user/order"
 	"github.com/perfect-panel/server/internal/jobs/spec"
 	internal "github.com/perfect-panel/server/internal/platform/http/types"
-	"github.com/perfect-panel/server/services/user/order"
 )
 
 type DeferCloseOrderLogic struct {

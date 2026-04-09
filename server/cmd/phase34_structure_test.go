@@ -8,7 +8,7 @@ import (
 )
 
 func TestPhase3ServicesNoLongerKeepHandlerLogicPairs(t *testing.T) {
-	servicesRoot := filepath.Join("..", "services")
+	servicesRoot := filepath.Join("..", "internal", "domains")
 	legacyPairs := 0
 
 	err := filepath.Walk(servicesRoot, func(path string, info os.FileInfo, walkErr error) error {
@@ -26,11 +26,11 @@ func TestPhase3ServicesNoLongerKeepHandlerLogicPairs(t *testing.T) {
 		return nil
 	})
 	if err != nil {
-		t.Fatalf("walk services tree: %v", err)
+		t.Fatalf("walk domains tree: %v", err)
 	}
 
 	if legacyPairs != 0 {
-		t.Fatalf("expected no split handler/logic pairs in services, found %d", legacyPairs)
+		t.Fatalf("expected no split handler/logic pairs in domains, found %d", legacyPairs)
 	}
 }
 
