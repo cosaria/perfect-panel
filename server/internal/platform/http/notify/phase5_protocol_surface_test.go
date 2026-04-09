@@ -10,8 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/config"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
+	"github.com/perfect-panel/server/internal/platform/http/middleware"
 	paymentModel "github.com/perfect-panel/server/models/payment"
-	"github.com/perfect-panel/server/routers/middleware"
 	telegramsvc "github.com/perfect-panel/server/services/telegram"
 	"github.com/stretchr/testify/require"
 )

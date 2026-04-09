@@ -11,8 +11,8 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-gonic/gin"
+	"github.com/perfect-panel/server/internal/platform/http/response"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/routers/response"
 	pkgerrors "github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )

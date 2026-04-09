@@ -15,7 +15,7 @@ import (
 	"github.com/perfect-panel/server/modules/util/tool"
 	"github.com/perfect-panel/server/modules/util/uuidx"
 	"github.com/perfect-panel/server/modules/verify/turnstile"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"net/http"

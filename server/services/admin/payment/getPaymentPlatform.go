@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 )
 
 type GetPaymentPlatformOutput struct {

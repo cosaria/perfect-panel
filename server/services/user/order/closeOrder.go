@@ -10,7 +10,7 @@ import (
 	"github.com/perfect-panel/server/modules/infra/logger"
 	"github.com/perfect-panel/server/modules/payment/alipay"
 	"github.com/perfect-panel/server/modules/payment/stripe"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 	"gorm.io/gorm"
 	"time"
 )

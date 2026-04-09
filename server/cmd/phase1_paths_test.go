@@ -8,6 +8,8 @@ import (
 	serverppanel "github.com/perfect-panel/server/cmd/ppanel"
 	serverconfig "github.com/perfect-panel/server/config"
 	appbootstrap "github.com/perfect-panel/server/internal/bootstrap/app"
+	servernotify "github.com/perfect-panel/server/internal/platform/http/notify"
+	serverresponse "github.com/perfect-panel/server/internal/platform/http/response"
 	servermigrate "github.com/perfect-panel/server/models/migrate"
 	servernode "github.com/perfect-panel/server/models/node"
 	serverauthmethod "github.com/perfect-panel/server/modules/auth/authmethod"
@@ -31,10 +33,8 @@ import (
 	serverrules "github.com/perfect-panel/server/modules/util/rules"
 	servertool "github.com/perfect-panel/server/modules/util/tool"
 	serverturnstile "github.com/perfect-panel/server/modules/verify/turnstile"
-	serverresponse "github.com/perfect-panel/server/routers/response"
 	serverauth "github.com/perfect-panel/server/services/auth"
 	servernodehandlers "github.com/perfect-panel/server/services/node"
-	servernotify "github.com/perfect-panel/server/services/notify"
 	serversubscribe "github.com/perfect-panel/server/services/subscribe"
 	servertelegram "github.com/perfect-panel/server/services/telegram"
 	serveruserorder "github.com/perfect-panel/server/services/user/order"
@@ -156,7 +156,7 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	}
 
 	if successPayload == nil || successPayload.Code != 200 {
-		t.Fatal("expected routers/response package to expose HTTP response helpers")
+		t.Fatal("expected internal/platform/http/response package to expose HTTP response helpers")
 	}
 
 	if versionNumber < 0 {

@@ -4,7 +4,7 @@ package common
 import (
 	"context"
 
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 )
 
 type CheckVerificationCodeInput struct {

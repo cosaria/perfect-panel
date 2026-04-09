@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	handler "github.com/perfect-panel/server/routers"
+	handler "github.com/perfect-panel/server/internal/platform/http"
 	"github.com/stretchr/testify/require"
 )
 

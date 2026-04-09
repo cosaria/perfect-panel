@@ -11,7 +11,7 @@ import (
 	"github.com/perfect-panel/server/modules/payment/stripe"
 	"github.com/perfect-panel/server/modules/util/random"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )

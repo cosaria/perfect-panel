@@ -19,12 +19,12 @@ func TestPhase6DependencySurfaceBaseline(t *testing.T) {
 	t.Parallel()
 
 	serviceContextRoots := map[string]int{
-		filepath.Join("..", "services"):                            0,
-		filepath.Join("..", "worker"):                              0,
-		filepath.Join("..", "routers", "middleware"):               0,
-		filepath.Join("..", "internal", "bootstrap", "app"):        0,
-		filepath.Join("..", "internal", "bootstrap", "configinit"): 0,
-		filepath.Join("..", "internal", "bootstrap", "runtime"):    0,
+		filepath.Join("..", "services"):                                   0,
+		filepath.Join("..", "worker"):                                     0,
+		filepath.Join("..", "internal", "platform", "http", "middleware"): 0,
+		filepath.Join("..", "internal", "bootstrap", "app"):               0,
+		filepath.Join("..", "internal", "bootstrap", "configinit"):        0,
+		filepath.Join("..", "internal", "bootstrap", "runtime"):           0,
 	}
 
 	totalServiceContextUsages := 0
@@ -38,12 +38,12 @@ func TestPhase6DependencySurfaceBaseline(t *testing.T) {
 	require.Zero(t, totalServiceContextUsages)
 
 	bootstrapImportRoots := map[string]int{
-		filepath.Join("..", "services"):                            0,
-		filepath.Join("..", "worker"):                              0,
-		filepath.Join("..", "routers", "middleware"):               8,
-		filepath.Join("..", "internal", "bootstrap", "app"):        0,
-		filepath.Join("..", "internal", "bootstrap", "configinit"): 0,
-		filepath.Join("..", "internal", "bootstrap", "runtime"):    0,
+		filepath.Join("..", "services"):                                   0,
+		filepath.Join("..", "worker"):                                     0,
+		filepath.Join("..", "internal", "platform", "http", "middleware"): 8,
+		filepath.Join("..", "internal", "bootstrap", "app"):               0,
+		filepath.Join("..", "internal", "bootstrap", "configinit"):        0,
+		filepath.Join("..", "internal", "bootstrap", "runtime"):           0,
 	}
 
 	totalBootstrapImports := 0

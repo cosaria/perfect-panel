@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	configinit "github.com/perfect-panel/server/internal/bootstrap/configinit"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
-	"github.com/perfect-panel/server/routers/middleware"
+	"github.com/perfect-panel/server/internal/platform/http/middleware"
 	adminAnnouncement "github.com/perfect-panel/server/services/admin/announcement"
 	adminApplication "github.com/perfect-panel/server/services/admin/application"
 	adminAuthMethod "github.com/perfect-panel/server/services/admin/authMethod"

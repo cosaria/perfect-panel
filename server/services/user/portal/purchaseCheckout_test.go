@@ -8,7 +8,7 @@ import (
 	modelorder "github.com/perfect-panel/server/models/order"
 	modelpayment "github.com/perfect-panel/server/models/payment"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 	"github.com/stretchr/testify/require"
 )
 

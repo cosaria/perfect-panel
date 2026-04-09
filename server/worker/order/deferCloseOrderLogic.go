@@ -8,7 +8,7 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/perfect-panel/server/services/user/order"
-	internal "github.com/perfect-panel/server/types"
+	internal "github.com/perfect-panel/server/internal/platform/http/types"
 	"github.com/perfect-panel/server/worker/spec"
 )
 

@@ -10,7 +10,7 @@ import (
 	"github.com/perfect-panel/server/modules/notify/email"
 	"github.com/perfect-panel/server/modules/notify/sms"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 	"github.com/pkg/errors"
 )
 

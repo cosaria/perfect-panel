@@ -7,7 +7,7 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humagin"
 	"github.com/gin-gonic/gin"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
-	"github.com/perfect-panel/server/routers/middleware"
+	"github.com/perfect-panel/server/internal/platform/http/middleware"
 	common "github.com/perfect-panel/server/services/common"
 )
 

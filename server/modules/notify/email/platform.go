@@ -1,6 +1,6 @@
 package email
 
-import "github.com/perfect-panel/server/types"
+import "github.com/perfect-panel/server/internal/platform/http/types"
 
 type Platform int
 

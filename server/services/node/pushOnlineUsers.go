@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/models/node"
 	"github.com/perfect-panel/server/modules/infra/logger"
-	"github.com/perfect-panel/server/routers/response"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/response"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 )
 
 func PushOnlineUsersHandler(deps Deps) func(c *gin.Context) {

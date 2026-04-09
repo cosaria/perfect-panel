@@ -7,7 +7,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
-	"github.com/perfect-panel/server/routers/response"
+	"github.com/perfect-panel/server/internal/platform/http/response"
 )
 
 var defaultOperationErrors = []int{

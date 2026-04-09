@@ -3,7 +3,7 @@ package portal
 import (
 	"github.com/perfect-panel/server/models/coupon"
 	"github.com/perfect-panel/server/models/payment"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 )
 
 func getDiscount(discounts []types.SubscribeDiscount, inputMonths int64) float64 {

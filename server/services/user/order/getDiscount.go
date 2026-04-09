@@ -1,6 +1,6 @@
 package order
 
-import "github.com/perfect-panel/server/types"
+import "github.com/perfect-panel/server/internal/platform/http/types"
 
 func getDiscount(discounts []types.SubscribeDiscount, inputMonths int64) float64 {
 	var finalDiscount float64 = 100

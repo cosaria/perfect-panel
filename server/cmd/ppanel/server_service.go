@@ -22,8 +22,8 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
-	handler "github.com/perfect-panel/server/routers"
-	"github.com/perfect-panel/server/routers/middleware"
+	handler "github.com/perfect-panel/server/internal/platform/http"
+	"github.com/perfect-panel/server/internal/platform/http/middleware"
 	"github.com/perfect-panel/server/web"
 )
 

@@ -7,7 +7,7 @@ import (
 
 	"github.com/perfect-panel/server/config"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )

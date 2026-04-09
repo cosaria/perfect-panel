@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
-	"github.com/perfect-panel/server/routers/middleware"
+	"github.com/perfect-panel/server/internal/platform/http/middleware"
 	server "github.com/perfect-panel/server/services/node"
 )
 

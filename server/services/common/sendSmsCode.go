@@ -12,7 +12,7 @@ import (
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/notify/phone"
 	"github.com/perfect-panel/server/modules/util/random"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 	queue "github.com/perfect-panel/server/worker"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"

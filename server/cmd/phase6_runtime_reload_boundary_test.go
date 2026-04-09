@@ -67,10 +67,10 @@ func TestPhase6NotifyNoLongerImportsBootstrapCompositionRoot(t *testing.T) {
 	t.Parallel()
 
 	assertTargetsHaveNoBootstrapBoundaryDependency(t, []string{
-		filepath.Join("..", "services", "notify", "paymentNotify.go"),
-		filepath.Join("..", "services", "notify", "ePayNotify.go"),
-		filepath.Join("..", "services", "notify", "stripeNotify.go"),
-		filepath.Join("..", "services", "notify", "alipayNotify.go"),
+		filepath.Join("..", "internal", "platform", "http", "notify", "paymentNotify.go"),
+		filepath.Join("..", "internal", "platform", "http", "notify", "ePayNotify.go"),
+		filepath.Join("..", "internal", "platform", "http", "notify", "stripeNotify.go"),
+		filepath.Join("..", "internal", "platform", "http", "notify", "alipayNotify.go"),
 	})
 }
 

@@ -9,7 +9,7 @@ import (
 	modelticket "github.com/perfect-panel/server/models/ticket"
 	modeluser "github.com/perfect-panel/server/models/user"
 	"github.com/perfect-panel/server/modules/infra/xerr"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 	"github.com/stretchr/testify/require"
 )
 

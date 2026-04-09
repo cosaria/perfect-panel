@@ -17,7 +17,7 @@ import (
 	"github.com/perfect-panel/server/modules/payment/exchangeRate"
 	"github.com/perfect-panel/server/modules/payment/stripe"
 	"github.com/perfect-panel/server/services/report"
-	"github.com/perfect-panel/server/types"
+	"github.com/perfect-panel/server/internal/platform/http/types"
 	queueType "github.com/perfect-panel/server/worker"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"

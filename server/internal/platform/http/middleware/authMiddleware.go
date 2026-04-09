@@ -11,10 +11,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/perfect-panel/server/config"
 	appruntime "github.com/perfect-panel/server/internal/bootstrap/runtime"
+	"github.com/perfect-panel/server/internal/platform/http/response"
 	"github.com/perfect-panel/server/modules/auth/jwt"
 	"github.com/perfect-panel/server/modules/infra/xerr"
 	"github.com/perfect-panel/server/modules/util/tool"
-	"github.com/perfect-panel/server/routers/response"
 	"github.com/pkg/errors"
 )
 
