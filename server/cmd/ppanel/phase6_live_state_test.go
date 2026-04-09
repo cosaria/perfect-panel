@@ -1,4 +1,4 @@
-package cmd
+package ppanel
 
 import (
 	"context"
@@ -113,14 +113,18 @@ type phase6SystemModelStub struct {
 	findNodeMultiplierConfig func(context.Context) (*modelsystem.System, error)
 }
 
-func (s phase6SystemModelStub) Insert(context.Context, *modelsystem.System) error { panic("unexpected Insert") }
+func (s phase6SystemModelStub) Insert(context.Context, *modelsystem.System) error {
+	panic("unexpected Insert")
+}
 func (s phase6SystemModelStub) FindOne(context.Context, int64) (*modelsystem.System, error) {
 	panic("unexpected FindOne")
 }
 func (s phase6SystemModelStub) FindOneByKey(context.Context, string) (*modelsystem.System, error) {
 	panic("unexpected FindOneByKey")
 }
-func (s phase6SystemModelStub) Update(context.Context, *modelsystem.System) error { panic("unexpected Update") }
+func (s phase6SystemModelStub) Update(context.Context, *modelsystem.System) error {
+	panic("unexpected Update")
+}
 func (s phase6SystemModelStub) Delete(context.Context, int64) error { panic("unexpected Delete") }
 func (s phase6SystemModelStub) Transaction(context.Context, func(*gorm.DB) error) error {
 	panic("unexpected Transaction")

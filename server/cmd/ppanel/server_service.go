@@ -1,4 +1,4 @@
-package cmd
+package ppanel
 
 import (
 	"context"
@@ -78,12 +78,12 @@ func initServer(svc *svc.ServiceContext, live *appruntime.LiveState) *gin.Engine
 	}
 
 	adminEnvVars := map[string]string{
-		"VITE_ADMIN_PATH":           adminPath,
-		"VITE_SITE_URL":             svc.Config.Site.Host,
-		"VITE_API_URL":              "", // same origin when embedded
-		"VITE_DEFAULT_USER_EMAIL":   svc.Config.Administrator.Email,
+		"VITE_ADMIN_PATH":            adminPath,
+		"VITE_SITE_URL":              svc.Config.Site.Host,
+		"VITE_API_URL":               "", // same origin when embedded
+		"VITE_DEFAULT_USER_EMAIL":    svc.Config.Administrator.Email,
 		"VITE_DEFAULT_USER_PASSWORD": svc.Config.Administrator.Password,
-		"VITE_DEFAULT_LANGUAGE":     "en-US",
+		"VITE_DEFAULT_LANGUAGE":      "en-US",
 	}
 	userEnvVars := map[string]string{
 		"VITE_SITE_URL":         svc.Config.Site.Host,

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	serverppanel "github.com/perfect-panel/server/cmd/ppanel"
 	serverconfig "github.com/perfect-panel/server/config"
 	servermigrate "github.com/perfect-panel/server/models/migrate"
 	servernode "github.com/perfect-panel/server/models/node"
@@ -68,6 +69,7 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 	telegramHandler := servertelegram.TelegramHandler(servertelegram.Deps{})
 	consumerServiceCtor := serverworker.NewConsumerService
 	schedulerServiceCtor := serverworker.NewSchedulerService
+	executeFn := serverppanel.Execute
 	errCode := serverxerr.NewErrMsg("boom")
 	wrappedErr := servererrorx.Wrap(errors.New("inner"), "outer")
 	logField := serverlogger.Field("phase", 2)
@@ -171,6 +173,10 @@ func TestPhase1TopLevelPathsExist(t *testing.T) {
 
 	if consumerServiceCtor == nil || schedulerServiceCtor == nil {
 		t.Fatal("expected worker package to expose consumer and scheduler services during phase 4 migration")
+	}
+
+	if executeFn == nil {
+		t.Fatal("expected command entry package to expose Execute from cmd/ppanel path")
 	}
 
 	if serverworker.SchedulerResetTraffic == "" || serverworker.ForthwithSendEmail == "" || serverworker.ForthwithActivateOrder == "" {

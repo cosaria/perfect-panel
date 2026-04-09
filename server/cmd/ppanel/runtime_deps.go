@@ -1,4 +1,4 @@
-package cmd
+package ppanel
 
 import (
 	appruntime "github.com/perfect-panel/server/runtime"

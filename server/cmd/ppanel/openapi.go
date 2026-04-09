@@ -1,4 +1,4 @@
-package cmd
+package ppanel
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
-	"github.com/perfect-panel/server/routers"
+	handler "github.com/perfect-panel/server/routers"
 	"github.com/spf13/cobra"
 )
 
