@@ -11,53 +11,44 @@ func Load(opts LoadOptions) (Config, error) {
 	cfg := Default()
 
 	if opts.FilePath != "" {
-		fileCfg, err := loadFromFile(opts.FilePath)
+		fileOverlay, err := loadFromFile(opts.FilePath)
 		if err != nil {
 			return Config{}, err
 		}
-		mergeConfig(&cfg, fileCfg)
+		fileOverlay.ApplyTo(&cfg)
 	}
 
-	mergeConfig(&cfg, loadFromEnv())
-	mergeConfig(&cfg, opts.CLI)
+	loadFromEnv().ApplyTo(&cfg)
+	opts.CLI.ApplyTo(&cfg)
 
 	return cfg, nil
 }
 
-func loadFromFile(path string) (Config, error) {
+func loadFromFile(path string) (ConfigOverlay, error) {
 	content, err := os.ReadFile(path)
 	if err != nil {
-		return Config{}, fmt.Errorf("读取配置文件失败: %w", err)
+		return ConfigOverlay{}, fmt.Errorf("读取配置文件失败: %w", err)
 	}
 
-	var cfg Config
-	if err := json.Unmarshal(content, &cfg); err != nil {
-		return Config{}, fmt.Errorf("解析配置文件失败: %w", err)
+	var overlay ConfigOverlay
+	if err := json.Unmarshal(content, &overlay); err != nil {
+		return ConfigOverlay{}, fmt.Errorf("解析配置文件失败: %w", err)
 	}
-	return cfg, nil
+	return overlay, nil
 }
 
-func loadFromEnv() Config {
-	return Config{
-		ServiceName: getEnv("PPANEL_SERVICE_NAME"),
-		HTTPAddr:    getEnv("PPANEL_HTTP_ADDR"),
-		LogLevel:    getEnv("PPANEL_LOG_LEVEL"),
+func loadFromEnv() ConfigOverlay {
+	return ConfigOverlay{
+		ServiceName: lookupEnvPtr("PPANEL_SERVICE_NAME"),
+		HTTPAddr:    lookupEnvPtr("PPANEL_HTTP_ADDR"),
+		LogLevel:    lookupEnvPtr("PPANEL_LOG_LEVEL"),
 	}
 }
 
-func getEnv(key string) string {
-	v, _ := os.LookupEnv(key)
-	return v
-}
-
-func mergeConfig(dst *Config, src Config) {
-	if src.ServiceName != "" {
-		dst.ServiceName = src.ServiceName
+func lookupEnvPtr(key string) *string {
+	value, ok := os.LookupEnv(key)
+	if !ok {
+		return nil
 	}
-	if src.HTTPAddr != "" {
-		dst.HTTPAddr = src.HTTPAddr
-	}
-	if src.LogLevel != "" {
-		dst.LogLevel = src.LogLevel
-	}
+	return &value
 }

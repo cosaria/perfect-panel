@@ -1,37 +1,27 @@
 package bootstrap_test
 
 import (
-	"encoding/json"
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/perfect-panel/server-v2/internal/platform/config"
+	"github.com/perfect-panel/server-v2/tests/support"
 )
 
 func TestLoadPrefersCLIOverEnvAndFile(t *testing.T) {
 	t.Setenv("PPANEL_HTTP_ADDR", ":7001")
 	t.Setenv("PPANEL_LOG_LEVEL", "error")
 
-	tmpDir := t.TempDir()
-	configPath := filepath.Join(tmpDir, "config.json")
-	fileConfig := config.Config{
+	env := support.NewServiceEnv(t)
+	configPath := env.WriteFixture(t, "config.json", config.Config{
 		ServiceName: "file-service",
 		HTTPAddr:    ":7000",
 		LogLevel:    "warn",
-	}
-	fileContent, err := json.Marshal(fileConfig)
-	if err != nil {
-		t.Fatalf("序列化配置文件失败: %v", err)
-	}
-	if err := os.WriteFile(configPath, fileContent, 0o600); err != nil {
-		t.Fatalf("写入配置文件失败: %v", err)
-	}
+	})
 
 	cfg, err := config.Load(config.LoadOptions{
 		FilePath: configPath,
-		CLI: config.Config{
-			HTTPAddr: ":7002",
+		CLI: config.ConfigOverlay{
+			HTTPAddr: support.Ptr(":7002"),
 		},
 	})
 	if err != nil {
@@ -46,5 +36,28 @@ func TestLoadPrefersCLIOverEnvAndFile(t *testing.T) {
 	}
 	if cfg.ServiceName != "file-service" {
 		t.Fatalf("ServiceName 应回退到 file，实际: %s", cfg.ServiceName)
+	}
+}
+
+func TestLoadDistinguishesUnsetAndExplicitZeroValue(t *testing.T) {
+	env := support.NewServiceEnv(t)
+	configPath := env.WriteFixture(t, "config.json", config.Config{
+		ServiceName: "file-service",
+		HTTPAddr:    ":7000",
+		LogLevel:    "warn",
+	})
+
+	cfg, err := config.Load(config.LoadOptions{
+		FilePath: configPath,
+		CLI: config.ConfigOverlay{
+			LogLevel: support.Ptr(""),
+		},
+	})
+	if err != nil {
+		t.Fatalf("加载配置失败: %v", err)
+	}
+
+	if cfg.LogLevel != "" {
+		t.Fatalf("CLI 显式空字符串应覆盖下层值，实际: %q", cfg.LogLevel)
 	}
 }
