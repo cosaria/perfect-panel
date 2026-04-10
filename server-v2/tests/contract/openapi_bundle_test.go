@@ -2,6 +2,7 @@ package contract_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -40,6 +41,7 @@ func TestContractPipelinePasses(t *testing.T) {
 	assertBundleHasRequiredSurface(t, bundlePath)
 	assertNodeUsageReportOperation(t, bundlePath)
 	assertPathFilesUseRootComponents(t, moduleRoot)
+	assertRootSpecReferencesAllPathFiles(t, moduleRoot)
 	assertRootSpecUsesComponentRefs(t, moduleRoot)
 	assertCleanupPlaceholdersExist(t, moduleRoot)
 	assertNoOpenApiTsErrorLogs(t, moduleRoot)
@@ -59,6 +61,7 @@ func getModuleRoot(t *testing.T) string {
 func runContractPipeline(t *testing.T, moduleRoot string) (string, string) {
 	t.Helper()
 
+	snapshot := snapshotGeneratedArtifacts(t, moduleRoot)
 	cleanupGeneratedArtifacts(t, moduleRoot)
 
 	cmd := exec.Command("make", "contract")
@@ -70,9 +73,138 @@ func runContractPipeline(t *testing.T, moduleRoot string) (string, string) {
 
 	t.Cleanup(func() {
 		cleanupGeneratedArtifacts(t, moduleRoot)
+		restoreGeneratedArtifacts(t, moduleRoot, snapshot)
 	})
 
 	return filepath.Join(moduleRoot, "openapi", "dist", "openapi.json"), filepath.Join(moduleRoot, "openapi", "generated", "ts")
+}
+
+type generatedArtifactSnapshot struct {
+	backupDir          string
+	bundlePresent      bool
+	bundleBackupPath   string
+	generatedPresent   bool
+	generatedBackupDir string
+}
+
+func snapshotGeneratedArtifacts(t *testing.T, moduleRoot string) generatedArtifactSnapshot {
+	t.Helper()
+
+	backupDir, err := os.MkdirTemp("", "server-v2-contract-artifacts-*")
+	if err != nil {
+		t.Fatalf("创建合同产物备份目录失败: %v", err)
+	}
+
+	snapshot := generatedArtifactSnapshot{backupDir: backupDir}
+
+	bundlePath := filepath.Join(moduleRoot, "openapi", "dist", "openapi.json")
+	if info, err := os.Stat(bundlePath); err == nil {
+		if info.IsDir() {
+			t.Fatalf("bundle 不是文件: %s", bundlePath)
+		}
+		snapshot.bundlePresent = true
+		snapshot.bundleBackupPath = filepath.Join(backupDir, "openapi.json")
+		if err := copyFile(bundlePath, snapshot.bundleBackupPath); err != nil {
+			t.Fatalf("备份 bundle 失败: %v", err)
+		}
+	} else if !os.IsNotExist(err) {
+		t.Fatalf("检查 bundle 状态失败: %v", err)
+	}
+
+	generatedPath := filepath.Join(moduleRoot, "openapi", "generated", "ts")
+	if info, err := os.Stat(generatedPath); err == nil {
+		if !info.IsDir() {
+			t.Fatalf("生成目录不是目录: %s", generatedPath)
+		}
+		snapshot.generatedPresent = true
+		snapshot.generatedBackupDir = filepath.Join(backupDir, "ts")
+		if err := copyDir(generatedPath, snapshot.generatedBackupDir); err != nil {
+			t.Fatalf("备份生成目录失败: %v", err)
+		}
+	} else if !os.IsNotExist(err) {
+		t.Fatalf("检查生成目录状态失败: %v", err)
+	}
+
+	return snapshot
+}
+
+func restoreGeneratedArtifacts(t *testing.T, moduleRoot string, snapshot generatedArtifactSnapshot) {
+	t.Helper()
+
+	bundlePath := filepath.Join(moduleRoot, "openapi", "dist", "openapi.json")
+	generatedPath := filepath.Join(moduleRoot, "openapi", "generated", "ts")
+
+	if err := os.RemoveAll(bundlePath); err != nil {
+		t.Fatalf("清理 bundle 失败: %v", err)
+	}
+	if snapshot.bundlePresent {
+		if err := copyFile(snapshot.bundleBackupPath, bundlePath); err != nil {
+			t.Fatalf("恢复 bundle 失败: %v", err)
+		}
+	}
+
+	if err := os.RemoveAll(generatedPath); err != nil {
+		t.Fatalf("清理生成目录失败: %v", err)
+	}
+	if snapshot.generatedPresent {
+		if err := copyDir(snapshot.generatedBackupDir, generatedPath); err != nil {
+			t.Fatalf("恢复生成目录失败: %v", err)
+		}
+	}
+
+	if snapshot.backupDir != "" {
+		if err := os.RemoveAll(snapshot.backupDir); err != nil {
+			t.Fatalf("清理合同产物备份失败: %v", err)
+		}
+	}
+}
+
+func copyFile(src, dst string) error {
+	raw, err := os.ReadFile(src)
+	if err != nil {
+		return err
+	}
+	info, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
+		return err
+	}
+	return os.WriteFile(dst, raw, info.Mode().Perm())
+}
+
+func copyDir(src, dst string) error {
+	info, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() {
+		return fmt.Errorf("%s 不是目录", src)
+	}
+	if err := os.MkdirAll(dst, info.Mode().Perm()); err != nil {
+		return err
+	}
+
+	entries, err := os.ReadDir(src)
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		srcPath := filepath.Join(src, entry.Name())
+		dstPath := filepath.Join(dst, entry.Name())
+		if entry.IsDir() {
+			if err := copyDir(srcPath, dstPath); err != nil {
+				return err
+			}
+			continue
+		}
+		if err := copyFile(srcPath, dstPath); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func cleanupGeneratedArtifacts(t *testing.T, moduleRoot string) {
@@ -450,6 +582,39 @@ func assertPathFilesUseRootComponents(t *testing.T, moduleRoot string) {
 	}
 	if strings.Contains(string(rootSpec), "\n  headers:\n") {
 		t.Fatalf("根 OpenAPI 仍然暴露 headers 组件分组")
+	}
+}
+
+func assertRootSpecReferencesAllPathFiles(t *testing.T, moduleRoot string) {
+	t.Helper()
+
+	rootSpec, err := os.ReadFile(filepath.Join(moduleRoot, "openapi", "openapi.yaml"))
+	if err != nil {
+		t.Fatalf("读取根 OpenAPI 失败: %v", err)
+	}
+	rootContent := string(rootSpec)
+
+	pathDir := filepath.Join(moduleRoot, "openapi", "paths")
+	err = filepath.WalkDir(pathDir, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() || !strings.HasSuffix(path, ".yaml") {
+			return nil
+		}
+
+		rel, err := filepath.Rel(filepath.Join(moduleRoot, "openapi"), path)
+		if err != nil {
+			return err
+		}
+		expectedRef := "$ref: ./" + filepath.ToSlash(rel)
+		if !strings.Contains(rootContent, expectedRef) {
+			t.Fatalf("根 OpenAPI 未引用路径文件: %s", rel)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("扫描 path 文件失败: %v", err)
 	}
 }
 
