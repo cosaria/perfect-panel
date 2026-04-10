@@ -62,8 +62,8 @@
 4. 权益必须展开为稳定快照，节点和客户端不直接回头临时拼装订阅规则。
 5. 节点授权采用“默认权益 + 覆盖规则 + 最终授权结果”的三层模型。
 6. usage 采用“原始事实 + 计费规则快照 + 最终计费结果”的三段式模型。
-7. 核心业务状态在事务内提交，邮件、缓存刷新、输出重建等副作用通过 `outbox_events` 异步同步。
-8. 业务历史查询依赖数据库事件表和操作日志，不依赖应用运行日志作为真相来源。
+7. 不可替代的事实与主状态在事务内提交，高扇出的可重建投影通过 `outbox_events` 异步重建。
+8. 业务历史查询依赖数据库事件表和操作日志，不依赖应用运行日志或 `outbox_events` 作为真相来源。
 
 ## 核心关系图
 
@@ -94,21 +94,29 @@ subscriptions
 -> subscription_addons
 -> subscription_addon_periods
 -> entitlements
+-> entitlement_node_groups
 
 hosts
 -> host_protocols
 -> nodes
--> node_groups
--> node_assignments
+
+node_groups
+-> node_group_members
+
+node_group_members
+-> nodes
 
 node_assignment_overrides
+-> node_assignments
 node_usage_reports
 online_sessions
 
 system_settings
 verification_tokens
 outbox_events
+auth_events
 admin_operation_logs
+subscription_events
 subscription_output_snapshots
 ```
 
@@ -173,6 +181,12 @@ subscription_output_snapshots
 - 支持撤销单个会话
 - 记录来源 IP、最后活跃时间、过期时间
 
+安全边界：
+
+- 会话表不保存可直接复用的明文 bearer token
+- 如需持久化令牌材料，应保存不可逆哈希或等价引用
+- 会话撤销与过期状态必须能独立表达，不能只靠删除记录
+
 ### 验证令牌模型
 
 验证码、找回密码、确认操作不落在 `users` 上，统一进入：
@@ -187,6 +201,12 @@ subscription_output_snapshots
 - `expires_at`
 - `used_at`
 - `status`
+
+安全边界：
+
+- token / code 只保存哈希，不保存可回放明文
+- 消费必须是原子单次消费，不能允许并发重复使用
+- 不允许把验证明文复制进审计日志或异步事件表
 
 ## 权限模型
 
@@ -235,6 +255,7 @@ subscription_output_snapshots
 它表示“哪些额外能力可以被售卖或附加到订阅上”。
 
 第一版 addon 不是套餐表上的零散附加字段，而是独立可售定义。
+`plan_addons` 归属 `plans`，不归属 `plan_variants`；如果未来需要做“某些变体不可购买某个 addon”，应额外引入可售关系表，而不是把 addon 定义复制到变体层。
 
 ## 交易模型
 
@@ -258,6 +279,16 @@ subscription_output_snapshots
 - 或只包含 addon
 - 或只包含续费项
 
+第一版额外冻结 2 条订单不变量：
+
+1. 一张订单只服务于一个履约根（fulfillment root）。
+2. 一张订单不能同时修改多条既有订阅。
+
+更具体地说：
+
+- 如果订单包含 `plan_purchase`，它最多只能有一个主套餐购买项；同单 addon 项只能附着在这次新建订阅上。
+- 如果订单包含 `subscription_renewal` 或面向既有订阅的 `addon_purchase`，则整张订单的所有 item 必须锚定同一个 `target_subscription_id`。
+
 ### 订单项模型
 
 `order_items` 统一承载不同购买项，并通过 `item_type` 区分：
@@ -267,6 +298,12 @@ subscription_output_snapshots
 - `addon_purchase`
 
 不为不同 item 类型拆多张明细表。
+
+履约锚定规则必须显式存在，而不是靠应用层猜测：
+
+- `plan_purchase` 不指向既有订阅，它的履约结果是创建一条新订阅。
+- `subscription_renewal` 必须显式指向一条既有订阅。
+- `addon_purchase` 必须显式指向“新建中的订阅”或“一条既有订阅”，不能做无目标 addon 成交。
 
 ### 价格快照原则
 
@@ -309,8 +346,15 @@ subscription_output_snapshots
 职责：
 
 - `orders` 代表业务交易
-- `payments` 代表支付记录
+- `payments` 代表支付尝试
 - `payment_events` 保存第三方回调和支付事件轨迹
+
+第一版冻结以下支付不变量：
+
+- 一张订单可以有多次支付尝试，但最多只能有一次成功支付。
+- `payment_events` 必须以提供方事件唯一键去重，例如 `(provider, provider_event_key)`。
+- `payment_events` 是业务历史，不直接承担异步桥接职责。
+- 支付成功后的履约动作只以成功支付记录为锚点，不以某次事件回调文本为锚点。
 
 ### 退款模型
 
@@ -326,6 +370,12 @@ subscription_output_snapshots
 - 本次退款对应的折扣份额
 - 退款原因或类型
 
+退款不变量：
+
+- `refunds` 必须锚定到一条成功支付记录，而不是悬空挂在订单上。
+- `refund_items` 必须锚定到具体 `order_item`，从而支持部分退款和 addon 单独退款。
+- 退款历史以 `refund_items` 快照为准，不回头反推订单当前状态。
+
 ## 订阅与履约模型
 
 第一版订阅链采用：
@@ -335,6 +385,7 @@ subscription_output_snapshots
 - `subscription_addons`
 - `subscription_addon_periods`
 - `entitlements`
+- `entitlement_node_groups`
 
 ### `subscriptions`
 
@@ -377,14 +428,34 @@ subscription_output_snapshots
 - 主订阅周期
 - addon 周期
 
+一条 `entitlements` 记录的粒度定义为：
+
+**单一来源对象 + 单一权益类型 + 单一生效窗口**
+
+也就是说：
+
+- 它不表示“整条订阅所有权益的一个大 JSON 结果”
+- 它也不直接细化到“每个节点一条权益”
+- 它表达的是一类可被独立消费和独立失效的有效权益事实
+
 它至少应表达：
 
 - 来源
+- `entitlement_kind`
 - 生效期
 - 状态
 - 最终有效限制与权益快照
 
 系统和节点消费的是真正展开后的 `entitlements`，而不是直接回头读取套餐定义。
+
+### 默认节点授权来源
+
+默认授权不是把节点组直接塞进 `entitlements`，而是通过独立关系表达：
+
+- `entitlement_node_groups`
+
+它表示“某条节点访问类权益默认授予哪些节点组”。  
+覆盖规则是覆盖规则，默认授权是默认授权，二者不能混成一张模糊表。
 
 ## 节点与授权模型
 
@@ -394,6 +465,7 @@ subscription_output_snapshots
 - `host_protocols`
 - `nodes`
 - `node_groups`
+- `node_group_members`
 - `node_assignment_overrides`
 - `node_assignments`
 
@@ -436,7 +508,12 @@ subscription_output_snapshots
 
 授权链采用：
 
-`entitlements -> node_groups -> nodes -> node_assignments`
+`entitlements -> entitlement_node_groups -> node_groups -> node_group_members -> nodes -> node_assignments`
+
+其中：
+
+- `entitlement_node_groups` 表达默认可访问节点组
+- `node_group_members` 表达节点组包含哪些用户节点
 
 ### 覆盖规则
 
@@ -451,13 +528,15 @@ subscription_output_snapshots
 - deny group
 - deny node
 
+覆盖规则本身属于不可替代的规则事实，不是可重建投影。
+
 ### 最终授权结果
 
 节点侧和客户端不直接读默认权益或覆盖规则，而是读最终授权结果：
 
 - `node_assignments`
 
-这是授权真相层的一部分。
+`node_assignments` 是运行时读取的授权真相投影，但它不是最原始的交易或履约事实；它必须可由默认权益和覆盖规则重建。
 
 ## usage 与在线连接模型
 
@@ -497,6 +576,12 @@ usage 采用：
 - `node` 域负责原始上报事实
 - `subscription` 域负责最终归集与消耗判定
 
+安全边界：
+
+- 原始上报必须具备稳定幂等键或可判定重复的上报标识
+- usage 聚合前必须先完成来源身份校验，不能把“能打到接口”当成可信节点
+- 原始上报保留可审计事实，但不在该表中保存无关敏感凭证
+
 ### 在线连接模型
 
 第一版不做重设备指纹模型，而采用更轻的在线连接记录：
@@ -512,21 +597,53 @@ usage 采用：
 
 在线连接数限制不靠单一计数字段，而靠活跃在线记录计算。
 
-## 授权真相层与输出快照层
+安全边界：
 
-为避免“套餐改了节点但客户端没刷新”这类问题，数据库规范明确区分两层：
+- 只记录做并发判断所必需的信息，例如归属、IP、会话和活跃时间
+- 不在在线连接表里保存密码、验证令牌或第三方认证材料
 
-1. **授权真相层**
-   - `entitlements`
+## 真相层、历史层、异步桥接与输出快照层
+
+为避免“套餐改了节点但客户端没刷新”这类问题，数据库规范明确区分 5 类对象：
+
+1. **不可替代事实层**
+   - `orders`
+   - `order_items`
+   - `payments`
+   - `refunds`
+   - `subscriptions`
+   - `subscription_periods`
+   - `subscription_addons`
+   - `subscription_addon_periods`
+   - `node_usage_reports`
    - `node_assignment_overrides`
+   - `online_sessions`
+
+2. **可重建真相投影层**
+   - `entitlements`
+   - `entitlement_node_groups`
    - `node_assignments`
 
-2. **输出快照层**
+3. **业务历史层**
+   - `payment_events`
+   - `subscription_events`
+   - `auth_events`
+   - `admin_operation_logs`
+
+4. **异步桥接层**
+   - `outbox_events`
+
+5. **输出快照层**
    - `subscription_output_snapshots`
    - 或等价的面向客户端订阅输出快照对象
 
 原则：
 
+- 不可替代事实层是系统最根的业务真相，不能依赖投影反推
+- 可重建真相投影层服务于高频读取，但必须允许幂等重建
+- 业务历史层用于审计与追踪，不承担异步派发语义
+- `outbox_events` 只承担可靠桥接，不是业务历史表，也不是调试用垃圾桶
+- 输出快照必须锚定明确的真相版本，例如 `assignment_generation` 或等价的 `source_generation`
 - 真相层变更后，输出快照必须可重建
 - 缓存只做加速，不承担真相职责
 - 客户端看到的订阅输出属于派生层，不是规则真相本身
@@ -598,6 +715,12 @@ usage 采用：
 - 来源 IP
 - 时间
 - 简要变更说明
+
+最小化原则：
+
+- `payment_events` 不保存支付秘密、卡敏感信息、完整签名材料
+- `admin_operation_logs` 不保存密码、重置口令、邮件验证码、第三方密钥明文
+- `outbox_events` 只保存派发所需最小载荷与业务引用，不存高敏感原文
 
 ## 生命周期与删除策略
 
@@ -677,7 +800,7 @@ seed 分成两类：
 
 第一版采用：
 
-**核心状态同事务，副作用异步化**
+**不可替代事实同事务，可重建投影异步化**
 
 也就是：
 
@@ -685,10 +808,17 @@ seed 分成两类：
 - 支付状态
 - 订阅开通
 - 周期创建
-- 权益展开
-- 节点授权结果更新
+- addon 生效事实
+- 覆盖规则变更
 
-这些核心数据库状态，尽量在同一事务内完成。
+这些不可替代事实与主状态，必须在同一事务内完成。
+
+但以下对象允许通过异步重建得到：
+
+- `entitlements`
+- `entitlement_node_groups`
+- `node_assignments`
+- `subscription_output_snapshots`
 
 而以下副作用通过异步机制完成：
 
@@ -696,6 +826,13 @@ seed 分成两类：
 - 缓存失效
 - 订阅输出重建
 - 次级任务投递
+
+这意味着第一版不要求“大客户订阅变更时把所有授权结果都塞进一个大事务里”；  
+规范要求的是：
+
+- 事务内先提交不可替代事实
+- 同事务写入可靠桥接事件
+- 事务外用幂等消费者重建高扇出投影和输出
 
 ### 推荐支撑对象
 
@@ -727,6 +864,8 @@ seed 分成两类：
 5. 把宿主机、协议服务、用户节点混成一张万能节点表
 6. 用一张无结构 `settings(key,value)` 大表承接所有配置
 7. 把 usage 简化成不可追溯的单一累计字段
+8. 把 `outbox_events` 当作业务历史表或排障万能日志
+9. 把验证令牌、支付秘密或高敏感凭证明文落进事件表、操作日志或输出快照
 
 ## 决策结果
 
@@ -736,10 +875,10 @@ seed 分成两类：
 - `users + user_identities + user_sessions + RBAC`
 - `plans + plan_variants + plan_addons`
 - `orders + order_items + payments + payment_events + refunds + refund_items`
-- `subscriptions + subscription_periods + subscription_addons + subscription_addon_periods + entitlements`
-- `hosts + host_protocols + nodes + node_groups + node_assignment_overrides + node_assignments`
+- `subscriptions + subscription_periods + subscription_addons + subscription_addon_periods + entitlements + entitlement_node_groups`
+- `hosts + host_protocols + nodes + node_groups + node_group_members + node_assignment_overrides + node_assignments`
 - `node_usage_reports + online_sessions`
-- `system_settings + verification_tokens + outbox_events + admin_operation_logs + subscription_output_snapshots`
+- `system_settings + verification_tokens + outbox_events + auth_events + subscription_events + admin_operation_logs + subscription_output_snapshots`
 
 一句话总结：
 
