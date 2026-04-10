@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -14,11 +13,11 @@ func TestOperationIDsAreExplicit(t *testing.T) {
 	moduleRoot := getModuleRoot(t)
 	bundlePath := filepath.Join(moduleRoot, "openapi", "dist", "openapi.json")
 
-	ensureBundleExists(t, moduleRoot, bundlePath)
+	runContractPipeline(t, moduleRoot)
 
 	raw, err := os.ReadFile(bundlePath)
 	if err != nil {
-		t.Fatalf("读取 bundle 失败，请先运行 make contract: %v", err)
+		t.Fatalf("读取 bundle 失败: %v", err)
 	}
 
 	var doc map[string]any
@@ -63,23 +62,6 @@ func TestOperationIDsAreExplicit(t *testing.T) {
 
 	if operationCount == 0 {
 		t.Fatalf("bundle 中没有发现任何 operation")
-	}
-}
-
-func ensureBundleExists(t *testing.T, moduleRoot, bundlePath string) {
-	t.Helper()
-
-	if _, err := os.Stat(bundlePath); err == nil {
-		return
-	} else if !os.IsNotExist(err) {
-		t.Fatalf("检查 bundle 是否存在失败: %v", err)
-	}
-
-	cmd := exec.Command("make", "contract")
-	cmd.Dir = moduleRoot
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		t.Fatalf("补跑 make contract 失败: %v\n输出:\n%s", err, string(out))
 	}
 }
 

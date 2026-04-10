@@ -6,10 +6,10 @@ post:
   security:
     - nodeAuth: []
   parameters:
-    - $ref: ../../components/parameters/idempotency_key.yaml
-    - $ref: ../../components/parameters/node_timestamp.yaml
-    - $ref: ../../components/parameters/node_nonce.yaml
-    - $ref: ../../components/parameters/node_signature.yaml
+    - $ref: '../../openapi.yaml#/components/parameters/idempotencyKey'
+    - $ref: '../../openapi.yaml#/components/parameters/nodeTimestamp'
+    - $ref: '../../openapi.yaml#/components/parameters/nodeNonce'
+    - $ref: '../../openapi.yaml#/components/parameters/nodeSignature'
   requestBody:
     required: true
     content:
@@ -32,13 +32,17 @@ post:
               type: object
               additionalProperties: false
               required:
-                - upload
-                - download
+                - uploadBytes
+                - downloadBytes
               properties:
-                upload:
-                  $ref: ../../components/schemas/common/money.yaml
-                download:
-                  $ref: ../../components/schemas/common/money.yaml
+                uploadBytes:
+                  type: integer
+                  format: int64
+                  minimum: 0
+                downloadBytes:
+                  type: integer
+                  format: int64
+                  minimum: 0
   responses:
     "201":
       description: 用量上报已接收。
@@ -77,16 +81,16 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/problem.yaml
+            $ref: '../../openapi.yaml#/components/schemas/Problem'
     "403":
       description: 无权限。
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/problem.yaml
+            $ref: '../../openapi.yaml#/components/schemas/Problem'
     "409":
       description: 冲突。
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/problem.yaml
+            $ref: '../../openapi.yaml#/components/schemas/Problem'
