@@ -48,7 +48,7 @@ function readStoredAuthSession() {
 export const authStore = new Store<AuthState>({
 	accessToken: null,
 	email: null,
-	hydrated: typeof window === 'undefined',
+	hydrated: false,
 });
 
 export function hydrateAuthSession() {
