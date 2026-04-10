@@ -4,7 +4,7 @@ import { Sidebar } from '@web-v2/ui';
 type NavigationItem = {
 	label: string;
 	description: string;
-	to?: '/';
+	to: '/' | '/users' | '/settings';
 };
 
 const navigationItems: NavigationItem[] = [
@@ -16,10 +16,12 @@ const navigationItems: NavigationItem[] = [
 	{
 		label: '用户管理',
 		description: '下一阶段接入用户列表与筛选。',
+		to: '/users',
 	},
 	{
 		label: '系统设置',
 		description: '下一阶段接入系统配置表单。',
+		to: '/settings',
 	},
 ];
 
@@ -39,31 +41,20 @@ export function AdminSidebar() {
 			</div>
 
 			<nav className="flex-1 space-y-2 px-3 py-4">
-				{navigationItems.map((item) =>
-					item.to ? (
-						<Link
-							activeOptions={{ exact: item.to === '/' }}
-							activeProps={{
-								className: 'border-cyan-300/40 bg-cyan-300/10 text-cyan-100',
-							}}
-							className="block rounded-2xl border border-transparent px-4 py-3 transition hover:border-white/10 hover:bg-white/5"
-							key={item.label}
-							to={item.to}
-						>
-							<div className="text-sm font-medium">{item.label}</div>
-							<p className="mt-1 text-xs leading-5 text-slate-400">{item.description}</p>
-						</Link>
-					) : (
-						<div
-							aria-disabled="true"
-							className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-slate-400"
-							key={item.label}
-						>
-							<div className="text-sm font-medium text-slate-200">{item.label}</div>
-							<p className="mt-1 text-xs leading-5 text-slate-400">{item.description}</p>
-						</div>
-					),
-				)}
+				{navigationItems.map((item) => (
+					<Link
+						activeOptions={{ exact: item.to === '/' }}
+						activeProps={{
+							className: 'border-cyan-300/40 bg-cyan-300/10 text-cyan-100',
+						}}
+						className="block rounded-2xl border border-transparent px-4 py-3 transition hover:border-white/10 hover:bg-white/5"
+						key={item.label}
+						to={item.to}
+					>
+						<div className="text-sm font-medium">{item.label}</div>
+						<p className="mt-1 text-xs leading-5 text-slate-400">{item.description}</p>
+					</Link>
+				))}
 			</nav>
 		</Sidebar>
 	);
