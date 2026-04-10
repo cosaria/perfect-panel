@@ -1,0 +1,20 @@
+{
+	"name": "@web-v2/api-client",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"openapi": "node ./scripts/generate.mjs",
+		"test": "vitest run",
+		"lint": "biome check src scripts",
+		"typecheck": "tsc --noEmit --module nodenext --moduleResolution nodenext --target es2022 src/index.ts"
+	},
+	"dependencies": {
+		"@hey-api/client-fetch": "^0.13.1"
+	},
+	"devDependencies": {
+		"@hey-api/openapi-ts": "^0.95.0"
+	}
+}
