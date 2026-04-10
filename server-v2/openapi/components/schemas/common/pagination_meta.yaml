@@ -1,3 +1,4 @@
+title: PaginationMeta
 type: object
 additionalProperties: false
 required:

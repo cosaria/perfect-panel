@@ -3,6 +3,7 @@ in: query
 required: false
 description: 排序方向。
 schema:
+  title: Order
   type: string
   enum:
     - asc

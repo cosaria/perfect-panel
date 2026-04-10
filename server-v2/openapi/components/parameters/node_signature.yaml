@@ -3,5 +3,6 @@ in: header
 required: true
 description: 节点请求签名。
 schema:
+  title: NodeSignature
   type: string
   minLength: 1

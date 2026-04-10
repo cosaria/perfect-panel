@@ -3,6 +3,7 @@ in: query
 required: false
 description: 每页条数。
 schema:
+  title: PageSize
   type: integer
   minimum: 1
   maximum: 100

@@ -3,6 +3,7 @@ in: query
 required: false
 description: 页码，从 1 开始。
 schema:
+  title: Page
   type: integer
   minimum: 1
   default: 1

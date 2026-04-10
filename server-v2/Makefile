@@ -2,6 +2,7 @@
 
 OPENAPI_DIR := openapi
 OPENAPI_SPEC := $(OPENAPI_DIR)/openapi.yaml
+OPENAPI_TS_INPUT := ./$(OPENAPI_SPEC)
 OPENAPI_REDOCLY := $(OPENAPI_DIR)/redocly.yaml
 OPENAPI_BUNDLE := $(OPENAPI_DIR)/dist/openapi.json
 OPENAPI_TS_DIR := $(OPENAPI_DIR)/generated/ts
@@ -19,5 +20,5 @@ contract-bundle:
 contract-openapi-ts:
 	rm -rf $(OPENAPI_TS_DIR) $(OPENAPI_TS_TMP)
 	mkdir -p $(dir $(OPENAPI_TS_TMP))
-	bunx @hey-api/openapi-ts@0.95.0 -i $(OPENAPI_BUNDLE) -o $(OPENAPI_TS_TMP)
+	bunx @hey-api/openapi-ts@0.95.0 -i $(OPENAPI_TS_INPUT) -o $(OPENAPI_TS_TMP)
 	mv $(OPENAPI_TS_TMP) $(OPENAPI_TS_DIR)

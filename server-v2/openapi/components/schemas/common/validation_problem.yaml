@@ -1,3 +1,4 @@
+title: ValidationProblem
 type: object
 additionalProperties: false
 required:

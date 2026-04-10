@@ -20,212 +20,34 @@ paths:
 components:
   parameters:
     page:
-      name: page
-      in: query
-      required: false
-      description: 页码，从 1 开始。
-      schema:
-        type: integer
-        minimum: 1
-        default: 1
+      $ref: ./components/parameters/page.yaml
     pageSize:
-      name: pageSize
-      in: query
-      required: false
-      description: 每页条数。
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 20
+      $ref: ./components/parameters/page_size.yaml
     q:
-      name: q
-      in: query
-      required: false
-      description: 通用搜索关键词。
-      schema:
-        type: string
-        minLength: 1
+      $ref: ./components/parameters/q.yaml
     sort:
-      name: sort
-      in: query
-      required: false
-      description: 排序字段。
-      schema:
-        type: string
-        minLength: 1
+      $ref: ./components/parameters/sort.yaml
     order:
-      name: order
-      in: query
-      required: false
-      description: 排序方向。
-      schema:
-        type: string
-        enum:
-          - asc
-          - desc
+      $ref: ./components/parameters/order.yaml
     idempotencyKey:
-      name: Idempotency-Key
-      in: header
-      required: false
-      description: 非幂等写请求的幂等键。
-      schema:
-        type: string
-        minLength: 1
+      $ref: ./components/parameters/idempotency_key.yaml
     nodeTimestamp:
-      name: X-Node-Timestamp
-      in: header
-      required: true
-      description: 节点请求时间戳。
-      schema:
-        type: integer
-        format: int64
+      $ref: ./components/parameters/node_timestamp.yaml
     nodeNonce:
-      name: X-Node-Nonce
-      in: header
-      required: true
-      description: 节点请求随机串。
-      schema:
-        type: string
-        minLength: 1
+      $ref: ./components/parameters/node_nonce.yaml
     nodeSignature:
-      name: X-Node-Signature
-      in: header
-      required: true
-      description: 节点请求签名。
-      schema:
-        type: string
-        minLength: 1
+      $ref: ./components/parameters/node_signature.yaml
   schemas:
     Problem:
-      type: object
-      additionalProperties: false
-      required:
-        - type
-        - title
-        - status
-        - detail
-      properties:
-        type:
-          type: string
-          format: uri
-        title:
-          type: string
-        status:
-          type: integer
-          format: int32
-        detail:
-          type: string
-        code:
-          type: string
-        instance:
-          type: string
-          format: uri
+      $ref: ./components/schemas/common/problem.yaml
     ValidationProblem:
-      type: object
-      additionalProperties: false
-      required:
-        - type
-        - title
-        - status
-        - detail
-        - errors
-      properties:
-        type:
-          type: string
-          format: uri
-        title:
-          type: string
-        status:
-          type: integer
-          format: int32
-        detail:
-          type: string
-        code:
-          type: string
-        instance:
-          type: string
-          format: uri
-        errors:
-          type: array
-          items:
-            type: object
-            additionalProperties: false
-            required:
-              - field
-              - code
-              - message
-            properties:
-              field:
-                type: string
-              code:
-                type: string
-              message:
-                type: string
+      $ref: ./components/schemas/common/validation_problem.yaml
     PaginationMeta:
-      type: object
-      additionalProperties: false
-      required:
-        - page
-        - pageSize
-        - total
-        - totalPages
-        - hasNext
-        - hasPrev
-      properties:
-        page:
-          type: integer
-          format: int32
-          minimum: 1
-        pageSize:
-          type: integer
-          format: int32
-          minimum: 1
-        total:
-          type: integer
-          format: int64
-          minimum: 0
-        totalPages:
-          type: integer
-          format: int32
-          minimum: 0
-        hasNext:
-          type: boolean
-        hasPrev:
-          type: boolean
+      $ref: ./components/schemas/common/pagination_meta.yaml
     Money:
-      type: object
-      additionalProperties: false
-      required:
-        - amount
-        - currency
-      properties:
-        amount:
-          type: integer
-          format: int64
-        currency:
-          type: string
-          minLength: 3
-          maxLength: 3
+      $ref: ./components/schemas/common/money.yaml
   securitySchemes:
     sessionAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: 登录会话认证。
+      $ref: ./components/security/security.yaml#/sessionAuth
     nodeAuth:
-      type: apiKey
-      in: header
-      name: X-Node-Key-Id
-      description: 节点签名式机器认证。
-      x-node-auth-binding:
-        subjectScope: 单一节点主体或单一宿主机主体
-        revocation: 支持按密钥单独吊销
-      x-node-auth-clock-skew-seconds: 300
-      x-node-auth-nonce-reuse-window-seconds: 300
-      x-node-auth-signature-coverage:
-        - method
-        - normalizedPath
-        - timestamp
-        - nonce
-        - bodyDigest
+      $ref: ./components/security/security.yaml#/nodeAuth

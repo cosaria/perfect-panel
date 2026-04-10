@@ -3,5 +3,6 @@ in: header
 required: true
 description: 节点请求时间戳。
 schema:
+  title: NodeTimestamp
   type: integer
   format: int64

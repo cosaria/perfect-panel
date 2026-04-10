@@ -1,3 +1,4 @@
+title: Money
 type: object
 additionalProperties: false
 required:

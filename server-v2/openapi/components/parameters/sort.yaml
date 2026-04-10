@@ -3,5 +3,6 @@ in: query
 required: false
 description: 排序字段。
 schema:
+  title: Sort
   type: string
   minLength: 1
