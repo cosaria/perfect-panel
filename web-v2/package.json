@@ -6,7 +6,6 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
-    "vitest": "vitest",
     "lint": "turbo lint",
     "format": "biome format . --write",
     "typecheck": "turbo typecheck",
