@@ -41,6 +41,7 @@ func TestContractPipelinePasses(t *testing.T) {
 	assertNodeUsageReportOperation(t, bundlePath)
 	assertPathFilesUseRootComponents(t, moduleRoot)
 	assertRootSpecUsesComponentRefs(t, moduleRoot)
+	assertCleanupPlaceholdersExist(t, moduleRoot)
 	assertGeneratedTypesHaveNoDuplicatePublicAliases(t, generatedPath)
 	assertNoOpenApiTsErrorLogs(t, moduleRoot)
 }
@@ -88,6 +89,16 @@ func cleanupGeneratedArtifacts(t *testing.T, moduleRoot string) {
 		}
 	}
 
+	if matches, err := filepath.Glob(filepath.Join(moduleRoot, "openapi-ts-error-*.log")); err == nil {
+		for _, path := range matches {
+			if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+				t.Fatalf("清理 server-v2 错误日志失败 %s: %v", path, err)
+			}
+		}
+	} else {
+		t.Fatalf("扫描 server-v2 openapi-ts 错误日志失败: %v", err)
+	}
+
 	if matches, err := filepath.Glob(filepath.Join(moduleRoot, "..", "web", "openapi-ts-error-*.log")); err == nil {
 		for _, path := range matches {
 			if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
@@ -99,6 +110,7 @@ func cleanupGeneratedArtifacts(t *testing.T, moduleRoot string) {
 	}
 
 	ensureDistGitkeep(t, moduleRoot)
+	ensureGeneratedGitkeep(t, moduleRoot)
 }
 
 func assertBundleHasRequiredSurface(t *testing.T, bundlePath string) {
@@ -483,12 +495,17 @@ func assertGeneratedTypesHaveNoDuplicatePublicAliases(t *testing.T, generatedPat
 func assertNoOpenApiTsErrorLogs(t *testing.T, moduleRoot string) {
 	t.Helper()
 
-	matches, err := filepath.Glob(filepath.Join(moduleRoot, "..", "web", "openapi-ts-error-*.log"))
-	if err != nil {
-		t.Fatalf("扫描 openapi-ts 错误日志失败: %v", err)
-	}
-	if len(matches) > 0 {
-		t.Fatalf("仍存在 openapi-ts 错误日志: %v", matches)
+	for _, pattern := range []string{
+		filepath.Join(moduleRoot, "openapi-ts-error-*.log"),
+		filepath.Join(moduleRoot, "..", "web", "openapi-ts-error-*.log"),
+	} {
+		matches, err := filepath.Glob(pattern)
+		if err != nil {
+			t.Fatalf("扫描 openapi-ts 错误日志失败: %v", err)
+		}
+		if len(matches) > 0 {
+			t.Fatalf("仍存在 openapi-ts 错误日志: %v", matches)
+		}
 	}
 }
 
@@ -501,6 +518,33 @@ func ensureDistGitkeep(t *testing.T, moduleRoot string) {
 	}
 	if err := os.WriteFile(path, []byte{}, 0o644); err != nil {
 		t.Fatalf("恢复 dist/.gitkeep 失败: %v", err)
+	}
+}
+
+func ensureGeneratedGitkeep(t *testing.T, moduleRoot string) {
+	t.Helper()
+
+	path := filepath.Join(moduleRoot, "openapi", "generated", ".gitkeep")
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatalf("恢复 generated 目录失败: %v", err)
+	}
+	if err := os.WriteFile(path, []byte("\n"), 0o644); err != nil {
+		t.Fatalf("恢复 generated/.gitkeep 失败: %v", err)
+	}
+}
+
+func assertCleanupPlaceholdersExist(t *testing.T, moduleRoot string) {
+	t.Helper()
+
+	for _, path := range []string{
+		filepath.Join(moduleRoot, "openapi", "dist", ".gitkeep"),
+		filepath.Join(moduleRoot, "openapi", "generated", ".gitkeep"),
+	} {
+		if info, err := os.Stat(path); err != nil {
+			t.Fatalf("占位文件缺失 %s: %v", path, err)
+		} else if info.IsDir() {
+			t.Fatalf("占位文件是目录而不是文件: %s", path)
+		}
 	}
 }
 

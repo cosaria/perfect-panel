@@ -6,6 +6,7 @@ rules:
   operation-operationId-url-safe: error
   no-unresolved-refs: error
   security-defined: error
-  no-unused-components: warn
+  # Money 作为冻结组件保留，但当前代表性路径不会消费它。
+  no-unused-components: off
   no-empty-servers: off
   info-license: off
