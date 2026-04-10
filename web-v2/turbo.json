@@ -1,0 +1,29 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"tasks": {
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**", ".tanstack/**"]
+		},
+		"test": {
+			"dependsOn": ["^test"],
+			"outputs": []
+		},
+		"lint": {
+			"dependsOn": ["^lint"],
+			"outputs": []
+		},
+		"typecheck": {
+			"dependsOn": ["^typecheck"],
+			"outputs": []
+		},
+		"openapi": {
+			"dependsOn": ["^openapi"],
+			"outputs": ["src/generated/**"]
+		}
+	}
+}
