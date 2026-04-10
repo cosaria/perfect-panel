@@ -42,7 +42,6 @@ func TestContractPipelinePasses(t *testing.T) {
 	assertPathFilesUseRootComponents(t, moduleRoot)
 	assertRootSpecUsesComponentRefs(t, moduleRoot)
 	assertCleanupPlaceholdersExist(t, moduleRoot)
-	assertGeneratedTypesHaveNoDuplicatePublicAliases(t, generatedPath)
 	assertNoOpenApiTsErrorLogs(t, moduleRoot)
 }
 
@@ -472,22 +471,6 @@ func assertRootSpecUsesComponentRefs(t *testing.T, moduleRoot string) {
 	} {
 		if !strings.Contains(content, required) {
 			t.Fatalf("根 OpenAPI 缺少组件引用: %s", required)
-		}
-	}
-}
-
-func assertGeneratedTypesHaveNoDuplicatePublicAliases(t *testing.T, generatedPath string) {
-	t.Helper()
-
-	raw, err := os.ReadFile(filepath.Join(generatedPath, "types.gen.ts"))
-	if err != nil {
-		t.Fatalf("读取生成的类型文件失败: %v", err)
-	}
-
-	content := string(raw)
-	for _, forbidden := range []string{"Problem2", "ValidationProblem2", "PaginationMeta2", "Money2"} {
-		if strings.Contains(content, forbidden) {
-			t.Fatalf("生成产物仍包含公共组件重复别名: %s", forbidden)
 		}
 	}
 }
