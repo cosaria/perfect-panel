@@ -40,13 +40,20 @@ export interface ButtonProps
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 	({ className, variant, size, asChild = false, type = 'button', ...props }, ref) => {
 		const Comp = asChild ? Slot : 'button';
+		const resolvedProps = asChild
+			? {
+					ref,
+					className: cn(buttonVariants({ variant, size }), className),
+					...props,
+				}
+			: {
+					ref,
+					type,
+					className: cn(buttonVariants({ variant, size }), className),
+					...props,
+				};
 
-		return React.createElement(Comp, {
-			ref,
-			type: asChild ? undefined : type,
-			className: cn(buttonVariants({ variant, size }), className),
-			...props,
-		});
+		return React.createElement(Comp, resolvedProps as any);
 	},
 );
 
