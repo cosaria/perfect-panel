@@ -10,7 +10,7 @@ type LoginValues = {
 	password: string;
 };
 
-export function LoginForm() {
+export function LoginForm({ redirectTo }: { redirectTo?: string }) {
 	const navigate = useNavigate();
 	const [message, setMessage] = useState<string | null>(null);
 
@@ -34,7 +34,10 @@ export function LoginForm() {
 
 				setAuthSession(response.data.data.accessToken, value.email);
 				setMessage('登录成功，正在进入管理后台。');
-				await navigate({ replace: true, to: '/' });
+				await navigate({
+					href: redirectTo ?? '/',
+					replace: true,
+				});
 			} catch {
 				setMessage('登录失败，请检查邮箱和密码后重试。');
 			}

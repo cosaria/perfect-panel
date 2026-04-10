@@ -1,6 +1,5 @@
-import type { RouterHistory } from '@tanstack/history';
 import { QueryClient } from '@tanstack/react-query';
-import { createRouter as createTanStackRouter } from '@tanstack/react-router';
+import { type RouterHistory, createRouter as createTanStackRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
 
 export interface AppRouterContext {

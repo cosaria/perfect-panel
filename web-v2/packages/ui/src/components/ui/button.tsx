@@ -1,5 +1,6 @@
 import { Slot } from '@radix-ui/react-slot';
 import { type VariantProps, cva } from 'class-variance-authority';
+// biome-ignore lint/style/useImportType: 当前 ui 包测试编译仍需要 React 运行时符号。
 import React from 'react';
 
 import { cn } from '../../lib/utils';

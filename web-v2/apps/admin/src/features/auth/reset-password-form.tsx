@@ -32,7 +32,11 @@ export function ResetPasswordForm({ initialToken = '' }: { initialToken?: string
 				});
 
 				setMessage('密码已经更新，现在可以重新登录。');
-				await navigate({ replace: true, to: '/login' });
+				await navigate({
+					replace: true,
+					search: { redirect: undefined },
+					to: '/login',
+				});
 			} catch {
 				setMessage('重置失败，请检查令牌是否正确。');
 			}
@@ -122,7 +126,11 @@ export function ResetPasswordForm({ initialToken = '' }: { initialToken?: string
 					</form>
 
 					<div className="mt-6 flex items-center justify-between text-sm text-slate-300">
-						<Link className="font-medium text-cyan-200 hover:text-cyan-100" to="/login">
+						<Link
+							className="font-medium text-cyan-200 hover:text-cyan-100"
+							search={{ redirect: undefined }}
+							to="/login"
+						>
 							返回登录
 						</Link>
 						<Link className="font-medium text-cyan-200 hover:text-cyan-100" to="/forgot-password">

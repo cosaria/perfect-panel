@@ -99,7 +99,11 @@ export function ForgotPasswordForm() {
 					</form>
 
 					<div className="mt-6 flex items-center justify-between text-sm text-slate-300">
-						<Link className="font-medium text-cyan-200 hover:text-cyan-100" to="/login">
+						<Link
+							className="font-medium text-cyan-200 hover:text-cyan-100"
+							search={{ redirect: undefined }}
+							to="/login"
+						>
 							返回登录
 						</Link>
 						<Link
