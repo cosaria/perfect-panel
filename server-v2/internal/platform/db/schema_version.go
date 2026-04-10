@@ -9,7 +9,7 @@ import (
 
 const (
 	// TargetSchemaVersion 表示当前代码要求的目标 schema 版本。
-	TargetSchemaVersion = "0001_baseline"
+	TargetSchemaVersion = "0002_auth_access"
 )
 
 // CurrentSchemaVersion 返回当前 schema 的最近版本号。

@@ -5,6 +5,7 @@ import (
 	"math/rand/v2"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -166,5 +167,27 @@ func createSchemaWithTargetRevisionMissingIDDefaults(t *testing.T, dsn string) {
 		if _, err := db.Exec(statement); err != nil {
 			t.Fatalf("准备缺省默认值 schema 失败: %v", err)
 		}
+	}
+}
+
+func createBaselineOnlySchema(t *testing.T, dsn string) {
+	t.Helper()
+
+	db, err := ppdb.Open(dsn)
+	if err != nil {
+		t.Fatalf("连接隔离数据库失败: %v", err)
+	}
+	defer db.Close()
+
+	scriptPath := filepath.Join(moduleRoot(t), "internal", "platform", "db", "migrations", "0001_baseline.sql")
+	script, err := os.ReadFile(scriptPath)
+	if err != nil {
+		t.Fatalf("读取 baseline migration 失败: %v", err)
+	}
+	if _, err := db.Exec(string(script)); err != nil {
+		t.Fatalf("执行 baseline migration 失败: %v", err)
+	}
+	if _, err := db.Exec(`INSERT INTO schema_revisions(version) VALUES ('0001_baseline')`); err != nil {
+		t.Fatalf("写入 baseline revision 失败: %v", err)
 	}
 }

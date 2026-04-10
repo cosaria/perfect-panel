@@ -6,6 +6,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"path/filepath"
 	"slices"
 	"strings"
 )
@@ -19,9 +20,21 @@ var managedTables = []string{
 	"system_settings",
 	"outbox_events",
 	"schema_revisions",
+	"user_identities",
+	"user_sessions",
+	"verification_tokens",
+	"permissions",
+	"role_permissions",
+	"user_roles",
+	"auth_events",
 }
 
-// Migrate 执行当前 baseline migration，并记录目标 schema version。
+var schemaMigrations = []string{
+	"0001_baseline.sql",
+	"0002_auth_access.sql",
+}
+
+// Migrate 执行 revision 主链，并记录目标 schema version。
 func Migrate(ctx context.Context, database *sql.DB) error {
 	if database == nil {
 		return fmt.Errorf("数据库实例不能为空")
@@ -38,10 +51,14 @@ func Migrate(ctx context.Context, database *sql.DB) error {
 		if currentVersion == "" {
 			return fmt.Errorf("schema_revisions 状态异常: 当前版本为空")
 		}
-		if currentVersion != TargetSchemaVersion {
-			return fmt.Errorf("当前 schema version 非目标版本: want=%s got=%s", TargetSchemaVersion, currentVersion)
+		currentIndex := revisionIndex(currentVersion)
+		if currentIndex < 0 {
+			return fmt.Errorf("当前 schema version 不在受管 revision 主链中: got=%s", currentVersion)
 		}
-		return EnsureSchemaVersion(ctx, database)
+		if currentVersion == TargetSchemaVersion {
+			return EnsureSchemaVersion(ctx, database)
+		}
+		return applyMigrationsFromIndex(ctx, database, currentIndex+1)
 	}
 
 	existingTables, err := findExistingManagedTables(ctx, database)
@@ -52,27 +69,7 @@ func Migrate(ctx context.Context, database *sql.DB) error {
 		return fmt.Errorf("检测到 schema 已漂移或状态异常，拒绝执行 baseline migration: %s", strings.Join(existingTables, ","))
 	}
 
-	script, err := migrationFiles.ReadFile("migrations/0001_baseline.sql")
-	if err != nil {
-		return fmt.Errorf("读取 baseline migration 失败: %w", err)
-	}
-
-	if err := WithTx(ctx, database, func(tx *sql.Tx) error {
-		if _, err := tx.ExecContext(ctx, string(script)); err != nil {
-			return fmt.Errorf("执行 baseline migration 失败: %w", err)
-		}
-		if _, err := tx.ExecContext(
-			ctx,
-			`INSERT INTO schema_revisions(version) VALUES ($1)`,
-			TargetSchemaVersion,
-		); err != nil {
-			return fmt.Errorf("写入 schema_revisions 失败: %w", err)
-		}
-		return nil
-	}); err != nil {
-		return err
-	}
-	return EnsureSchemaVersion(ctx, database)
+	return applyMigrationsFromIndex(ctx, database, 0)
 }
 
 func currentSchemaVersionState(ctx context.Context, database *sql.DB) (bool, string, error) {
@@ -130,4 +127,36 @@ func findExistingManagedTables(ctx context.Context, database *sql.DB) ([]string,
 	}
 	slices.Sort(existing)
 	return existing, nil
+}
+
+func applyMigrationsFromIndex(ctx context.Context, database *sql.DB, start int) error {
+	for idx := start; idx < len(schemaMigrations); idx++ {
+		version := strings.TrimSuffix(filepath.Base(schemaMigrations[idx]), filepath.Ext(schemaMigrations[idx]))
+		script, err := migrationFiles.ReadFile("migrations/" + schemaMigrations[idx])
+		if err != nil {
+			return fmt.Errorf("读取 migration %s 失败: %w", version, err)
+		}
+		if err := WithTx(ctx, database, func(tx *sql.Tx) error {
+			if _, err := tx.ExecContext(ctx, string(script)); err != nil {
+				return fmt.Errorf("执行 migration %s 失败: %w", version, err)
+			}
+			if _, err := tx.ExecContext(ctx, `INSERT INTO schema_revisions(version) VALUES ($1)`, version); err != nil {
+				return fmt.Errorf("写入 schema_revisions %s 失败: %w", version, err)
+			}
+			return nil
+		}); err != nil {
+			return err
+		}
+	}
+	return EnsureSchemaVersion(ctx, database)
+}
+
+func revisionIndex(version string) int {
+	for idx, name := range schemaMigrations {
+		current := strings.TrimSuffix(filepath.Base(name), filepath.Ext(name))
+		if current == version {
+			return idx
+		}
+	}
+	return -1
 }

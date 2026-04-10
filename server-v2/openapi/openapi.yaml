@@ -13,6 +13,54 @@ paths:
     $ref: ./paths/public/password_resets.yaml
   /api/v1/user/me/sessions:
     $ref: ./paths/user/me_sessions.yaml
+  /api/v1/user/me/sessions/{sessionId}:
+    delete:
+      tags:
+        - Auth
+      operationId: userAuthSessionDelete
+      summary: 撤销当前用户指定会话
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: 会话已撤销。
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - data
+                  - meta
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - revoked
+                      - revokedAt
+                    properties:
+                      revoked:
+                        type: boolean
+                      revokedAt:
+                        type: string
+                        format: date-time
+                  meta:
+                    type: object
+                    additionalProperties: false
+        "401":
+          description: 未认证。
+          content:
+            application/json:
+              schema:
+                $ref: ./components/schemas/common/problem.yaml
   /api/v1/admin/users:
     $ref: ./paths/admin/users.yaml
   /api/v1/node/usage-reports:

@@ -64,6 +64,12 @@ post:
         application/json:
           schema:
             $ref: '../../openapi.yaml#/components/schemas/Problem'
+    "401":
+      description: 认证失败。
+      content:
+        application/json:
+          schema:
+            $ref: '../../openapi.yaml#/components/schemas/Problem'
     "409":
       description: 冲突。
       content:

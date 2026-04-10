@@ -42,6 +42,9 @@ func ValidateSchemaContract(ctx context.Context, database *sql.DB) error {
 	if err := assertUUIDDefault(ctx, database, "system_settings", "id"); err != nil {
 		return err
 	}
+	if err := assertColumnType(ctx, database, "users", "status", "text"); err != nil {
+		return err
+	}
 
 	if err := assertColumnType(ctx, database, "system_settings", "scope", "text"); err != nil {
 		return err
@@ -59,6 +62,24 @@ func ValidateSchemaContract(ctx context.Context, database *sql.DB) error {
 	if err := assertColumnExists(ctx, database, "outbox_events", "aggregate_id"); err != nil {
 		return err
 	}
+	if err := assertColumnExists(ctx, database, "user_identities", "provider"); err != nil {
+		return err
+	}
+	if err := assertColumnExists(ctx, database, "user_identities", "identifier"); err != nil {
+		return err
+	}
+	if err := assertColumnExists(ctx, database, "user_sessions", "token_hash"); err != nil {
+		return err
+	}
+	if err := assertColumnExists(ctx, database, "verification_tokens", "token_hash"); err != nil {
+		return err
+	}
+	if err := assertColumnExists(ctx, database, "verification_tokens", "used_at"); err != nil {
+		return err
+	}
+	if err := assertColumnExists(ctx, database, "auth_events", "event_type"); err != nil {
+		return err
+	}
 
 	ok, err := hasSystemSettingsScopeKeyUniqueIndex(ctx, database)
 	if err != nil {
@@ -66,6 +87,12 @@ func ValidateSchemaContract(ctx context.Context, database *sql.DB) error {
 	}
 	if !ok {
 		return fmt.Errorf("schema 契约缺失: system_settings 需要 (scope, key) 唯一索引/约束")
+	}
+	if err := assertUniqueIndexContains(ctx, database, "verification_tokens", "(token_hash)"); err != nil {
+		return err
+	}
+	if err := assertUniqueIndexContains(ctx, database, "user_identities", "(provider, identifier)"); err != nil {
+		return err
 	}
 	return nil
 }
@@ -169,4 +196,27 @@ func hasSystemSettingsScopeKeyUniqueIndex(ctx context.Context, database *sql.DB)
 		return false, fmt.Errorf("检查 system_settings 唯一索引失败: %w", err)
 	}
 	return exists, nil
+}
+
+func assertUniqueIndexContains(ctx context.Context, database *sql.DB, table string, snippet string) error {
+	var exists bool
+	if err := database.QueryRowContext(
+		ctx,
+		`SELECT EXISTS (
+			SELECT 1
+			FROM pg_indexes
+			WHERE schemaname = current_schema()
+				AND tablename = $1
+				AND position('create unique index' IN lower(indexdef)) > 0
+				AND position($2 IN lower(replace(indexdef, '"', ''))) > 0
+		)`,
+		table,
+		strings.ToLower(snippet),
+	).Scan(&exists); err != nil {
+		return fmt.Errorf("检查 %s 唯一索引失败: %w", table, err)
+	}
+	if !exists {
+		return fmt.Errorf("schema 契约缺失: %s 需要唯一索引 %s", table, snippet)
+	}
+	return nil
 }
