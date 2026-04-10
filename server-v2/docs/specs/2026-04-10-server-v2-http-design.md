@@ -15,7 +15,7 @@
 
 它不追求“理论上最通用的 API 风格”，而是优先服务 4 件事：
 
-1. `OpenAPI 3.2` 真相源
+1. `OpenAPI 3.1` 真相源
 2. [Redocly](https://redocly.com/) 文档生成
 3. `@hey-api/openapi-ts` 客户端生成
 4. AI 在后续实现与维护中的稳定识别
@@ -38,15 +38,15 @@
 
 这份 HTTP 规范采用：
 
-**单一 OpenAPI 真相源 + 四个调用面 + 资源化路径 + 统一 envelope + 结构化错误 + 显式兼容规则**
+**单一 OpenAPI 真相源 + 四个调用面 + 资源化路径 + 统一成功响应体 + 结构化错误 + 显式兼容规则**
 
 它对应 10 条工作原则：
 
-1. 维护一份 OpenAPI 3.2 总规范，而不是多份彼此独立的 API 文档。
+1. 维护一份 OpenAPI 3.1 总规范，而不是多份彼此独立的 API 文档。
 2. 路径先按调用面分流，再按资源组织，不走 RPC 风格。
-3. 所有成功响应统一使用 `data + meta` 外层结构。
+3. 所有带响应体的成功响应统一使用 `data + meta` 外层结构，`v1` 不使用 `204 No Content`。
 4. 所有错误统一使用 `Problem Details`，校验错误追加统一字段级错误数组。
-5. `user / admin / node` 认证方案显式分离，权限要求结构化标注。
+5. `user / admin` 共享 `sessionAuth`，`node` 使用独立机器认证方案，权限要求结构化标注。
 6. 所有非幂等写操作统一支持 `Idempotency-Key`。
 7. 更新统一使用 `PATCH` 业务型局部更新对象，不使用 `PUT`、`JSON Merge Patch` 或 `JSON Patch`。
 8. 少数异步写操作统一返回 `202 Accepted` 与标准任务受理对象。
@@ -57,7 +57,7 @@
 
 ### 总体要求
 
-`server-v2` 第一版 HTTP API 以 **一份 OpenAPI 3.2 规范** 作为唯一真相源。
+`server-v2` 第一版 HTTP API 以 **一份 OpenAPI 3.1 规范** 作为唯一真相源。
 
 这份真相源同时服务于：
 
@@ -67,6 +67,24 @@
 - AI 后续修改接口时的稳定参考
 
 不允许维护四份彼此独立的 `public / user / admin / node` 规范。
+
+### 真相源与派生产物流水线
+
+`server-v2` 的 HTTP 契约遵守固定流水线：
+
+1. 人工维护 `server-v2/openapi/openapi.yaml` 及其 `$ref` 子文件，作为唯一可编辑真相源。
+2. 使用 Redocly 对真相源执行 lint 与 bundle。
+3. 基于 bundle 产出文档站可消费的规范文件。
+4. 基于同一份 bundle 产出 `@hey-api/openapi-ts` 客户端。
+5. `server-v2` 的 Go 实现对齐这份规范，但不反向生成新的 OpenAPI 真相源。
+
+这条规则的含义是：
+
+- 文档和客户端都从 OpenAPI 真相源派生
+- 服务实现服从 OpenAPI 契约
+- 不允许同时维护“Go 代码是真相源”和“OpenAPI 文件是真相源”两套体系
+
+如果未来工具链完整支持 `OpenAPI 3.2`，可以在不改变这条流水线的前提下升级；第一版基线固定为 `3.1`，以确保 Redocly 和客户端生成链路稳定。
 
 ### 源码组织
 
@@ -222,7 +240,7 @@ HTTP 规范默认采用资源化路径，而不是动作化路径。
 
 - `POST /api/v1/node/usage-reports`
 - `POST /api/v1/node/heartbeats`
-- `POST /api/v1/node/enrollments`
+- `POST /api/v1/node/registrations`
 
 它不拥有单独的“动作路径哲学”。
 
@@ -230,18 +248,58 @@ HTTP 规范默认采用资源化路径，而不是动作化路径。
 
 ### 安全方案
 
-OpenAPI 中显式维护三套安全方案：
+OpenAPI 中显式维护两套安全方案：
 
-- `userSessionAuth`
-- `adminSessionAuth`
+- `sessionAuth`
 - `nodeAuth`
 
 其中：
 
-- `user / admin` 使用 Bearer Token 会话语义
+- `user / admin` 共享同一套 Bearer Token 会话语义
 - `node` 使用独立机器认证语义
 
-第一版不允许把三者压成一个笼统的 `bearerAuth`。
+第一版不允许把 `node` 也压成笼统的 Bearer Token。
+
+`sessionAuth` 只表达“这是一个已登录主体的会话认证”；它不表达调用面权限差异。`admin` 能否访问某个接口，仍由：
+
+- 路径调用面
+- `x-requiredPermissions`
+- 必要时 `x-requiredRoles`
+
+共同决定。
+
+在 OpenAPI `securitySchemes` 中：
+
+- `sessionAuth` 固定为 `type: http`、`scheme: bearer`
+- `nodeAuth` 固定为 `type: apiKey`、`in: header`、`name: X-Node-Key-Id`
+
+### `nodeAuth`
+
+`nodeAuth` 在协议上固定为一套签名式机器认证，而不是普通 Bearer Token。
+
+第一版至少包含以下 header：
+
+- `X-Node-Key-Id`
+- `X-Node-Timestamp`
+- `X-Node-Nonce`
+- `X-Node-Signature`
+
+其中 `X-Node-Key-Id` 由 `nodeAuth` security scheme 表达，其余 3 个 header 作为共享参数组件挂载到所有 `node` 写接口与受保护读接口。
+
+其中：
+
+- `X-Node-Key-Id` 标识当前节点或宿主机使用的可吊销密钥
+- `X-Node-Timestamp` 提供有限时间窗
+- `X-Node-Nonce` 提供单次请求随机性
+- `X-Node-Signature` 对请求摘要签名
+
+规范层冻结以下最小安全语义：
+
+- 密钥必须绑定到单一节点主体或单一宿主机主体
+- 时间窗默认不超过 5 分钟
+- `nonce` 在有效时间窗内不得重复使用
+- 节点密钥必须支持单独吊销，不影响其他节点主体
+- 签名覆盖 method、规范化 path、时间戳、nonce 和请求体摘要
 
 ### 权限标注
 
@@ -269,11 +327,19 @@ OpenAPI 中显式维护三套安全方案：
 - 高风险后台写操作
 - 其他可重试的创建型请求
 
+幂等语义冻结如下：
+
+- 幂等判定作用域至少包含：调用主体、HTTP method、路径模板、请求摘要
+- 相同作用域内，`Idempotency-Key` 的默认去重时间窗为 24 小时
+- 同一 `Idempotency-Key` 在时间窗内如果命中完全相同的请求摘要，应返回第一次成功受理的响应
+- 同一 `Idempotency-Key` 在时间窗内如果命中不同请求摘要，必须返回 `409 Conflict`
+- `409` 响应仍使用 Problem Details，并携带稳定的业务错误码，例如 `idempotency_conflict`
+
 ## 请求与响应契约
 
 ### 成功响应 envelope
 
-所有成功响应统一采用：
+所有带响应体的成功响应统一采用：
 
 ```json
 {
@@ -287,6 +353,19 @@ OpenAPI 中显式维护三套安全方案：
 - `data` 始终存在
 - `meta` 始终存在
 - 不因为“这个接口很简单”就省略 envelope
+
+但这条规则不意味着实现一个全局泛型 `SuccessEnvelope` schema。为了保证 `@hey-api/openapi-ts` 的生成类型精度，每个 operation 仍应拥有自己显式命名的成功响应 schema，例如：
+
+- `UserSubscriptionListResponse`
+- `AdminNodeDetailResponse`
+- `PublicSessionCreateResponse`
+
+公共组件只抽取真正稳定复用的片段，例如：
+
+- `PaginationMeta`
+- `Money`
+- `Problem`
+- `ValidationProblem`
 
 ### 列表响应
 
@@ -472,6 +551,8 @@ OpenAPI 中显式维护三套安全方案：
 
 只有少数异步动作允许返回 `202 Accepted`。
 
+`public` 调用面第一版不返回 `202`。如果匿名请求内部需要异步副作用，例如发邮件，它仍应对外表现为同步受理结果，而不是暴露匿名任务查询资源。
+
 ## 异步受理与任务资源
 
 ### `202 Accepted`
@@ -493,7 +574,7 @@ OpenAPI 中显式维护三套安全方案：
 - `/api/v1/admin/jobs/{jobId}`
 - `/api/v1/node/jobs/{jobId}`
 
-第一版不使用全局混合任务路径 `/api/v1/jobs/{jobId}`。
+第一版不使用全局混合任务路径 `/api/v1/jobs/{jobId}`，也不定义 `public` 面任务资源。
 
 ### 任务表示
 
@@ -570,16 +651,35 @@ OpenAPI 中显式维护三套安全方案：
 
 所有 operation 强制显式定义 `operationId`。
 
-命名规则采用：
+命名模板收紧为：
 
-**调用面 + 领域 + 动作**
+`{surface}{domain}{resource}{action}`
+
+其中：
+
+- `surface` 固定为 `public | user | admin | node`
+- `domain` 固定为 `Auth | Access | Catalog | Billing | Subscription | Node | System`
+- `resource` 使用单数 PascalCase 资源名，必要时可以是父子资源拼接
+- `action` 使用受控动词集：`List / Get / Create / Update / Delete / Cancel / Refresh / Retry / Approve / Reject`
+
+机械规则如下：
+
+- 集合读取：`{surface}{domain}{resource}List`
+- 详情读取：`{surface}{domain}{resource}Get`
+- 创建：`{surface}{domain}{resource}Create`
+- 更新：`{surface}{domain}{resource}Update`
+- 删除：`{surface}{domain}{resource}Delete`
+- 嵌套资源：`{surface}{domain}{parentResource}{childResource}{action}`
 
 例如：
 
-- `publicAuthCreateSession`
+- `publicAuthSessionCreate`
 - `userSubscriptionList`
 - `adminNodeUpdate`
 - `nodeUsageReportCreate`
+- `adminUserSubscriptionList`
+
+所有 `operationId` 必须全局唯一，不允许不同调用面依赖同名方法再由客户端二次分组。
 
 不允许依赖工具按 path 自动推导。
 
@@ -607,7 +707,6 @@ tags 按业务域分组，而不是按调用面分组。
 
 - `Problem`
 - `ValidationProblem`
-- `SuccessEnvelope`
 - `PaginationMeta`
 - `Money`
 - `AsyncJobAccepted`
@@ -616,7 +715,9 @@ tags 按业务域分组，而不是按调用面分组。
 - `SortParam`
 - `OrderParam`
 - `IdempotencyKeyHeader`
-- 三套 `securitySchemes`
+- `sessionAuth` 与 `nodeAuth` 两套 `securitySchemes`
+
+成功响应 envelope 是一条契约规则，不是一个必须在所有 operation 上复用的单一泛型 schema。
 
 ### 组合类型
 
@@ -635,7 +736,6 @@ tags 按业务域分组，而不是按调用面分组。
 - `200`：读取成功 / 一般成功
 - `201`：创建成功
 - `202`：异步受理
-- `204`：无响应体成功
 - `400`：请求格式错误
 - `401`：未认证
 - `403`：已认证但无权限
@@ -647,6 +747,8 @@ tags 按业务域分组，而不是按调用面分组。
 
 状态码不允许在各领域中各自重新解释。
 
+第一版不使用 `204 No Content`，以避免和统一成功响应体规则冲突。原本可能使用 `204` 的接口，统一返回 `200` 与显式成功响应体。
+
 ## 示例要求
 
 关键接口必须提供 request / response example。
@@ -657,7 +759,7 @@ tags 按业务域分组，而不是按调用面分组。
 - `user` 面订阅与会话接口
 - `billing` 的订单 / 支付 / 退款接口
 - `admin` 的套餐 / 节点 / 用户接口
-- `node` 的 usage report / heartbeat / enrollment 接口
+- `node` 的 usage report / heartbeat / registration 接口
 - `Problem` 与字段级校验错误示例
 
 普通接口可以不为每一个都强制提供示例，但关键主链必须有。
@@ -673,6 +775,7 @@ tags 按业务域分组，而不是按调用面分组。
 - 新增可选 query 参数
 - 新增不破坏旧客户端的响应字段
 - 在明确定义兼容策略下新增 enum 值
+- 在不改变语义的前提下为文档补充 example 或 `x-` 扩展字段
 
 ### `v1` 内禁止的变更
 
@@ -685,6 +788,7 @@ tags 按业务域分组，而不是按调用面分组。
 - 修改已发布 path 语义
 - 修改 `operationId`
 - 修改已有状态码语义
+- 在 `v1` 内把 OpenAPI 真相源从 `3.1` 切到不被现有工具链稳定消费的版本
 
 ## 允许的简化
 
@@ -708,22 +812,23 @@ tags 按业务域分组，而不是按调用面分组。
 7. 在 JSON 中混用 `camelCase` 与 `snake_case`
 8. 把写接口是否支持幂等留给实现阶段自由判断
 9. 让认证规则只靠 prose 描述而没有结构化 `security` 与权限扩展字段
+10. 在 `v1` 中返回 `204 No Content` 破坏统一成功响应体规则
 
 ## 决策结果
 
 `server-v2` 第一版 HTTP 规范采用：
 
-- 单一 OpenAPI 3.2 真相源
+- 单一 OpenAPI 3.1 真相源
 - Redocly 文档输出
 - `@hey-api/openapi-ts` 客户端生成
 - `paths` 按调用面拆分，`components` 按业务域拆分
 - `/api/v1/public|user|admin|node/...` 四个调用面
 - 资源化路径、复数 path、单数 schema、显式 `operationId`
-- 成功响应统一 `data + meta`
+- 带响应体的成功响应统一 `data + meta`
 - 错误统一 Problem Details + 字段级错误数组
-- Bearer 的 `user/admin` 会话认证 + 独立 `node` 认证
+- 共享 `sessionAuth` 的 `user/admin` 会话认证 + 签名式 `nodeAuth`
 - 统一 `Idempotency-Key`
-- 统一 `202` 受理对象与按调用面分开的任务资源
+- 统一 `202` 受理对象与按调用面分开的任务资源，`public` 面不暴露任务资源
 - `v1` 明确的向后兼容边界
 
 一句话总结：
