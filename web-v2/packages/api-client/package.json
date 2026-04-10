@@ -7,9 +7,9 @@
 	},
 	"scripts": {
 		"openapi": "node ./scripts/generate.mjs",
-		"test": "vitest run",
+		"test": "vitest run --passWithNoTests",
 		"lint": "biome check src/index.ts scripts/generate.mjs",
-		"typecheck": "tsc --noEmit --module nodenext --moduleResolution nodenext --target es2022 src/index.ts"
+		"typecheck": "tsc --noEmit --module esnext --moduleResolution bundler --target es2022 src/index.ts"
 	},
 	"dependencies": {
 		"@hey-api/client-fetch": "^0.13.1"

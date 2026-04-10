@@ -7,7 +7,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const expectedScripts = {
 	dev: 'turbo dev',
 	build: 'turbo build',
-	test: 'vitest run tests/smoke/workspace-layout.test.ts && turbo test',
+	test: 'vitest run tests/smoke/*.test.ts && turbo test',
 	lint: 'turbo lint',
 	format: 'biome format . --write',
 	typecheck: 'turbo typecheck',
