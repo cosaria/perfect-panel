@@ -1,0 +1,7 @@
+name: X-Node-Nonce
+in: header
+required: true
+description: 节点请求随机串。
+schema:
+  type: string
+  minLength: 1

@@ -8,3 +8,14 @@ nodeAuth:
   in: header
   name: X-Node-Key-Id
   description: 节点签名式机器认证。
+  x-node-auth-binding:
+    subjectScope: 单一节点主体或单一宿主机主体
+    revocation: 支持按密钥单独吊销
+  x-node-auth-clock-skew-seconds: 300
+  x-node-auth-nonce-reuse-window-seconds: 300
+  x-node-auth-signature-coverage:
+    - method
+    - normalizedPath
+    - timestamp
+    - nonce
+    - bodyDigest

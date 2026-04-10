@@ -1,0 +1,7 @@
+name: X-Node-Timestamp
+in: header
+required: true
+description: 节点请求时间戳。
+schema:
+  type: integer
+  format: int64

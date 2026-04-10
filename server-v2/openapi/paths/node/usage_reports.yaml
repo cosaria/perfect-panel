@@ -7,27 +7,9 @@ post:
     - nodeAuth: []
   parameters:
     - $ref: ../../components/parameters/idempotency_key.yaml
-    - name: X-Node-Timestamp
-      in: header
-      required: true
-      description: 节点请求时间戳。
-      schema:
-        type: integer
-        format: int64
-    - name: X-Node-Nonce
-      in: header
-      required: true
-      description: 节点请求随机串。
-      schema:
-        type: string
-        minLength: 1
-    - name: X-Node-Signature
-      in: header
-      required: true
-      description: 节点请求签名。
-      schema:
-        type: string
-        minLength: 1
+    - $ref: ../../components/parameters/node_timestamp.yaml
+    - $ref: ../../components/parameters/node_nonce.yaml
+    - $ref: ../../components/parameters/node_signature.yaml
   requestBody:
     required: true
     content:
