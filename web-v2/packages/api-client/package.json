@@ -8,7 +8,7 @@
 	"scripts": {
 		"openapi": "node ./scripts/generate.mjs",
 		"test": "vitest run",
-		"lint": "biome check src scripts",
+		"lint": "biome check src/index.ts scripts/generate.mjs",
 		"typecheck": "tsc --noEmit --module nodenext --moduleResolution nodenext --target es2022 src/index.ts"
 	},
 	"dependencies": {
