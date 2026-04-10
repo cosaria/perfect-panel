@@ -49,10 +49,12 @@ server-v2/
 │   └── server/
 │       ├── main.go
 │       ├── root.go
-│       ├── run.go
-│       ├── db_bootstrap.go
-│       ├── db_seed.go
-│       └── openapi.go
+│       ├── serve_api.go
+│       ├── serve_worker.go
+│       ├── serve_scheduler.go
+│       ├── migrate.go
+│       ├── seed_required.go
+│       └── seed_demo.go
 ├── internal/
 │   ├── app/
 │   │   ├── bootstrap/
@@ -118,6 +120,7 @@ server-v2/
 │   │   ├── bootstrap/
 │   │   ├── routing/
 │   │   └── wiring/
+│   ├── support/
 │   ├── domains/
 │   │   ├── access/
 │   │   │   ├── api/
@@ -171,7 +174,7 @@ server-v2/
 ### `cmd/server/`
 
 当前唯一的可执行入口目录。  
-`cmd/server/main.go` 负责启动根 CLI，`run`、`db bootstrap`、`db seed`、`openapi` 等命令也都定义在这个目录下。
+`cmd/server/main.go` 负责启动根 CLI，`serve-api`、`serve-worker`、`serve-scheduler`、`migrate`、`seed-required`、`seed-demo` 等命令也都定义在这个目录下。
 
 这样做有两个直接好处：
 
@@ -232,6 +235,7 @@ server-v2/
 - `tests/domains/`：镜像业务域测试
 - `tests/platform/`：镜像平台层测试
 - `tests/app/`：镜像装配与启动测试
+- `tests/support/`：共享测试支架、Testcontainers 辅助、fixture 构造器
 - `tests/integration/`：真实依赖联动
 - `tests/smoke/`：关键路径冒烟
 - `tests/contract/`：契约测试

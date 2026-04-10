@@ -1,6 +1,6 @@
 # Server 数据库规范化重构设计
 
-> 说明：本文档记录的是“在不变更现有 API 的前提下尽可能规范化数据库”的方向。自 2026-04-09 起，当前主方向已切换为 greenfield 重建；后续以 `docs/brainstorms/2026-04-09-server-greenfield-commercial-core-requirements.md` 为准。
+> 说明：本文档记录的是“在不变更现有 API 的前提下尽可能规范化数据库”的方向。自 2026-04-09 起，当前主方向已切换为 greenfield 重建；后续以 `server-v2/docs/brainstorms/2026-04-09-server-greenfield-commercial-core-requirements.md` 为准。
 
 ## 背景
 
