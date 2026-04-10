@@ -41,7 +41,9 @@ export function ForgotPasswordForm() {
 				<div className="w-full rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 shadow-2xl shadow-black/40 backdrop-blur sm:p-8">
 					<div className="space-y-2">
 						<h1 className="text-3xl font-semibold tracking-tight text-white">找回密码</h1>
-						<p className="text-sm leading-6 text-slate-300">输入你的邮箱，我们会发送一封包含重置指引的邮件。</p>
+						<p className="text-sm leading-6 text-slate-300">
+							输入你的邮箱，我们会发送一封包含重置指引的邮件。
+						</p>
 					</div>
 
 					<form
@@ -73,12 +75,23 @@ export function ForgotPasswordForm() {
 						</form.Field>
 
 						{message ? (
-							<p className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">{message}</p>
+							<p className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
+								{message}
+							</p>
 						) : null}
 
-						<form.Subscribe selector={(state) => ({ canSubmit: state.canSubmit, isSubmitting: state.isSubmitting })}>
+						<form.Subscribe
+							selector={(state) => ({
+								canSubmit: state.canSubmit,
+								isSubmitting: state.isSubmitting,
+							})}
+						>
 							{({ canSubmit, isSubmitting }) => (
-								<Button className="h-11 w-full rounded-xl text-sm" disabled={!canSubmit || isSubmitting} type="submit">
+								<Button
+									className="h-11 w-full rounded-xl text-sm"
+									disabled={!canSubmit || isSubmitting}
+									type="submit"
+								>
 									{isSubmitting ? '发送中' : '发送重置邮件'}
 								</Button>
 							)}
@@ -89,7 +102,11 @@ export function ForgotPasswordForm() {
 						<Link className="font-medium text-cyan-200 hover:text-cyan-100" to="/login">
 							返回登录
 						</Link>
-						<Link className="font-medium text-cyan-200 hover:text-cyan-100" search={{ token: '' }} to="/reset-password">
+						<Link
+							className="font-medium text-cyan-200 hover:text-cyan-100"
+							search={{ token: '' }}
+							to="/reset-password"
+						>
 							直接重置
 						</Link>
 					</div>

@@ -70,7 +70,9 @@ export function LoginForm() {
 								</div>
 								<div className="space-y-2">
 									<h2 className="text-3xl font-semibold tracking-tight text-white">登录你的账户</h2>
-									<p className="text-sm leading-6 text-slate-300">请输入邮箱和密码，继续进入后台。</p>
+									<p className="text-sm leading-6 text-slate-300">
+										请输入邮箱和密码，继续进入后台。
+									</p>
 								</div>
 							</div>
 
@@ -84,7 +86,10 @@ export function LoginForm() {
 								<form.Field name="email">
 									{(field) => (
 										<div className="space-y-2">
-											<label className="block text-sm font-medium text-slate-100" htmlFor={field.name}>
+											<label
+												className="block text-sm font-medium text-slate-100"
+												htmlFor={field.name}
+											>
 												邮箱
 											</label>
 											<input
@@ -105,7 +110,10 @@ export function LoginForm() {
 								<form.Field name="password">
 									{(field) => (
 										<div className="space-y-2">
-											<label className="block text-sm font-medium text-slate-100" htmlFor={field.name}>
+											<label
+												className="block text-sm font-medium text-slate-100"
+												htmlFor={field.name}
+											>
 												密码
 											</label>
 											<input
@@ -129,9 +137,18 @@ export function LoginForm() {
 									</p>
 								) : null}
 
-								<form.Subscribe selector={(state) => ({ canSubmit: state.canSubmit, isSubmitting: state.isSubmitting })}>
+								<form.Subscribe
+									selector={(state) => ({
+										canSubmit: state.canSubmit,
+										isSubmitting: state.isSubmitting,
+									})}
+								>
 									{({ canSubmit, isSubmitting }) => (
-										<Button className="h-11 w-full rounded-xl text-sm" disabled={!canSubmit || isSubmitting} type="submit">
+										<Button
+											className="h-11 w-full rounded-xl text-sm"
+											disabled={!canSubmit || isSubmitting}
+											type="submit"
+										>
 											{isSubmitting ? '登录中' : '登录'}
 										</Button>
 									)}
@@ -140,7 +157,10 @@ export function LoginForm() {
 
 							<div className="flex items-center justify-between text-sm text-slate-300">
 								<span>忘记密码了？</span>
-								<Link className="font-medium text-cyan-200 hover:text-cyan-100" to="/forgot-password">
+								<Link
+									className="font-medium text-cyan-200 hover:text-cyan-100"
+									to="/forgot-password"
+								>
 									前往找回
 								</Link>
 							</div>

@@ -98,12 +98,23 @@ export function ResetPasswordForm({ initialToken = '' }: { initialToken?: string
 						</form.Field>
 
 						{message ? (
-							<p className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">{message}</p>
+							<p className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
+								{message}
+							</p>
 						) : null}
 
-						<form.Subscribe selector={(state) => ({ canSubmit: state.canSubmit, isSubmitting: state.isSubmitting })}>
+						<form.Subscribe
+							selector={(state) => ({
+								canSubmit: state.canSubmit,
+								isSubmitting: state.isSubmitting,
+							})}
+						>
 							{({ canSubmit, isSubmitting }) => (
-								<Button className="h-11 w-full rounded-xl text-sm" disabled={!canSubmit || isSubmitting} type="submit">
+								<Button
+									className="h-11 w-full rounded-xl text-sm"
+									disabled={!canSubmit || isSubmitting}
+									type="submit"
+								>
 									{isSubmitting ? '提交中' : '确认重置'}
 								</Button>
 							)}
