@@ -59,3 +59,25 @@ func TestMigrateFailsWhenRevisionExistsButContractDrifted(t *testing.T) {
 		t.Fatal("target revision 已存在但 schema 契约漂移时，migrate 应失败")
 	}
 }
+
+func TestMigrateFailsWhenCurrentVersionIsHigherThanTarget(t *testing.T) {
+	dsn, cleanup := newIsolatedPostgres(t)
+	defer cleanup()
+
+	db, err := ppdb.Open(dsn)
+	if err != nil {
+		t.Fatalf("连接隔离数据库失败: %v", err)
+	}
+	defer db.Close()
+
+	if err := ppdb.Migrate(context.Background(), db); err != nil {
+		t.Fatalf("初始化 baseline migrate 失败: %v", err)
+	}
+	if _, err := db.Exec(`INSERT INTO schema_revisions(version) VALUES ('0002_after_baseline')`); err != nil {
+		t.Fatalf("插入更高版本 revision 失败: %v", err)
+	}
+
+	if err := ppdb.Migrate(context.Background(), db); err == nil {
+		t.Fatal("当前版本高于 target 时，baseline migrate 不应误判成功")
+	}
+}

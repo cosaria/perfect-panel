@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"embed"
+	"errors"
 	"fmt"
 	"slices"
 	"strings"
@@ -29,12 +30,18 @@ func Migrate(ctx context.Context, database *sql.DB) error {
 		ctx = context.Background()
 	}
 
-	revisionExists, err := schemaRevisionExists(ctx, database, TargetSchemaVersion)
+	revisionTableExists, currentVersion, err := currentSchemaVersionState(ctx, database)
 	if err != nil {
 		return err
 	}
-	if revisionExists {
-		return ValidateSchemaContract(ctx, database)
+	if revisionTableExists {
+		if currentVersion == "" {
+			return fmt.Errorf("schema_revisions 状态异常: 当前版本为空")
+		}
+		if currentVersion != TargetSchemaVersion {
+			return fmt.Errorf("当前 schema version 非目标版本: want=%s got=%s", TargetSchemaVersion, currentVersion)
+		}
+		return EnsureSchemaVersion(ctx, database)
 	}
 
 	existingTables, err := findExistingManagedTables(ctx, database)
@@ -68,27 +75,29 @@ func Migrate(ctx context.Context, database *sql.DB) error {
 	return EnsureSchemaVersion(ctx, database)
 }
 
-func schemaRevisionExists(ctx context.Context, database *sql.DB, version string) (bool, error) {
+func currentSchemaVersionState(ctx context.Context, database *sql.DB) (bool, string, error) {
 	var revisionTableExists bool
 	if err := database.QueryRowContext(
 		ctx,
 		`SELECT to_regclass(current_schema() || '.schema_revisions') IS NOT NULL`,
 	).Scan(&revisionTableExists); err != nil {
-		return false, fmt.Errorf("检查 schema_revisions 是否存在失败: %w", err)
+		return false, "", fmt.Errorf("检查 schema_revisions 是否存在失败: %w", err)
 	}
 	if !revisionTableExists {
-		return false, nil
+		return false, "", nil
 	}
 
-	var count int
+	var version string
 	if err := database.QueryRowContext(
 		ctx,
-		`SELECT COUNT(*) FROM schema_revisions WHERE version = $1`,
-		version,
-	).Scan(&count); err != nil {
-		return false, fmt.Errorf("检查目标 schema version 失败: %w", err)
+		`SELECT version FROM schema_revisions ORDER BY applied_at DESC, id DESC LIMIT 1`,
+	).Scan(&version); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return true, "", nil
+		}
+		return false, "", fmt.Errorf("读取当前 schema version 失败: %w", err)
 	}
-	return count > 0, nil
+	return true, version, nil
 }
 
 func findExistingManagedTables(ctx context.Context, database *sql.DB) ([]string, error) {

@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -30,6 +31,15 @@ func ValidateSchemaContract(ctx context.Context, database *sql.DB) error {
 		return err
 	}
 	if err := assertUUIDColumn(ctx, database, "roles", "id"); err != nil {
+		return err
+	}
+	if err := assertUUIDDefault(ctx, database, "users", "id"); err != nil {
+		return err
+	}
+	if err := assertUUIDDefault(ctx, database, "roles", "id"); err != nil {
+		return err
+	}
+	if err := assertUUIDDefault(ctx, database, "system_settings", "id"); err != nil {
 		return err
 	}
 
@@ -114,6 +124,31 @@ func assertColumnType(ctx context.Context, database *sql.DB, table string, colum
 	}
 	if strings.ToLower(udtName) != strings.ToLower(wantType) {
 		return fmt.Errorf("schema 契约不匹配: 列 %s.%s 期望类型 %s，实际 %s", table, column, wantType, udtName)
+	}
+	return nil
+}
+
+func assertUUIDDefault(ctx context.Context, database *sql.DB, table string, column string) error {
+	var columnDefault sql.NullString
+	err := database.QueryRowContext(
+		ctx,
+		`SELECT column_default
+		FROM information_schema.columns
+		WHERE table_schema = current_schema() AND table_name = $1 AND column_name = $2`,
+		table,
+		column,
+	).Scan(&columnDefault)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return fmt.Errorf("schema 契约缺失: 列 %s.%s 不存在", table, column)
+		}
+		return fmt.Errorf("读取列默认值 %s.%s 失败: %w", table, column, err)
+	}
+	if !columnDefault.Valid {
+		return fmt.Errorf("schema 契约不匹配: 列 %s.%s 缺少 gen_random_uuid() 默认值", table, column)
+	}
+	if !strings.Contains(strings.ToLower(columnDefault.String), "gen_random_uuid()") {
+		return fmt.Errorf("schema 契约不匹配: 列 %s.%s 默认值应包含 gen_random_uuid()，实际 %s", table, column, columnDefault.String)
 	}
 	return nil
 }
