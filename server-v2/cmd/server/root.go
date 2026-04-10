@@ -23,7 +23,14 @@ func Execute(args []string, stdout io.Writer, stderr io.Writer) error {
 	_ = stderr
 
 	root := newRootCommand()
-	if len(args) == 0 || isHelpToken(args[0]) {
+	if len(args) == 0 {
+		root.printHelp(stdout)
+		return nil
+	}
+	if isHelpToken(args[0]) {
+		if len(args) > 1 {
+			return fmt.Errorf("根命令 help 不接受额外参数: %s", strings.Join(args[1:], " "))
+		}
 		root.printHelp(stdout)
 		return nil
 	}

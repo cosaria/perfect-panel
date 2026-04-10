@@ -69,6 +69,7 @@ func TestCliRejectsUnexpectedArgs(t *testing.T) {
 	testCases := [][]string{
 		{"migrate", "--bad-flag"},
 		{"serve-api", "unexpected-arg"},
+		{"--help", "extra-arg"},
 	}
 
 	for _, args := range testCases {
