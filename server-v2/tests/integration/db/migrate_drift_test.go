@@ -42,3 +42,20 @@ func TestMigrateFailsOnDriftedSchema(t *testing.T) {
 		t.Fatalf("漂移失败场景不应写入目标版本 revision，实际 count=%d", count)
 	}
 }
+
+func TestMigrateFailsWhenRevisionExistsButContractDrifted(t *testing.T) {
+	dsn, cleanup := newIsolatedPostgres(t)
+	defer cleanup()
+
+	createSchemaWithTargetRevisionButContractDrifted(t, dsn)
+
+	db, err := ppdb.Open(dsn)
+	if err != nil {
+		t.Fatalf("连接隔离数据库失败: %v", err)
+	}
+	defer db.Close()
+
+	if err := ppdb.Migrate(context.Background(), db); err == nil {
+		t.Fatal("target revision 已存在但 schema 契约漂移时，migrate 应失败")
+	}
+}

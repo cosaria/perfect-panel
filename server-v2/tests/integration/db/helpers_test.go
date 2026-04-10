@@ -59,3 +59,57 @@ func applySearchPath(dsn string, schema string) (string, error) {
 	}
 	return dsn + " search_path=" + schema, nil
 }
+
+func createSchemaWithTargetRevisionButContractDrifted(t *testing.T, dsn string) {
+	t.Helper()
+
+	db, err := ppdb.Open(dsn)
+	if err != nil {
+		t.Fatalf("连接隔离数据库失败: %v", err)
+	}
+	defer db.Close()
+
+	statements := []string{
+		`CREATE TABLE schema_revisions (
+			id BIGSERIAL PRIMARY KEY,
+			version TEXT NOT NULL UNIQUE,
+			applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		)`,
+		`INSERT INTO schema_revisions(version) VALUES ('` + ppdb.TargetSchemaVersion + `')`,
+		`CREATE TABLE users (
+			id BIGINT PRIMARY KEY,
+			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+			updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		)`,
+		`CREATE TABLE roles (
+			id UUID PRIMARY KEY,
+			code TEXT NOT NULL UNIQUE,
+			name TEXT NOT NULL,
+			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+			updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		)`,
+		`CREATE TABLE system_settings (
+			id UUID PRIMARY KEY,
+			scope TEXT NOT NULL,
+			key TEXT NOT NULL,
+			value_json JSONB NOT NULL DEFAULT '{}'::jsonb,
+			updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		)`,
+		`CREATE UNIQUE INDEX idx_system_settings_scope_key ON system_settings(scope, key)`,
+		`CREATE TABLE outbox_events (
+			id UUID PRIMARY KEY,
+			topic TEXT NOT NULL,
+			status TEXT NOT NULL,
+			aggregate_type TEXT NOT NULL,
+			aggregate_id UUID NOT NULL,
+			payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		)`,
+	}
+
+	for _, statement := range statements {
+		if _, err := db.Exec(statement); err != nil {
+			t.Fatalf("准备漂移 schema 失败: %v", err)
+		}
+	}
+}

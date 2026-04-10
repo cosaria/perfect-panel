@@ -34,7 +34,7 @@ func Migrate(ctx context.Context, database *sql.DB) error {
 		return err
 	}
 	if revisionExists {
-		return nil
+		return ValidateSchemaContract(ctx, database)
 	}
 
 	existingTables, err := findExistingManagedTables(ctx, database)
@@ -50,7 +50,7 @@ func Migrate(ctx context.Context, database *sql.DB) error {
 		return fmt.Errorf("读取 baseline migration 失败: %w", err)
 	}
 
-	return WithTx(ctx, database, func(tx *sql.Tx) error {
+	if err := WithTx(ctx, database, func(tx *sql.Tx) error {
 		if _, err := tx.ExecContext(ctx, string(script)); err != nil {
 			return fmt.Errorf("执行 baseline migration 失败: %w", err)
 		}
@@ -62,7 +62,10 @@ func Migrate(ctx context.Context, database *sql.DB) error {
 			return fmt.Errorf("写入 schema_revisions 失败: %w", err)
 		}
 		return nil
-	})
+	}); err != nil {
+		return err
+	}
+	return EnsureSchemaVersion(ctx, database)
 }
 
 func schemaRevisionExists(ctx context.Context, database *sql.DB, version string) (bool, error) {

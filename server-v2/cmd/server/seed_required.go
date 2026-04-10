@@ -19,6 +19,10 @@ func newSeedRequiredCommand() subCommand {
 			}
 			defer database.Close()
 
+			if err := ppdb.EnsureSchemaVersion(context.Background(), database); err != nil {
+				return err
+			}
+
 			return seeds.ApplyRequired(context.Background(), database)
 		},
 	}

@@ -35,3 +35,16 @@ func TestServeFailsWhenSchemaVersionMismatches(t *testing.T) {
 		t.Fatal("schema version 不匹配时，serve 模式构建应失败")
 	}
 }
+
+func TestServeFailsWhenSchemaContractDriftedEvenWithTargetVersion(t *testing.T) {
+	dsn, cleanup := newIsolatedPostgres(t)
+	defer cleanup()
+
+	createSchemaWithTargetRevisionButContractDrifted(t, dsn)
+	t.Setenv("PPANEL_DB_DSN", dsn)
+
+	_, err := bootstrap.BuildForMode(runtime.ModeServeAPI, bootstrap.Options{})
+	if err == nil {
+		t.Fatal("schema 契约漂移时，serve 模式构建应失败")
+	}
+}

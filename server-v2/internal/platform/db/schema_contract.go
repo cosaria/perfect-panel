@@ -1,0 +1,137 @@
+package db
+
+import (
+	"context"
+	"database/sql"
+	"fmt"
+	"strings"
+)
+
+// ValidateSchemaContract 校验 baseline 最小承重契约。
+func ValidateSchemaContract(ctx context.Context, database *sql.DB) error {
+	if database == nil {
+		return fmt.Errorf("数据库实例不能为空")
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	for _, table := range managedTables {
+		ok, err := tableExists(ctx, database, table)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return fmt.Errorf("schema 契约缺失: 表 %s 不存在", table)
+		}
+	}
+
+	if err := assertUUIDColumn(ctx, database, "users", "id"); err != nil {
+		return err
+	}
+	if err := assertUUIDColumn(ctx, database, "roles", "id"); err != nil {
+		return err
+	}
+
+	if err := assertColumnType(ctx, database, "system_settings", "scope", "text"); err != nil {
+		return err
+	}
+	if err := assertColumnType(ctx, database, "system_settings", "key", "text"); err != nil {
+		return err
+	}
+	if err := assertColumnType(ctx, database, "system_settings", "value_json", "jsonb"); err != nil {
+		return err
+	}
+
+	if err := assertColumnExists(ctx, database, "outbox_events", "aggregate_type"); err != nil {
+		return err
+	}
+	if err := assertColumnExists(ctx, database, "outbox_events", "aggregate_id"); err != nil {
+		return err
+	}
+
+	ok, err := hasSystemSettingsScopeKeyUniqueIndex(ctx, database)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return fmt.Errorf("schema 契约缺失: system_settings 需要 (scope, key) 唯一索引/约束")
+	}
+	return nil
+}
+
+func tableExists(ctx context.Context, database *sql.DB, table string) (bool, error) {
+	var exists bool
+	if err := database.QueryRowContext(
+		ctx,
+		`SELECT to_regclass(current_schema() || '.' || $1) IS NOT NULL`,
+		table,
+	).Scan(&exists); err != nil {
+		return false, fmt.Errorf("检查表 %s 是否存在失败: %w", table, err)
+	}
+	return exists, nil
+}
+
+func assertUUIDColumn(ctx context.Context, database *sql.DB, table string, column string) error {
+	return assertColumnType(ctx, database, table, column, "uuid")
+}
+
+func assertColumnExists(ctx context.Context, database *sql.DB, table string, column string) error {
+	var exists bool
+	if err := database.QueryRowContext(
+		ctx,
+		`SELECT EXISTS (
+			SELECT 1
+			FROM information_schema.columns
+			WHERE table_schema = current_schema() AND table_name = $1 AND column_name = $2
+		)`,
+		table,
+		column,
+	).Scan(&exists); err != nil {
+		return fmt.Errorf("检查列 %s.%s 是否存在失败: %w", table, column, err)
+	}
+	if !exists {
+		return fmt.Errorf("schema 契约缺失: 列 %s.%s 不存在", table, column)
+	}
+	return nil
+}
+
+func assertColumnType(ctx context.Context, database *sql.DB, table string, column string, wantType string) error {
+	var udtName string
+	err := database.QueryRowContext(
+		ctx,
+		`SELECT udt_name
+		FROM information_schema.columns
+		WHERE table_schema = current_schema() AND table_name = $1 AND column_name = $2`,
+		table,
+		column,
+	).Scan(&udtName)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return fmt.Errorf("schema 契约缺失: 列 %s.%s 不存在", table, column)
+		}
+		return fmt.Errorf("读取列类型 %s.%s 失败: %w", table, column, err)
+	}
+	if strings.ToLower(udtName) != strings.ToLower(wantType) {
+		return fmt.Errorf("schema 契约不匹配: 列 %s.%s 期望类型 %s，实际 %s", table, column, wantType, udtName)
+	}
+	return nil
+}
+
+func hasSystemSettingsScopeKeyUniqueIndex(ctx context.Context, database *sql.DB) (bool, error) {
+	var exists bool
+	if err := database.QueryRowContext(
+		ctx,
+		`SELECT EXISTS (
+			SELECT 1
+			FROM pg_indexes
+			WHERE schemaname = current_schema()
+				AND tablename = 'system_settings'
+				AND position('create unique index' IN lower(indexdef)) > 0
+				AND position('(scope, key)' IN lower(replace(indexdef, '"', ''))) > 0
+		)`,
+	).Scan(&exists); err != nil {
+		return false, fmt.Errorf("检查 system_settings 唯一索引失败: %w", err)
+	}
+	return exists, nil
+}

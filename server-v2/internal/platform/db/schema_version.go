@@ -55,5 +55,5 @@ func EnsureSchemaVersion(ctx context.Context, database *sql.DB) error {
 	if current != TargetSchemaVersion {
 		return fmt.Errorf("schema version 不匹配: want=%s got=%s", TargetSchemaVersion, current)
 	}
-	return nil
+	return ValidateSchemaContract(ctx, database)
 }
