@@ -34,8 +34,14 @@ func Execute(args []string, stdout io.Writer, stderr io.Writer) error {
 			continue
 		}
 		if len(args) > 1 && isHelpToken(args[1]) {
+			if len(args) > 2 {
+				return fmt.Errorf("命令 %s 不接受额外参数: %s", cmd.name, strings.Join(args[2:], " "))
+			}
 			root.printSubCommandHelp(stdout, cmd)
 			return nil
+		}
+		if len(args) > 1 {
+			return fmt.Errorf("命令 %s 不接受额外参数: %s", cmd.name, strings.Join(args[1:], " "))
 		}
 		return cmd.run()
 	}
