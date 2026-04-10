@@ -6,7 +6,7 @@
 		"dev": "vite",
 		"build": "vite build",
 		"test": "vitest run --environment jsdom",
-		"lint": "biome check src app.config.ts vite.config.ts",
+		"lint": "biome check app.config.ts vite.config.ts src/app src/routes src/router.tsx",
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
