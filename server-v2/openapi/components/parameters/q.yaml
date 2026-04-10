@@ -1,0 +1,7 @@
+name: q
+in: query
+required: false
+description: 通用搜索关键词。
+schema:
+  type: string
+  minLength: 1

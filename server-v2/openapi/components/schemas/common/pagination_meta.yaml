@@ -1,0 +1,30 @@
+type: object
+additionalProperties: false
+required:
+  - page
+  - pageSize
+  - total
+  - totalPages
+  - hasNext
+  - hasPrev
+properties:
+  page:
+    type: integer
+    format: int32
+    minimum: 1
+  pageSize:
+    type: integer
+    format: int32
+    minimum: 1
+  total:
+    type: integer
+    format: int64
+    minimum: 0
+  totalPages:
+    type: integer
+    format: int32
+    minimum: 0
+  hasNext:
+    type: boolean
+  hasPrev:
+    type: boolean

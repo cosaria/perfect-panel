@@ -1,0 +1,9 @@
+name: order
+in: query
+required: false
+description: 排序方向。
+schema:
+  type: string
+  enum:
+    - asc
+    - desc

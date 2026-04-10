@@ -1,0 +1,10 @@
+sessionAuth:
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: 登录会话认证。
+nodeAuth:
+  type: apiKey
+  in: header
+  name: X-Node-Key-Id
+  description: 节点签名式机器认证。

@@ -1,0 +1,70 @@
+post:
+  tags:
+    - Auth
+  operationId: publicAuthVerificationTokenCreate
+  summary: 创建验证令牌
+  security: []
+  parameters:
+    - $ref: ../../components/parameters/idempotency_key.yaml
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          additionalProperties: false
+          required:
+            - email
+          properties:
+            email:
+              type: string
+              format: email
+  responses:
+    "201":
+      description: 验证令牌已创建。
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - data
+              - meta
+            properties:
+              data:
+                type: object
+                additionalProperties: false
+                required:
+                  - id
+                  - destination
+                  - expiresAt
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  destination:
+                    type: string
+                  expiresAt:
+                    type: string
+                    format: date-time
+              meta:
+                type: object
+                additionalProperties: false
+    "400":
+      description: 请求格式错误。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/problem.yaml
+    "409":
+      description: 冲突。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/problem.yaml
+    "422":
+      description: 业务校验失败。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/validation_problem.yaml

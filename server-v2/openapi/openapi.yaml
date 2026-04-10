@@ -1,0 +1,53 @@
+openapi: 3.1.0
+info:
+  title: Server V2 API
+  version: 0.1.0
+paths:
+  /api/v1/public/sessions:
+    $ref: ./paths/public/sessions.yaml
+  /api/v1/public/verification-tokens:
+    $ref: ./paths/public/verification_tokens.yaml
+  /api/v1/public/password-reset-requests:
+    $ref: ./paths/public/password_reset_requests.yaml
+  /api/v1/public/password-resets:
+    $ref: ./paths/public/password_resets.yaml
+  /api/v1/user/me/sessions:
+    $ref: ./paths/user/me_sessions.yaml
+  /api/v1/admin/users:
+    $ref: ./paths/admin/users.yaml
+  /api/v1/node/usage-reports:
+    $ref: ./paths/node/usage_reports.yaml
+components:
+  parameters:
+    page:
+      $ref: ./components/parameters/page.yaml
+    pageSize:
+      $ref: ./components/parameters/page_size.yaml
+    q:
+      $ref: ./components/parameters/q.yaml
+    sort:
+      $ref: ./components/parameters/sort.yaml
+    order:
+      $ref: ./components/parameters/order.yaml
+  schemas:
+    Problem:
+      $ref: ./components/schemas/common/problem.yaml
+    ValidationProblem:
+      $ref: ./components/schemas/common/validation_problem.yaml
+    PaginationMeta:
+      $ref: ./components/schemas/common/pagination_meta.yaml
+    Money:
+      $ref: ./components/schemas/common/money.yaml
+  headers:
+    idempotencyKey:
+      $ref: ./components/headers/idempotency_key.yaml
+    nodeKeyId:
+      $ref: ./components/headers/node_key_id.yaml
+    nodeTimestamp:
+      $ref: ./components/headers/node_timestamp.yaml
+    nodeNonce:
+      $ref: ./components/headers/node_nonce.yaml
+    nodeSignature:
+      $ref: ./components/headers/node_signature.yaml
+  securitySchemes:
+    $ref: ./components/security/security.yaml

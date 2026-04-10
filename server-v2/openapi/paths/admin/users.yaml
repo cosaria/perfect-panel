@@ -1,0 +1,146 @@
+get:
+  tags:
+    - Access
+  operationId: adminAccessUserList
+  summary: 列出用户
+  security:
+    - sessionAuth: []
+  parameters:
+    - $ref: ../../components/parameters/page.yaml
+    - $ref: ../../components/parameters/page_size.yaml
+    - $ref: ../../components/parameters/q.yaml
+    - $ref: ../../components/parameters/sort.yaml
+    - $ref: ../../components/parameters/order.yaml
+  responses:
+    "200":
+      description: 用户列表。
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - data
+              - meta
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - id
+                    - email
+                    - status
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    email:
+                      type: string
+                      format: email
+                    status:
+                      type: string
+                      enum:
+                        - active
+                        - disabled
+              meta:
+                $ref: ../../components/schemas/common/pagination_meta.yaml
+    "401":
+      description: 未认证。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/problem.yaml
+    "403":
+      description: 无权限。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/problem.yaml
+post:
+  tags:
+    - Access
+  operationId: adminAccessUserCreate
+  summary: 创建用户
+  security:
+    - sessionAuth: []
+  parameters:
+    - $ref: ../../components/parameters/idempotency_key.yaml
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          additionalProperties: false
+          required:
+            - email
+            - status
+          properties:
+            email:
+              type: string
+              format: email
+            status:
+              type: string
+              enum:
+                - active
+                - disabled
+  responses:
+    "201":
+      description: 用户已创建。
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - data
+              - meta
+            properties:
+              data:
+                type: object
+                additionalProperties: false
+                required:
+                  - id
+                  - email
+                  - status
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  email:
+                    type: string
+                    format: email
+                  status:
+                    type: string
+                    enum:
+                      - active
+                      - disabled
+              meta:
+                type: object
+                additionalProperties: false
+    "401":
+      description: 未认证。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/problem.yaml
+    "403":
+      description: 无权限。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/problem.yaml
+    "409":
+      description: 冲突。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/problem.yaml
+    "422":
+      description: 业务校验失败。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/validation_problem.yaml

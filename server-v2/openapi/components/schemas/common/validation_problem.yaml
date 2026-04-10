@@ -1,0 +1,40 @@
+type: object
+additionalProperties: false
+required:
+  - type
+  - title
+  - status
+  - detail
+  - errors
+properties:
+  type:
+    type: string
+    format: uri
+  title:
+    type: string
+  status:
+    type: integer
+    format: int32
+  detail:
+    type: string
+  code:
+    type: string
+  instance:
+    type: string
+    format: uri
+  errors:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - field
+        - code
+        - message
+      properties:
+        field:
+          type: string
+        code:
+          type: string
+        message:
+          type: string

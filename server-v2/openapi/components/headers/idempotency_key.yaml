@@ -1,0 +1,4 @@
+description: 非幂等写请求的幂等键。
+schema:
+  type: string
+  minLength: 1

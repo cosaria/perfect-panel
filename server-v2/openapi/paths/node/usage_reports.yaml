@@ -1,0 +1,110 @@
+post:
+  tags:
+    - Node
+  operationId: nodeUsageReportCreate
+  summary: 创建用量上报
+  security:
+    - nodeAuth: []
+  parameters:
+    - $ref: ../../components/parameters/idempotency_key.yaml
+    - name: X-Node-Timestamp
+      in: header
+      required: true
+      description: 节点请求时间戳。
+      schema:
+        type: integer
+        format: int64
+    - name: X-Node-Nonce
+      in: header
+      required: true
+      description: 节点请求随机串。
+      schema:
+        type: string
+        minLength: 1
+    - name: X-Node-Signature
+      in: header
+      required: true
+      description: 节点请求签名。
+      schema:
+        type: string
+        minLength: 1
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          additionalProperties: false
+          required:
+            - nodeId
+            - usageAt
+            - traffic
+          properties:
+            nodeId:
+              type: string
+              format: uuid
+            usageAt:
+              type: string
+              format: date-time
+            traffic:
+              type: object
+              additionalProperties: false
+              required:
+                - upload
+                - download
+              properties:
+                upload:
+                  $ref: ../../components/schemas/common/money.yaml
+                download:
+                  $ref: ../../components/schemas/common/money.yaml
+  responses:
+    "201":
+      description: 用量上报已接收。
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - data
+              - meta
+            properties:
+              data:
+                type: object
+                additionalProperties: false
+                required:
+                  - id
+                  - status
+                  - acceptedAt
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum:
+                      - accepted
+                  acceptedAt:
+                    type: string
+                    format: date-time
+              meta:
+                type: object
+                additionalProperties: false
+    "401":
+      description: 未认证。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/problem.yaml
+    "403":
+      description: 无权限。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/problem.yaml
+    "409":
+      description: 冲突。
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/problem.yaml

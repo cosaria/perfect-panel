@@ -1,0 +1,11 @@
+extends:
+  - recommended
+
+rules:
+  operation-operationId-unique: error
+  operation-operationId-url-safe: error
+  no-unresolved-refs: error
+  security-defined: error
+  no-unused-components: warn
+  no-empty-servers: off
+  info-license: off

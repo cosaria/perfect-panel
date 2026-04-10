@@ -1,0 +1,7 @@
+name: sort
+in: query
+required: false
+description: 排序字段。
+schema:
+  type: string
+  minLength: 1

@@ -1,0 +1,4 @@
+description: 节点请求时间戳。
+schema:
+  type: integer
+  format: int64
