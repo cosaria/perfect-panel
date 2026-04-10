@@ -1,0 +1,101 @@
+<h2>选择 `web-v2 admin` 的视觉方向</h2>
+<p class="subtitle">先定整体气质。后面的登录页、侧栏、Dashboard 壳子都会沿这个方向展开。</p>
+
+<div class="cards">
+  <div class="card" data-choice="direction-a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">A. 冷静控制台</div>
+        <div class="mockup-body" style="background:linear-gradient(180deg,#f8fafc,#eef2f7);padding:16px;">
+          <div style="display:flex;gap:12px;min-height:240px;">
+            <div style="width:74px;background:#0f172a;color:#e2e8f0;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;">
+              <div style="height:26px;background:#1e293b;border-radius:8px;"></div>
+              <div style="height:10px;background:#334155;border-radius:999px;"></div>
+              <div style="height:10px;background:#475569;border-radius:999px;"></div>
+              <div style="height:10px;background:#334155;border-radius:999px;"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:12px;">
+              <div style="height:40px;background:#ffffff;border:1px solid #dbe3ee;border-radius:14px;"></div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+                <div style="height:78px;background:#ffffff;border:1px solid #dbe3ee;border-radius:16px;"></div>
+                <div style="height:78px;background:#ffffff;border:1px solid #dbe3ee;border-radius:16px;"></div>
+                <div style="height:78px;background:#ffffff;border:1px solid #dbe3ee;border-radius:16px;"></div>
+              </div>
+              <div style="height:94px;background:#ffffff;border:1px solid #dbe3ee;border-radius:16px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>冷静控制台</h3>
+      <p>偏专业、偏运维。浅底深侧栏，层级克制，适合稳定感和管理感很强的后台。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="direction-b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">B. 商业运营台</div>
+        <div class="mockup-body" style="background:linear-gradient(135deg,#fff8ef,#ffe8d2);padding:16px;">
+          <div style="display:flex;gap:12px;min-height:240px;">
+            <div style="width:86px;background:#fff1df;border:1px solid #ffd4a7;border-radius:20px;padding:12px;display:flex;flex-direction:column;gap:10px;">
+              <div style="height:26px;background:#f97316;border-radius:10px;"></div>
+              <div style="height:10px;background:#fdba74;border-radius:999px;"></div>
+              <div style="height:10px;background:#fdba74;border-radius:999px;"></div>
+              <div style="height:10px;background:#fed7aa;border-radius:999px;"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:12px;">
+              <div style="height:42px;background:#fffdf9;border:1px solid #ffd4a7;border-radius:18px;"></div>
+              <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:12px;">
+                <div style="height:96px;background:#fffdf9;border:1px solid #ffd4a7;border-radius:20px;"></div>
+                <div style="height:96px;background:#f97316;border-radius:20px;opacity:.9;"></div>
+              </div>
+              <div style="height:92px;background:#fffdf9;border:1px solid #ffd4a7;border-radius:20px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>商业运营台</h3>
+      <p>更偏运营和增长面板。暖色重点更明显，卡片更有“业务数据中心”的感觉。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="direction-c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">C. 未来网络台</div>
+        <div class="mockup-body" style="background:radial-gradient(circle at top left,#e0f2fe,#eef2ff 48%,#f8fafc);padding:16px;">
+          <div style="display:flex;gap:12px;min-height:240px;">
+            <div style="width:82px;background:rgba(255,255,255,.72);backdrop-filter:blur(10px);border:1px solid #cbd5e1;border-radius:20px;padding:12px;display:flex;flex-direction:column;gap:10px;">
+              <div style="height:26px;background:#0ea5e9;border-radius:10px;"></div>
+              <div style="height:10px;background:#38bdf8;border-radius:999px;"></div>
+              <div style="height:10px;background:#818cf8;border-radius:999px;"></div>
+              <div style="height:10px;background:#bae6fd;border-radius:999px;"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:12px;">
+              <div style="height:42px;background:rgba(255,255,255,.7);backdrop-filter:blur(10px);border:1px solid #dbeafe;border-radius:18px;"></div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+                <div style="height:82px;background:rgba(255,255,255,.7);border:1px solid #dbeafe;border-radius:18px;"></div>
+                <div style="height:82px;background:rgba(255,255,255,.7);border:1px solid #dbeafe;border-radius:18px;"></div>
+                <div style="height:82px;background:linear-gradient(135deg,#0ea5e9,#6366f1);border-radius:18px;opacity:.92;"></div>
+              </div>
+              <div style="height:100px;background:rgba(255,255,255,.7);border:1px solid #dbeafe;border-radius:18px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>未来网络台</h3>
+      <p>更像新一代网络控制面。高亮更科技化，适合强调“节点、线路、网络状态”的产品气质。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>我当前的建议</h3>
+  <p>我推荐 <strong>B. 商业运营台</strong>。它最适合 admin 第一阶段：既不像传统运维后台那么冷，也不会像纯科技展示页那样失去运营管理的可读性。</p>
+</div>
