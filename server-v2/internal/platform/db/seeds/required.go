@@ -30,10 +30,10 @@ func ApplyRequired(ctx context.Context, database *sql.DB) error {
 
 		if _, err := tx.ExecContext(
 			ctx,
-			`INSERT INTO system_settings(key, value) VALUES
-				('site_name', 'Perfect Panel'),
-				('app_name', 'Perfect Panel')
-			ON CONFLICT(key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()`,
+			`INSERT INTO system_settings(scope, key, value_json) VALUES
+				('site', 'site_name', to_jsonb('Perfect Panel'::text)),
+				('site', 'app_name', to_jsonb('Perfect Panel'::text))
+			ON CONFLICT(scope, key) DO UPDATE SET value_json = EXCLUDED.value_json, updated_at = NOW()`,
 		); err != nil {
 			return fmt.Errorf("写入系统配置失败: %w", err)
 		}
