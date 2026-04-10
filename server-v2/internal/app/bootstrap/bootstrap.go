@@ -1,10 +1,13 @@
 package bootstrap
 
 import (
+	"context"
 	"log/slog"
 
+	"github.com/perfect-panel/server-v2/internal/app/runtime"
 	"github.com/perfect-panel/server-v2/internal/app/wiring"
 	"github.com/perfect-panel/server-v2/internal/platform/config"
+	ppdb "github.com/perfect-panel/server-v2/internal/platform/db"
 	"github.com/perfect-panel/server-v2/internal/platform/observability"
 )
 
@@ -27,4 +30,35 @@ func Build(opts Options) (*wiring.Container, error) {
 	}
 
 	return wiring.NewContainer(cfg, logger), nil
+}
+
+// BuildForMode 在 Build 的基础上，为 serve 模式增加 schema version 门禁。
+func BuildForMode(mode string, opts Options) (*wiring.Container, error) {
+	container, err := Build(opts)
+	if err != nil {
+		return nil, err
+	}
+	if !isServeMode(mode) {
+		return container, nil
+	}
+
+	database, err := ppdb.OpenFromEnv()
+	if err != nil {
+		return nil, err
+	}
+	defer database.Close()
+
+	if err := ppdb.EnsureSchemaVersion(context.Background(), database); err != nil {
+		return nil, err
+	}
+	return container, nil
+}
+
+func isServeMode(mode string) bool {
+	switch mode {
+	case runtime.ModeServeAPI, runtime.ModeServeWorker, runtime.ModeServeScheduler:
+		return true
+	default:
+		return false
+	}
 }
